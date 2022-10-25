@@ -1,35 +1,46 @@
 import bottle
 import json
 import chat
-
 ################################################################
 #       Functions needed to allow clients to access files      #
 ################################################################
+
 
 @bottle.route('/')
 def index():
   html_file = bottle.static_file("index.html", root=".")
   return html_file
 
-@bottle.route('/chat.js')
+
+@bottle.route('/static/style.css')
+def css_style():
+  css_file = bottle.static_file("static/style.css", root=".")
+  return css_file
+
+
+@bottle.route('/backend/chat.js')
 def chat_file():
-  chat_js_file = bottle.static_file("chat.js", root=".")
+  chat_js_file = bottle.static_file("backend/chat.js", root=".")
   return chat_js_file
 
-@bottle.route('/ajax.js')
+
+@bottle.route('/backend/ajax.js')
 def ajax_file():
-  ajax_js_file = bottle.static_file("ajax.js", root=".")
-  return ajax_js_file  
+  ajax_js_file = bottle.static_file("backend/ajax.js", root=".")
+  return ajax_js_file
+
 
 ################################################################
 #             Functions handling AJAX interactions             #
 ################################################################
+
 
 @bottle.get('/chat')
 def respond_with_chat():
   messages = chat.get_chat()
   ret_val = json.dumps(messages)
   return ret_val
+
 
 @bottle.post('/send')
 def do_chat():
@@ -41,6 +52,8 @@ def do_chat():
   # the server and client are completely different machines
   ret_val = json.dumps(response)
   return ret_val
+
+
 ################################################################
 #      Start the webserver                                     #
 ################################################################

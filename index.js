@@ -34,3 +34,7 @@ io.on('connection', function(socket) {
 });
 
 /// socket.emit('server message', data);
+
+
+// this uses socketio, a js libary
+// we alrady have the majority of this done in main.py

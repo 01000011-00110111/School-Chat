@@ -1,7 +1,15 @@
-get it working again
-get css working 
-add usernames 
-make look nicer
-imprivments
-publish
-publish a private server feature 
+get it working again                  |  done
+get css working                       |  done, works now 
+add accounts useing the replit login  |  start
+add roles                             |  soon
+add commands                          |  soon
+set up command lock by roles          |  soon
+make look nicer                       |  soon
+imprivments                           |  far
+inprove css                           |  Far
+publish                               |  super far
+add more color formats                |  super far
+add event color formats               |  super far
+get a rasbary pi to conect            |  Will be a long timeeee
+set up a pi for a storage server      |  depends on me and my wallet 
+publish a private server feature      |  will take a whileeeeeeee...

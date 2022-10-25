@@ -42,14 +42,13 @@ function renderChat(jsonData) {
   chatDiv["innerHTML"] = chat;
 }
 
-message.addEventListener('keydown', function(event) {
-  const key = event.key; // "a", "1", "Shift", etc.
-  console.log(key);
-});
 
 function checkKey(event) {
   // Check if the enter key is pressed when typing
-  let key = event.which;
-  let charStr = String.fromCharCode(charCode);
-  console.log(charStr);
+  //let key = event.key;
+  if (event.key === "Enter") {
+    sendMessage();
+  }
+  //console.log(event.key);
+
 }

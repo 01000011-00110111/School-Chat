@@ -105,5 +105,5 @@ pattern = "**/*.py"
 start = "pylsp"
 
 [auth]
-pageEnabled = true
+pageEnabled = false
 buttonEnabled = false

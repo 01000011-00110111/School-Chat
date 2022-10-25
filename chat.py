@@ -1,4 +1,4 @@
-logfile = "chat.txt"
+logfile = "backend/chat.txt"
 
 # Returns a list of dictionaries. Each dictionary in the list
 # is a message that has been sent in our chat server

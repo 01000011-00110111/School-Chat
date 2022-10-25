@@ -1,16 +1,17 @@
 <html>
 	<head>
-		<title>HomebrewChat</title>
-    <link rel="stylesheet" href="/static/style.css">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="backend/ajax.js"></script>
+    <script src="backend/chat.js"></script>
+    <link rel="stylesheet" href="static/style.css">
 	</head>
 
-<body onload="setInterval(loadChat,3000);">
+  <body onload="setInterval(loadChat,3000);">
 
-<div id="chat"></div><br>
+    <div id="chat"></div><br>
 
-Message: 
-  <input type="text" id="message"></input><br>
-
-</body>
+    <p>Message:<p/> 
+    <input type="text" id="message" onkeypress="checkKey(event);"></input><br>
+  
+    <button onClick="sendMessage();">Send</button>
+  </body>
 </html>
