@@ -47,16 +47,6 @@ message.addEventListener('keydown', function(event) {
   console.log(key);
 });
 
-inmsg.addEventListener("keydown", function() {
-	if (event.keyCode === 13) { // When user hits the enter key...
-		event.preventDefault();
-		if (inmsg.value == "") // Yeet outta there if the message is empty
-			return;
-		socket.emit('outgoing message', localStorage.getItem("name") + ": " + inmsg.value); // Broadcast message to server for handling
-		inmsg.value = ""; // Clear message box
-	}
-});
-
 function checkKey(event) {
   // Check if the enter key is pressed when typing
   let key = event.which;
