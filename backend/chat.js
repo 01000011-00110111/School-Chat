@@ -45,10 +45,21 @@ function renderChat(jsonData) {
 
 function checkKey(event) {
   // Check if the enter key is pressed when typing
-  //let key = event.key;
+  let messageElement = document.getElementById("message");
+
+  let message = messageElement["value"];
+
+  if (message === "") {
+    return
+  }
+  
   if (event.key === "Enter") {
     sendMessage();
   }
   //console.log(event.key);
 
 }
+
+$(document).ready(function(){
+     $('body,html').animate({scrollTop: 156}, 800); 
+});
