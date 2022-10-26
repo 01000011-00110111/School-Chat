@@ -1,0 +1,9 @@
+# file for excluding files from git repo (dev files)
+
+# chatlog
+backend/chat.txt
+backend/Chat-backup.txt
+
+# running files
+__pycache__/
+venv/
