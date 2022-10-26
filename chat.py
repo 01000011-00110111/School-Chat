@@ -1,4 +1,5 @@
 logfile = "backend/chat.txt"
+#1logfile = "backend/backup-chat.txt"
 
 # Returns a list of dictionaries. Each dictionary in the list
 # is a message that has been sent in our chat server

@@ -9,9 +9,10 @@
 
     <div id="chat"></div><br>
 
-    <p>Message:<p/> 
-    <input type="text" id="message" onkeypress="checkKey(event);"></input><br>
-  
-    <button onClick="sendMessage();">Send</button>
+    <div id="chatbox">
+      <p id="msg-title">Message:<p/>
+      <input type="text" id="message" onkeypress="checkKey(event);"></input><br>
+      <button onClick="sendMessage();" id="send">Send</button>
+    </div>
   </body>
 </html>

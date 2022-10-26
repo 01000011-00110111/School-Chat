@@ -21,24 +21,36 @@ body {
 	margin: 0;
 }
 
-/* alright it works well, im gonna say its done*/
-/*afk sorry */
 #chat {
   color: #b35905;
   z-index: -1;
-	overflow-y: scroll;
+	/*overflow-y: scroll;*/
 	height: calc(100% - 24px);
 	margin: 0;
 }
 
-#message-txt {
+#Message {
   color: #817474;
 }
 
-#txt-Box {
+#chatbox {
+  padding-left: 20px;
+  background-color: #000000;
+  color: #ffffff;
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+/* just open in a new tab, biltin browser is broken */
+/* k */
+/*  */
+#send {
+  background-color: #0093b0;
   color: #000000;
 }
 
-#send {
-  color: #0093b0;
+#msg-title {
+  padding-right: 10px;
 }

@@ -14,6 +14,12 @@ function sendMessage(){
   let message = messageElement["value"];
   // Let the user "see" the message was sent by clearing the textbox
   messageElement["value"] = "";
+
+  if (message === "") {
+    return
+  } else if (message === " ") {
+    return
+  }
   // We will send the message as a JSON encoding of an obejct.
   // This will simplify what is needed for future improvements
   let toSend = {"message": message};
@@ -45,13 +51,6 @@ function renderChat(jsonData) {
 
 function checkKey(event) {
   // Check if the enter key is pressed when typing
-  let messageElement = document.getElementById("message");
-
-  let message = messageElement["value"];
-
-  if (message === "") {
-    return
-  }
   
   if (event.key === "Enter") {
     sendMessage();

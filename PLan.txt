@@ -1,6 +1,9 @@
 get it working again                  |  done
 get css working                       |  done, works now 
-add accounts useing the replit login  |  start
+add check for a empty chatbox         |  done
+add accounts useing the replit login  |  starting
+add a auto scroll when opened         |  starting
+set up a send to bottem after a update|  soon
 add roles                             |  soon
 add commands                          |  soon
 set up command lock by roles          |  soon
@@ -13,3 +16,16 @@ add event color formats               |  super far
 get a rasbary pi to conect            |  Will be a long timeeee
 set up a pi for a storage server      |  depends on me and my wallet 
 publish a private server feature      |  will take a whileeeeeeee...
+add a meme of the day                 |  unknown if wiill be done
+
+
+
+
+###### Some reqired things that need to be added ######
+the textbox is always below the messages 
+a auto scroll
+meme of the day 
+a online active feature (so you dont talk to someone who is not online)
+a notification feature 
+More soon
+remove the outer scroll 
