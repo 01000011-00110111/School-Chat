@@ -1,6 +1,7 @@
 get it working again                  |  done
 get css working                       |  done, works now 
 add check for a empty chatbox         |  done
+make favicon                          |  starting and whenever i can learn art will be done
 add accounts useing the replit login  |  starting
 add a auto scroll when opened         |  starting
 set up a send to bottem after a update|  soon

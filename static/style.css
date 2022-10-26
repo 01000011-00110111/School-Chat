@@ -23,32 +23,47 @@ body {
 
 #chat {
   color: #b35905;
-  z-index: -1;
+  z-index: 0;
 	/*overflow-y: scroll;*/
 	height: calc(100% - 24px);
 	margin: 0;
+  line-height: 1;
 }
 
 #Message {
-  color: #817474;
+  color: #d90808;
+  font-size: 20px;
+  width: 200%;
 }
-
+/* id start by getting the text above the area the text box is */
 #chatbox {
-  padding-left: 20px;
-  background-color: #000000;
+  padding-top: 20px;
+  background-color: #292c33;
   color: #ffffff;
   flex: 0 0 auto;
   display: flex;
-  justify-content: center;
   align-items: center;
-  
+  position: fixed;
+  border-radius: 20px;
+  bottom: 0%;
+  left: 25%;
+  right: 25%;
+  padding-left: 5%;
+  vertical-align: middle;
+  font-size: 20px;
+  border: 0;
 }
-/* just open in a new tab, biltin browser is broken */
-/* k */
-/*  */
+
+#sides {
+  color: #b35905;
+  flex: 0 0 auto;
+  left: 0%;
+  right: 0%;
+}
 #send {
   background-color: #0093b0;
   color: #000000;
+  font-size: 24px;
 }
 
 #msg-title {

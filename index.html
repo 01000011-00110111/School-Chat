@@ -1,5 +1,8 @@
+<!DOCTYPE html>
 <html>
 	<head>
+    <title>School Chat</title>
+     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <script src="backend/ajax.js"></script>
     <script src="backend/chat.js"></script>
     <link rel="stylesheet" href="static/style.css">
@@ -8,11 +11,13 @@
   <body onload="setInterval(loadChat,3000);">
 
     <div id="chat"></div><br>
-
-    <div id="chatbox">
-      <p id="msg-title">Message:<p/>
-      <input type="text" id="message" onkeypress="checkKey(event);"></input><br>
-      <button onClick="sendMessage();" id="send">Send</button>
+    <!-- a comment -->
+    <div id="sides">
+      <div id="chatbox">
+        <p id="msg-title">Message:<p/>
+        <input type="text" id="message" onkeypress="checkKey(event);"></input><br>
+        <button onClick="sendMessage();" id="send">Send</button>
+      </div>
     </div>
   </body>
 </html>
