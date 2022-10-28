@@ -8,7 +8,11 @@ import chat
 
 @bottle.route('/')
 def index():
-  html_file = bottle.static_file("index.html", root=".")
+  print(bottle.request.headers['X-Replit-User-Name'])
+  html_file = bottle.template(
+    "index.html",
+    root=".",
+    user_name=bottle.request.headers['X-Replit-User-Name'])
   return html_file
 
 
@@ -48,8 +52,6 @@ def do_chat():
   message_dic = json.loads(json_receive)
   chat.add_message(message_dic['message'])
   response = chat.get_chat()
-  # Pauses are NOT needed; I am adding this to emphasize that
-  # the server and client are completely different machines
   ret_val = json.dumps(response)
   return ret_val
 

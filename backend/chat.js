@@ -1,4 +1,4 @@
-console.log("Anything here was run on my computer")
+console.log("")
 
 // This function requests the server send it a full chat log
 function loadChat() {
@@ -7,7 +7,7 @@ function loadChat() {
 
 // This function sends the server the new message and receives
 // the full chat log in response
-function sendMessage(){
+function sendMessage(user_name){
   // Get an object representing the text box
   let messageElement = document.getElementById("message");
   // Save the message text 
@@ -19,10 +19,12 @@ function sendMessage(){
     return
   } else if (message === " ") {
     return
+  } else if (message === "  ") {
+    return
   }
   // We will send the message as a JSON encoding of an obejct.
   // This will simplify what is needed for future improvements
-  let toSend = {"message": message};
+  let toSend = {"message": user_name.toString() + ": " + message};
   jsonString = JSON.stringify(toSend);
   // Send the JSON string to the server
   ajaxPostRequest("/send", jsonString, renderChat)
@@ -49,16 +51,10 @@ function renderChat(jsonData) {
 }
 
 
-function checkKey(event) {
+function checkKey(user_name) {
   // Check if the enter key is pressed when typing
   
   if (event.key === "Enter") {
-    sendMessage();
+    sendMessage(user_name);
   }
-  //console.log(event.key);
-
 }
-
-$(document).ready(function(){
-     $('body,html').animate({scrollTop: 156}, 800); 
-});

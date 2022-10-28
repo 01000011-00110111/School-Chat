@@ -2,22 +2,28 @@
 <html>
 	<head>
     <title>School Chat</title>
-     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="">
     <script src="backend/ajax.js"></script>
     <script src="backend/chat.js"></script>
     <link rel="stylesheet" href="static/style.css">
+
 	</head>
 
-  <body onload="setInterval(loadChat,3000);">
-
+  <body
+    onload="setInterval(loadChat,3000);">
     <div id="chat"></div><br>
-    <!-- a comment -->
+   <!-- <div>
+     <script authed="location.reload()" src="https://auth.util.repl.co/script.js"></script>
+</div>-->
     <div id="sides">
       <div id="chatbox">
-        <p id="msg-title">Message:<p/>
-        <input type="text" id="message" onkeypress="checkKey(event);"></input><br>
-        <button onClick="sendMessage();" id="send">Send</button>
+        <p id="msg-title">Message: {{ user_name }}<p/>
+        <input type="text" id="message" onkeypress="checkKey('{{ user_name }}');"></input><br>
+        <button onClick="sendMessage('{{ user_name }}');" id="send">Send</button>
       </div>
     </div>
+
   </body>
+
 </html>
+<!-- i had to end eary have to go to bed -->

@@ -1,5 +1,6 @@
 *{
   font-family: sans-serif;
+  color: #000000;
 }
 
 body {
@@ -28,7 +29,8 @@ body {
 	height: calc(100% - 24px);
 	margin: 0;
   line-height: 1;
-  padding-bottom: 6%;
+  padding-bottom: 8%;
+  /*overflow-x:hidden;*/
 }
 
 #Message {
@@ -38,12 +40,10 @@ body {
 }
 /* id start by getting the text above the area the text box is */
 #chatbox {
-  padding-top: 20px;
+  padding-top: 2%;
   background-color: #292c33;
-  color: #ffffff;
-  flex: 0 0 auto;
   display: flex;
-  align-items: center;
+  /*align-items: center;*/
   position: fixed;
   border-radius: 20px;
   bottom: 0%;
@@ -53,7 +53,6 @@ body {
   vertical-align: middle;
   font-size: 20px;
   border: 0;
-
 }
 
 #sides {
@@ -61,9 +60,10 @@ body {
   position: fixed;
   bottom: 0%;
   width: 100%;
-  padding-bottom: 6%;
+  padding-bottom: 5%;
+  /*border-top: 5px solid black*/
 }
-/* im going to start working on the replit auth */
+/*  */
 #send {
   background-color: #0093b0;
   color: #000000;
@@ -72,4 +72,5 @@ body {
 
 #msg-title {
   padding-right: 10px;
+  color: white;
 }
