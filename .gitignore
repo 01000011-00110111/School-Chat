@@ -3,6 +3,7 @@
 # chatlog
 backend/chat.txt
 backend/Chat-backup.txt
+backend/muted.txt
 
 # running files
 __pycache__/*
