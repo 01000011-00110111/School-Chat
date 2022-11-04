@@ -1,6 +1,6 @@
 *{
   font-family: sans-serif;
-  color: #000000;
+  /*color: #000000; */
 }
 
 body {
@@ -23,7 +23,7 @@ body {
 }
 
 #chat {
-  color: #b35905;
+  color: #c64600;
   z-index: 0;
 	/*overflow-y: scroll;*/
 	height: calc(100% - 24px);
@@ -33,15 +33,15 @@ body {
   /*overflow-x:hidden;*/
 }
 
-#Message {
-  color: #d90808;
+#message {
+  color: #e66100;
   font-size: 20px;
   width: 200%;
 }
 /* id start by getting the text above the area the text box is */
 #chatbox {
   padding-top: 2%;
-  background-color: #292c33;
+  background-color: #2c2525;
   display: flex;
   /*align-items: center;*/
   position: fixed;
@@ -68,6 +68,14 @@ body {
   background-color: #0093b0;
   color: #000000;
   font-size: 24px;
+  border-radius: 20px;
+}
+
+#login {
+  background-color: #a51d2d;
+  color: #000000;
+  font-size: 20px;
+  border-radius: 20px;
 }
 
 #msg-title {
