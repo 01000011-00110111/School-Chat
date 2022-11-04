@@ -12,20 +12,19 @@
   <body
     onload="setInterval(loadChat,3000);">
     <div id="chat"></div><br>
+    
       <script src="https://replit.com/public/js/repl-auth-v2.js"></script>
-    <div id="sides">
-      <div id="chatbox">
-        <p id="msg-title">Message: {{ user_name }}<p/>
-        <input type="text" id="message" onkeypress="checkKey('{{ user_name }}');"></input><br>
-        <button onClick="sendMessage('{{ user_name }}');" id="send">Send</button>
-        {% if user_name is  %}
-        {% else %}
-          <button onclick="LoginWithReplit()"> Login </button>
-        {% endif %}
+      <div id="sides">
+        <div id="chatbox">
+          <p id="msg-title">Message: {{ user_name }}<p/>
+          <input type="text" id="message" onkeypress="checkKey('{{ user_name }}');"></input><br>
+          <button onClick="sendMessage('{{ user_name }}');" id="send">Send</button>
+          <button id="login" onclick="LoginWithReplit()" {{!'' if user_name == 'Anonymous' else 'hidden'}}> Login </button>
+          
+
+        </div>
       </div>
-    </div>
 
   </body>
 
 </html>
-<!-- i had to end eary have to go to bed -->

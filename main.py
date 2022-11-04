@@ -9,12 +9,14 @@ import chat
 
 @bottle.route('/')
 def index():
-  print(bottle.request.headers['X-Replit-User-Name'])
+  print(type(bottle.request.headers['X-Replit-User-Name']))
   html_file = bottle.template(
     "index.html",
     root=".",
     user_name=('Anonymous' if bottle.request.headers['X-Replit-User-Name']
-               == '' else bottle.request.headers['X-Replit-User-Name']))
+               == '' else bottle.request.headers['X-Replit-User-Name']),
+    login_button=
+    "<button id='login' onclick='LoginWithReplit()'> Login </button>")
   return html_file
 
 
