@@ -1,5 +1,3 @@
-console.log("")
-
 // This function requests the server send it a full chat log
 function loadChat() {
   ajaxGetRequest("/chat", renderChat);

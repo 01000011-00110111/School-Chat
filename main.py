@@ -1,6 +1,7 @@
 import bottle
 import json
 import chat
+# what did it do to hurt you #
 ################################################################
 #       Functions needed to allow clients to access files      #
 ################################################################
@@ -12,7 +13,8 @@ def index():
   html_file = bottle.template(
     "index.html",
     root=".",
-    user_name=bottle.request.headers['X-Replit-User-Name'])
+    user_name=('Anonymous' if bottle.request.headers['X-Replit-User-Name']
+               == '' else bottle.request.headers['X-Replit-User-Name']))
   return html_file
 
 
