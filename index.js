@@ -59,7 +59,7 @@ function LoginWithReplit() {
   );
 
   function authComplete(e) {
-    if (e.data !== 'auth_complete') {
+    if (e.data !== 'auth_complete') {s
       return;
     }
 

@@ -1,7 +1,10 @@
 function is_cmd(cmd) {
   // check if the text could match a cmd
   // MAKE SURE THIS ONLY MATCHES CMDS AND NOT A CHAT MESSAGE WITH THE WORD HELP AS AN EXAMPLE
+  return false;
 }
+
+// use replit db instead of text files (note for later I'm on phone rn)
 
 function help_cmd() {
   // open static/commands.txt, read all commands
@@ -21,4 +24,5 @@ function unmute_cmd(user) {
 
 function is_user_muted(user) {
   // check if user is in muted.txt
+  return false;
 }

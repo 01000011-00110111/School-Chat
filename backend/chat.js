@@ -10,16 +10,25 @@ function sendMessage(user_name){
   let messageElement = document.getElementById("message");
   // Save the message text 
   let message = messageElement["value"];
-  // Let the user "see" the message was sent by clearing the textbox
-  messageElement["value"] = "";
+  let isCmd = is_cmd(message)
+  let isMuted = is_user_muted(user_name);
 
-  if (message === "") {
+  if (isMuted === true) {
+    return
+  } else if (isCmd === true) {
+    return
+  } else if (message === "") {
     return
   } else if (message === " ") {
     return
   } else if (message === "  ") {
     return
   }
+
+  
+  // Let the user "see" the message was sent by clearing the textbox
+  messageElement["value"] = "";
+  
   // We will send the message as a JSON encoding of an obejct.
   // This will simplify what is needed for future improvements
   let toSend = {"message": user_name.toString() + ": " + message};
@@ -31,6 +40,7 @@ function sendMessage(user_name){
 // This is the callback function used for both ajax requests
 // It will be called by JS automatically whenever we get a response from the server
 function renderChat(jsonData) {
+   window.scrollTo(0, document.body.scrollHeight);
   // Store the HTML needed to move to the next line. This makes the coding easier to read
   let newline = "<br>";
   // Get an object representing the div displaying the chat
@@ -39,6 +49,8 @@ function renderChat(jsonData) {
   let chat = "";
   // Decode the JSON string the server sent to us
   let messages = JSON.parse(jsonData);
+
+  console.log(messages)
   // Loop through each message in the data sent from the server
   for (let messageObj of messages) {
     // Update our accumulator with the message's text

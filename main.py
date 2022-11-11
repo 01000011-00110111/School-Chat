@@ -9,14 +9,11 @@ import chat
 
 @bottle.route('/')
 def index():
-  print(type(bottle.request.headers['X-Replit-User-Name']))
   html_file = bottle.template(
     "index.html",
     root=".",
     user_name=('Anonymous' if bottle.request.headers['X-Replit-User-Name']
-               == '' else bottle.request.headers['X-Replit-User-Name']),
-    login_button=
-    "<button id='login' onclick='LoginWithReplit()'> Login </button>")
+               == '' else bottle.request.headers['X-Replit-User-Name']))
   return html_file
 
 
@@ -25,6 +22,10 @@ def css_style():
   css_file = bottle.static_file("static/style.css", root=".")
   return css_file
 
+@bottle.route('/static/favicon.ico')
+def favicon():
+  favicon = bottle.static_file("images/favicon.ico", root=".")
+  return favicon
 
 @bottle.route('/backend/chat.js')
 def chat_file():
@@ -36,6 +37,12 @@ def chat_file():
 def ajax_file():
   ajax_js_file = bottle.static_file("backend/ajax.js", root=".")
   return ajax_js_file
+
+
+@bottle.route('/backend/commands.js')
+def commands_file():
+  commands_js_file = bottle.static_file("backend/commands.js", root=".")
+  return commands_js_file
 
 
 ################################################################
