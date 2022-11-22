@@ -2,7 +2,6 @@
 function loadChat() {
   ajaxGetRequest("/chat", renderChat);
 }
-
 // This function sends the server the new message and receives
 // the full chat log in response
 function sendMessage(){
@@ -36,7 +35,6 @@ function sendMessage(){
   
   // Let the user "see" the message was sent by clearing the textbox
   messageElement["value"] = "";
-  
   // We will send the message as a JSON encoding of an obejct.
   // This will simplify what is needed for future improvements
   let toSend = {"message": user_name.toString() + ": " + message};
@@ -44,11 +42,9 @@ function sendMessage(){
   // Send the JSON string to the server
   ajaxPostRequest("/send", jsonString, renderChat)
 }
-
 // This is the callback function used for both ajax requests
 // It will be called by JS automatically whenever we get a response from the server
 function renderChat(jsonData) {
-   window.scrollTo(0, document.body.scrollHeight);
   // Store the HTML needed to move to the next line. This makes the coding easier to read
   let newline = "<br>";
   // Get an object representing the div displaying the chat
@@ -73,7 +69,6 @@ function renderChat(jsonData) {
 
 function checkKey() {
   // Check if the enter key is pressed when typing
-  
   if (event.key === "Enter") {
     sendMessage();
   }
