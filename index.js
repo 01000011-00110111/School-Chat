@@ -69,4 +69,3 @@ function LoginWithReplit() {
     location.reload();
   }
 }
-

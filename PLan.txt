@@ -21,11 +21,3 @@ get a rasbary pi to conect            |  Will be a long timeeee
 set up a pi for a storage server      |  depends on me and my wallet 
 publish a private server feature      |  will take a whileeeeeeee...
 add a meme of the day                 |  unknown if wiill be done
-
-
-
-
-###### Some reqired things that need to be added ######  
-a online active feature (so you dont talk to someone who is not online)
-a notification feature 
-More soon
