@@ -106,4 +106,4 @@ start = "pylsp"
 
 [auth]
 pageEnabled = false
-buttonEnabled = true
+buttonEnabled = false

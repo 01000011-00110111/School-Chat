@@ -25,9 +25,7 @@ add a meme of the day                 |  unknown if wiill be done
 
 
 
-###### Some reqired things that need to be added ###### 
-a auto scroll
-meme of the day 
+###### Some reqired things that need to be added ######  
 a online active feature (so you dont talk to someone who is not online)
 a notification feature 
 More soon

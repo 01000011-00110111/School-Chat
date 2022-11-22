@@ -1,3 +1,4 @@
+//(Connor explain)
 function ajaxGetRequest(path, callback){
   let request = new XMLHttpRequest();
   request.onreadystatechange = function(){
@@ -8,7 +9,7 @@ function ajaxGetRequest(path, callback){
   request.open("GET", path);
   request.send();
 }
-
+//(Connor explain)
 function ajaxPostRequest(path, data, callback){
   let request = new XMLHttpRequest();
   request.onreadystatechange = function(){

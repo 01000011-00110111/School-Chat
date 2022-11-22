@@ -28,16 +28,27 @@ body {
 	/*overflow-y: scroll;*/
 	height: calc(100% - 24px);
 	margin: 0;
-  line-height: 1;
-  padding-bottom: 8%;
+  line-height: 32px;
+  padding-bottom: 9%;
   /*overflow-x:hidden;*/
 }
 
 #message {
   color: #4c0606;
-  font-size: 20px;
-  width: 200%;
+  font-size: 18px;
+  width: 100%;
 }
+
+#user {
+  color: #4c0606;
+  font-size: 18px;
+  width: 100%;
+}
+
+#user_name {
+  color: #d4af37;
+}
+
 /* id start by getting the text above the area the text box is */
 #chatbox {
   padding-top: 2%;
@@ -76,6 +87,11 @@ body {
   color: #2d8633;
   font-size: 20px;
   border-radius: 20px;
+}
+
+#user-title {
+  padding-right: 10px;
+  color: #ddd9d9;
 }
 
 #msg-title {

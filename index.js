@@ -36,7 +36,7 @@ io.on('connection', function(socket) {
 /// socket.emit('server message', data);
 
 
-// this uses socketio, a js libary
+// this uses socketio, a js libary (Connor add dumbed down version)
 // we alrady have the majority of this done in main.py
 function LoginWithReplit() {
   window.addEventListener('message', authComplete);

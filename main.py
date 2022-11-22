@@ -1,7 +1,7 @@
-import bottle
+import bottle 
 import json
 import chat
-# what did it do to hurt you #
+import logging
 ################################################################
 #       Functions needed to allow clients to access files      #
 ################################################################
@@ -22,10 +22,17 @@ def css_style():
   css_file = bottle.static_file("static/style.css", root=".")
   return css_file
 
+
+@bottle.route('/static/CSS/Event-CSS/<filepath:path>')
+def server_static(filepath):
+  return bottle.static_file(filepath, root='./static/')
+
+
 @bottle.route('/static/favicon.ico')
 def favicon():
   favicon = bottle.static_file("images/favicon.ico", root=".")
   return favicon
+
 
 @bottle.route('/backend/chat.js')
 def chat_file():
@@ -65,6 +72,12 @@ def do_chat():
   response = chat.get_chat()
   ret_val = json.dumps(response)
   return ret_val
+
+
+################################################################
+#      console log                                             #
+################################################################
+
 
 
 ################################################################
