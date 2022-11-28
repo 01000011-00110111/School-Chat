@@ -1,10 +1,9 @@
 *{
   font-family: sans-serif;
-  /*color: #000000; */
 }
 
 body {
-  background-color:  #44220b;
+  background-color:  #ffffff;
 }
 
 #main {
@@ -23,11 +22,12 @@ body {
 }
 
 #chat {
-  color: #4e8926;
+  color: #000000;
   z-index: 0;
 	/*overflow-y: scroll;*/
 	height: calc(100% - 24px);
-	margin: 0;
+	margin: 2%;
+  margin-left: 1.5%;
   line-height: 32px;
   padding-bottom: 9%;
   /*overflow-x:hidden;*/
@@ -39,16 +39,15 @@ body {
   width: 100%;
 }
 
-#user {
-  color: #000000;
-  font-size: 18px;
-  width: 100%;
+#user_name {
+  color: #d4af37;
 }
 
 /* id start by getting the text above the area the text box is */
 #chatbox {
   padding-top: 2%;
-  background-color: #e26831;
+  padding-bottom: 2%;
+  background-color: #deddda;
   display: flex;
   /*align-items: center;*/
   position: fixed;
@@ -63,24 +62,24 @@ body {
 }
 
 #sides {
-  background-color: #44220b;
+  background-color: #c0bfbc;
   position: fixed;
   bottom: 0%;
   width: 100%;
-  padding-bottom: 7%;
+  padding-bottom: 6%;
   /*border-top: 5px solid black*/
 }
 /*  */
 #send {
-  background-color: #d63420;
-  color: #fcaf2c;
+  background-color: #192080;
+  color: #ffffff;
   font-size: 24px;
   border-radius: 20px;
 }
 
 #login {
-  background-color: #fcaf2c;
-  color: #e26831;
+  background-color: #5c0f0f;
+  color: #ffffff;
   font-size: 20px;
   border-radius: 20px;
 }
@@ -96,6 +95,97 @@ body {
 }
 
 #img {
-right: 25%;
-padding-left: 5%;
+  right: 25%;
+  padding-left: 5%;
+}
+
+#top {
+  position: fixed;
+  background-color: #5A5A5A;
+  width: 100%;
+  padding-top: .5%;
+  color: #000000;
+}
+
+
+
+
+/* Nav Menu */
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+
+
+
+/* Menu options */
+
+#user {
+  color: #000000;
+  font-size: 30px;
+  width: 100%;
+}
+
+#dark {
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 24px;
+  border-radius: 20px;
+}
+
+#light {
+  background-color: #9a9996;
+  color: #ffffff;
+  font-size: 24px;
+  border-radius: 20px;
+}
+
+#troll {
+  background-color: #3d3846;
+  color: #ffffff;
+  font-size: 24px;
+  border-radius: 20px;
+}
+
+#event {
+  background-color: #62a0ea;
+  color: #ffffff;
+  font-size: 24px;
+  border-radius: 20px;
 }

@@ -22,14 +22,17 @@ def css_style():
   css_file = bottle.static_file("static/style.css", root=".")
   return css_file
 
+
 @bottle.route('/static/CSS/Event-CSS/<filepath:path>')
 def server_static(filepath):
   return bottle.static_file(filepath, root='./static/')
+
 
 @bottle.route('/static/favicon.ico')
 def favicon():
   favicon = bottle.static_file("images/favicon.ico", root=".")
   return favicon
+
 
 @bottle.route('/backend/chat.js')
 def chat_file():
@@ -60,6 +63,19 @@ def respond_with_chat():
   ret_val = json.dumps(messages)
   return ret_val
 
+
+# serves commands to client, only gets requested once at loading
+@bottle.get('/commands')
+def command_list():
+  commands = chat.get_command_list()
+  ret_val = json.dumps(commands)
+  return ret_val
+
+@bottle.get('/cmdDef')
+def command_def():
+  commands = chat.get_command_defs()
+  ret_val = json.dumps(commands)
+  return ret_val
 
 @bottle.post('/send')
 def do_chat():

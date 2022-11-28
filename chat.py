@@ -23,3 +23,24 @@ def add_message(message_text):
   # This return is not needed, but ensures replit shows the updated
   # file when it is selected from the file browser during our demo
   return None
+
+
+# returns list of commands.
+# will be run at loading of page
+def get_command_list():
+  ret_val = []
+  with open("backend/commands.txt", "r") as commands:
+    for command in commands:
+      line = command.rstrip("\n\r")
+      rec = {"commands": line}
+      ret_val.append(rec)
+  return ret_val
+
+def get_command_defs():
+  ret_val = []
+  with open("backend/cmd_def.txt", "r") as commands:
+    for command in commands:
+      line = command.rstrip("\n\r")
+      rec = {"commands": line}
+      ret_val.append(rec)
+  return ret_val

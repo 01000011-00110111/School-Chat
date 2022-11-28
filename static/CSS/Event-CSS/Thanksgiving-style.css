@@ -1,9 +1,10 @@
 *{
   font-family: sans-serif;
+  /*color: #000000; */
 }
 
 body {
-  background-color:  #ffffff;
+  background-color:  #44220b;
 }
 
 #main {
@@ -22,36 +23,34 @@ body {
 }
 
 #chat {
-  color: #000000;
+  color: #4e8926;
   z-index: 0;
 	/*overflow-y: scroll;*/
 	height: calc(100% - 24px);
-	margin: 0;
+	margin: 2%;
+  margin-left: 1.5%;
   line-height: 32px;
   padding-bottom: 9%;
   /*overflow-x:hidden;*/
 }
 
 #message {
-  color: #ffffff;
+  color: #000000;
   font-size: 18px;
   width: 100%;
 }
 
 #user {
-  color: #ffffff;
+  color: #000000;
   font-size: 18px;
   width: 100%;
-}
-
-#user_name {
-  color: #d4af37;
 }
 
 /* id start by getting the text above the area the text box is */
 #chatbox {
   padding-top: 2%;
-  background-color: #deddda;
+  padding-bottom: 2%;
+  background-color: #e26831;
   display: flex;
   /*align-items: center;*/
   position: fixed;
@@ -66,7 +65,7 @@ body {
 }
 
 #sides {
-  background-color: #c0bfbc;
+  background-color: #44220b;
   position: fixed;
   bottom: 0%;
   width: 100%;
@@ -75,16 +74,9 @@ body {
 }
 /*  */
 #send {
-  background-color: #192080;
-  color: #ffffff;
+  background-color: #d63420;
+  color: #fcaf2c;
   font-size: 24px;
-  border-radius: 20px;
-}
-
-#login {
-  background-color: #5c0f0f;
-  color: #ffffff;
-  font-size: 20px;
   border-radius: 20px;
 }
 

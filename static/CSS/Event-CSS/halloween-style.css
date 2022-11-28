@@ -27,9 +27,10 @@ body {
   z-index: 0;
 	/*overflow-y: scroll;*/
 	height: calc(100% - 24px);
-	margin: 0;
-  line-height: 1;
-  padding-bottom: 8%;
+	margin: 2%;
+  margin-left: 1.5%;
+  line-height: 32px;
+  padding-bottom: 9%;
   /*overflow-x:hidden;*/
 }
 
