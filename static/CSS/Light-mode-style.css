@@ -1,11 +1,9 @@
 *{
   font-family: sans-serif;
-  /*color: #000000; */
 }
 
 body {
- /* background-color:  #121212;*/
-  background-color:  #000000;
+  background-color:  #ffffff;
 }
 
 #main {
@@ -28,7 +26,7 @@ body {
   z-index: 0;
 	/*overflow-y: scroll;*/
 	height: calc(100% - 24px);
-	margin: 2%;
+	padding: 2%;
   margin-left: 1.5%;
   line-height: 32px;
   padding-bottom: 9%;
@@ -42,13 +40,14 @@ body {
 }
 
 #user_name {
-  color: #e01b24;
+  color: #d4af37;
 }
 
 /* id start by getting the text above the area the text box is */
 #chatbox {
   padding-top: 2%;
-  background-color: #181616;
+  padding-bottom: 2%;
+  background-color: #deddda;
   display: flex;
   /*align-items: center;*/
   position: fixed;
@@ -63,11 +62,11 @@ body {
 }
 
 #sides {
-  background-color: #121212;
+  background-color: #c0bfbc;
   position: fixed;
   bottom: 0%;
   width: 100%;
-  padding-bottom: 7%;
+  padding-bottom: 6%;
   /*border-top: 5px solid black*/
 }
 /*  */
@@ -87,22 +86,25 @@ body {
 
 #user-title {
   padding-right: 10px;
-  color: #133e72;
+  color: #1a5fb4;
 }
 
 #msg-title {
   padding-right: 10px;
-  color: #133e72;
+  color: #1a5fb4;
 }
 
 #img {
-right: 25%;
-padding-left: 5%;
+  right: 25%;
+  padding-left: 5%;
 }
 
 #top {
   position: fixed;
-  background-color: red;
+  background-color: #5A5A5A;
+  width: 100%;
+  padding-top: .5%;
+  color: #000000;
 }
 
 
