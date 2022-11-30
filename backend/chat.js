@@ -6,6 +6,7 @@ function loadChat() {
 function runStartup() {
   ajaxGetRequest("/commands", save_cmd_list);
   ajaxGetRequest("/cmdDef", save_cmd_def);
+  window.scrollTo(0, document.body.scrollHeight);
   setInterval(loadChat,3000);
 }
 // This function sends the server the new message and receives
@@ -38,12 +39,17 @@ function sendMessage() {
       message = '<font color="#13D2CA">' + message + "</font>"
   }
 
-  if (user_name.toString() === "") {
+  if (user_name === "") {
     user_name = "Anonymes"
-  }else if  (user_name === "T🅾️〰️📧🇳") {
+  } else if  (user_name === "T🅾️〰️📧🇳") {
     user_name = "🅾️〰️📧🇳"
-  }else if (user_name === "🅾️〰️📧🇳") {
+  } else if (user_name === "🅾️〰️📧🇳") {
     return
+  } else if  (user_name === "Adm!n") {
+    user_name = "Admin"
+  } else if (user_name === "Admin") {
+    return
+  }
   // Let the user "see" the message was sent by clearing the textbox
   messageElement["value"] = "";
   // We will send the message as a JSON encoding of an obejct.
@@ -75,9 +81,10 @@ function renderChat(jsonData) {
   console.log(chat);
   console.log(chatDiv["innerHTML"])
   // Update the DIV to display all of the messages
-  if (chatDiv["innerHTML"] != chat) {
-    window.scrollTo(0, document.body.scrollHeight);
-  }
+  //if (chatDiv["innerHTML"] != chat) {
+  //  window.scrollTo(0, document.body.scrollHeight);
+  //}
+  // untill i can figure out what breaks the autoscroll in chat (maybe photos?), itll only go to bottom on page load
 
   chatDiv["innerHTML"] = chat;
 }

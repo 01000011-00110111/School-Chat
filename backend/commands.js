@@ -9,22 +9,14 @@ function is_cmd(message, cmd_list) {
 // saves cmd list in cache? cookie? idk but somewhere in the browser
 function save_cmd_list(jsonData) {
   console.log(jsonData);
+  document.cookie = "cmds=" + jsonData + "; path=/";
   return false;
 }
 
 // saves command definitions on loading
 function save_cmd_def(jsonData) {
   console.log(jsonData);
-  return false;
-}
-
-// get the command list from wherever it is
-function get_cmd_list() {
-  return false;
-}
-
-function processCmdDef(jsonData) {
-  // return a 
+  document.cookie = "cmd_def=" + jsonData + "; path=/";
   return false;
 }
 // use replit db instead of text files (note for later I'm on phone rn)
