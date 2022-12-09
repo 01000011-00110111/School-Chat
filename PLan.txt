@@ -21,3 +21,5 @@ get a rasbary pi to conect            |  Will be a long timeeee
 set up a pi for a storage server      |  depends on me and my wallet 
 publish a private server feature      |  will take a whileeeeeeee...
 add a meme of the day                 |  unknown if wiill be done
+set up a webserver and make the replit the dev server for working and the webserver for chatting (so the chat does not break when working on it anymore)
+set up a dev menu

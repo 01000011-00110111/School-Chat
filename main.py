@@ -9,13 +9,11 @@ import chat
 
 @bottle.route('/')
 def index():
-  html_file = bottle.template(
-    "index.html",
-    root=".",
-    user_name=('Anonymous' if bottle.request.headers['X-Replit-User-Name']
-               == '' else bottle.request.headers['X-Replit-User-Name']))
-  return html_file
-
+  if bottle.request.params.get('a') is not None:
+    print("it works!")
+  else:
+    html_file = bottle.template("index.html", root=".")
+    return html_file
 
 @bottle.route('/static/style.css')
 def css_style():
@@ -39,6 +37,10 @@ def chat_file():
   chat_js_file = bottle.static_file("backend/chat.js", root=".")
   return chat_js_file
 
+@bottle.route('/backend/styles.js')
+def styles_js_file():
+  styles_js_file = bottle.static_file("backend/styles.js", root=".")
+  return styles_js_file
 
 @bottle.route('/backend/ajax.js')
 def ajax_file():
@@ -63,6 +65,12 @@ def respond_with_chat():
   ret_val = json.dumps(messages)
   return ret_val
 
+# send total lines in chat
+@bottle.get('/chat_count')
+def chat_list():
+  lines = chat.get_line_count()
+  ret_val = json.dumps(lines)
+  return ret_val
 
 # serves commands to client, only gets requested once at loading
 @bottle.get('/commands')
@@ -81,7 +89,7 @@ def command_def():
 def do_chat():
   json_receive = bottle.request.body.read().decode()
   message_dic = json.loads(json_receive)
-  chat.add_message(message_dic['message'])
+  #chat.add_message(message_dic['message'])
   response = chat.get_chat()
   ret_val = json.dumps(response)
   return ret_val

@@ -1,12 +1,18 @@
-function is_cmd(message, cmd_list) {
+
+function is_cmd(message) {
   // check if the text could match a cmd
   // MAKE SURE THIS ONLY MATCHES CMDS AND NOT A CHAT MESSAGE WITH THE WORD HELP AS AN EXAMPLE
-  // for the help cmd
-  // let cmd_def = ajaxGetRequest('/cmdDef', processCmdDef);
-  
-  return false;
+  // for the chat lines cmd
+  // ajaxGetRequest("/chat_count", chat_log_count)
+  // the long if statement set lol
+  if (message === "/lines") {
+    ajaxGetRequest("/chat_count", chat_log_count);
+    return true;
+  } else {
+    return false;
+  }
 }
-// saves cmd list in cache? cookie? idk but somewhere in the browser
+// saves cmd list in cookie... idk but somewhere in the browser
 function save_cmd_list(jsonData) {
   console.log(jsonData);
   document.cookie = "cmds=" + jsonData + "; path=/";
@@ -20,10 +26,15 @@ function save_cmd_def(jsonData) {
   return false;
 }
 // use replit db instead of text files (note for later I'm on phone rn)
-
 function help_cmd(cmd_list, cmd_def) {
   // send user_name as SYSTEM for these commands
   
+}
+
+// function that prints out chat logfile line count
+function chat_log_count(jsonData) {
+  console.log(jsonData)
+  return;
 }
 
 // Mute cmd list and checks

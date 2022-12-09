@@ -1,10 +1,9 @@
 *{
   font-family: sans-serif;
-  /*color: #000000; */
 }
 
-body {
-  background-color:  #44220b;
+#body {
+  background-color:  #115029;
 }
 
 #main {
@@ -23,34 +22,33 @@ body {
 }
 
 #chat {
-  color: #4e8926;
+  color: #ffffff;
   z-index: 0;
-	/*overflow-y: scroll;*/
 	height: calc(100% - 24px);
-	margin: 2%;
+	padding-left: 5%;
+  padding-top: 4%;
   margin-left: 1.5%;
   line-height: 32px;
   padding-bottom: 9%;
-  /*overflow-x:hidden;*/
+  padding-top: 9%;
 }
 
 #message {
-  color: #000000;
+  color: #4c0606;
   font-size: 18px;
   width: 100%;
 }
 
 #user_name {
-  color: #e01b24;
+  color: #d4af37;
 }
 
 /* id start by getting the text above the area the text box is */
 #chatbox {
   padding-top: 2%;
   padding-bottom: 2%;
-  background-color: #e26831;
+  background-color: #a91919;
   display: flex;
-  /*align-items: center;*/
   position: fixed;
   border-radius: 20px;
   bottom: 0%;
@@ -63,29 +61,29 @@ body {
 }
 
 #sides {
-  background-color: #44220b;
+  background-color: #176d38;
   position: fixed;
   bottom: 0%;
   width: 100%;
   padding-bottom: 7%;
   /*border-top: 5px solid black*/
 }
-/*  */
+/* rember yo email your next semester clases and teacher in order */
 #send {
-  background-color: #d63420;
-  color: #fcaf2c;
+  background-color: #6caa55;
+  color: #c2bcbc;
   font-size: 24px;
   border-radius: 20px;
 }
 
 #user-title {
   padding-right: 10px;
-  color: #1a5fb4;
+  color: #ddd9d9;
 }
 
 #msg-title {
   padding-right: 10px;
-  color: #1a5fb4;
+  color: #ddd9d9;
 }
 
 #img {
@@ -95,10 +93,10 @@ padding-left: 5%;
 
 #top {
   position: fixed;
-  background-color: #121212;
+  background-color: #176d38;
   width: 100%;
-  padding-top: .5%;
-  color: #696969;
+ /* padding-top: .5%; */
+  color: #c2bcbc;
 }
 
 
@@ -113,7 +111,7 @@ padding-left: 5%;
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #111;
+  background-color: #292;
   overflow-x: hidden;
   transition: 0.5s;
   padding-top: 60px;
@@ -123,7 +121,7 @@ padding-left: 5%;
   padding: 8px 8px 8px 32px;
   text-decoration: none;
   font-size: 25px;
-  color: #818181;
+  color: #d0c8c8;
   display: block;
   transition: 0.3s;
 }
@@ -160,26 +158,100 @@ padding-left: 5%;
   background-color: #000000;
   color: #ffffff;
   font-size: 24px;
-  border-radius: 20px;
 }
 
 #light {
   background-color: #9a9996;
   color: #ffffff;
   font-size: 24px;
-  border-radius: 20px;
 }
 
-#troll {
+#specal1 {
   background-color: #3d3846;
   color: #ffffff;
   font-size: 24px;
-  border-radius: 20px;
 }
 
 #event {
   background-color: #62a0ea;
   color: #ffffff;
   font-size: 24px;
+}
+
+#val {
+  background-color: #ff33e4;
+  color: #8a0a7f;
+  font-size: 24px;
+}
+
+#specal1 {
+  background-color: #3d3846;
+  color: #ffffff;
+  font-size: 24px;
+}
+
+#login {
+  background-color: #e59e24;
+  color: #2d8633;
+  font-size: 20px;
   border-radius: 20px;
 }
+
+#fsend {
+  background-color:  #292;
+  color:  #292;
+  font-size: 20px;
+  border-radius: 20px;
+}
+
+
+
+
+/* Dropdown Button */
+#colorDropdown {
+  border-radius: 20px;
+}
+    
+.dropbtn {
+  background-color: #3498DB;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #2980B9;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #323538;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd;}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}

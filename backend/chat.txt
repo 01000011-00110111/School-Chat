@@ -1,34 +1,6 @@
-   chat reset
-Anonymes: e
-Anonymes: e
-Anonymes: testing
-Anonymes: one sec
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: e
-Anonymes: idk what keeps breaking autoscroll
-Anonymes: maybe just scroll to bottom on page load instead
-Anonymes: something soneone puts in chat breaks autoscroll
-Anonymes: someone
-Anonymes: so its just going to go to bottom on page load
-Anonymes: done
+  chat reset
+chat is done for the day (and possibly tomorrow)
+[FEATURE] might adapt a discord bot I made to do something (chat bot maybe?)
+[FEATURE] will implement a chat lock feature
+[FEATURE] will have after x lines chat wiped
+Chat locked by admin until further notice

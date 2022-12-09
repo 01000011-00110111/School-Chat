@@ -49,7 +49,6 @@ body {
   padding-bottom: 2%;
   background-color: #deddda;
   display: flex;
-  /*align-items: center;*/
   position: fixed;
   border-radius: 20px;
   bottom: 0%;
@@ -119,7 +118,7 @@ body {
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #111;
+  background-color: #b9c6c9;
   overflow-x: hidden;
   transition: 0.5s;
   padding-top: 60px;
@@ -129,7 +128,7 @@ body {
   padding: 8px 8px 8px 32px;
   text-decoration: none;
   font-size: 25px;
-  color: #818181;
+  color: #313536;
   display: block;
   transition: 0.3s;
 }

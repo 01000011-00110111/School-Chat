@@ -4,7 +4,7 @@
 }
 
 body {
-  background-color:  #44220b;
+  background-color:  #0d2f47;
 }
 
 #main {
@@ -23,11 +23,12 @@ body {
 }
 
 #chat {
-  color: #4e8926;
+  color: #0e8775;
   z-index: 0;
 	/*overflow-y: scroll;*/
 	height: calc(100% - 24px);
-	margin: 2%;
+	padding-left: 5%;
+  padding-top: 4%;
   margin-left: 1.5%;
   line-height: 32px;
   padding-bottom: 9%;
@@ -35,7 +36,7 @@ body {
 }
 
 #message {
-  color: #000000;
+  color: #2c9696;
   font-size: 18px;
   width: 100%;
 }
@@ -48,7 +49,7 @@ body {
 #chatbox {
   padding-top: 2%;
   padding-bottom: 2%;
-  background-color: #e26831;
+  background-color: #0d4242;
   display: flex;
   /*align-items: center;*/
   position: fixed;
@@ -63,7 +64,7 @@ body {
 }
 
 #sides {
-  background-color: #44220b;
+  background-color: #024a7d;
   position: fixed;
   bottom: 0%;
   width: 100%;
@@ -72,20 +73,27 @@ body {
 }
 /*  */
 #send {
-  background-color: #d63420;
-  color: #fcaf2c;
+  background-color: #0d5e5e;
+  color: #010a0f;
   font-size: 24px;
+  border-radius: 20px;
+}
+
+#login {
+  background-color: #5c0f0f;
+  color: #ffffff;
+  font-size: 20px;
   border-radius: 20px;
 }
 
 #user-title {
   padding-right: 10px;
-  color: #1a5fb4;
+  color: #41e8e8;
 }
 
 #msg-title {
   padding-right: 10px;
-  color: #1a5fb4;
+  color: #41e8e8;
 }
 
 #img {
@@ -95,10 +103,10 @@ padding-left: 5%;
 
 #top {
   position: fixed;
-  background-color: #121212;
+  background-color: #024a7d;
   width: 100%;
   padding-top: .5%;
-  color: #696969;
+  color: #0481d9;
 }
 
 
@@ -113,7 +121,7 @@ padding-left: 5%;
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #111;
+  background-color: #2c5978;
   overflow-x: hidden;
   transition: 0.5s;
   padding-top: 60px;

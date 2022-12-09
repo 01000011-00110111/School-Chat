@@ -13,6 +13,14 @@ def get_chat():
       ret_val.append(rec)
   return ret_val
 
+def get_line_count():
+  ret_val = []
+  line_amt = 0
+  with open(logfile) as f_in:
+    for line in f_in:
+      line_amt += 1
+  return str(ret_val)
+
 
 # Adds the message text to our file containing all the messages
 def add_message(message_text):
