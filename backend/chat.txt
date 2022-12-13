@@ -1,6 +1,0 @@
-  chat reset
-chat is done for the day (and possibly tomorrow)
-[FEATURE] might adapt a discord bot I made to do something (chat bot maybe?)
-[FEATURE] will implement a chat lock feature
-[FEATURE] will have after x lines chat wiped
-Chat locked by admin until further notice
