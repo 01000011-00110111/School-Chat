@@ -1,6 +1,7 @@
 import bottle
 import json
 import chat
+import os
 
 ################################################################
 #       Functions needed to allow clients to access files      #
@@ -9,8 +10,9 @@ import chat
 
 @bottle.route('/')
 def index():
-  if bottle.request.params.get('a') is not None:
-    print("it works!")
+  if bottle.request.params.get('dev') == "true":
+    html_file = bottle.template("dev-index.html", root=".")
+    return html_file
   else:
     html_file = bottle.template("index.html", root=".")
     return html_file
@@ -53,6 +55,11 @@ def commands_file():
   commands_js_file = bottle.static_file("backend/commands.js", root=".")
   return commands_js_file
 
+@bottle.route('/backend/dev-menu.js')
+def dev_menu_file():
+  dev_menu_js_file = bottle.static_file("backend/dev-menu.js", root=".")
+  return dev_menu_js_file
+
 
 ################################################################
 #             Functions handling AJAX interactions             #
@@ -89,11 +96,36 @@ def command_def():
 def do_chat():
   json_receive = bottle.request.body.read().decode()
   message_dic = json.loads(json_receive)
-  chat.add_message(message_dic['message'])
+  if os.path.exists("backend/chat.lock"):
+    pass
+  else:
+    chat.add_message(message_dic['message'])
   response = chat.get_chat()
   ret_val = json.dumps(response)
   return ret_val
 
+@bottle.post('/force_send')
+def force_chat():
+  json_receive = bottle.request.body.read().decode()
+  message_dic = json.loads(json_receive)
+  chat.force_message(message_dic['message'])
+  response = chat.get_chat()
+  ret_val = json.dumps(response)
+  return ret_val
+
+@bottle.get('/lock')
+def lock_chat():
+  chat.add_message("[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>")
+  with open("backend/chat.lock", "w") as f:
+    pass
+
+@bottle.get('/unlock')
+def unlock_chat():
+  if os.path.exists("backend/chat.lock"):
+    os.remove("backend/chat.lock")
+    chat.add_message("[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>")
+  else:
+    pass
 
 ################################################################
 #      Start the webserver                                     #

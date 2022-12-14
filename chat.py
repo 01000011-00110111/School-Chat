@@ -17,8 +17,8 @@ def get_line_count():
   ret_val = []
   with open(logfile, "r") as f:
     lines = len(f.readlines())
-  with open(logfile, "w") as f:
-    f.write(f"[SYSTEM]: Line count is {lines}")
+  with open(logfile, "a") as f:
+    f.write(f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n")
     ret_val.append(lines)
   return ret_val
 
@@ -29,7 +29,7 @@ def add_message(message_text):
     lines = len(f.readlines())
   if lines > 500:
     with open(logfile, "w") as f_out:
-      f_out.write("[SYSTEM]: Chat reset by automatic wipe system.\n" + message_text + "\n")
+      f_out.write("[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n" + message_text + "\n")
   else:
     with open(logfile, "a") as f:
       f.write(message_text + "\n")
@@ -39,6 +39,15 @@ def add_message(message_text):
   # file when it is selected from the file browser during our demo
   return None
 
+# force the message text to our file containing all the messages
+def force_message(message_text):
+  with open(logfile, "a") as f:
+    f.write(message_text + "\n")
+  with open(logfile_b, "a") as f_out:
+    f_out.write(message_text + "\n")
+  # This return is not needed, but ensures replit shows the updated
+  # file when it is selected from the file browser during our demo
+  return None
 
 # returns list of commands.
 # will be run at loading of page

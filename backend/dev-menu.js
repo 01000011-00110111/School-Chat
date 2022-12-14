@@ -45,12 +45,12 @@ function getStats() {
 
 // lock/unlock chat helper functions
 function lock_chat() {
-  ajaxPostRequest("/lock", "1", dummyajax);
+  ajaxGetRequest("/lock", dummyajax);
 }
 
 // unlocks chat
 function unlock_chat() {
-  ajaxPostRequest("/lock", "0", dummyajax);
+  ajaxGetRequest("/unlock", dummyajax);
 }
 
 // see comment inside function
