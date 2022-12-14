@@ -1,4 +1,5 @@
 # file for excluding files from git repo (dev files)
+backend/Backups/*
 
 # chatlog
 backend/chat.txt

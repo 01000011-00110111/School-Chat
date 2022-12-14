@@ -15,17 +15,24 @@ def get_chat():
 
 def get_line_count():
   ret_val = []
-  line_amt = 0
-  with open(logfile) as f_in:
-    for line in f_in:
-      line_amt += 1
-  return str(ret_val)
+  with open(logfile, "r") as f:
+    lines = len(f.readlines())
+  with open(logfile, "w") as f:
+    f.write(f"[SYSTEM]: Line count is {lines}")
+    ret_val.append(lines)
+  return ret_val
 
 
 # Adds the message text to our file containing all the messages
 def add_message(message_text):
-  with open(logfile, "a") as f_out:
-    f_out.write(message_text + "\n")
+  with open(logfile, "r") as f:
+    lines = len(f.readlines())
+  if lines > 500:
+    with open(logfile, "w") as f_out:
+      f_out.write("[SYSTEM]: Chat reset by automatic wipe system.\n" + message_text + "\n")
+  else:
+    with open(logfile, "a") as f:
+      f.write(message_text + "\n")
   with open(logfile_b, "a") as f_out:
     f_out.write(message_text + "\n")
   # This return is not needed, but ensures replit shows the updated

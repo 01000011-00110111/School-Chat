@@ -2,6 +2,10 @@
   font-family: sans-serif;
 }
 
+#body {
+  margin: 0;
+}
+
 #main {
 	display: flex;
 	width: 100%;
@@ -66,6 +70,10 @@
   border-radius: 20px;
 }
 
+#send:hover {
+  color: #787773;
+}
+
 #user-title {
   padding-right: 10px;
 }
@@ -79,18 +87,29 @@ right: 25%;
 padding-left: 5%;
 }
 
-#top {
+#topleft {
   position: fixed;
-  background-color: #176d38;
-  width: 100%;
+  width: 0%;
   padding-top: .5%;
   color: #c2bcbc;
+  font-size:40px;
+  cursor:pointer
+}
+
+#topright {
+  position: fixed;
+  width: 0%;
+  margin-left: 95%;
+  color: #c2bcbc;
+  margin-top: 1%;
+  font-size:30px;
+  cursor: pointer;
 }
 
 
 
 
-/* Nav Menu */
+/* Nav Menu left */
 
 .sidenav {
   height: 100%;
@@ -156,7 +175,7 @@ padding-left: 5%;
   display: flex;
 }
 
-#troll {
+#specal1 {
   background-color: #3d3846;
   color: #ffffff;
   font-size: 30px;
@@ -177,7 +196,7 @@ padding-left: 5%;
   display: flex;
 }
 
-#specal1 {
+#specal2 {
   background-color: #3d3846;
   color: #ffffff;
   font-size: 30px;
@@ -189,13 +208,6 @@ padding-left: 5%;
   color: #2d8633;
   font-size: 20px;
   border-radius: 20px;
-}
-
-#fsend {
-  background-color:  #292;
-  color:  #292;
-  font-size: 20px;
-  /*border-radius: 20px;*/
 }
 
 
@@ -249,3 +261,171 @@ padding-left: 5%;
 
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
 .show {display:block;}
+
+
+
+
+/* nav menu right */
+
+.sidenavR {
+  height: 45%;
+  right: 0;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  background-color: #241f31;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenavR a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #d0c8c8;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenavR a:hover {
+  color: #f1f1f1;
+}
+
+.sidenavR .closebtnR {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+  padding-left: 0%;
+}
+
+@media screen and (max-height: 550px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+
+
+
+
+/* Dev menu text */
+
+#Devnavtext {
+  color: #bbb4b4;
+}
+
+
+
+
+/* Right menu options*/
+
+#fsendT {
+  background-color:  #000000;
+  color:  #ffffff;
+  font-size: 20px;
+  border-radius: 10px;
+  border-style: dashed;
+}
+
+#fsendB {
+  background-color: #a51d2d;
+  color: #f6d32d;
+  font-size: 20px;
+  border-radius: 20px;
+  border-style: dashed;
+  border-color: #f6d32d;
+}
+
+#fsendB:hover {
+  colors: #77767b;
+}
+
+#lock {
+  background-color:  #c61010;
+  color:  #000000;
+  font-size: 20px;
+  border-radius: 20px;
+}
+
+#lock:hover {
+  colors: #77767b;
+}
+
+#unlock {
+  background-color:  #54da0b;
+  color:  #000000;
+  font-size: 20px;
+  border-radius: 20px;
+}
+
+#unlock:hover {
+  colors: #77767b;
+}
+
+#mute {
+  background-color:  #77767b;
+  color:  #000000;
+  font-size: 20px;
+  border-radius: 20px;
+}
+
+#unmute{
+  background-color:  #62a0ea;
+  color:  #000000;
+  font-size: 20px;
+  border-radius: 20px;
+}
+
+#muteuserbox{
+  background-color:  #000000;
+  color:  #ffffff;
+  font-size: 20px;
+  border-radius: 10px;
+  border-style: dotted;
+}
+
+#systemsendB{
+  background-color:  #1c71d8;
+  color:  #000000;
+  font-size: 20px;
+  border-radius: 20px;
+}
+
+#systemsendT{
+  background-color:  #000000;
+  color:  #ffffff;
+  font-size: 20px;
+  border-radius: 10px;
+}
+
+#sendimgB{
+  background-color:  #000000;
+  color:  #ffffff;
+  font-size: 20px;
+  border-radius: 20px;
+}
+
+#sendimgT{
+  background-color:  #000000;
+  color:  #ffffff;
+  font-size: 20px;
+  border-radius: 10px;
+}
+
+#chatlineB{
+  background-color:  #54da0b;
+  color:  #000000;
+  font-size: 20px;
+  border-radius: 20px;
+}
+
+#chatspamB {
+  background-color:  #a51d2d;
+  color:  #f5c211;
+  font-size: 20px;
+  border-radius: 20px;
+  border-style: dotted;
+}

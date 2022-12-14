@@ -33,7 +33,9 @@ function help_cmd(cmd_list, cmd_def) {
 
 // function that prints out chat logfile line count
 function chat_log_count(jsonData) {
-  console.log(jsonData)
+  // nothing needed here, itll just add it to the log file
+  // in the future maybe add it to dev chat instead of main
+  // or use it in someway here for some other function
   return;
 }
 

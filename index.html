@@ -33,17 +33,15 @@
         <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">OCD wleb Potato man Skill Issue!!!1!</a>
         <input type="text" id="user" name="username" placeholder="username" maxlength="12" disabled></input><br/>
         <div class="colorDropdown">
-          <button onclick="myFunction()" class="dropbtn">Dropdown</button>
+          <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
           <div id="myDropdown" class="dropdown-content">
-            <button id="dark" onClick="setDarkStyle();">Dark</button><br>
-            <button id="light" onClick="setLightStyle();">Light</button><br>
-            <button id="specal1" onClick="setSpecalStyle();">Specal</button><br>
-            <button id="event" onClick="whichEvent();">Event</button><br>
-            <button id="val" onClick="setValtimesstyle();">Val</button><br>
-            <button id="specal2" onClick="setSpecalStyle();">Soon</button>
-          </div>
-        </div><br>
-        <button onClick="FsendMessage();" id="fsend" hidden=True disabled>Force Send</button>
+            <button id="dark" onclick="setDarkStyle();">Dark</button><br>
+            <button id="light" onclick="setLightStyle();">Light</button><br>
+            <button id="specal1" onclick="setSpecalStyle();">Specal</button><br>
+            <button id="event" onclick="whichEvent();">Event</button>
+            contact us:
+              harperom62@k12louisa.org
+          </div><br>
       </div>
       <span id="top" style="font-size:40px;cursor:pointer" onclick="openNav()">&#9776;</span>
     <div id="chat">
@@ -54,7 +52,7 @@
         <!--<p id="user-title">Username: <script>user_name</script></p>-->
         <p id="msg-title">Message: </p>  
         <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250" disabled></input><br/>
-        <button onClick="sendMessage();" id="send" disabled>Send</button>
+        <button onClick="sendMessage();" id="send">Send</button>
       </div>
     </div>
   </body>

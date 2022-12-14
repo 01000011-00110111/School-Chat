@@ -89,7 +89,7 @@ def command_def():
 def do_chat():
   json_receive = bottle.request.body.read().decode()
   message_dic = json.loads(json_receive)
-  #chat.add_message(message_dic['message'])
+  chat.add_message(message_dic['message'])
   response = chat.get_chat()
   ret_val = json.dumps(response)
   return ret_val

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>OCD wleb Potato man Skill Issue!!!1!</title>
+    <link rel="icon" type="image/x-icon" href="https://tux.school-chat.us/static/favicon.ico">
+    <!--<meta name="description" content="A chat app, what else did you think this is?">
+    <meta name="footer" content="hmmmmm">-->
+    <script src="OCD wleb Potato man Skill Issue!!!1!_files/ajax.js"></script>
+    <script src="OCD wleb Potato man Skill Issue!!!1!_files/chat.js"></script>
+    <script src="OCD wleb Potato man Skill Issue!!!1!_files/commands.js"></script>
+    <script src="OCD wleb Potato man Skill Issue!!!1!_files/styles.js"></script>
+    <script src="OCD wleb Potato man Skill Issue!!!1!_files/dev-menu.js"></script>
+    <!-- bootstrap CDN links -->
+    <!-- we dont even use bootstrap, so ill comment for now -->
+    <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script> lol-->
+    <link rel="stylesheet" href="static/style.css"> 
+    <!-- Jquery 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    ill send you the hex codes in a sec -->
+    <meta charset="utf-8">
+    <meta name="description" content="A chat app, what else did you think this is?">
+    <meta name="author" content="C7, cserver">
+    <meta name="googlebot" content="noindex,nofollow,nositelinkssearchbox,nopagereadaloud,notranslate">
+	</head>
+  
+  <body onload="runStartup();" id="body">
+      <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <a href="#Soon">dev Info</a>
+        <a href="https://docs.google.com/spreadsheets/d/1HBQ4X0ajghOKvYHkLbsZ1RDGZp_wtsLFNhuM_yqhEA0/edit?usp=sharing" >Tux Do List</a>
+        <a href="#Soon">Skill issue</a>
+        <a href="https://boulderbugle.com/wow-ff94f684">Swimming Skill issue</a>
+        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">OCD wleb Potato man Skill Issue!!!1!</a>
+        <input type="text" id="user" name="username" placeholder="username" maxlength="12" value="lovetheme"><br>
+        <div class="colorDropdown">
+          <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
+          <div id="myDropdown" class="dropdown-content">
+            <button id="dark" onclick="setDarkStyle();">Dark</button><br>
+            <button id="light" onclick="setLightStyle();">Light</button><br>
+            <button id="specal1" onclick="setSpecalStyle();">Specal</button><br>
+            <button id="event" onclick="whichEvent();">Event</button><br>
+            <button id="val" onclick="">someday will use</button><br>
+            <button id="specal2" onclick="">Soon</button>
+          </div>
+        <p>contact us:</p>
+          <p>burforaj02@k12louisa.org</p>
+        </div><br>
+      </div>
+      <span id="topleft" onclick="openNav()">☰</span>
+      <div id="devSidenav" class="sidenavR">
+        <br>
+        <a href="javascript:void(0)" class="closebtnR" onclick="devcloseNav()">×</a>
+        <h3 id="Devnavtext">This is the dev menu use for testing and admistrating chat</h3><!-- edit the text later to look nicer -->
+        <p id="Devnavtext">Enter message here and send as admin</p>
+        <input type="text" id="fsendT" placeholder="Force Send message:"><br>
+        <button onclick="FsendMessage();" id="fsendB">Force Send</button>
+        <button onclick="lock_chat();" id="lock">Lock</button><button onclick="unlock_chat();" id="unlock">Unlock</button><br>
+        <p id="Devnavtext">Enter username in here for muting</p>
+        <input type="text" id="muteuserbox" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">Unmute</button><br>
+        <p id="Devnavtext">Send message as SYSTEM user</p>
+        <input type="text" id="systemsendT" placeholder="Send message as SYSTEM"><button onclick="systemmessage();" id="systemsendB">Send</button><br>
+        <button onclick='ajaxGetRequest("/chat_count", chat_log_count);' id="chatlineB">Print total line count</button>
+        <button onclick="sendlines100();" id="chatspamB">Send 100 Empty lines</button>
+        <button onclick="getStats();" id="statsB">Send server stats in chat.</button><br>
+        <input type="text" id="sendimgT" placeholder="Paste img url here"><button onclick="sendImage();" id="sendimgB">Send</button>
+      </div>
+      <span id="topright" onclick="devopenNav();">🔧</span>
+    <div id="chat">
+      
+    </div><br/>
+    <div id="sides">
+      <div id="chatbox">      
+        <p id="msg-title">Message: </p>  
+        <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250" ><br>
+        <button onclick="sendMessage();" id="send" >Send</button>
+      </div>
+    </div>
+  
+</body>
+</html>

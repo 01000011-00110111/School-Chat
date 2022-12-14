@@ -1,39 +1,40 @@
-
 // This function requests the server send it a full chat log
 function loadChat() {
   ajaxGetRequest("/chat", renderChat); 
 }
 
 // get specific cookie value
-function getCookie(cname) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(';');
-  for(let i = 0; i <ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
+function getCookie(name) {
+    name = name + "=";
+    var cookies = document.cookie.split(';');
+    for(var i = 0; i <cookies.length; i++) {
+        var cookie = cookies[i];
+        while (cookie.charAt(0)==' ') {
+            cookie = cookie.substring(1);
+        }
+        if (cookie.indexOf(name) == 0) {
+            return cookie.substring(name.length,cookie.length);
+        }
     }
-    if (c.indexOf(name) == 0) {
-      console.log(c.substring(name.length, c.length));
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
+    return "";
 }
 
 
 // stuff to run at startup
 function runStartup() {
+  // get commands/command definitions
   ajaxGetRequest("/commands", save_cmd_list);
   ajaxGetRequest("/cmdDef", save_cmd_def);
+  // (should) scroll to the bottom (but doesen't prob because of timing with load_chat)
   window.scrollTo(0, document.body.scrollHeight);
   // set styles because we dont use style sheets for colors anymore (unless static colors)
-  whichEvent();
   setInterval(loadChat,3000);
+  // add the username currently in a cookie unless there is none
   let userElement = document.getElementById("user");
-  console.log(getCookie("username"));
- // userElement["value"] = getCookie("username") 
+  
+  userElement["value"] = getCookie("username");
+  console.log(getCookie('theme'));
+  whichEvent(getCookie("theme"));
 }
 
 // This function sends the server the new message and receives
@@ -78,16 +79,17 @@ function sendMessage() {
   } else if (user_name === "cserverReal") {
     message =  '<font color="#ff7f00">' + 'Founder Cserver- ' + '</font>' + '<font color="#ff430a">' + message + "</font>";
   }
-  
+
+  // the stupid long user_name check
+  // should be on server side to be honest, but then we have to parse the string
+  // on the server side
   if (user_name === "") {
       user_name = "Anonymes";
   } else if  (user_name === "🅾️〰️📧🇳 ") {
       user_name = "🅾️〰️📧🇳";
   } else if (user_name === "🅾️〰️📧🇳") {
     return;
-  } else if  (user_name === "Adm!n") {
-      user_name = "Admin";
-  } else if (user_name === "Admin") { //|| user_name === "admin") {
+  } else if (user_name === "Admin" || user_name === "admin" || user_name === "[admin]" || user_name === "[admin]" || user_name === "[ADMIN]") {
     return;
   } else if  (user_name === "Dev EReal") {
       user_name = "Dev E";
@@ -96,6 +98,8 @@ function sendMessage() {
   } else if  (user_name === "cserverReal") {
       user_name = "cserver";
   } else if  (user_name === "cserver") {
+    return;
+  } else if (user_name === "SYSTEM" || user_name === "[SYSTEM]") {
     return;
   }
   
@@ -111,16 +115,6 @@ function sendMessage() {
   // Send the JSON string to the server
   ajaxPostRequest("/send", jsonString, renderChat);
 }
-  //the force send code need a better info here
-function FsendMessage() {
-  let messageElement = document.getElementById("message");
-  let isCmd = is_cmd(message);
-  messageElement["value"] = "";
-  //console.log(document.getElementById("user_name"));
-  let toSend = {"message": message};
-  jsonString = JSON.stringify(toSend);
-  ajaxPostRequest("/send", jsonString, renderChat);
-} 
 // This is the callback function used for both ajax requests
 // It will be called by JS automatically whenever we get a response from the server
 function renderChat(jsonData) {
@@ -151,8 +145,6 @@ function checkKey() {
   // Check if the enter key is pressed when typing
   if (event.key === "Enter") {
     sendMessage();
-  } else if (event.key === "Escape") {
-    closeNav();
   }
 }
 
@@ -166,21 +158,23 @@ function closeNav() {
   document.getElementById("mySidenav").style.width = "0";
 }
 
-// checks if escape key is pressed when nav is open
-// does not currently work, idk why
-//function ESCkey() {
-//  if (event.key === "Escape") {
-   // closeNav();
-  //}
-//}
+function devopenNav() {
+  document.getElementById("devSidenav").style.width = "550px";
+  document.getElementById("devSidenav").style.paddingLeft = "5%";
+}
+
+function devcloseNav() {          
+  document.getElementById("devSidenav").style.width = "0";
+  document.getElementById("devSidenav").style.paddingLeft = "0";
+}
 
 /* When the user clicks on the button,
 toggle between hiding and showing the dropdown content */
-function myFunction() {
+function dropdownTheme() {
   document.getElementById("myDropdown").classList.toggle("show");
 }
 
-// Close the dropdown menu if the user clicks outside of it
+// Close a menu if the user clicks outside of it
 window.onclick = function(event) {
   if (!event.target.matches('.dropbtn')) {
     var dropdowns = document.getElementsByClassName("dropdown-content");
@@ -189,7 +183,18 @@ window.onclick = function(event) {
       var openDropdown = dropdowns[i];
       if (openDropdown.classList.contains('show')) {
         openDropdown.classList.remove('show');
-      }
+      } 
     }
+  } else if (!event.target.matches('.mySidenav')) {
+    // whenever i can get sidenav-content (hidden element) implemented in css
+    // simillar to dropdown-content, but with some widths changed and other stuff
+    //var dropdowns = document.getElementsByClassName("dropdown-content");
+    //var i;
+    //for (i = 0; i < dropdowns.length; i++) {
+    //  var openDropdown = dropdowns[i];
+    //  if (openDropdown.classList.contains('show')) {
+    //    openDropdown.classList.remove('show');
+    //  }
+    //}
   }
 }
