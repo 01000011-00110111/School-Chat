@@ -30,8 +30,7 @@ function runStartup() {
   // set styles because we dont use style sheets for colors anymore (unless static colors)
   setInterval(loadChat,3000);
   // add the username currently in a cookie unless there is none
-  let userElement = document.getElementById("user");
-  
+  let userElement = document.getElementById("user"); 
   userElement["value"] = getCookie("username");
   console.log(getCookie('theme'));
   whichEvent(getCookie("theme"));
@@ -43,9 +42,12 @@ function sendMessage() {
   // Get an object representing the text box (where we get the user and msg to get sent)
   let messageElement = document.getElementById("message");
   let userElement = document.getElementById("user");
+  //let profileElement = document.getElementById("profile_picture");
+  
   // Save the message text 
   let unsafeMessage = messageElement["value"];
   let user_name = userElement["value"];
+  //let profile_picture = profileElemnt["value"]
   let isMuted = is_user_muted(user_name);
 
   // just so nothing gets overritten in cookies, is has to be up here
@@ -69,15 +71,15 @@ function sendMessage() {
   } else if (message === "  ") {
     return;
   } else if  (user_name === "💲♓️🅰️ⓨ👢🅰") {
-      message = '<font color="#db1690">' + "Cool Owen's GF- " + '</font>' + '<font color="#25C178">' + message + "</font>";
+      message = /*profile_picture +*/ '<font color="#db1690">' + "Cool Owen's GF- " + '</font>' + '<font color="#25C178">' + message + "</font>";
   } else if  (user_name === "Steven W") {
-      message = '<font color="#1788E8">' + 'Aperture Scientist- ' + '</font>' + '<font color="#13D2CA">' + message + "</font>";
+      message = /*profile_picture +*/ '<font color="#1788E8">' + 'Aperture Scientist- ' + '</font>' + '<font color="#13D2CA">' + message + "</font>";
   } else if  (user_name === "🅾️〰️📧🇳 ") {
-    message = '<font color="#1abd2d">' + 'Cool Owen- ' + '</font>' + '<font color="#ffd700">' + message + "</font>";
+    message = /*profile_picture +*/ '<font color="#1abd2d">' + 'Cool Owen- ' + '</font>' + '<font color="#ffd700">' + message + "</font>";
   } else if  (user_name === "Dev EReal") {
-     message = '<font color="#ff8800">' + 'Founder C7- ' + '</font>' + '<font color="#08ff83">' + message + "</font>";
+     message = /*profile_picture +*/ '<font color="#ff8800">' + 'Founder C7- ' + '</font>' + '<font color="#08ff83">' + message + "</font>";
   } else if (user_name === "cserverReal") {
-    message =  '<font color="#ff7f00">' + 'Founder Cserver- ' + '</font>' + '<font color="#ff430a">' + message + "</font>";
+    message = /*profile_picture +*/ '<font color="#ff7f00">' + 'Founder Cserver- ' + '</font>' + '<font color="#ff430a">' + message + "</font>";
   }
 
   // the stupid long user_name check
@@ -102,6 +104,10 @@ function sendMessage() {
   } else if (user_name === "SYSTEM" || user_name === "[SYSTEM]") {
     return;
   }
+
+ /* if (profile_picture === ""){
+      profile_picture = "Don't have one";
+  }*/
   
   // Let the user "see" the message was sent by clearing the textbox
   messageElement["value"] = "";

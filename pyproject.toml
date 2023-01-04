@@ -11,6 +11,7 @@ replit = "^3.2.4"
 urllib3 = "^1.26.12"
 bottle = "^0.12.23"
 poetry-lock-package = "^0.4.5"
+psutil = "^5.9.4"
 
 [tool.poetry.dev-dependencies]
 debugpy = "^1.6.2"

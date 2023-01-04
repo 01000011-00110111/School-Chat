@@ -53,6 +53,14 @@ function unlock_chat() {
   ajaxGetRequest("/unlock", dummyajax);
 }
 
+function mute() {
+  document.cookie = "access=" + isMuted + "; path=/";
+}
+
+function unmute() {
+  
+} 
+
 // see comment inside function
 function dummyajax(jsonData) {
   // dummy function so ajaxPostRequest doesent error out from no function callback

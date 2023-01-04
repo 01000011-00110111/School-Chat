@@ -358,6 +358,17 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "psutil"
+version = "5.9.4"
+description = "Cross-platform lib for process and system monitoring in Python."
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[package.extras]
+test = ["ipaddress", "mock", "enum34", "pywin32", "wmi"]
+
+[[package]]
 name = "pycparser"
 version = "2.21"
 description = "C parser in Python"
@@ -626,7 +637,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8.0,<3.9"
-content-hash = "699f30d86bbad9c137e248ec44ffdf0e750dab66c2e55862d5a06098330dbc6a"
+content-hash = "a0360b58dd18367bb892503681a2eb828b6ebee54de7525461184f3efdb2943c"
 
 [metadata.files]
 aiohttp = []
@@ -660,6 +671,7 @@ passlib = []
 pluggy = []
 poetry-lock-package = []
 protobuf = []
+psutil = []
 pycparser = []
 pycryptodomex = []
 pyflakes = []

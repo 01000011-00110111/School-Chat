@@ -160,7 +160,7 @@ function setSpecalStyle() {
   // ig this easter egg
   let userElement = document.getElementById("user");
   let user_name = userElement["value"];
-  if (user_name === "DLHTCS") { // put your username here sir // how dare you
+  if (user_name === "DLHTCS") { // put your username here sir // how dare you sir
     // set theme in cookie
     setTheme("special1");
     // get all id tags
@@ -185,7 +185,7 @@ function setSpecalStyle() {
     // to here
     send.style.backgroundColor = "#0d5e5e";
     send.style.color = "#010a0f";
-  } else if (user_name === "lovetheme") { // wow
+  } else if (user_name === "lovetheme") { // wow // I know i hate it too
     // set theme in cookie
     setTheme("special2");
     // get all id tags
@@ -199,13 +199,13 @@ function setSpecalStyle() {
     let sidenav = document.getElementsByClassName("sidenav");
     // then set the color to what it is in the css document
     body.style.backgroundColor = "#d10d7c";
-    chat.style.color = "#3e045c";
+    chat.style.color = "#ffffff";
     message.style.color = "";
     chatbox.style.backgroundColor = "#c711d1";
     sides.style.backgroundColor = "#d10d7c";
     // ADD styling elements to css file from here
-    topleft.style.backgroundColor = "";
-    topleft.style.color = "";
+    topleft.style.backgroundColor = "ffffff";
+    topleft.style.color = "ffffff";
     sidenav.style.backgroundColor = "";
     // to here
     send.style.backgroundColor = "";

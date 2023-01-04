@@ -127,6 +127,11 @@ def unlock_chat():
   else:
     pass
 
+@bottle.get('/stats')
+def get_stats():
+  chat.get_stats()
+  return
+
 ################################################################
 #      Start the webserver                                     #
 ################################################################

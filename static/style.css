@@ -91,7 +91,7 @@ padding-left: 5%;
   position: fixed;
   width: 0%;
   padding-top: .5%;
-  color: #c2bcbc;
+  /*color: #c2bcbc;*/
   font-size:40px;
   cursor:pointer
 }
@@ -100,7 +100,6 @@ padding-left: 5%;
   position: fixed;
   width: 0%;
   margin-left: 95%;
-  color: #c2bcbc;
   margin-top: 1%;
   font-size:30px;
   cursor: pointer;
