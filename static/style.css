@@ -428,3 +428,17 @@ padding-left: 5%;
   border-radius: 20px;
   border-style: dotted;
 }
+
+#EventMSGT {
+  background-color:  #000000;
+  color:  #ffffff;
+  font-size: 20px;
+  border-radius: 10px;
+}
+
+#EventMSGB {
+  background-color:  #1c71d8;
+  color:  #000000;
+  font-size: 20px;
+  border-radius: 20px;
+}

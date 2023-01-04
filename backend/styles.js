@@ -22,6 +22,8 @@ function whichEvent(event = "christmas") {
     setThanksTheme();
   } else if (event === "hollow") {
     setHollowTheme();
+  }else if (event === "newyears") {
+    setNewyearsTheme();
   } else if (event === "") {
     whichEvent();
   } else if (event === "special1" || event === "special2") {
@@ -111,6 +113,38 @@ function setChristmasTheme() {
   let snav_text = sidenav.getElementsByTagName("a")
   let snav_iter = snav_text.length;
   // then set the color to what it is in the css document
+  body.style.backgroundColor = "#115029";
+  chat.style.color = "#ffffff";
+  message.style.color = "#4c0606";
+  chatbox.style.backgroundColor = "#a91919";
+  sides.style.backgroundColor = "#176d38";
+  topleft.style.backgroundColor = "#176d38";
+  topleft.style.color = "#c2bcbc";
+  send.style.backgroundColor = "#6caa55";
+  send.style.color = "#c2bcbc";
+  sidenav.style.backgroundColor = "#292";
+  // for loop to cycle thru links in sidebar
+  for (let i = 0; i < snav_iter; i++) {
+    snav_text[i].style.color = "#d0c8c8";
+  }
+}
+//this is new years thing that will never use 
+function setNewyearsTheme() {
+  // set theme in cookie
+  setTheme("newyears");
+  // get all id tags
+  let body = document.getElementById("body");
+  let chat = document.getElementById("chat");
+  let message = document.getElementById("message");
+  let chatbox = document.getElementById("chatbox");
+  let sides = document.getElementById("sides");
+  let topleft = document.getElementById("topleft");
+  let send = document.getElementById("send");
+  let sidenav = document.getElementsByClassName("sidenav")[0]
+  let snav_text = sidenav.getElementsByTagName("a")
+  let snav_iter = snav_text.length;
+  // then set the color to what it is in the css document
+  //its red make
   body.style.backgroundColor = "#115029";
   chat.style.color = "#ffffff";
   message.style.color = "#4c0606";

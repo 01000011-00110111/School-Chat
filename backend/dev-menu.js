@@ -29,14 +29,35 @@ function FsendMessage() {
 
 // take a img url, and convert it into a img html tag
 function sendImage() {
-  let messageElement = document.getElementById("imagesendT")
-  let toSend = {"message": "<img href='" + messageElement["value"] + "'></img>"};
+  let messageElement = document.getElementById("sendimgT");
+  let toSend = {"message": "<img src='" + messageElement["value"] + "'></img>"};
   jsonString = JSON.stringify(toSend);
 
   messageElement["value"] = "";
   
   ajaxPostRequest("/send", jsonString, renderChat);
 }
+
+// send a bunch of black lines to chat system
+function testChatGC() {
+  let toSend = {"message": '[SYSTEM]: <font color="#ff7f00">nothing to see here\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'};
+  jsonString = JSON.stringify(toSend);
+  ajaxPostRequest("/send", jsonString, renderChat);
+}
+
+
+function EsendMessage() {
+  // just bits and pieces from sendMessage
+  let messageElement = document.getElementById("EventMSGT");
+
+  message = '<font color="e54e40">' + messageElement["value"] + '</font>' + "</h3>"
+  messageElement["value"] = "";
+  let toSend = {"message": "<h3> [Event]: " + message};
+  jsonString = JSON.stringify(toSend);
+  // Send the JSON string to the server
+  ajaxPostRequest("/event_send", jsonString, renderChat);
+}
+
 
 // get stats from the replit instance
 function getStats() {
@@ -54,12 +75,16 @@ function unlock_chat() {
 }
 
 function mute() {
-  document.cookie = "access=" + isMuted + "; path=/";
+  
 }
 
 function unmute() {
   
 } 
+
+function ban() {
+  
+}
 
 // see comment inside function
 function dummyajax(jsonData) {

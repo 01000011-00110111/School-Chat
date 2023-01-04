@@ -42,12 +42,12 @@ function sendMessage() {
   // Get an object representing the text box (where we get the user and msg to get sent)
   let messageElement = document.getElementById("message");
   let userElement = document.getElementById("user");
-  //let profileElement = document.getElementById("profile_picture");
+  let profileElement = document.getElementById("profile_picture");
   
   // Save the message text 
   let unsafeMessage = messageElement["value"];
   let user_name = userElement["value"];
-  //let profile_picture = profileElemnt["value"]
+  let profile_picture = profileElement["value"]
   let isMuted = is_user_muted(user_name);
 
   // just so nothing gets overritten in cookies, is has to be up here
@@ -58,6 +58,7 @@ function sendMessage() {
 
   // good idea to escape js anyway from here
   let isCmd = is_cmd(message);
+  let profile_img = "<img src='" + profile_picture + "'></img>";
 
   if (isMuted === true) {
     return;
@@ -116,6 +117,9 @@ function sendMessage() {
   console.log(document.getElementById("user_name"));
   //let user_color = document.getElementById("user_color").style.color;
   //let user_color_name = "<font color='" + user_color + "'>" + user_name.toString() + "</font>";
+  // add profile_picture before user_name after I figure out how to limit how big an image is
+  // still need user chooseable colors, will add to github issue tracker
+
   let toSend = {"message": user_name.toString() + ": " + message};
   jsonString = JSON.stringify(toSend);
   // Send the JSON string to the server
