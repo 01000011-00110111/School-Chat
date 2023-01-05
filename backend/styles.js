@@ -95,6 +95,7 @@ function setLightStyle() {
   }
 }
 
+// never gonna give you up never gonna let you down
 // event themes after here
 
 // sets theme to christmas (event)
@@ -159,6 +160,34 @@ function setNewyearsTheme() {
   for (let i = 0; i < snav_iter; i++) {
     snav_text[i].style.color = "#d0c8c8";
   }
+}
+
+// sets theme to thanksgiving (event)
+function setThanksTheme() {
+  // set theme in cookie
+  setTheme("thanks");
+  // get all id tags
+  let body = document.getElementById("body");
+  let chat = document.getElementById("chat");
+  let message = document.getElementById("message");
+  let chatbox = document.getElementById("chatbox");
+  let sides = document.getElementById("sides");
+  let topleft = document.getElementById("topleft");
+  let send = document.getElementById("send");
+  let sidenav = document.getElementsByClassName("sidenav")
+  // then set the color to what it is in the css document
+  body.style.backgroundColor = "#44220b";
+  chat.style.color = "#4e8926";
+  message.style.color = "#000000";
+  chatbox.style.backgroundColor = "#e26831";
+  sides.style.backgroundColor = "#44220b";
+  // ADD styling elements to css file from here
+  topleft.style.backgroundColor = "#176d38";
+  topleft.style.color = "#c2bcbc";
+  sidenav.style.backgroundColor = "#292";
+  // to here
+  send.style.backgroundColor = "#d63420";
+  send.style.color = "#fcaf2c";
 }
 
 // sets theme to thanksgiving (event)

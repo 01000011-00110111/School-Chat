@@ -1,4 +1,4 @@
-  // Dev menu js code to keep chat.js cleaner //
+  // Dev menu js code to keep chat.js cleaner and easy to read and find what you need//
 
 // send message as the user [SYSTEM]
 function systemmessage() {
@@ -40,11 +40,11 @@ function sendImage() {
 
 // send a bunch of black lines to chat system
 function testChatGC() {
-  let toSend = {"message": '[SYSTEM]: <font color="#ff7f00">nothing to see here\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'};
+  let toSend = {"message": '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nnothing to see here\n</font>'};
   jsonString = JSON.stringify(toSend);
   ajaxPostRequest("/send", jsonString, renderChat);
 }
-
+//{"message": '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'};
 
 function EsendMessage() {
   // just bits and pieces from sendMessage
@@ -83,7 +83,7 @@ function unmute() {
 } 
 
 function ban() {
-  
+//document.cookie = "=" + user_name + "; path=/";
 }
 
 // see comment inside function

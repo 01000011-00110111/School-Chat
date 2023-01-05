@@ -32,7 +32,6 @@ function runStartup() {
   // add the username currently in a cookie unless there is none
   let userElement = document.getElementById("user"); 
   userElement["value"] = getCookie("username");
-  console.log(getCookie('theme'));
   whichEvent(getCookie("theme"));
 }
 
@@ -48,17 +47,18 @@ function sendMessage() {
   let unsafeMessage = messageElement["value"];
   let user_name = userElement["value"];
   let profile_picture = profileElement["value"]
+  let role = roleElement["value"]
   let isMuted = is_user_muted(user_name);
 
   // just so nothing gets overritten in cookies, is has to be up here
   document.cookie = "username=" + user_name + "; path=/";
-
-  // stupid long replace tree that doesent even work atm
+  document.cookie = "profile_picture=" + profile_picture + "; path=/";
+  // stupid long replace tree that doesent even work atm // then get it working!!
   let message = unsafeMessage.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, '"').replace(/'/g, "'");
 
   // good idea to escape js anyway from here
   let isCmd = is_cmd(message);
-  let profile_img = "<img src='" + profile_picture + "'></img>";
+  let profile_img = "<img style='max-height:25px; max-width:25px; overflow: hidden' src='" + profile_picture + "'></img>";
 
   if (isMuted === true) {
     return;
@@ -72,15 +72,15 @@ function sendMessage() {
   } else if (message === "  ") {
     return;
   } else if  (user_name === "💲♓️🅰️ⓨ👢🅰") {
-      message = /*profile_picture +*/ '<font color="#db1690">' + "Cool Owen's GF- " + '</font>' + '<font color="#25C178">' + message + "</font>";
+      message = '<font color="#db1690">' + "Cool Owen's GF- " + '</font>' + '<font color="#25C178">' + message + "</font>";
   } else if  (user_name === "Steven W") {
-      message = /*profile_picture +*/ '<font color="#1788E8">' + 'Aperture Scientist- ' + '</font>' + '<font color="#13D2CA">' + message + "</font>";
+      message = '<font color="#1788E8">' + 'Aperture Scientist- ' + '</font>' + '<font color="#13D2CA">' + message + "</font>";
   } else if  (user_name === "🅾️〰️📧🇳 ") {
-    message = /*profile_picture +*/ '<font color="#1abd2d">' + 'Cool Owen- ' + '</font>' + '<font color="#ffd700">' + message + "</font>";
+    message = '<font color="#1abd2d">' + 'Cool Owen- ' + '</font>' + '<font color="#ffd700">' + message + "</font>";
   } else if  (user_name === "Dev EReal") {
-     message = /*profile_picture +*/ '<font color="#ff8800">' + 'Founder C7- ' + '</font>' + '<font color="#08ff83">' + message + "</font>";
+     message = '<font color="#ff8800">' + 'Founder C7- ' + '</font>' + '<font color="#08ff83">' + message + "</font>";
   } else if (user_name === "cserverReal") {
-    message = /*profile_picture +*/ '<font color="#ff7f00">' + 'Founder Cserver- ' + '</font>' + '<font color="#ff430a">' + message + "</font>";
+    message = '<font color="#ff7f00">' + 'Founder Cserver- ' + '</font>' + '<font color="#ff430a">' + message + "</font>";
   }
 
   // the stupid long user_name check
@@ -106,7 +106,11 @@ function sendMessage() {
     return;
   }
 
- /* if (profile_picture === ""){
+  if (user_name === "") {
+      role =
+  }
+
+  /* if (profile_picture === ""){
       profile_picture = "Don't have one";
   }*/
   
@@ -117,7 +121,7 @@ function sendMessage() {
   console.log(document.getElementById("user_name"));
   //let user_color = document.getElementById("user_color").style.color;
   //let user_color_name = "<font color='" + user_color + "'>" + user_name.toString() + "</font>";
-  // add profile_picture before user_name after I figure out how to limit how big an image is
+  // add profile_picture before user_name after I figure out how to limit how big an image is // i know how
   // still need user chooseable colors, will add to github issue tracker
 
   let toSend = {"message": user_name.toString() + ": " + message};
