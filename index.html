@@ -17,13 +17,15 @@
   <body onload="runStartup();" id="body">
       <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="#Soon">Share ideas</a>
-        <a href="https://docs.google.com/spreadsheets/d/1HBQ4X0ajghOKvYHkLbsZ1RDGZp_wtsLFNhuM_yqhEA0/edit?usp=sharing">Tux Do List</a>
-        <a href="#Soon">Update log</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfdCGMUhy6RwT2yMtM7Egd8bC3VNAE5_-w_8wZzyXwBX9daVg/viewform">Share ideas</a>
+        <a href="https://trello.com/b/ndht1H9F/chat-plans">Trello</a>
+        <a href="https://tux.school-chat.us/changelog">Update log</a>
         <a href="#no more pranks">Soon</a>
         <a href="#your safe now">Soon</a>
         <input type="text" id="user" name="username" placeholder="username" maxlength="12"></input><br/>
         <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture" hidden>
+        <input type="text" id="role" name="role" placeholder="role" maxlength="15"><br>
+        <h3 hidden>CHOOSE YOUR COLOR:</h3><input type="color" id="user_color" name="color choser" hidden>
         <div class="colorDropdown">
           <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
           <div id="myDropdown" class="dropdown-content">
@@ -32,9 +34,16 @@
             <button id="specal1" onclick="setSpecalStyle();">Special</button><br>
             <button id="event" onclick="whichEvent();">Event</button>
           </div><br>
+          <h3 id="user_colorTXT">CHOOSE YOUR COLOR:</h3>
+        <p id="user_colorTXT">Username: </p>
+        <input type="color" value="#ffffff" id="user_color" name="color choser"><br>
+        <p id="user_colorTXT">Role: </p>
+        <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
+        <p id="user_colorTXT">Message: </p>
+        <input type="color" value="null" id="message_color" name="color choser">
         </div>
         <h3><a href="mailto:harperom62@k12louisa.org">Contact us</a></h3>
-        <H4><a href="#add bug report">Report Bugs</a></H4>
+        <H4><a href="https://docs.google.com/forms/d/e/1FAIpQLSdK8bsgzEn2kzDXQTu4sc-AP2HwK8aCZ_5NYhsKWItnJz2rDQ/viewform">Report Bugs</a></H4>
       </div>
       <span id="topleft" style="font-size:40px;cursor:pointer" onclick="openNav()">&#9776;</span>
     <div id="chat">

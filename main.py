@@ -17,6 +17,11 @@ def index():
     html_file = bottle.template("index.html", root=".")
     return html_file
 
+@bottle.route('/changelog')
+def changelog():
+  html_file = bottle.template('update-log.html', root=".")
+  return html_file
+
 @bottle.route('/static/style.css')
 def css_style():
   css_file = bottle.static_file("static/style.css", root=".")
@@ -100,9 +105,9 @@ def do_chat():
     pass
   else:
     chat.add_message(message_dic['message'])
-  response = chat.get_chat()
-  ret_val = json.dumps(response)
-  return ret_val
+    response = chat.get_chat()
+    ret_val = json.dumps(response)
+    return ret_val
 
 @bottle.post('/force_send')
 def force_chat():
@@ -130,6 +135,11 @@ def unlock_chat():
 @bottle.get('/stats')
 def get_stats():
   chat.get_stats()
+  return
+
+@bottle.get('/reset')
+def reset_Chat():
+  chat.reset_chat(False, True)
   return
 
 ################################################################

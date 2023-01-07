@@ -24,20 +24,28 @@
         <a href="https://replit.com/@School-chat-room/School-Chat">Code Page</a>
         <a href="https://stackoverflow.com">Need help with code?</a>
         <a href="https://bottlepy.org/docs/dev/">Webserver info</a>
-        <input type="text" id="user" name="username" placeholder="username" maxlength="12" value="lovetheme"><br>
+        <input type="text" id="user" name="username" placeholder="username" maxlength="12"><br>
+        <input type="text" id="role" name="role" placeholder="role" maxlength="15"><br>
         <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
         <div class="colorDropdown">
           <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
           <div id="myDropdown" class="dropdown-content">
-            <button id="dark" onclick="setDarkStyle();">Dark</button><br>
-            <button id="light" onclick="setLightStyle();">Light</button><br>
-            <button id="specal1" onclick="setSpecalStyle();">Specal</button><br>
-            <button id="event" onclick="whichEvent();">Event</button><br>
-            <!--<button id="val" onclick="">someday will use</button><br>
-            <button id="specal2" onclick="">Soon</button>-->
+            <a id="dark" onclick="setDarkStyle();">Dark</a><br>
+            <a id="light" onclick="setLightStyle();">Light</a><br>
+            <a id="specal1" onclick="setSpecalStyle();">Specal</a><br>
+            <a id="event" onclick="whichEvent();">Event</a><br>
+            <a id="dark" onclick="setDevStyle()">Dev</a><br>
+          <!--  <button id="specal2" onclick="">Soon</button>-->
           </div>
         <h3><a href="mailto:harperom62@k12louisa.org">Contact us</a></h3>
         </div><br>
+        <h3 id="user_colorTXT" >CHOOSE YOUR COLOR:</h3>
+        <p id="user_colorTXT">Username: </p>
+        <input type="color" value="#ffffff" id="user_color" name="color choser"><br>
+        <p id="user_colorTXT">Role: </p>
+        <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
+        <p id="user_colorTXT">Message: </p>
+        <input type="color" value="#ffffff" id="message_color" name="color choser">
       </div>
       <span id="topleft" onclick="openNav()">☰</span>
       <div id="devSidenav" class="sidenavR">
@@ -50,25 +58,28 @@
         <button onclick="lock_chat();" id="lock">Lock</button><button onclick="unlock_chat();" id="unlock">Unlock</button><br>
         <p id="Devnavtext">Enter username in here for muting</p>
         <input type="text" id="muteuserbox" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">Unmute</button><button onclick="ban();" id="ban">Ban</button><br>
+        <button id="cookieRemoverB">Cookie eater</button>
         <p id="Devnavtext">Send message as SYSTEM user</p>
         <input type="text" id="systemsendT" placeholder="Send message as SYSTEM"><button onclick="systemmessage();" id="systemsendB">Send</button><br>
         <button onclick='ajaxGetRequest("/chat_count", chat_log_count);' id="chatlineB">Print total line count</button>
         <button onclick="testChatGC();" id="chatspamB">Send 100 Empty lines</button>
-        <button onclick="getStats();" id="statsB">Send server stats in chat.</button><button onclick="ResetChat()" id="ChatrestB">Reset chat</button><br>
+        <button onclick="getStats();" id="statsB">Send server stats in chat.</button><button onclick="reset_chat()" id="ChatrestB">Reset chat</button><br>
         <input type="text" id="sendimgT" placeholder="Paste img url here"><button onclick="sendImage();" id="sendimgB">Send</button><br>
         <p id="Devnavtext">Send messages in bold/biger</p>
         <input type="text" id="EventMSGT" placeholder="Send message here"><button onclick="EsendMessage();" id="EventMSGB">Send</button>
       </div>
       <span id="topright" onclick="devopenNav();">🔧</span>
-    <div id="chat">
+    <div id="chat"> 
+
+      <!-- add popup here -->
+      
     </div><br/>
-    <div id="sides">
+    <div id="sides"> <!-- sides is here so i dont get lost -->
       <div id="chatbox">      
         <p id="msg-title">Message: </p>  
         <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250" ><br>
         <button onclick="sendMessage();" id="send" >Send</button>
       </div>
     </div>
-  
   </body>
 </html>

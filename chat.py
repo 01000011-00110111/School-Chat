@@ -1,6 +1,6 @@
 import psutil
 from time import time
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 logfile = "backend/chat.txt"
 logfile_b = "backend/Chat-backup.txt"
@@ -62,19 +62,29 @@ def get_stats():
 def add_message(message_text):
   with open(logfile, "r") as f:
     lines = len(f.readlines())
-  if lines > 500:
-    with open(logfile, "w") as f_out:
-      f_out.write(
-        "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n"
-        + message_text + "\n")
+  if lines >= 500:
+    reset_chat(message_text, False)
   else:
     with open(logfile, "a") as f:
       f.write(message_text + "\n")
   with open(logfile_b, "a") as f_out:
-    f_out.write(message_text + "\n")
+    date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
+    f_out.write(date + message_text + "\n")
   # This return is not needed, but ensures replit shows the updated
   # file when it is selected from the file browser during our demo
   return None
+
+
+def reset_chat(message, admin):
+  if admin == True:
+    with open(logfile, "w") as f_out:
+      f_out.write(
+        "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n")
+  else:
+    with open(logfile, "w") as f_out:
+      f_out.write(
+        "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n"
+        + message + "\n")
 
 
 # force the message text to our file containing all the messages

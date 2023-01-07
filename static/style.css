@@ -168,7 +168,7 @@ padding-left: 5%;
 }
 
 #light {
-  background-color: #9a9996;
+  background-color: #9a9996; 
   color: #ffffff;
   font-size: 30px;
   display: flex;
@@ -207,6 +207,10 @@ padding-left: 5%;
   color: #2d8633;
   font-size: 20px;
   border-radius: 20px;
+}
+
+#user_colorTXT {
+  color: #d0c8c8;
 }
 
 
@@ -442,3 +446,53 @@ padding-left: 5%;
   font-size: 20px;
   border-radius: 20px;
 }
+
+/* The message text color dropdown button */
+
+.dropbtnTXT {
+  background-color: #111111;
+  color: black;
+  padding: -16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  margin-top: 150%;
+}
+
+.dropbtnTXT:hover, .dropbtn:focus {
+  background-color: #2980B9;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-contentTXT {
+  display: none;
+  position: absolute;
+  background-color: #3f3f3f;
+  min-width: 90px;
+  max-height: -80px;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  bottom: 100%;
+}
+
+.dropdown-contentTXT a {
+  color: black;
+  padding: 12px -16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown a:hover {background-color: #ddd;}
+
+.showTXT {display: block;}
+
+
+
+
+/* the POPUP FOR RULES */
+

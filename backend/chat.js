@@ -30,9 +30,15 @@ function runStartup() {
   // set styles because we dont use style sheets for colors anymore (unless static colors)
   setInterval(loadChat,3000);
   // add the username currently in a cookie unless there is none
-  let userElement = document.getElementById("user"); 
-  userElement["value"] = getCookie("username");
   whichEvent(getCookie("theme"));
+  let userElement = document.getElementById("user"); 
+  let user_color = document.getElementById("user_color");
+  let message_color = document.getElementById("message_color");
+  let role_color = document.getElementById("role_color");
+  user_color["value"] = getCookie("user_color");
+  message_color["value"] = getCookie("message_color");
+  role_color["value"] = getCookie("role_color");
+  userElement["value"] = getCookie("username");
 }
 
 // This function sends the server the new message and receives
@@ -42,19 +48,31 @@ function sendMessage() {
   let messageElement = document.getElementById("message");
   let userElement = document.getElementById("user");
   let profileElement = document.getElementById("profile_picture");
+  let roleElement = document.getElementById("role")
+  let messageColorElement = document.getElementById("message_color");
+  let roleColorElement = document.getElementById("role_color");
+  let userColorElement = document.getElementById("user_color");
   
   // Save the message text 
   let unsafeMessage = messageElement["value"];
   let user_name = userElement["value"];
   let profile_picture = profileElement["value"]
   let role = roleElement["value"]
+  let user_color = userColorElement["value"];
+  let message_color = messageColorElement["value"];
+  let role_color = roleColorElement["value"]
   let isMuted = is_user_muted(user_name);
 
   // just so nothing gets overritten in cookies, is has to be up here
   document.cookie = "username=" + user_name + "; path=/";
   document.cookie = "profile_picture=" + profile_picture + "; path=/";
+  document.cookie = "user_color=" + user_color + "; path=/";
+  document.cookie = "message_color=" + message_color + "; path=/";
+  document.cookie = "role_color=" + role_color + "; path=/";
+  document.cookie = "role=" + role + "; path=/";
+  
   // stupid long replace tree that doesent even work atm // then get it working!!
-  let message = unsafeMessage.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, '"').replace(/'/g, "'");
+  let message = unsafeMessage// .replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, '"').replace(/'/g, "'");
 
   // good idea to escape js anyway from here
   let isCmd = is_cmd(message);
@@ -71,26 +89,26 @@ function sendMessage() {
     return;
   } else if (message === "  ") {
     return;
-  } else if  (user_name === "💲♓️🅰️ⓨ👢🅰") {
-      message = '<font color="#db1690">' + "Cool Owen's GF- " + '</font>' + '<font color="#25C178">' + message + "</font>";
+  } else if  (user_name === "Shatla") {
+      role = 'Cool Owen GF'
   } else if  (user_name === "Steven W") {
-      message = '<font color="#1788E8">' + 'Aperture Scientist- ' + '</font>' + '<font color="#13D2CA">' + message + "</font>";
-  } else if  (user_name === "🅾️〰️📧🇳 ") {
-    message = '<font color="#1abd2d">' + 'Cool Owen- ' + '</font>' + '<font color="#ffd700">' + message + "</font>";
+      role = 'Aperture Scientist'
+  } else if  (user_name === "Owen ") {
+    role = 'Cool Owen'
   } else if  (user_name === "Dev EReal") {
-     message = '<font color="#ff8800">' + 'Founder C7- ' + '</font>' + '<font color="#08ff83">' + message + "</font>";
+     role = 'Founder C7'
   } else if (user_name === "cserverReal") {
-    message = '<font color="#ff7f00">' + 'Founder Cserver- ' + '</font>' + '<font color="#ff430a">' + message + "</font>";
+    role = 'Founder Cserver'
   }
 
   // the stupid long user_name check
   // should be on server side to be honest, but then we have to parse the string
   // on the server side
   if (user_name === "") {
-      user_name = "Anonymes";
-  } else if  (user_name === "🅾️〰️📧🇳 ") {
-      user_name = "🅾️〰️📧🇳";
-  } else if (user_name === "🅾️〰️📧🇳") {
+      user_name = "Anonymous";
+  } else if  (user_name === "Owen ") {
+      user_name = "Owen";
+  } else if (user_name === "Owen") {
     return;
   } else if (user_name === "Admin" || user_name === "admin" || user_name === "[admin]" || user_name === "[admin]" || user_name === "[ADMIN]") {
     return;
@@ -106,9 +124,6 @@ function sendMessage() {
     return;
   }
 
-  if (user_name === "") {
-      role =
-  }
 
   /* if (profile_picture === ""){
       profile_picture = "Don't have one";
@@ -118,17 +133,24 @@ function sendMessage() {
   messageElement["value"] = "";
   // We will send the message as a JSON encoding of an obejct.
   // This will simplify what is needed for future improvements
-  console.log(document.getElementById("user_name"));
-  //let user_color = document.getElementById("user_color").style.color;
-  //let user_color_name = "<font color='" + user_color + "'>" + user_name.toString() + "</font>";
+  // add this in later by changing message to user_color_name
+  let user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>";
+  let message_color_send = "<font color='" + message_color + "'>" + message + "</font>";
+  let role_color_send = "<font color='" + role_color + "'>" + role + "</font>";
   // add profile_picture before user_name after I figure out how to limit how big an image is // i know how
   // still need user chooseable colors, will add to github issue tracker
-
-  let toSend = {"message": user_name.toString() + ": " + message};
-  jsonString = JSON.stringify(toSend);
-  // Send the JSON string to the server
-  ajaxPostRequest("/send", jsonString, renderChat);
+  if (role === "") {
+    let toSend = {"message": profile_picture + user_color_name.toString() + " - " + message_color_send};
+    jsonString = JSON.stringify(toSend);
+    ajaxPostRequest("/send", jsonString, renderChat);
+  } else {
+    let toSend = {"message": profile_picture + user_color_name.toString() + " (" + role_color_send + ")" + " - " + message_color_send};
+    jsonString = JSON.stringify(toSend);
+    ajaxPostRequest("/send", jsonString, renderChat);
+  }
 }
+
+
 // This is the callback function used for both ajax requests
 // It will be called by JS automatically whenever we get a response from the server
 function renderChat(jsonData) {
@@ -188,7 +210,6 @@ function dropdownTheme() {
   document.getElementById("myDropdown").classList.toggle("show");
 }
 
-// Close a menu if the user clicks outside of it
 window.onclick = function(event) {
   if (!event.target.matches('.dropbtn')) {
     var dropdowns = document.getElementsByClassName("dropdown-content");
@@ -210,5 +231,24 @@ window.onclick = function(event) {
     //    openDropdown.classList.remove('show');
     //  }
     //}
+  }
+}
+
+//The message text color dropdown button
+
+function DropdownTXTtheme() {
+  document.getElementById("DropdownTXT").classList.toggle("showTXT");
+}
+
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtnTXT')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('showTXT')) {
+        openDropdown.classList.remove('showTXT');
+      }
+    }
   }
 }

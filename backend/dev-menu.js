@@ -55,9 +55,12 @@ function EsendMessage() {
   let toSend = {"message": "<h3> [Event]: " + message};
   jsonString = JSON.stringify(toSend);
   // Send the JSON string to the server
-  ajaxPostRequest("/event_send", jsonString, renderChat);
+  ajaxPostRequest("/force_send", jsonString, renderChat);
 }
 
+function reset_chat() {
+  ajaxGetRequest('/reset', dummyajax);
+}
 
 // get stats from the replit instance
 function getStats() {
