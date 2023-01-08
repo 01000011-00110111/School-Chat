@@ -4,6 +4,7 @@ backend/Backups/*
 # chatlog
 backend/chat.txt
 backend/chat.lock
+backend/webserver.log
 backend/Chat-backup.txt
 backend/muted.txt
 
