@@ -9,6 +9,7 @@
     <script src="static/commands.js"></script>
     <script src="static/styles.js"></script>
     <script src="static/dev-menu.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="static/style.css"> 
     <meta charset="utf-8">
     <meta name="description" content="A chat app, what else did you think this is?">
@@ -71,7 +72,16 @@
       <span id="topright" onclick="devopenNav();">🔧</span>
     <div id="chat"> 
 
-      <!-- add popup here -->
+          <div class="popup">
+      <div class="gradient-bar"></div>
+      <span class="close_popup"><i class="fas fa-times"></i></span>
+      <div class="text-wrapper">
+        <h3>Welcome to Stackfindover!</h3>
+        <p>Stack Findover is the largest, most trusted online community for developers to learn, share​ ​their programming ​knowledge, and build their careers.</p>
+        <button onclick="popupno()">No</button>
+        <button onclick="popupyes()">Yes</button>
+      </div>
+    </div>
       
     </div><br/>
     <div id="sides"> <!-- sides is here so i dont get lost -->
@@ -83,3 +93,12 @@
     </div>
   </body>
 </html>
+
+<script>
+// A $( document ).ready() block.
+$( document ).ready(function() {
+    jQuery('body').on('click','.close_popup',function() {    
+        jQuery('.modal').addClass("hide");
+    });
+});
+</script>

@@ -496,3 +496,73 @@ padding-left: 5%;
 
 /* the POPUP FOR RULES */
 
+.modal {
+  position: relative;
+  margin: auto;
+  background-color: #FFF;
+  height: 225px;
+  width: 450px;
+  border-radius: 3px;
+  overflow: hidden;
+  transition: height 1.5s; 
+}
+.fa-times {
+  float: right;
+  margin: 15px 10px;
+  color: #454545;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.fa-times:hover {
+  transform: scale(0.75);
+  color: #6b6b6b;
+}
+.text-wrapper {
+  text-align: center;
+  width: 80%;
+  font-family: "Open Sans";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.text-wrapper h3 {
+  font-size: 18px;
+}
+.text-wrapper p {
+  margin: 10px 0px 20px 0px;
+  font-size: 16px;
+  color: #454545;
+}
+.text-wrapper .button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: 600;
+  border: none;
+  margin: 0px 5px;
+  height: 40px;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.text-wrapper .button-yes {
+  background-color: #d231e7;
+  color: #FFF;
+}
+.text-wrapper .button-yes:hover {
+  background-image: none;
+  background-color: #aa31e7;
+}
+.text-wrapper .button-no {
+  border: 1px solid #454545;
+  background-color: transparent;
+  color: #454545;
+}
+.text-wrapper .button-no:hover {
+  border-color: black;
+  color: black;
+}
+.modal.hide {
+    height: 0;
+    opacity: 0;
+    transition: all 1s;
+}

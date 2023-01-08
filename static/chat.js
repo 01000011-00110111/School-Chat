@@ -80,6 +80,10 @@ function sendMessage() {
   let isCmd = is_cmd(message);
   let profile_img = "<img style='max-height:25px; max-width:25px; overflow: hidden' src='" + profile_picture + "'></img>";
 
+  //for popup temp fix too tired to make it better
+  if 
+  //
+  
   if (isMuted === true) {
     return;
   } else if (isCmd === true) {
