@@ -1,69 +1,42 @@
-import bottle
+"""Main webserver file"""
+import flask
+from flask import request
+from flask_socketio import SocketIO, send
 import json
 import chat
+import filtering
 import os
+import logging
+from flask.logging import default_handler
+
+app = flask.Flask(__name__)
+app.config['SECRET'] = os.urandom(
+  9001)  #lets hope our hacker does not have a quantum computer
+# lol
+root = logging.getLogger()
+root.addHandler(default_handler)
+# make this load from replit secrets later
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 ################################################################
 #       Functions needed to allow clients to access files      #
 ################################################################
 
 
-@bottle.route('/')
+@app.route('/')
 def index():
-  if bottle.request.params.get('dev') == "true":
-    html_file = bottle.template("dev-index.html", root=".")
+  if request.args.get('dev') == "true":
+    html_file = flask.render_template("dev-index.html")
     return html_file
   else:
-    html_file = bottle.template("index.html", root=".")
+    html_file = flask.render_template("index.html")
     return html_file
 
-@bottle.route('/changelog')
+
+@app.route('/changelog')
 def changelog():
-  html_file = bottle.template('update-log.html', root=".")
+  html_file = flask.render_template('update-log.html')
   return html_file
-
-@bottle.route('/static/style.css')
-def css_style():
-  css_file = bottle.static_file("static/style.css", root=".")
-  return css_file
-
-
-@bottle.route('/static/CSS/Event-CSS/<filepath:path>')
-def server_static(filepath):
-  return bottle.static_file(filepath, root='./static/')
-
-
-@bottle.route('/static/favicon.ico')
-def favicon():
-  favicon = bottle.static_file("images/favicon.ico", root=".")
-  return favicon
-
-
-@bottle.route('/backend/chat.js')
-def chat_file():
-  chat_js_file = bottle.static_file("backend/chat.js", root=".")
-  return chat_js_file
-
-@bottle.route('/backend/styles.js')
-def styles_js_file():
-  styles_js_file = bottle.static_file("backend/styles.js", root=".")
-  return styles_js_file
-
-@bottle.route('/backend/ajax.js')
-def ajax_file():
-  ajax_js_file = bottle.static_file("backend/ajax.js", root=".")
-  return ajax_js_file
-
-
-@bottle.route('/backend/commands.js')
-def commands_file():
-  commands_js_file = bottle.static_file("backend/commands.js", root=".")
-  return commands_js_file
-
-@bottle.route('/backend/dev-menu.js')
-def dev_menu_file():
-  dev_menu_js_file = bottle.static_file("backend/dev-menu.js", root=".")
-  return dev_menu_js_file
 
 
 ################################################################
@@ -71,79 +44,97 @@ def dev_menu_file():
 ################################################################
 
 
-@bottle.get('/chat')
+@app.get('/chat')
 def respond_with_chat():
   messages = chat.get_chat()
   ret_val = json.dumps(messages)
   return ret_val
 
+
 # send total lines in chat
-@bottle.get('/chat_count')
+@app.get('/chat_count')
 def chat_list():
   lines = chat.get_line_count()
   ret_val = json.dumps(lines)
   return ret_val
 
+
 # serves commands to client, only gets requested once at loading
-@bottle.get('/commands')
+@app.get('/commands')
 def command_list():
   commands = chat.get_command_list()
   ret_val = json.dumps(commands)
   return ret_val
 
-@bottle.get('/cmdDef')
+
+@app.get('/cmdDef')
 def command_def():
   commands = chat.get_command_defs()
   ret_val = json.dumps(commands)
   return ret_val
 
-@bottle.post('/send')
+
+@app.post('/send')
 def do_chat():
-  json_receive = bottle.request.body.read().decode()
-  message_dic = json.loads(json_receive)
+  json_receive = request.get_json(force=True)
   if os.path.exists("backend/chat.lock"):
     pass
   else:
-    chat.add_message(message_dic['message'])
+    chat.add_message(json_receive['message'])
     response = chat.get_chat()
     ret_val = json.dumps(response)
     return ret_val
 
-@bottle.post('/force_send')
+
+@app.post('/force_send')
 def force_chat():
-  json_receive = bottle.request.body.read().decode()
-  message_dic = json.loads(json_receive)
-  chat.force_message(message_dic['message'])
+  json_receive = request.get_json(force=True)
+  chat.force_message(json_receive['message'])
   response = chat.get_chat()
   ret_val = json.dumps(response)
   return ret_val
 
-@bottle.get('/lock')
+
+@app.get('/lock')
 def lock_chat():
-  chat.add_message("[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>")
+  chat.add_message(
+    "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>")
   with open("backend/chat.lock", "w") as f:
     pass
 
-@bottle.get('/unlock')
+
+@app.get('/unlock')
 def unlock_chat():
   if os.path.exists("backend/chat.lock"):
     os.remove("backend/chat.lock")
-    chat.add_message("[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>")
+    chat.add_message(
+      "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>")
   else:
     pass
 
-@bottle.get('/stats')
+
+@app.get('/stats')
 def get_stats():
   chat.get_stats()
   return
 
-@bottle.get('/reset')
+
+@app.get('/reset')
 def reset_Chat():
   chat.reset_chat(False, True)
   return
+
+
+# socketio stuff
+@socketio.on('message')
+def handle_message(message):
+  if message != "User connected to your text channel.":
+    send(message, broadcast=True)
+
 
 ################################################################
 #      Start the webserver                                     #
 ################################################################
 
-bottle.run(host="0.0.0.0", port=8080)
+if __name__ == "__main__":
+  socketio.run(app, host="0.0.0.0", port=8080)

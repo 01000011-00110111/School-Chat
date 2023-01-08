@@ -336,7 +336,7 @@ function setSpecalStyle() {
   }
 }
 
-// what is this
+// a style just for us the chat color is green  btw the specal themes work now just needed to add some stuff that was not added to the old ones
 
 function setDevStyle() {
   // set theme in cookie

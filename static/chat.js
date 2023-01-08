@@ -35,9 +35,11 @@ function runStartup() {
   let user_color = document.getElementById("user_color");
   let message_color = document.getElementById("message_color");
   let role_color = document.getElementById("role_color");
+  let roleElement = document.getElementById("role");
   user_color["value"] = getCookie("user_color");
   message_color["value"] = getCookie("message_color");
   role_color["value"] = getCookie("role_color");
+  roleElement["value"] = getCookie("role");
   userElement["value"] = getCookie("username");
 }
 
@@ -90,21 +92,15 @@ function sendMessage() {
   } else if (message === "  ") {
     return;
   } else if  (user_name === "Shatla") {
-      role = 'Cool Owen GF'
-  } else if  (user_name === "Steven W") {
-      role = 'Aperture Scientist'
-  } else if  (user_name === "Owen ") {
-    role = 'Cool Owen'
-  } else if  (user_name === "Dev EReal") {
-     role = 'Founder C7'
-  } else if (user_name === "cserverReal") {
-    role = 'Founder Cserver'
+      role = 'Cool Owen GF';
   }
 
+  // role Founder Cserver
+  // role Founder C7
   // the stupid long user_name check
   // should be on server side to be honest, but then we have to parse the string
   // on the server side
-  if (user_name === "") {
+  /*if (user_name === "") {
       user_name = "Anonymous";
   } else if  (user_name === "Owen ") {
       user_name = "Owen";
@@ -122,11 +118,6 @@ function sendMessage() {
     return;
   } else if (user_name === "SYSTEM" || user_name === "[SYSTEM]") {
     return;
-  }
-
-
-  /* if (profile_picture === ""){
-      profile_picture = "Don't have one";
   }*/
   
   // Let the user "see" the message was sent by clearing the textbox
