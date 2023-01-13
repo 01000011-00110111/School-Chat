@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-    <title>OCD wleb Potato man Skill Issue!!!1!</title>
+    <title>Class Chat STYLER/ARTIST</title>
     <link rel="icon" type="image/x-icon" href="static/favicon.ico">
     <!-- SOCKETIO IMPORT MUST BE HERE, BEFORE CHAT.JS IMPORT. IT BREAKS OTHERWISE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
@@ -16,13 +16,13 @@
     <meta name="googlebot" content="noindex,nofollow,nositelinkssearchbox,nopagereadaloud,notranslate">
 	</head>
   
-  <body onload='runCheckStartup();' id="body">
+  <body onload="runCheckStartup();" id="body">
       <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSfdCGMUhy6RwT2yMtM7Egd8bC3VNAE5_-w_8wZzyXwBX9daVg/viewform">Share ideas</a>
         <a href="https://trello.com/b/ndht1H9F/chat-plans">Trello</a>
         <a href="https://tux.school-chat.us/changelog">Update log</a>
-        <a href="https://docs.google.com/document/d/17JESl1yq2wxHypgCRimOauFCQIJboKFX1D0Jga0OYGw/edit?usp=sharing">Rules</a>
+        <a href="#no more pranks">Soon</a>
         <a href="#your safe now">Soon</a>
         <input type="text" id="user" name="username" placeholder="username" maxlength="12"></input><br/>
         <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture" hidden>
@@ -34,6 +34,10 @@
             <a id="light" onclick="setLightStyle();">Light</a>
             <a id="specal1" onclick="setSpecalStyle();">Special</a>
             <a id="event" onclick="whichEvent();">Event</a>
+            <a id="event" onclick="setTestingStyle1();">Test style 1</a>
+            <a id="event" onclick="setTestingStyle2();">Test style 2</a>
+            <a id="event" onclick="setTestingStyle3();">Test style 3</a>
+            <a id="event" onclick="setTestingStyle4();">Test style 4</a>
           </div><br>
           <h3 id="user_colorTXT">CHOOSE YOUR COLOR:</h3>
         <p id="user_colorTXT">Username: </p>
@@ -50,14 +54,13 @@
     <div id="chat">
       <div id="popup1" class="overlay">
         <div class="popup">
-          <h2>Rules</h2>
+          <h2>Editor Rules</h2>
           <h4 style="color: red;">To use the chat you must agree to all rules and folow them</h4>
           <!-- This hides it. -->
           <div class="content">
             <button class="limited_close" onclick="runLimitedStartup();">No</button>
             <button class="close" onclick="runStartup();checkMsgBox();">Yes</button>
-            <p style="color: #000000;">No spamming (no more than 3 messages by one person in a row)<br>No uppercase words<br>No Cursing<br> Keep nicknames and roles consistent and noticeable as you if changed<br>No other languages besides English allowed unless prompted by a Founder or Developer<br>No photos or images<br>No more than 3 dots a message
-</p>
+            <p style="color: #000000;">1.No spamming (no more than 3 messages by one person in a row)<br>2.No uppercase words<br>3.No Cursing<br>4.Keep nicknames and roles consistent and noticeable as you if changed<br>5.No other languages besides English allowed unless prompted by a Founder or Developer<br>6.No photos or images<br>7.No more than 3 dots a message<br>8.No abuse of power<br>9.Do not let anyone have access to dev web pages unless prompted by founders or developers<br>10.Do not edit chat.txt if you have access or don’t</p>
           </div>
         </div>
       </div>

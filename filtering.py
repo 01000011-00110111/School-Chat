@@ -1,21 +1,40 @@
-def filter_username(message):
-  user_name = message.split(":")[0]
+from bs4 import BeautifulSoup
 
-  if (user_name == ""):
-    user_name = "Anonymous"
-  elif (user_name == "Owen "):
-    user_name = "Owen"
-  elif (user_name == "Owen"):
+
+def filter_username(message):
+  message_profile = message.split("</img>")
+  messages = message_profile[1].split("-")
+  soup = BeautifulSoup(messages[0], "html.parser")
+  tags = soup.font
+
+  if (tags.string == None):
+    tags.string = "Anonymous"
+  elif (tags.string == "Owen "):
+    tags.string = "Owen"
+  elif (tags.string == "Owen"):
     return
-  elif (user_name == "Admin" or user_name == "admin" or user_name == "[admin]" or user_name == "[admin]" or user_name == "[ADMIN]"):
+  elif (tags.string == "Admin" or tags.string == "admin"
+        or tags.string == "[admin]" or tags.string == "[admin]"
+        or tags.string == "[ADMIN]" or tags.string == "ADMIN"):
     return
-  elif (user_name == "Dev EReal"): 
-    user_name = "Dev E"
-  elif (user_name == "Dev E"):
+  elif (tags.string == "mod" or tags.string == "Mod" or tags.string == "[mod]"
+        or tags.string == "[Mod]" or tags.string == "[MOD]"
+        or tags.string == "MOD"):
     return
-  elif (user_name == "cserverReal"):
-      user_name = "cserver"
-  elif (user_name == "cserver"):
+  elif (tags.string == "Dev EReal"):
+    tags.string = "Dev E"
+  elif (tags.string == "Dev E"):
     return
-  elif (user_name == "SYSTEM" or user_name == "[SYSTEM]"):
-    return#//im working on the account and google accounts is what we are doing or do you want somthing else its gona be hard ok ill push to git then /ok/ no I cant need to learn how to might need to make a stackoverflow queston
+  elif (tags.string == "cserverReal"):
+    tags.string = "cserver"
+  elif (tags.string == "cserver"):
+    return
+  elif (tags.string == "SYSTEM" or tags.string == "[SYSTEM]"):
+    return
+  messages[0] = str(soup)
+  msg = ""
+  for message_e in messages:
+    msg = msg + message_e + "-"
+
+  msg = msg.rstrip(msg[-1])
+  return msg

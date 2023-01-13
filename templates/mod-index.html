@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-    <title>OCD wleb Potato man Skill Issue!!!1!</title>
+    <title>Class Chat MOD</title>
     <link rel="icon" type="image/x-icon" href="static/favicon.ico">
     <!-- SOCKETIO IMPORT MUST BE HERE, BEFORE CHAT.JS IMPORT. IT BREAKS OTHERWISE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
@@ -9,6 +9,7 @@
     <script src="static/chat.js"></script>
     <script src="static/commands.js"></script>
     <script src="static/styles.js"></script>
+    <script src="static/dev-menu.js"></script> 
     <link rel="stylesheet" href="static/style.css"> 
     <meta charset="utf-8">
     <meta name="description" content="A chat app, what else did you think this is?">
@@ -16,7 +17,7 @@
     <meta name="googlebot" content="noindex,nofollow,nositelinkssearchbox,nopagereadaloud,notranslate">
 	</head>
   
-  <body onload='runCheckStartup();' id="body">
+  <body onload="runCheckStartup();" id="body">
       <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSfdCGMUhy6RwT2yMtM7Egd8bC3VNAE5_-w_8wZzyXwBX9daVg/viewform">Share ideas</a>
@@ -47,17 +48,33 @@
         <H4><a href="https://docs.google.com/forms/d/e/1FAIpQLSdK8bsgzEn2kzDXQTu4sc-AP2HwK8aCZ_5NYhsKWItnJz2rDQ/viewform">Report Bugs</a></H4>
       </div>
       <span id="topleft" style="font-size:40px;cursor:pointer" onclick="openNav()">&#9776;</span>
+    <div id="devSidenav" class="sidenavR">
+        <br>
+        <a href="javascript:void(0)" class="closebtnR" onclick="devcloseNav()">×</a>
+        <h3 id="Devnavtext">This is the mod menu use for admistrating chat</h3><!-- edit the text later to look nicer -->
+        <p id="Devnavtext">Enter message here and send as mod</p>
+        <input type="text" id="fsendT" placeholder="Force Send message:"><br>
+        <button onclick="FsendMessageM();" id="fsendB">Force Send</button>
+       <!-- <button onclick="lock_chat();" id="lock">Lock</button><button onclick="unlock_chat();" id="unlock">Unlock</button><br> -->
+        <p id="Devnavtext">Enter username in here for muting</p>
+        <input type="text" id="muteuserbox" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">Unmute</button><br>
+        <button onclick="ban();" id="ban">Ban</button><br>
+        <p id="Devnavtext">send stats about the chat</p>
+        <button onclick='ajaxGetRequest("/chat_count", chat_log_count);' id="chatlineB">Print total line count</button>
+        <button onclick="getStats();" id="statsB">Send server stats in chat.</button>
+        <button id="cookieRemoverB">Cookie eater</button>
+      </div>
+      <span id="topright" onclick="devopenNav();">🛡</span>
     <div id="chat">
       <div id="popup1" class="overlay">
         <div class="popup">
-          <h2>Rules</h2>
+          <h2>Mod Rules</h2>
           <h4 style="color: red;">To use the chat you must agree to all rules and folow them</h4>
           <!-- This hides it. -->
           <div class="content">
             <button class="limited_close" onclick="runLimitedStartup();">No</button>
             <button class="close" onclick="runStartup();checkMsgBox();">Yes</button>
-            <p style="color: #000000;">No spamming (no more than 3 messages by one person in a row)<br>No uppercase words<br>No Cursing<br> Keep nicknames and roles consistent and noticeable as you if changed<br>No other languages besides English allowed unless prompted by a Founder or Developer<br>No photos or images<br>No more than 3 dots a message
-</p>
+            <p style="color: #000000;">No spamming (no more than 3 messages by one person in a row)<br>No uppercase words<br>No Cursing<br> Keep nicknames and roles consistent and noticeable as you if changed<br>No other languages besides English allowed unless prompted by a Founder or Developer<br>No photos or images<br>No more than 3 dots a message<br>No abuse of power<br>Do not let anyone have access to dev web pages unless prompted by founders or developers</p>
           </div>
         </div>
       </div>

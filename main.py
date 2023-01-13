@@ -1,7 +1,7 @@
 """Main webserver file"""
 import flask
 from flask import request
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, emit
 import json
 import chat
 import filtering
@@ -13,6 +13,9 @@ app = flask.Flask(__name__)
 app.config['SECRET'] = os.urandom(
   9001)  #lets hope our hacker does not have a quantum computer
 # lol
+logging.basicConfig(filename="backend/webserver.log",
+                    filemode='a',
+                    level=logging.INFO)
 root = logging.getLogger()
 root.addHandler(default_handler)
 # make this load from replit secrets later
@@ -25,8 +28,17 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 @app.route('/')
 def index():
-  if request.args.get('dev') == "true":
+  if request.args.get('dev') == os.environ['unknownkey']:
     html_file = flask.render_template("dev-index.html")
+    return html_file
+  elif request.args.get('editor') == "true":
+    html_file = flask.render_template("editor-index.html")
+    return html_file
+  elif request.args.get('mod') == os.environ['Unknownvalue']:
+    html_file = flask.render_template("mod-index.html")
+    return html_file
+  elif request.args.get('chaos') == "true":
+    html_file = flask.render_template("chaos-index.html")
     return html_file
   else:
     html_file = flask.render_template("index.html")
@@ -55,8 +67,11 @@ def respond_with_chat():
 @app.get('/chat_count')
 def chat_list():
   lines = chat.get_line_count()
-  ret_val = json.dumps(lines)
-  return ret_val
+  emit("message_chat",
+       f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>",
+       broadcast=True,
+       namespace="/")
+  return "done"
 
 
 # serves commands to client, only gets requested once at loading
@@ -74,33 +89,43 @@ def command_def():
   return ret_val
 
 
-@app.post('/send')
+"""@app.post('/send')
 def do_chat():
   json_receive = request.get_json(force=True)
   if os.path.exists("backend/chat.lock"):
     pass
   else:
-    chat.add_message(json_receive['message'])
+    result = filtering.filter_username(json_receive['message'])
+    if result is not None:
+      chat.add_message(result)
+    # handle_message(result)
     response = chat.get_chat()
     ret_val = json.dumps(response)
-    return ret_val
+    return ret_val"""
+# now implmented in socketio
 
 
 @app.post('/force_send')
 def force_chat():
+  # probably going to leave this as a html request, but still send to all (add send tag)
   json_receive = request.get_json(force=True)
   chat.force_message(json_receive['message'])
-  response = chat.get_chat()
-  ret_val = json.dumps(response)
-  return ret_val
+  emit("message_chat", json_receive['message'], broadcast=True, namespace="/")
+  return "done"
 
 
 @app.get('/lock')
 def lock_chat():
   chat.add_message(
     "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>")
+  emit("message_chat",
+       "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>",
+       broadcast=True,
+       namespace="/")
   with open("backend/chat.lock", "w") as f:
     pass
+
+  return "done"
 
 
 @app.get('/unlock')
@@ -109,28 +134,64 @@ def unlock_chat():
     os.remove("backend/chat.lock")
     chat.add_message(
       "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>")
+    emit("message_chat",
+         "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>",
+         broadcast=True,
+         namespace="/")
   else:
     pass
+
+  return "done"
 
 
 @app.get('/stats')
 def get_stats():
-  chat.get_stats()
-  return
+  result = chat.get_stats()
+  emit("message_chat", result, broadcast=True, namespace="/")
+  return "done"
 
 
 @app.get('/reset')
 def reset_Chat():
   chat.reset_chat(False, True)
-  return
+  emit("reset_chat", broadcast=True, namespace="/")
+  return "done"
 
 
 # socketio stuff
-@socketio.on('message')
-def handle_message(message):
-  if message != "User connected to your text channel.":
-    send(message, broadcast=True)
+@socketio.on('connect')
+def handle_connect(message):
+  print(message)
+  # not working at the moment, possibly different, will check docs later
 
+
+@socketio.on("admin_cmd")
+def handle_admin_stuff(cmd):
+  if cmd == "blanks":
+    chat.line_blanks()
+
+
+@socketio.on('message_chat')
+def handle_message(message):
+  print(message)
+  if os.path.exists("backend/chat.lock"):
+    pass
+  else:
+    result = filtering.filter_username(message)
+    if result is not None:
+      chat.add_message(result)
+      emit("message_chat", result, broadcast=True)
+
+
+# temporary, will be in diffrent namespace soon
+@socketio.on('admin_message')
+def handle_admin_message(message):
+  chat.force_message(message)
+  emit("message_chat", message, broadcast=True, namespace="/")
+
+
+#if message != "User connected to your text channel.":
+#  send(message, broadcast=True)
 
 ################################################################
 #      Start the webserver                                     #

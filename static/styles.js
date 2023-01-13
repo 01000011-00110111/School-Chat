@@ -7,7 +7,7 @@ function setTheme(theme) {
 
 // for event theme
 // set what event is currently being used
-function whichEvent(event = "hollow") {
+function whichEvent(event = "dark") {
   // SET WHAT EVENT IS HAPPENING HERE
   // MUST BE ALL LOWERCASE TO WORK
 
@@ -30,6 +30,14 @@ function whichEvent(event = "hollow") {
     setSpecalStyle();
   } else if (event === "dev") {
     setDevStyle();
+  } else if (event === "testing1") {
+    setTestingStyle1();
+  } else if (event === "testing2") {
+    setTestingStyle2();
+  } else if (event === "testing3") {
+    setTestingStyle3();
+  } else if (event === "testing4") {
+    setTestingStyle4();
   }
 }
   
@@ -336,7 +344,7 @@ function setSpecalStyle() {
   }
 }
 
-// a style just for us the chat color is green  btw the specal themes work now just needed to add some stuff that was not added to the old ones
+
 
 function setDevStyle() {
   // set theme in cookie
@@ -366,5 +374,132 @@ function setDevStyle() {
   // for loop to cycle thru links in sidebar
   for (let i = 0; i < snav_iter; i++) {
     snav_text[i].style.color = "#818181";
+  }
+}
+
+
+
+//owens testing styles for all themes
+  function setTestingStyle1() {
+  // set theme in cookie
+  setTheme("testing1");
+  // get all id tags
+  let body = document.getElementById("body");
+  let chat = document.getElementById("chat");
+  let message = document.getElementById("message");
+  let chatbox = document.getElementById("chatbox");
+  let sides = document.getElementById("sides");
+  let topleft = document.getElementById("topleft");
+  let send = document.getElementById("send");
+  let sidenav = document.getElementsByClassName("sidenav")[0]
+  let snav_text = sidenav.getElementsByTagName("a")
+  let snav_iter = snav_text.length;
+  // then set the color to what it is in the css document
+  body.style.backgroundColor = "#434270";
+  chat.style.color = "#000000";
+  message.style.color = "#000000";
+  chatbox.style.backgroundColor = "#deddda";
+  sides.style.backgroundColor = "#c0bfbc";
+  topleft.style.backgroundColor = "#5A5A5A";
+  topleft.style.color = "#000000";
+  send.style.backgroundColor = "#343cad";
+  send.style.color = "#ffffff";
+  sidenav.style.backgroundColor = "#729fcf";
+  // for loop to cycle thru links in sidebar
+  for (let i = 0; i < snav_iter; i++) {
+    snav_text[i].style.color = "#313536";
+  }
+}
+
+  function setTestingStyle2() {
+  // set theme in cookie
+  setTheme("testing2");
+  // get all id tags
+  let body = document.getElementById("body");
+  let chat = document.getElementById("chat");
+  let message = document.getElementById("message");
+  let chatbox = document.getElementById("chatbox");
+  let sides = document.getElementById("sides");
+  let topleft = document.getElementById("topleft");
+  let send = document.getElementById("send");
+  let sidenav = document.getElementsByClassName("sidenav")[0]
+  let snav_text = sidenav.getElementsByTagName("a")
+  let snav_iter = snav_text.length;
+  // then set the color to what it is in the css document
+  body.style.backgroundColor = "#434270";
+  chat.style.color = "#000000";
+  message.style.color = "#000000";
+  chatbox.style.backgroundColor = "#deddda";
+  sides.style.backgroundColor = "#c0bfbc";
+  topleft.style.backgroundColor = "#5A5A5A";
+  topleft.style.color = "#000000";
+  send.style.backgroundColor = "#343cad";
+  send.style.color = "#ffffff";
+  sidenav.style.backgroundColor = "#729fcf";
+  // for loop to cycle thru links in sidebar
+  for (let i = 0; i < snav_iter; i++) {
+    snav_text[i].style.color = "#313536";
+  }
+}
+
+  function setTestingStyle3() {
+  // set theme in cookie
+  setTheme("testing3");
+  // get all id tags
+  let body = document.getElementById("body");
+  let chat = document.getElementById("chat");
+  let message = document.getElementById("message");
+  let chatbox = document.getElementById("chatbox");
+  let sides = document.getElementById("sides");
+  let topleft = document.getElementById("topleft");
+  let send = document.getElementById("send");
+  let sidenav = document.getElementsByClassName("sidenav")[0]
+  let snav_text = sidenav.getElementsByTagName("a")
+  let snav_iter = snav_text.length;
+  // then set the color to what it is in the css document
+  body.style.backgroundColor = "#434270";
+  chat.style.color = "#000000";
+  message.style.color = "#000000";
+  chatbox.style.backgroundColor = "#deddda";
+  sides.style.backgroundColor = "#c0bfbc";
+  topleft.style.backgroundColor = "#5A5A5A";
+  topleft.style.color = "#000000";
+  send.style.backgroundColor = "#343cad";
+  send.style.color = "#ffffff";
+  sidenav.style.backgroundColor = "#729fcf";
+  // for loop to cycle thru links in sidebar
+  for (let i = 0; i < snav_iter; i++) {
+    snav_text[i].style.color = "#313536";
+  }
+}
+
+  function setTestingStyle4() {
+  // set theme in cookie
+  setTheme("testing4");
+  // get all id tags
+  let body = document.getElementById("body");
+  let chat = document.getElementById("chat");
+  let message = document.getElementById("message");
+  let chatbox = document.getElementById("chatbox");
+  let sides = document.getElementById("sides");
+  let topleft = document.getElementById("topleft");
+  let send = document.getElementById("send");
+  let sidenav = document.getElementsByClassName("sidenav")[0]
+  let snav_text = sidenav.getElementsByTagName("a")
+  let snav_iter = snav_text.length;
+  // then set the color to what it is in the css document
+  body.style.backgroundColor = "#434270";
+  chat.style.color = "#000000";
+  message.style.color = "#000000";
+  chatbox.style.backgroundColor = "#deddda";
+  sides.style.backgroundColor = "#c0bfbc";
+  topleft.style.backgroundColor = "#5A5A5A";
+  topleft.style.color = "#000000";
+  send.style.backgroundColor = "#343cad";
+  send.style.color = "#ffffff";
+  sidenav.style.backgroundColor = "#729fcf";
+  // for loop to cycle thru links in sidebar
+  for (let i = 0; i < snav_iter; i++) {
+    snav_text[i].style.color = "#313536";
   }
 }

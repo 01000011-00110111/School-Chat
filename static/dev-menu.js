@@ -7,44 +7,68 @@ function systemmessage() {
 
   message = '<font color="#ff7f00">' + messageElement["value"] + '</font>'
   messageElement["value"] = "";
-  let toSend = {"message": "[SYSTEM]: " + message};
-  jsonString = JSON.stringify(toSend);
-  // Send the JSON string to the server
-  ajaxPostRequest("/force_send", jsonString, renderChat);
+  let toSend = "[SYSTEM]: " + message
+  // send to socketio
+  socket.emit('admin_message', toSend);
 }
+//"<a href='" + urlElement + "'>" + urlsendElement + "</a>"
+function urlsend() {
+  let urlElement = document.getElementById('urlsendT');
+  let urlsendElement = document.getElementById('urlsendT2');
+  message = "<a href='" + urlElement["value"] + "'>";
+  urlmessage = urlsendElement["value"];
+  urlElement["value"] = "";
+  urlsendElement["value"] = "";
+  let toSend = "[URL] - " + message + urlmessage + "</a>"
+  if (message === "<a href=''>") {
+    return;
+  } else if (urlmessage === "") {
+    return;
+  }  
+  socket.emit('admin_message', toSend);
+}
+// let hrefurlElement = "<a href='" + urlElement + "'>" + urlsendElement + "</a>"
+// let message = hrefurlElement
 
 //the force send code need a better info here
-function FsendMessage() {
+function FsendMessageA() {
   let messageElement = document.getElementById('fsendT');
   // 100% CPU usage lol on tablet lol
   //console.log(document.getElementById("user_name"));
-  let toSend = {"message": "[Admin]: " + messageElement.value};
-  jsonString = JSON.stringify(toSend);
+  let toSend = "[Admin]: " + messageElement.value
 
   messageElement.value = "";
   // we use a diffrent endpoint, so it doesen't get blocked by the add_message function on the server end
   // also gets rid of a lot of checks inside add_message
-  ajaxPostRequest("/force_send", jsonString, renderChat);
+  socket.emit('admin_message', toSend);
+} 
+
+function FsendMessageM() {
+  let messageElement = document.getElementById('fsendT');
+  // 100% CPU usage lol on tablet lol
+  //console.log(document.getElementById("user_name"));
+  let toSend = "[Mod]: " + messageElement.value
+
+  messageElement.value = "";
+  // we use a diffrent endpoint, so it doesen't get blocked by the add_message function on the server end
+  // also gets rid of a lot of checks inside add_message
+  socket.emit('admin_message', toSend);
 } 
 
 // take a img url, and convert it into a img html tag
 function sendImage() {
   let messageElement = document.getElementById("sendimgT");
-  let toSend = {"message": "<img src='" + messageElement["value"] + "'></img>"};
-  jsonString = JSON.stringify(toSend);
+  let toSend = "<img src='" + messageElement["value"] + "'></img>"
 
   messageElement["value"] = "";
-  
-  ajaxPostRequest("/send", jsonString, renderChat);
+
+  socket.emit('admin_message', toSend);
 }
 
 // send a bunch of black lines to chat system
 function testChatGC() {
-  let toSend = {"message": '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nnothing to see here\n</font>'};
-  jsonString = JSON.stringify(toSend);
-  ajaxPostRequest("/send", jsonString, renderChat);
+  socket.emit('admin_cmd', "blanks");
 }
-//{"message": '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'};
 
 function EsendMessage() {
   // just bits and pieces from sendMessage
@@ -52,10 +76,9 @@ function EsendMessage() {
 
   message = '<font color="e54e40">' + messageElement["value"] + '</font>' + "</h3>"
   messageElement["value"] = "";
-  let toSend = {"message": "<h3> [Event]: " + message};
-  jsonString = JSON.stringify(toSend);
-  // Send the JSON string to the server
-  ajaxPostRequest("/force_send", jsonString, renderChat);
+  let toSend = "<h3> [Event]: " + message
+  // send via socketio
+  socket.emit('admin_message', toSend);
 }
 
 function reset_chat() {

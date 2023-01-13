@@ -101,6 +101,7 @@ padding-left: 5%;
   width: 0%;
   margin-left: 95%;
   margin-top: 1%;
+  margin-bottom: 1%;
   font-size:30px;
   cursor: pointer;
 }
@@ -496,73 +497,80 @@ padding-left: 5%;
 
 /* the POPUP FOR RULES */
 
-.modal {
-  position: relative;
-  margin: auto;
-  background-color: #FFF;
-  height: 225px;
-  width: 450px;
-  border-radius: 3px;
-  overflow: hidden;
-  transition: height 1.5s; 
+.popupbox {
+    width: 20%;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 35px;
+    border: 2px solid #fff;
+    border-radius: 20px/50px;
+    background-clip: padding-box;
+    text-align: center;
 }
-.fa-times {
-  float: right;
-  margin: 15px 10px;
-  color: #454545;
-  cursor: pointer;
-  transition: all 0.3s;
+
+.popup {
+    margin: 70px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+    width: 30%;
+    position: relative;
 }
-.fa-times:hover {
-  transform: scale(0.75);
-  color: #6b6b6b;
+
+.popup h2 {
+    margin-top: 0;
+    color: #333;
+    font-family: Tahoma, Arial, sans-serif;
 }
-.text-wrapper {
-  text-align: center;
-  width: 80%;
-  font-family: "Open Sans";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+
+.popup .close {
+    position: absolute;
+    top: 20px;
+    right: 100px;
+    transition: all 200ms;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
 }
-.text-wrapper h3 {
-  font-size: 18px;
+
+.popup .limited_close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    transition: all 200ms;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
 }
-.text-wrapper p {
-  margin: 10px 0px 20px 0px;
-  font-size: 16px;
-  color: #454545;
+
+/*.popup .close:hover {
+    color: orange;
+}*/
+
+.popup .content {
+    max-height: 30%;
+    overflow: auto;
 }
-.text-wrapper .button {
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-weight: 600;
-  border: none;
-  margin: 0px 5px;
-  height: 40px;
-  transition: all 0.3s;
-  cursor: pointer;
+
+.popupoverlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
 }
-.text-wrapper .button-yes {
-  background-color: #d231e7;
-  color: #FFF;
+
+/* These are the rules you are looking for. */
+.popupoverlay {
+    transition: opacity 500ms;
+    opacity: 1;
+    pointer-events: all;
 }
-.text-wrapper .button-yes:hover {
-  background-image: none;
-  background-color: #aa31e7;
-}
-.text-wrapper .button-no {
-  border: 1px solid #454545;
-  background-color: transparent;
-  color: #454545;
-}
-.text-wrapper .button-no:hover {
-  border-color: black;
-  color: black;
-}
-.modal.hide {
-    height: 0;
+
+.popupoverlay:target {
     opacity: 0;
-    transition: all 1s;
+    pointer-events: none;
 }

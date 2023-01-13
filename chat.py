@@ -1,6 +1,7 @@
 import psutil
 from time import time
 from datetime import timedelta, datetime
+from flask_socketio import emit
 
 logfile = "backend/chat.txt"
 logfile_b = "backend/Chat-backup.txt"
@@ -24,8 +25,12 @@ def get_line_count():
     lines = len(f.readlines())
   with open(logfile, "a") as f:
     f.write(f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n")
-    ret_val.append(lines)
+    ret_val = lines
   return ret_val
+
+def line_blanks():
+  add_message('[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>')
+  emit("message_chat", '[SYSTEM]: <font color="#ff7f00">nothing to see here <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>nothing to see here<br></font>')
 
 
 def get_stats():
@@ -52,10 +57,10 @@ def get_stats():
   lines_f = f"Temp logfile: {lines} lines.\nBackup logfile: {lines_b} lines."
   uptime_f = f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds."
   cpu_info = f"Threads: {thread_count}"
-  longstats = f"{begin_f}\n{lines_f}\n{uptime_f}\n"
+  longstats = f"{begin_f}<br>{lines_f}<br>{uptime_f}<br>{cpu_info}<br>"
   with open(logfile, "a") as f:
     f.write(longstats)
-  return
+  return longstats
 
 
 # Adds the message text to our file containing all the messages
@@ -71,7 +76,7 @@ def add_message(message_text):
     date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
     f_out.write(date + message_text + "\n")
   # This return is not needed, but ensures replit shows the updated
-  # file when it is selected from the file browser during our demo
+  # file when it is selected from the file browser
   return None
 
 
@@ -80,11 +85,15 @@ def reset_chat(message, admin):
     with open(logfile, "w") as f_out:
       f_out.write(
         "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n")
+      emit("reset_chat", "admin", broadcast=True, namespace="/")
+    return "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n"
   else:
     with open(logfile, "w") as f_out:
       f_out.write(
         "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n"
         + message + "\n")
+      emit("reset_chat", "auto", broadcast=True, namespace="/")
+    return "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n" + message + "\n"
 
 
 # force the message text to our file containing all the messages
