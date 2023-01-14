@@ -25,11 +25,12 @@
   z-index: 0;
 	height: calc(100% - 24px);
 	padding-left: 5%;
-  padding-right: 15%;
+  padding-right: 12%;
   margin-left: 1.5%;
   line-height: 32px;
   padding-bottom: 9%;
   padding-top: 9%;
+  word-wrap: break-word;
 }
 
 #message {
