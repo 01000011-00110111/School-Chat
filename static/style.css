@@ -25,7 +25,7 @@
   z-index: 0;
 	height: calc(100% - 24px);
 	padding-left: 5%;
-  padding-top: 4%;
+  padding-right: 15%;
   margin-left: 1.5%;
   line-height: 32px;
   padding-bottom: 9%;
@@ -64,7 +64,17 @@
   padding-bottom: 7%;
   /*border-top: 5px solid black*/
 }
-/* rember yo email your next semester clases and teacher in order */
+
+#activenav {
+position: fixed;
+bottom: 0%;
+width: 100%;
+padding-bottom: 54%;
+background-color: white;
+margin-left: 88%;
+border-left: 5px solid blue;
+}
+
 #send {
   font-size: 24px;
   border-radius: 20px;
@@ -99,7 +109,7 @@ padding-left: 5%;
 #topright {
   position: fixed;
   width: 0%;
-  margin-left: 95%;
+  margin-left: 85%;
   margin-top: 1%;
   margin-bottom: 1%;
   font-size:30px;
