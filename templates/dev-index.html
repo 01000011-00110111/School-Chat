@@ -13,6 +13,7 @@
     <script src="static/commands.js"></script>
     <script src="static/styles.js"></script>
     <script src="static/dev-menu.js"></script>
+    <script src="static/accounts.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="static/style.css"> 
     <meta charset="utf-8">
@@ -29,6 +30,7 @@
         <a href="https://replit.com/@School-chat-room/School-Chat">Code Page</a>
         <a href="https://stackoverflow.com">Need help with code?</a>
         <a href="change-to-flask-please">Webserver info</a>
+        <button id="login" onclick="openForm()"">Login</button>
         <input type="text" id="user" name="username" placeholder="username" maxlength="12"><br>
         <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
         <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
@@ -89,6 +91,20 @@
           </div>
         </div>
       </div>
+<div class="form-popup" id="accountlogin">
+  <form action="/action_page.php" class="form-container">
+    <h1>Login</h1>
+
+    <label for="email"><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="email" required>
+
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" required>
+
+    <button type="submit" class="btn">Login</button>
+    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+  </form>
+</div>
     </div><br/>
     <div id="sides">  <!-- sides is here so i dont get lost -->
       <div id="chatbox">      
