@@ -9,10 +9,6 @@ def filter_username(message):
 
   if (tags.string == None):
     tags.string = "Anonymous"
-  elif (tags.string == "Owen "):
-    tags.string = "Owen"
-  elif (tags.string == "Owen"):
-    return
   elif (tags.string == "Admin" or tags.string == "admin"
         or tags.string == "[admin]" or tags.string == "[admin]"
         or tags.string == "[ADMIN]" or tags.string == "ADMIN"):

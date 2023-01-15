@@ -37,7 +37,7 @@ def index():
   elif request.args.get('mod') == os.environ['Unknownvalue']:
     html_file = flask.render_template("mod-index.html")
     return html_file
-  elif request.args.get('chaos') == "true":
+  elif request.args.get('dev') == "true":
     html_file = flask.render_template("chaos-index.html")
     return html_file
   else:
