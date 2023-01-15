@@ -59,7 +59,6 @@ function runCheckStartup() {
 // what happens if you don't agree to the rules
 function runLimitedStartup() {
   runStartup();
-
   // lock the abbility to type in chat
   let message_box = document.getElementById('message');
   let send = document.getElementById('send');
@@ -73,6 +72,7 @@ function runLimitedStartup() {
 
 // stuff to run at startup and what happens when you do agree to the rules
 function runStartup() {
+   access= 'true'
   document.cookie = "access=" + access + "; path=/";
   socket.on("connect", () => {
     socket.send("John doe knows all");
