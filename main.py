@@ -1,13 +1,13 @@
 """Main webserver file"""
-import flask
-from flask import request
-from flask_socketio import SocketIO, emit
-import json
-import chat
-import filtering
 import os
 import logging
+import json
+import flask
+from flask import request
 from flask.logging import default_handler
+from flask_socketio import SocketIO, emit
+import chat
+import filtering
 
 app = flask.Flask(__name__)
 app.config['SECRET'] = os.urandom(
@@ -28,6 +28,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 @app.route('/')
 def index():
+    """Serve the main html page, modified if permission is granted."""
     if request.args.get('dev') == os.environ['unknownkey']:
         html_file = flask.render_template("dev-index.html")
         return html_file
@@ -40,13 +41,14 @@ def index():
     elif request.args.get('dev') == "true":
         html_file = flask.render_template("chaos-index.html")
         return html_file
-    else:
-        html_file = flask.render_template("index.html")
-        return html_file
+        
+    html_file = flask.render_template("index.html")
+    return html_file
 
 
 @app.route('/changelog')
 def changelog():
+    """Serve the changelog."""
     html_file = flask.render_template('update-log.html')
     return html_file
 
@@ -58,6 +60,7 @@ def changelog():
 
 @app.get('/chat')
 def respond_with_chat():
+    """Legacy function only used now for inital chat load."""
     messages = chat.get_chat()
     ret_val = json.dumps(messages)
     return ret_val
@@ -66,6 +69,7 @@ def respond_with_chat():
 # send total lines in chat
 @app.get('/chat_count')
 def chat_list():
+    """Print line count of the chat in the chat."""
     lines = chat.get_line_count()
     emit("message_chat",
          f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>",
@@ -77,6 +81,7 @@ def chat_list():
 # serves commands to client, only gets requested once at loading
 @app.get('/commands')
 def command_list():
+    """Return the current commands, probably will be scraped later."""
     commands = chat.get_command_list()
     ret_val = json.dumps(commands)
     return ret_val
@@ -84,30 +89,14 @@ def command_list():
 
 @app.get('/cmdDef')
 def command_def():
+    """Return the current command definitions, probably will be scraped later."""
     commands = chat.get_command_defs()
     ret_val = json.dumps(commands)
     return ret_val
 
-
-"""@app.post('/send')
-def do_chat():
-  json_receive = request.get_json(force=True)
-  if os.path.exists("backend/chat.lock"):
-    pass
-  else:
-    result = filtering.filter_username(json_receive['message'])
-    if result is not None:
-      chat.add_message(result)
-    # handle_message(result)
-    response = chat.get_chat()
-    ret_val = json.dumps(response)
-    return ret_val"""
-# now implmented in socketio
-
-
 @app.post('/force_send')
 def force_chat():
-    # probably going to leave this as a html request, but still send to all (add send tag)
+    """Legacy function that will be removed later."""
     json_receive = request.get_json(force=True)
     chat.force_message(json_receive['message'])
     emit("message_chat",
@@ -119,13 +108,14 @@ def force_chat():
 
 @app.get('/lock')
 def lock_chat():
+    """Lock the chat on the server side."""
     chat.add_message(
         "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>")
     emit("message_chat",
          "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>",
          broadcast=True,
          namespace="/")
-    with open("backend/chat.lock", "w") as f:
+    with open("backend/chat.lock", "w"):
         pass
 
     return "done"
@@ -133,6 +123,7 @@ def lock_chat():
 
 @app.get('/unlock')
 def unlock_chat():
+    """Unlock the chat on the server side."""
     if os.path.exists("backend/chat.lock"):
         os.remove("backend/chat.lock")
         chat.add_message(
@@ -149,13 +140,15 @@ def unlock_chat():
 
 @app.get('/stats')
 def get_stats():
+    """Send the server statistics in the chat."""
     result = chat.get_stats()
     emit("message_chat", result, broadcast=True, namespace="/")
     return "done"
 
 
 @app.get('/reset')
-def reset_Chat():
+def reset_chat():
+    """Wipe the chat on admin request."""
     chat.reset_chat(False, True)
     emit("reset_chat", broadcast=True, namespace="/")
     return "done"
@@ -164,18 +157,21 @@ def reset_Chat():
 # socketio stuff
 @socketio.on('connect')
 def handle_connect(message):
+    """Will be used later for online users."""
     print(message)
     # not working at the moment, possibly different, will check docs later
 
 
 @socketio.on("admin_cmd")
 def handle_admin_stuff(cmd):
+    """Admin commands will be sent here."""
     if cmd == "blanks":
         chat.line_blanks()
 
 
 @socketio.on('message_chat')
 def handle_message(message):
+    """New socketio implemntation for chat message handling."""
     print(message)
     if os.path.exists("backend/chat.lock"):
         pass
@@ -189,6 +185,7 @@ def handle_message(message):
 # temporary, will be in diffrent namespace soon
 @socketio.on('admin_message')
 def handle_admin_message(message):
+    """Bypass message filtering, used when chat is locked."""
     chat.force_message(message)
     emit("message_chat", message, broadcast=True, namespace="/")
 
