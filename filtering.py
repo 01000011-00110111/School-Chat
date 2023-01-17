@@ -1,3 +1,4 @@
+"""Filter usernames and make the chat more xss safe"""
 from bs4 import BeautifulSoup
 
 

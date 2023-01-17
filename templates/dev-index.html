@@ -1,124 +1,124 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Class Chat DEV</title>
-    <link rel="icon" type="image/x-icon" href="static/favicon.ico">
-    <!-- SOCKETIO IMPORT MUST BE HERE, BEFORE CHAT.JS IMPORT. IT BREAKS OTHERWISE -->
-    <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
-    <script src="static/ajax.js"></script>
-    <script src="static/chat.js"></script>
-    <script src="static/commands.js"></script>
-    <script src="static/styles.js"></script>
-    <script src="static/dev-menu.js"></script>
-    <script src="static/accounts.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="static/style.css"> 
-    <meta charset="utf-8">
-    <meta name="description" content="A chat app, what else did you think this is?">
-    <meta name="author" content="C7, cserver">
-    <meta name="googlebot" content="noindex,nofollow,nositelinkssearchbox,nopagereadaloud,notranslate">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <title>Class Chat DEV</title>
+        <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+        <!-- SOCKETIO IMPORT MUST BE HERE, BEFORE CHAT.JS IMPORT. IT BREAKS OTHERWISE -->
+        <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+        <script src="static/ajax.js"></script>
+        <script src="static/chat.js"></script>
+        <script src="static/commands.js"></script>
+        <script src="static/styles.js"></script>
+        <script src="static/dev-menu.js"></script>
+        <script src="static/accounts.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="static/style.css"> 
+        <meta charset="utf-8">
+        <meta name="description" content="A chat app, what else did you think this is?">
+        <meta name="author" content="C7, cserver">
+        <meta name="googlebot" content="noindex,nofollow,nositelinkssearchbox,nopagereadaloud,notranslate">
 	</head>
   
-  <body id="body" onload="runCheckStartup();" > <!-- onload="runStartup();" --> 
-      <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-        <a href="https://www.djangoproject.com/">dev Info</a>
-        <a href="#soon">Tux Do List</a>
-        <a href="https://replit.com/@School-chat-room/School-Chat">Code Page</a>
-        <a href="https://stackoverflow.com">Need help with code?</a>
-        <a href="change-to-flask-please">Webserver info</a>
-        <button class="open-button" onclick="openForm()">Open Form</button>
-        <button id="login" onclick="openForm()"">Login</button>
-        <input type="text" id="user" name="username" placeholder="username" maxlength="12"><br>
-        <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
-        <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
-        <div class="colorDropdown">
-          <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
-          <div id="myDropdown" class="dropdown-content">
-            <a id="dark" onclick="setDarkStyle();">Dark</a>
-            <a id="light" onclick="setLightStyle();">Light</a>
-            <a id="specal1" onclick="setSpecalStyle();">Specal</a>
-            <a id="event" onclick="whichEvent();">Event</a>
-            <a id="dark" onclick="setDevStyle()">Dev</a>
-          <!--  <button id="specal2" onclick="">Soon</button>-->
-          </div>
-        <h3><a href="mailto:harperom62@k12louisa.org">Contact us</a></h3>
-        </div><br>
-        <h3 id="user_colorTXT" >CHOOSE YOUR COLOR:</h3>
-        <p id="user_colorTXT">Username: </p>
-        <input type="color" value="#ffffff" id="user_color" name="color choser"><br>
-        <p id="user_colorTXT">Role: </p>
-        <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
-        <p id="user_colorTXT">Message: </p>
-        <input type="color" value="#ffffff" id="message_color" name="color choser">
-      </div>
-      <span id="topleft" onclick="openNav()">☰</span>
-      <div id="devSidenav" class="sidenavR">
-        <br>
-        <a href="javascript:void(0)" class="closebtnR" onclick="devcloseNav()">×</a>
-        <h3 id="Devnavtext">This is the dev menu use for testing and admistrating chat</h3><!-- edit the text later to look nicer -->
-        <p id="Devnavtext">Enter message here and send as admin</p>
-        <input type="text" id="fsendT" placeholder="Force Send message:"><br>
-        <button onclick="FsendMessageA();" id="fsendB">Force Send</button>
-        <button onclick="lock_chat();" id="lock">Lock</button><button onclick="unlock_chat();" id="unlock">Unlock</button><br>
-        <p id="Devnavtext">Enter username in here for muting</p>
-        <input type="text" id="muteuserbox" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">unmute</button><br>
-        <button onclick="ban();" id="ban">Ban</button>
-        <button id="cookieRemoverB">Cookie eater</button>
-        <p id="Devnavtext">Send message as SYSTEM user</p>
-        <input type="text" id="systemsendT" placeholder="Send message as SYSTEM"><button onclick="systemmessage();" id="systemsendB">Send</button><br>
-        <button onclick='ajaxGetRequest("/chat_count", chat_log_count);' id="chatlineB">Print total line count</button>
-        <button onclick="testChatGC();" id="chatspamB">Send 100 Empty lines</button>
-        <button onclick="getStats();" id="statsB">Send server stats in chat.</button><button onclick="reset_chat()" id="ChatrestB">Reset chat</button><br>
-        <input type="text" id="sendimgT" placeholder="Paste img url here"><button onclick="sendImage();" id="sendimgB">Send</button><br>
-        <p id="Devnavtext">Send messages in bold/biger</p>
-        <input type="text" id="EventMSGT" placeholder="Send message here"><button onclick="EsendMessage();" id="EventMSGB">Send</button>
-        <input type="text" id="urlsendT" placeholder="paste url here"><input type="text" id="urlsendT2" placeholder="put message here"><button onclick="urlsend()" id="urlsendB">Send</button>
-      </div>
-      <span id="topright" onclick="devopenNav();">🔧</span>
-    <div id="chat"> 
-      <div id="popup1" class="overlay">
-        <div class="popup">
-          <h2>Dev Rules</h2>
-          <h4 style="color: red;">To use the chat you must agree to all rules and folow them</h4>
-          <!-- This hides it. -->
-          <div class="content">
-            <button class="limited_close" onclick="runLimitedStartup();">No</button>
-            <button class="close" onclick="runStartup();checkMsgBox();">Yes</button>
-            <p style="color: #000000;">1.No spamming (no more than 3 messages by one person in a row)<br>2.No uppercase words<br>3.No Cursing<br>4.Keep nicknames and roles consistent and noticeable as you if changed<br>5.No other languages besides English allowed unless prompted by a Founder or Developer<br>6.No photos or images<br>7.No more than 3 dots a message<br>8.No abuse of power<br>9.Do not let anyone have access to dev web pages unless prompted by founders or developers<br>10.Do not edit chat.txt if you have access or don’t</p>
-          </div>
+    <body id="body" onload="runCheckStartup();" > <!-- onload="runStartup();" --> 
+        <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+            <a href="https://www.djangoproject.com/">dev Info</a>
+            <a href="#soon">Tux Do List</a>
+            <a href="https://replit.com/@School-chat-room/School-Chat">Code Page</a>
+            <a href="https://stackoverflow.com">Need help with code?</a>
+            <a href="change-to-flask-please">Webserver info</a>
+            <button class="open-button" onclick="openForm()">Open Form</button>
+            <button id="login" onclick="openForm()"">Login</button>
+            <input type="text" id="user" name="username" placeholder="username" maxlength="12"><br>
+            <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
+            <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
+            <div class="colorDropdown">
+                <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
+                <div id="myDropdown" class="dropdown-content">
+                    <a id="dark" onclick="setDarkStyle();">Dark</a>
+                    <a id="light" onclick="setLightStyle();">Light</a>
+                    <a id="specal1" onclick="setSpecalStyle();">Specal</a>
+                    <a id="event" onclick="whichEvent();">Event</a>
+                    <a id="dark" onclick="setDevStyle()">Dev</a>
+                    <!--  <button id="specal2" onclick="">Soon</button>-->
+                </div>
+                <h3><a href="mailto:harperom62@k12louisa.org">Contact us</a></h3>
+            </div><br>
+            <h3 id="user_colorTXT" >CHOOSE YOUR COLOR:</h3>
+            <p id="user_colorTXT">Username: </p>
+            <input type="color" value="#ffffff" id="user_color" name="color choser"><br>
+            <p id="user_colorTXT">Role: </p>
+            <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
+            <p id="user_colorTXT">Message: </p>
+            <input type="color" value="#ffffff" id="message_color" name="color choser">
         </div>
-      </div>
+        <span id="topleft" onclick="openNav()">☰</span>
+        <div id="devSidenav" class="sidenavR">
+            <br>
+            <a href="javascript:void(0)" class="closebtnR" onclick="devcloseNav()">×</a>
+            <h3 id="Devnavtext">This is the dev menu use for testing and admistrating chat</h3>
+            <p id="Devnavtext">Enter message here and send as admin</p>
+            <input type="text" id="fsendT" placeholder="Force Send message:"><br>
+            <button onclick="FsendMessageA();" id="fsendB">Force Send</button>
+            <button onclick="lock_chat();" id="lock">Lock</button><button onclick="unlock_chat();" id="unlock">Unlock</button><br>
+            <p id="Devnavtext">Enter username in here for muting</p>
+            <input type="text" id="muteuserbox" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">unmute</button><br>
+            <button onclick="ban();" id="ban">Ban</button>
+            <button id="cookieRemoverB">Cookie eater</button>
+            <p id="Devnavtext">Send message as SYSTEM user</p>
+            <input type="text" id="systemsendT" placeholder="Send message as SYSTEM"><button onclick="systemmessage();" id="systemsendB">Send</button><br>
+            <button onclick='ajaxGetRequest("/chat_count", chat_log_count);' id="chatlineB">Print total line count</button>
+            <button onclick="testChatGC();" id="chatspamB">Send 100 Empty lines</button>
+            <button onclick="getStats();" id="statsB">Send server stats in chat.</button><button onclick="reset_chat()" id="ChatrestB">Reset chat</button><br>
+            <input type="text" id="sendimgT" placeholder="Paste img url here"><button onclick="sendImage();" id="sendimgB">Send</button><br>
+            <p id="Devnavtext">Send messages in bold/biger</p>
+            <input type="text" id="EventMSGT" placeholder="Send message here"><button onclick="EsendMessage();" id="EventMSGB">Send</button>
+            <input type="text" id="urlsendT" placeholder="paste url here"><input type="text" id="urlsendT2" placeholder="put message here"><button onclick="urlsend()" id="urlsendB">Send</button>
+        </div>
+        <span id="topright" onclick="devopenNav();">🔧</span>
+        <div id="chat"> 
+            <div id="popup1" class="overlay">
+                <div class="popup">
+                    <h2>Dev Rules</h2>
+                    <h4 style="color: red;">To use the chat you must agree to all rules and folow them</h4>
+                    <!-- This hides it. -->
+                    <div class="content">
+                        <button class="limited_close" onclick="runLimitedStartup();">No</button>
+                        <button class="close" onclick="runStartup();checkMsgBox();">Yes</button>
+                        <p style="color: #000000;">1.No spamming (no more than 3 messages by one person in a row)<br>2.No uppercase words<br>3.No Cursing<br>4.Keep nicknames and roles consistent and noticeable as you if changed<br>5.No other languages besides English allowed unless prompted by a Founder or Developer<br>6.No photos or images<br>7.No more than 3 dots a message<br>8.No abuse of power<br>9.Do not let anyone have access to dev web pages unless prompted by founders or developers<br>10.Do not edit chat.txt if you have access or don’t</p>
+                    </div>
+                </div>
+            </div>
       
-<div class="form-popup" id="loginform">
-  <form action="/action_page.php" class="form-container">
-    <h1>Login</h1>
+            <div class="form-popup" id="loginform">
+                <form action="/action_page.php" class="form-container">
+                    <h1>Login</h1>
 
-    <label for="email"><b>Email</b></label>
-    <input type="text" placeholder="Enter Email" name="email" required>
+                    <label for="email"><b>Email</b></label>
+                    <input type="text" placeholder="Enter Email" name="email" required>
 
-    <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" required>
+                    <label for="psw"><b>Password</b></label>
+                    <input type="password" placeholder="Enter Password" name="psw" required>
 
-    <button type="submit" class="btn">Login</button>
-    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
-  </form>
-</div>
+                    <button type="submit" class="btn">Login</button>
+                    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+                </form>
+            </div>
       
-    </div><br/>
-    <div id="sides">  <!-- sides is here so i dont get lost -->
-      <div id="chatbox">      
-        <p id="msg-title">Message: </p>  
-        <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250" ><br>
-        <button onclick="sendMessage();" id="send" >Send</button>
-      </div>
-    </div><br>
-    <div id="activenav">
-      <span id="topright" onclick="devopenNav();">🔧</span>
-      <p>add online/offline stuff here</p>
-    </div>
-  </body>
+        </div><br/>
+        <div id="sides">  <!-- sides is here so i dont get lost -->
+            <div id="chatbox">      
+                <p id="msg-title">Message: </p>  
+                <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250" ><br>
+                <button onclick="sendMessage();" id="send" >Send</button>
+            </div>
+        </div><br>
+        <div id="activenav">
+            <span id="topright" onclick="devopenNav();">🔧</span>
+            <p>add online/offline stuff here</p>
+        </div>
+    </body>
 </html>
