@@ -1,5 +1,6 @@
 """Filter usernames and make the chat more xss safe"""
 from bs4 import BeautifulSoup
+#from chat import online
 
 
 def filter_username(message):

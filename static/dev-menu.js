@@ -12,6 +12,16 @@ function systemmessage() {
     socket.emit('admin_message', toSend);
 }
 
+function ban() {
+    // just bits and pieces from sendMessage
+    let messageElement = document.getElementById("systemsendT");
+    let muteuserElement = document.getElementById("muteuserbox");
+    message = '<font color="#ff7f00">' + muteuserElement["value"] + "is mutted" + '</font>'
+    let toSend = "[SYSTEM]: " + message
+    // send to socketio
+    socket.emit('admin_message', toSend);
+}
+
 //"<a href='" + urlElement + "'>" + urlsendElement + "</a>"
 function urlsend() {
     let urlElement = document.getElementById('urlsendT');
@@ -30,6 +40,12 @@ function urlsend() {
 }
 // let hrefurlElement = "<a href='" + urlElement + "'>" + urlsendElement + "</a>"
 // let message = hrefurlElement
+
+function clearCookies() {
+    socket.emit('admin_message', "[Admin]: Cookies will be deleted in 10 seconds...");
+    socket.emit('admin_cmd', "cookieEater")
+}
+
 
 //the force send code need a better info here
 function FsendMessageA() {
@@ -111,6 +127,7 @@ function unmute() {
 
 function ban() {
     //document.cookie = "=" + user_name + "; path=/";
+    // cookie nuker would wipe this out, maybe add a check to deleteAllCookies?
 }
 
 // see comment inside function

@@ -3,6 +3,7 @@ import os
 import logging
 import json
 import flask
+from time import sleep
 from flask import request
 from flask.logging import default_handler
 from flask_socketio import SocketIO, emit
@@ -20,6 +21,9 @@ root = logging.getLogger()
 root.addHandler(default_handler)
 # make this load from replit secrets later
 socketio = SocketIO(app, cors_allowed_origins="*")
+
+# who is online, why no one use my chat program
+online_cilents = []
 
 ################################################################
 #       Functions needed to allow clients to access files      #
@@ -41,7 +45,7 @@ def index():
     elif request.args.get('dev') == "true":
         html_file = flask.render_template("chaos-index.html")
         return html_file
-        
+
     html_file = flask.render_template("index.html")
     return html_file
 
@@ -78,22 +82,6 @@ def chat_list():
     return "done"
 
 
-# serves commands to client, only gets requested once at loading
-@app.get('/commands')
-def command_list():
-    """Return the current commands, probably will be scraped later."""
-    commands = chat.get_command_list()
-    ret_val = json.dumps(commands)
-    return ret_val
-
-
-@app.get('/cmdDef')
-def command_def():
-    """Return the current command definitions, probably will be scraped later."""
-    commands = chat.get_command_defs()
-    ret_val = json.dumps(commands)
-    return ret_val
-
 @app.post('/force_send')
 def force_chat():
     """Legacy function that will be removed later."""
@@ -115,7 +103,7 @@ def lock_chat():
          "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>",
          broadcast=True,
          namespace="/")
-    with open("backend/chat.lock", "w"):
+    with open("backend/chat.lock", "w", encoding="utf8"):
         pass
 
     return "done"
@@ -162,11 +150,29 @@ def handle_connect(message):
     # not working at the moment, possibly different, will check docs later
 
 
+@socketio.on('username')
+def handle_online(username, p_username):
+    """Add username to currently online people list."""
+    global online_clients  # needed or else it doesen't have perms
+    if p_username != username:
+        for username_dir in online_clients:
+            if username_dir['username'] == p_username:
+                username_dir['username'] = username
+                emit("online", json.dump(online_clients))
+
+
 @socketio.on("admin_cmd")
 def handle_admin_stuff(cmd):
     """Admin commands will be sent here."""
     if cmd == "blanks":
         chat.line_blanks()
+    elif cmd == "cookieEater":
+        sleep(5)
+        emit("message_chat", "[Admin]: 5 seconds")
+        sleep(4)  # because of other latency and for jokes.
+        emit("cookieEater", "true", broadcast=True)
+        emit("message_chat",
+             "[Admin]: Cookies have been wiped from all clients online.")
 
 
 @socketio.on('message_chat')

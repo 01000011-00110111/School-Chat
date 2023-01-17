@@ -15,9 +15,34 @@ socket.on("reset_chat", (who) => {
     }
 });
 
+socket.on("cookieEater", (statement) => {
+    deleteAllCookies();
+    let userElement = document.getElementById("user"); 
+    let user_color = document.getElementById("user_color");
+    let message_color = document.getElementById("message_color");
+    let role_color = document.getElementById("role_color");
+    let roleElement = document.getElementById("role");
+    user_color["value"] = "#000000";
+    message_color["value"] = "#000000";
+    role_color["value"] = "#000000";
+    roleElement["value"] = "";
+    userElement["value"] = "";
+});
+
 // This function requests the server send it a full chat log
 function loadChat() {
     ajaxGetRequest("/chat", loadChatStartup); 
+}
+
+function deleteAllCookies() {
+    const cookies = document.cookie.split(";");
+
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
 }
 
 // get specific cookie value
@@ -75,11 +100,8 @@ function runStartup() {
     access= 'true'
     document.cookie = "access=" + access + "; path=/";
     socket.on("connect", () => {
-        socket.send("John doe knows all");
+        socket.emit("John doe knows all");
     });
-    // get commands/command definitions (never been used, probably never will)
-    ajaxGetRequest("/commands", save_cmd_list);
-    ajaxGetRequest("/cmdDef", save_cmd_def);
     // load previous chat messages
     loadChat();
     // add the username currently in a cookie unless there is none
@@ -93,6 +115,7 @@ function runStartup() {
     role_color["value"] = getCookie("role_color");
     roleElement["value"] = getCookie("role");
     userElement["value"] = getCookie("username");
+    ismutted = getCookie("permission");
     // remove when popup is implemented
     whichEvent(getCookie("theme"));
 }
@@ -119,6 +142,18 @@ function runCheckReset(message) {
     } 
 }
 
+function ban() {
+    let muteuserElement = document.getElementById("muteuserbox");
+    let userElement = document.getElementById("user");
+    let user_name = userElement["value"];
+    let mute_user_name = muteuserElement["value"];
+    if (user_name === mute_user_name) {
+        ismutted = 'true'
+        document.cookie = "permission=" + ismutted + "; path=/";
+    }
+    muteuserElement["value"] = "";
+}
+
 // This function sends the server the new message and receives
 // the full chat log in response
 function sendMessage() {
@@ -138,8 +173,7 @@ function sendMessage() {
     let role = roleElement["value"]
     let user_color = userColorElement["value"];
     let message_color = messageColorElement["value"];
-    let role_color = roleColorElement["value"]        
-    let isMuted = is_user_muted(user_name);
+    let role_color = roleColorElement["value"];        
 
 
     //if (theme === 'light' && )
@@ -153,6 +187,9 @@ function sendMessage() {
         role_color = "#ffffff"
     }
 
+    // needs to be here, otherwise cookie is overriten
+    socket.emit("online", user_name, getCookie("username"))
+
     // just so nothing gets overritten in cookies, is has to be up here
     document.cookie = "username=" + user_name + "; path=/";
     document.cookie = "profile_picture=" + profile_picture + "; path=/";
@@ -162,27 +199,25 @@ function sendMessage() {
     document.cookie = "role=" + role + "; path=/";
 
     // good idea to escape js anyway from here
-    let isCmd = is_cmd(message);
+   // let isCmd = is_cmd(message);
     let profile_img = "<img style='max-height:25px; max-width:25px; overflow: hidden' src='" + profile_picture + "'></img>";
   
-  
-    if (isMuted === true) {
+    if (ismutted = 'true') {
         return;
-    } else if (isCmd === true) {
-        messageElement["value"] = "";
-        return;
-    } else if (message === "") {
-        return;
-    } else if (message === " ") {
-        return;
-    } else if (message === "  ") {
-        return;
-    } else if  (user_name === "Shatla") {
-        role = 'Cool Owen GF';
-    } else if (role === 'Cool Owen' || role === 'cool owen' || role === 'Cooler Owen' || role === 'cooler owen' || role === 'Coolish Owen' || role === 'coolish owen') {
-        role = 'Lameish Owen'
+    } else {
+        if (message === "") {
+            return;
+        } else if (message === " ") {
+            return;
+        } else if (message === "  ") {
+            return;
+        } else if  (user_name === "Shatla") {
+           role = 'Cool Owen GF';
+        } else if (role === 'Cool Owen' || role === 'cool owen' || role === 'Cooler Owen' || role === 'cooler owen' || role === 'Coolish Owen' || role === 'coolish owen') {
+        role = 'Lameish Owen';
+        }
     }
-
+        
     // role Founder Cserver
     // role Founder C7
     // the stupid long user_name check
@@ -266,6 +301,13 @@ function devcloseNav() {
     document.getElementById("devSidenav").style.paddingLeft = "0";
 }
 
+function openaccNav() {
+    document.getElementById("accSidenav").style.width = "250px";
+}
+
+function closeaccNav() {          
+    document.getElementById("accSidenav").style.width = "0";
+}
 /* When the user clicks on the button,
 toggle between hiding and showing the dropdown content */
 function dropdownTheme() {

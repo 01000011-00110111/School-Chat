@@ -7,7 +7,7 @@ function setTheme(theme) {
 
 // for event theme
 // set what event is currently being used
-function whichEvent(event = "dark") {
+function whichEvent(event = "testing1") {
     // SET WHAT EVENT IS HAPPENING HERE
     // MUST BE ALL LOWERCASE TO WORK
 
@@ -426,11 +426,11 @@ function setTestingStyle2() {
     let snav_text = sidenav.getElementsByTagName("a")
     let snav_iter = snav_text.length;
     // then set the color to what it is in the css document
-    body.style.backgroundColor = "#434270";
+    body.style.backgroundColor = "#c26251";
     chat.style.color = "#000000";
     message.style.color = "#000000";
-    chatbox.style.backgroundColor = "#deddda";
-    sides.style.backgroundColor = "#c0bfbc";
+    chatbox.style.backgroundColor = "#413f5e";
+    sides.style.backgroundColor = "#413f5e";
     topleft.style.backgroundColor = "#5A5A5A";
     topleft.style.color = "#000000";
     send.style.backgroundColor = "#343cad";

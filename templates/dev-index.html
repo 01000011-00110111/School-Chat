@@ -10,7 +10,6 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
         <script src="static/ajax.js"></script>
         <script src="static/chat.js"></script>
-        <script src="static/commands.js"></script>
         <script src="static/styles.js"></script>
         <script src="static/dev-menu.js"></script>
         <script src="static/accounts.js"></script>
@@ -30,11 +29,9 @@
             <a href="https://replit.com/@School-chat-room/School-Chat">Code Page</a>
             <a href="https://stackoverflow.com">Need help with code?</a>
             <a href="change-to-flask-please">Webserver info</a>
-            <button class="open-button" onclick="openForm()">Open Form</button>
-            <button id="login" onclick="openForm()"">Login</button>
-            <input type="text" id="user" name="username" placeholder="username" maxlength="12"><br>
+            <!--<input type="text" id="user" name="username" placeholder="username" maxlength="12"><br>
             <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
-            <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
+            <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">-->
             <div class="colorDropdown">
                 <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
                 <div id="myDropdown" class="dropdown-content">
@@ -45,7 +42,7 @@
                     <a id="dark" onclick="setDevStyle()">Dev</a>
                     <!--  <button id="specal2" onclick="">Soon</button>-->
                 </div>
-                <h3><a href="mailto:harperom62@k12louisa.org">Contact us</a></h3>
+                
             </div><br>
             <h3 id="user_colorTXT" >CHOOSE YOUR COLOR:</h3>
             <p id="user_colorTXT">Username: </p>
@@ -54,6 +51,8 @@
             <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
             <p id="user_colorTXT">Message: </p>
             <input type="color" value="#ffffff" id="message_color" name="color choser">
+            <br>
+            <h3><a href="mailto:harperom62@k12louisa.org">Contact us</a></h3>
         </div>
         <span id="topleft" onclick="openNav()">☰</span>
         <div id="devSidenav" class="sidenavR">
@@ -67,7 +66,7 @@
             <p id="Devnavtext">Enter username in here for muting</p>
             <input type="text" id="muteuserbox" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">unmute</button><br>
             <button onclick="ban();" id="ban">Ban</button>
-            <button id="cookieRemoverB">Cookie eater</button>
+            <button id="cookieRemoverB" onclick="clearCookies();">Cookie eater</button>
             <p id="Devnavtext">Send message as SYSTEM user</p>
             <input type="text" id="systemsendT" placeholder="Send message as SYSTEM"><button onclick="systemmessage();" id="systemsendB">Send</button><br>
             <button onclick='ajaxGetRequest("/chat_count", chat_log_count);' id="chatlineB">Print total line count</button>
@@ -92,22 +91,6 @@
                     </div>
                 </div>
             </div>
-      
-            <div class="form-popup" id="loginform">
-                <form action="/action_page.php" class="form-container">
-                    <h1>Login</h1>
-
-                    <label for="email"><b>Email</b></label>
-                    <input type="text" placeholder="Enter Email" name="email" required>
-
-                    <label for="psw"><b>Password</b></label>
-                    <input type="password" placeholder="Enter Password" name="psw" required>
-
-                    <button type="submit" class="btn">Login</button>
-                    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
-                </form>
-            </div>
-      
         </div><br/>
         <div id="sides">  <!-- sides is here so i dont get lost -->
             <div id="chatbox">      
@@ -117,8 +100,24 @@
             </div>
         </div><br>
         <div id="activenav">
-            <span id="topright" onclick="devopenNav();">🔧</span>
             <p>add online/offline stuff here</p>
+            <div id="accSidenav" class="sidenava">
+            <a href="javascript:void(0)" class="closebtna" onclick="closeaccNav()">×</a>
+            <p id="#logintxt1">Username:</p>
+            <input type="text" id="user" placeholder="Username"><br>
+            <p id="#logintxt1">Password:</p>
+            <input type="text" id="pass" placeholder="Password"><br>
+                <button id="login">Login</button>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <input type="text" name="username" placeholder="username" maxlength="12"><br>
+            <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
+            <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
+        </div>
+            <span id="account" onclick="openaccNav()">☰</span>
         </div>
     </body>
 </html>

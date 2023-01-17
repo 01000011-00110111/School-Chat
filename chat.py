@@ -1,3 +1,4 @@
+"""Handle chat messages."""
 import psutil
 from time import time
 from datetime import timedelta, datetime
@@ -10,6 +11,7 @@ logfile_b = "backend/Chat-backup.txt"
 # Returns a list of dictionaries. Each dictionary in the list
 # is a message that has been sent in our chat server
 def get_chat():
+    """Return list of chat messages."""
     ret_val = []
     with open(logfile) as f_in:
         for line in f_in:
@@ -20,6 +22,7 @@ def get_chat():
 
 
 def get_line_count():
+    """Return the line count in the logfiles."""
     ret_val = []
     with open(logfile, "r") as f:
         lines = len(f.readlines())
