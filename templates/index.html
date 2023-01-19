@@ -66,6 +66,26 @@
                 <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250"></input><br/>
                 <button onClick="sendMessage();" id="send">Send</button>
             </div>
+        </div><br>
+        <div id="activenav" hidden>
+            <p>add online/offline stuff here</p>
+            <div id="accSidenav" class="sidenava">
+                <a href="javascript:void(0)" class="closebtna" onclick="closeaccNav()">×</a>
+                <p id="#logintxt1">Username:</p>
+                <input type="text" id="user" placeholder="Username"><br>
+                <p id="#logintxt1">Password:</p>
+                <input type="text" id="pass" placeholder="Password"><br>
+                <button id="login">Login</button>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <input type="text" name="username" placeholder="username" maxlength="12"><br>
+                <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
+                <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
+            </div>
+            <span id="account" onclick="openaccNav()">☰</span>
         </div>
     </body>
 </html>

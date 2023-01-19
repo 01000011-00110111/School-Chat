@@ -65,17 +65,20 @@
             <button onclick="lock_chat();" id="lock">Lock</button><button onclick="unlock_chat();" id="unlock">Unlock</button><br>
             <p id="Devnavtext">Enter username in here for muting</p>
             <input type="text" id="muteuserbox" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">unmute</button><br>
-            <button onclick="ban();" id="ban">Ban</button>
-            <button id="cookieRemoverB" onclick="clearCookies();">Cookie eater</button>
+            <button onclick="banHammer();" id="ban">Ban</button>
             <p id="Devnavtext">Send message as SYSTEM user</p>
             <input type="text" id="systemsendT" placeholder="Send message as SYSTEM"><button onclick="systemmessage();" id="systemsendB">Send</button><br>
-            <button onclick='ajaxGetRequest("/chat_count", chat_log_count);' id="chatlineB">Print total line count</button>
+            <button onclick='ajaxGetRequest("/chat_count", dummyajax);' id="chatlineB">Print total line count</button>
             <button onclick="testChatGC();" id="chatspamB">Send 100 Empty lines</button>
             <button onclick="getStats();" id="statsB">Send server stats in chat.</button><button onclick="reset_chat()" id="ChatrestB">Reset chat</button><br>
-            <input type="text" id="sendimgT" placeholder="Paste img url here"><button onclick="sendImage();" id="sendimgB">Send</button><br>
+            <input type="text" id="sendimgT" placeholder="Paste img url here"><button onclick="sendImage();" id="sendimgB">Send</button><br> 
             <p id="Devnavtext">Send messages in bold/biger</p>
             <input type="text" id="EventMSGT" placeholder="Send message here"><button onclick="EsendMessage();" id="EventMSGB">Send</button>
             <input type="text" id="urlsendT" placeholder="paste url here"><input type="text" id="urlsendT2" placeholder="put message here"><button onclick="urlsend()" id="urlsendB">Send</button>
+          <br>
+          <br>
+          <br>
+          <button id="cookieRemoverB" onclick="clearCookies();">Cookie eater</button><button id="cookieRemoverB" onclick="nukeCookies();">Cookie Nuker</button>
         </div>
         <span id="topright" onclick="devopenNav();">🔧</span>
         <div id="chat"> 
@@ -86,7 +89,7 @@
                     <!-- This hides it. -->
                     <div class="content">
                         <button class="limited_close" onclick="runLimitedStartup();">No</button>
-                        <button class="close" onclick="runStartup();checkMsgBox();">Yes</button>
+                        <button class="close" onclick="yesTOS();">Yes</button>
                         <p style="color: #000000;">1.No spamming (no more than 3 messages by one person in a row)<br>2.No uppercase words<br>3.No Cursing<br>4.Keep nicknames and roles consistent and noticeable as you if changed<br>5.No other languages besides English allowed unless prompted by a Founder or Developer<br>6.No photos or images<br>7.No more than 3 dots a message<br>8.No abuse of power<br>9.Do not let anyone have access to dev web pages unless prompted by founders or developers<br>10.Do not edit chat.txt if you have access or don’t</p>
                     </div>
                 </div>
@@ -102,21 +105,21 @@
         <div id="activenav">
             <p>add online/offline stuff here</p>
             <div id="accSidenav" class="sidenava">
-            <a href="javascript:void(0)" class="closebtna" onclick="closeaccNav()">×</a>
-            <p id="#logintxt1">Username:</p>
-            <input type="text" id="user" placeholder="Username"><br>
-            <p id="#logintxt1">Password:</p>
-            <input type="text" id="pass" placeholder="Password"><br>
+                <a href="javascript:void(0)" class="closebtna" onclick="closeaccNav()">×</a>
+                <p id="#logintxt1">Username:</p>
+                <input type="text" id="user" placeholder="Username"><br>
+                <p id="#logintxt1">Password:</p>
+                <input type="text" id="pass" placeholder="Password"><br>
                 <button id="login">Login</button>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <input type="text" name="username" placeholder="username" maxlength="12"><br>
-            <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
-            <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
-        </div>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <input type="text" name="username" placeholder="username" maxlength="12"><br>
+                <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
+                <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
+            </div>
             <span id="account" onclick="openaccNav()">☰</span>
         </div>
     </body>

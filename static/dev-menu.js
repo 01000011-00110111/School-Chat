@@ -12,14 +12,10 @@ function systemmessage() {
     socket.emit('admin_message', toSend);
 }
 
-function ban() {
-    // just bits and pieces from sendMessage
-    let messageElement = document.getElementById("systemsendT");
+function banHammer() {
     let muteuserElement = document.getElementById("muteuserbox");
-    message = '<font color="#ff7f00">' + muteuserElement["value"] + "is mutted" + '</font>'
-    let toSend = "[SYSTEM]: " + message
-    // send to socketio
-    socket.emit('admin_message', toSend);
+    let mute_user_name = muteuserElement["value"];
+    socket.emit('admin_cmd', "ban")
 }
 
 //"<a href='" + urlElement + "'>" + urlsendElement + "</a>"
@@ -93,7 +89,7 @@ function EsendMessage() {
 
     message = '<font color="e54e40">' + messageElement["value"] + '</font>' + "</h3>"
     messageElement["value"] = "";
-    let toSend = "<h3> [Event]: " + message
+    let toSend = "<h3> [Event]: " + message + "</h3>"
     // send via socketio
     socket.emit('admin_message', toSend);
 }
@@ -104,30 +100,17 @@ function reset_chat() {
 
 // get stats from the replit instance
 function getStats() {
-    ajaxGetRequest("/stats", dummyajax);
+    socket.emit('admin_cmd', "full_status");
 }
 
 // lock/unlock chat helper functions
 function lock_chat() {
-    ajaxGetRequest("/lock", dummyajax);
+    socket.emit('admin_cmd', "lock");
 }
 
 // unlocks chat
 function unlock_chat() {
-    ajaxGetRequest("/unlock", dummyajax);
-}
-
-function mute() {
-    // filler
-}
-
-function unmute() {
-    // filler
-} 
-
-function ban() {
-    //document.cookie = "=" + user_name + "; path=/";
-    // cookie nuker would wipe this out, maybe add a check to deleteAllCookies?
+    socket.emit('admin_cmd', "unlock");
 }
 
 // see comment inside function

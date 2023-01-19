@@ -7,6 +7,7 @@ from time import sleep
 from flask import request
 from flask.logging import default_handler
 from flask_socketio import SocketIO, emit
+from replit import db
 import chat
 import filtering
 
@@ -23,7 +24,6 @@ root.addHandler(default_handler)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # who is online, why no one use my chat program
-online_cilents = []
 
 ################################################################
 #       Functions needed to allow clients to access files      #
@@ -94,46 +94,6 @@ def force_chat():
     return "done"
 
 
-@app.get('/lock')
-def lock_chat():
-    """Lock the chat on the server side."""
-    chat.add_message(
-        "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>")
-    emit("message_chat",
-         "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>",
-         broadcast=True,
-         namespace="/")
-    with open("backend/chat.lock", "w", encoding="utf8"):
-        pass
-
-    return "done"
-
-
-@app.get('/unlock')
-def unlock_chat():
-    """Unlock the chat on the server side."""
-    if os.path.exists("backend/chat.lock"):
-        os.remove("backend/chat.lock")
-        chat.add_message(
-            "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>")
-        emit("message_chat",
-             "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>",
-             broadcast=True,
-             namespace="/")
-    else:
-        pass
-
-    return "done"
-
-
-@app.get('/stats')
-def get_stats():
-    """Send the server statistics in the chat."""
-    result = chat.get_stats()
-    emit("message_chat", result, broadcast=True, namespace="/")
-    return "done"
-
-
 @app.get('/reset')
 def reset_chat():
     """Wipe the chat on admin request."""
@@ -143,22 +103,28 @@ def reset_chat():
 
 
 # socketio stuff
-@socketio.on('connect')
-def handle_connect(message):
+@socketio.on('username')
+def handle_connect(username, socketid):
     """Will be used later for online users."""
-    print(message)
+    db[socketid] = username
+    username_list = []
+    for onlineuser in db:
+        username_list.append(onlineuser)
+    emit("online", username_list, broadcast=True)
     # not working at the moment, possibly different, will check docs later
 
 
-@socketio.on('username')
-def handle_online(username, p_username):
+@socketio.on('username_msg')
+def handle_online(username, p_username, socketid):
     """Add username to currently online people list."""
-    global online_clients  # needed or else it doesen't have perms
     if p_username != username:
-        for username_dir in online_clients:
-            if username_dir['username'] == p_username:
-                username_dir['username'] = username
-                emit("online", json.dump(online_clients))
+        for socketid_db in db:
+            if socketid_db[socketid] == p_username:
+                socketid_db[socketid] = username
+                username_list = []
+                # rewrite in a second, because it makes no sense lol
+                for onlineuser in db: username_list.append(onlineuser[socketid_db])
+                emit("online", username_list, broadcast=True)
 
 
 @socketio.on("admin_cmd")
@@ -173,6 +139,30 @@ def handle_admin_stuff(cmd):
         emit("cookieEater", "true", broadcast=True)
         emit("message_chat",
              "[Admin]: Cookies have been wiped from all clients online.")
+    elif cmd == "ban":
+        print("test")
+        emit("ban", "true", broadcast=True)
+    elif cmd == "full_status":
+        result = chat.get_stats()
+        emit("message_chat", result, broadcast=True)
+    elif cmd == "lock":
+        chat.add_message(
+            "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>")
+        emit("message_chat",
+             "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>",
+             broadcast=True)
+        with open("backend/chat.lock", "w", encoding="utf8"):
+            pass
+    elif cmd == "unlock":
+        if os.path.exists("backend/chat.lock"):
+            os.remove("backend/chat.lock")
+            chat.add_message(
+                "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>"
+            )
+            emit(
+                "message_chat",
+                "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>",
+                broadcast=True)
 
 
 @socketio.on('message_chat')

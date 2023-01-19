@@ -6,6 +6,10 @@ socket.on("message_chat", (message) => {
     renderChat(message);
 });
 
+socket.on("connect", () => {
+    socket.emit("username", "John doe knows all", socket.id);
+});
+
 socket.on("reset_chat", (who) => {
     let chatDiv = document.getElementById("chat");
     if (who === "admin") {
@@ -28,6 +32,30 @@ socket.on("cookieEater", (statement) => {
     roleElement["value"] = "";
     userElement["value"] = "";
 });
+
+socket.on("ban", (statement) => {
+    bancline();
+});
+
+socket.on("online", (db) => {
+    console.log(db)
+});
+
+function bancline() {
+    let userElement = document.getElementById("user");
+    let user_name = userElement["value"];
+    let messageElement = document.getElementById("systemsendT")
+    
+    if (user_name === mute_user_name) {
+        let ismutted = 'true'
+        document.cookie = "permission=" + ismutted + "; path=/";
+    }
+    muteuserElement["value"] = "";
+  
+    banmessage = '<font color="#ff7f00">' + muteuserElement["value"] + "is mutted" + '</font>'
+    let toSend = "[SYSTEM]: " + banmessage
+    socket.emit('message_chat', toSend);
+}
 
 // This function requests the server send it a full chat log
 function loadChat() {
@@ -95,13 +123,15 @@ function runLimitedStartup() {
     document.cookie = "access=" + access + "; path=/";
 }
 
+function yesTOS() {
+    access = 'true';
+    document.cookie = "access=" + access + "; path=/";
+    runStartup();
+    checkMsgBox();
+}
+
 // stuff to run at startup and what happens when you do agree to the rules
 function runStartup() {
-    access= 'true'
-    document.cookie = "access=" + access + "; path=/";
-    socket.on("connect", () => {
-        socket.emit("John doe knows all");
-    });
     // load previous chat messages
     loadChat();
     // add the username currently in a cookie unless there is none
@@ -142,18 +172,6 @@ function runCheckReset(message) {
     } 
 }
 
-function ban() {
-    let muteuserElement = document.getElementById("muteuserbox");
-    let userElement = document.getElementById("user");
-    let user_name = userElement["value"];
-    let mute_user_name = muteuserElement["value"];
-    if (user_name === mute_user_name) {
-        ismutted = 'true'
-        document.cookie = "permission=" + ismutted + "; path=/";
-    }
-    muteuserElement["value"] = "";
-}
-
 // This function sends the server the new message and receives
 // the full chat log in response
 function sendMessage() {
@@ -165,6 +183,7 @@ function sendMessage() {
     let messageColorElement = document.getElementById("message_color");
     let roleColorElement = document.getElementById("role_color");
     let userColorElement = document.getElementById("user_color");  
+    let ismutted = getCookie("permission");
   
     // Save the message text 
     let message = messageElement["value"];
@@ -202,10 +221,9 @@ function sendMessage() {
    // let isCmd = is_cmd(message);
     let profile_img = "<img style='max-height:25px; max-width:25px; overflow: hidden' src='" + profile_picture + "'></img>";
   
-    if (ismutted = 'true') {
-        return;
-    } else {
-        if (message === "") {
+        /*if (ismutted = 'true') {
+            return;
+        }else*/ if (message === "") {
             return;
         } else if (message === " ") {
             return;
@@ -216,7 +234,7 @@ function sendMessage() {
         } else if (role === 'Cool Owen' || role === 'cool owen' || role === 'Cooler Owen' || role === 'cooler owen' || role === 'Coolish Owen' || role === 'coolish owen') {
         role = 'Lameish Owen';
         }
-    }
+     
         
     // role Founder Cserver
     // role Founder C7

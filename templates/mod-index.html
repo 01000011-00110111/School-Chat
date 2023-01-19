@@ -8,7 +8,7 @@
         <script src="static/ajax.js"></script>
         <script src="static/chat.js"></script>
         <script src="static/styles.js"></script>
-        <script src="static/dev-menu.js"></script> 
+        <script src="static/mod-menu.js"></script> 
         <link rel="stylesheet" href="static/style.css"> 
         <meta charset="utf-8">
         <meta name="description" content="A chat app, what else did you think this is?">
@@ -61,7 +61,10 @@
             <p id="Devnavtext">send stats about the chat</p>
             <button onclick='ajaxGetRequest("/chat_count", chat_log_count);' id="chatlineB">Print total line count</button>
             <button onclick="getStats();" id="statsB">Send server stats in chat.</button>
-            <button id="cookieRemoverB">Cookie eater</button>
+            <br>
+            <br>
+            <br>
+            <button id="cookieRemoverB">Cookie eater</button><p color: white; >not functional sorry cole</p>
         </div>
         <span id="topright" onclick="devopenNav();">🛡</span>
         <div id="chat">
@@ -84,6 +87,26 @@
                 <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250"></input><br/>
                 <button onClick="sendMessage();" id="send">Send</button>
             </div>
+        </div><br>
+        <div id="activenav" hidden>
+            <p>add online/offline stuff here</p>
+            <div id="accSidenav" class="sidenava">
+                <a href="javascript:void(0)" class="closebtna" onclick="closeaccNav()">×</a>
+                <p id="#logintxt1">Username:</p>
+                <input type="text" id="user" placeholder="Username"><br>
+                <p id="#logintxt1">Password:</p>
+                <input type="text" id="pass" placeholder="Password"><br>
+                <button id="login">Login</button>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <input type="text" name="username" placeholder="username" maxlength="12"><br>
+                <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
+                <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
+            </div>
+            <span id="account" onclick="openaccNav()">☰</span>
         </div>
     </body>
 </html>
