@@ -38,7 +38,7 @@ socket.on("ban", (statement) => {
 });
 
 socket.on("force_username", (statement) => {
-  .reload();
+  reload();
 });
 
 socket.on("online", (db) => {
