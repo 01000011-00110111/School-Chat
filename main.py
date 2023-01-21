@@ -8,6 +8,7 @@ from flask import request
 from flask.logging import default_handler
 from flask_socketio import SocketIO, emit
 from replit import db
+# import sqlite3
 import chat
 import filtering
 
@@ -24,7 +25,10 @@ root.addHandler(default_handler)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # who is online, why no one use my chat program
-
+db.clear()
+# connection = sqlite3.connect("myDatabase.db")
+# connection.execute("CREATE TABLE IF NOT EXISTS online (id STRING PRIMARY KEY, username STRING);")
+# cursor = connection.cursor("SELECT * FROM online")
 ################################################################
 #       Functions needed to allow clients to access files      #
 ################################################################
@@ -56,6 +60,11 @@ def changelog():
     html_file = flask.render_template('update-log.html')
     return html_file
 
+@app.route('/signup')
+def signup():
+    """Serve the signup page."""
+    html_file = flask.render_template('signup-index.html')
+    return html_file
 
 ################################################################
 #             Functions handling AJAX interactions             #
@@ -104,27 +113,39 @@ def reset_chat():
 
 # socketio stuff
 @socketio.on('username')
-def handle_connect(username, socketid):
+def handle_connect(username):
     """Will be used later for online users."""
+    socketid = request.sid
     db[socketid] = username
     username_list = []
-    for onlineuser in db:
-        username_list.append(onlineuser)
+    keys = db.keys()
+    for key in keys:
+        username_list.append(db[key])
     emit("online", username_list, broadcast=True)
-    # not working at the moment, possibly different, will check docs later
+
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    socketid = request.sid
+    print(socketid)
+    print(db.keys())
+    del db[socketid]
 
 
 @socketio.on('username_msg')
-def handle_online(username, p_username, socketid):
+def handle_online(username, p_username):
     """Add username to currently online people list."""
     if p_username != username:
-        for socketid_db in db:
-            if socketid_db[socketid] == p_username:
-                socketid_db[socketid] = username
+        keys = db.keys()
+        for key in keys:
+            if db[key] == p_username:
+                db[key] = username
                 username_list = []
                 # rewrite in a second, because it makes no sense lol
-                for onlineuser in db: username_list.append(onlineuser[socketid_db])
+                for key in keys:
+                    username_list.append(db[key])
                 emit("online", username_list, broadcast=True)
+                return
 
 
 @socketio.on("admin_cmd")
@@ -163,6 +184,11 @@ def handle_admin_stuff(cmd):
                 "message_chat",
                 "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>",
                 broadcast=True)
+    elif cmd == "username_clear":
+        db.clear()
+    elif cmd == "refresh_users":
+        db.clear()
+        emit("force_username", "", broadcast=True)
 
 
 @socketio.on('message_chat')
@@ -185,9 +211,6 @@ def handle_admin_message(message):
     chat.force_message(message)
     emit("message_chat", message, broadcast=True, namespace="/")
 
-
-#if message != "User connected to your text channel.":
-#  send(message, broadcast=True)
 
 ################################################################
 #      Start the webserver                                     #

@@ -103,6 +103,14 @@ function getStats() {
     socket.emit('admin_cmd', "full_status");
 }
 
+function clearDB() {
+    socket.emit('admin_cmd', "username_clear");
+}
+
+function refreshUsers() {
+    socket.emit('admin_cmd', "refresh_users");
+}
+
 // lock/unlock chat helper functions
 function lock_chat() {
     socket.emit('admin_cmd', "lock");

@@ -6,10 +6,6 @@ socket.on("message_chat", (message) => {
     renderChat(message);
 });
 
-socket.on("connect", () => {
-    socket.emit("username", "John doe knows all", socket.id);
-});
-
 socket.on("reset_chat", (who) => {
     let chatDiv = document.getElementById("chat");
     if (who === "admin") {
@@ -17,6 +13,10 @@ socket.on("reset_chat", (who) => {
     } else if (who === "auto") {
         chatDiv["innerHTML"] = "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font><br>"
     }
+});
+
+socket.on("force_username", (statement) => {
+    socket.emit("username", getCookie("username"), socket.id);
 });
 
 socket.on("cookieEater", (statement) => {
@@ -37,8 +37,25 @@ socket.on("ban", (statement) => {
     bancline();
 });
 
+socket.on("force_username", (statement) => {
+  .reload();
+});
+
 socket.on("online", (db) => {
-    console.log(db)
+    let newline = "<br>"
+    let online = "";
+    let onlineDiv = document.getElementById("online_users");
+    for (onlineUser of db) {
+        if (onlineUser === "cserverReal") {
+            onlineUser = "cserver"
+        } else if (onlineUser === "") {
+            onlineUser = "Anonymous"
+        } else if (onlineUser === "Dev EReal") {
+            onlineUser = "Dev E"
+        }
+        online = online + onlineUser + newline;
+    }
+    onlineDiv["innerHTML"] = online;
 });
 
 function bancline() {
@@ -148,6 +165,7 @@ function runStartup() {
     ismutted = getCookie("permission");
     // remove when popup is implemented
     whichEvent(getCookie("theme"));
+    socket.emit("username", getCookie("username"));
 }
 
 function checkMsgBox() {
@@ -207,7 +225,7 @@ function sendMessage() {
     }
 
     // needs to be here, otherwise cookie is overriten
-    socket.emit("online", user_name, getCookie("username"))
+    socket.emit("username_msg", user_name, getCookie("username"));
 
     // just so nothing gets overritten in cookies, is has to be up here
     document.cookie = "username=" + user_name + "; path=/";

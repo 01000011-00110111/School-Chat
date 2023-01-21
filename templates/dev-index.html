@@ -64,13 +64,16 @@
             <button onclick="FsendMessageA();" id="fsendB">Force Send</button>
             <button onclick="lock_chat();" id="lock">Lock</button><button onclick="unlock_chat();" id="unlock">Unlock</button><br>
             <p id="Devnavtext">Enter username in here for muting</p>
-            <input type="text" id="muteuserbox" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">unmute</button><br>
-            <button onclick="banHammer();" id="ban">Ban</button>
+            <input type="text" id="muteuserbox" placeholder="type user to mute here:"><br>
+            <button onclick="mute();" id="mute">Mute</button>
+            <button onclick="unmute();" id="unmute">unmute</button>
+            <button onclick="banHammer();" id="ban">Ban</button><br>
+            <button onclick="refreshUsers();">Force refresh users</button>
             <p id="Devnavtext">Send message as SYSTEM user</p>
             <input type="text" id="systemsendT" placeholder="Send message as SYSTEM"><button onclick="systemmessage();" id="systemsendB">Send</button><br>
             <button onclick='ajaxGetRequest("/chat_count", dummyajax);' id="chatlineB">Print total line count</button>
             <button onclick="testChatGC();" id="chatspamB">Send 100 Empty lines</button>
-            <button onclick="getStats();" id="statsB">Send server stats in chat.</button><button onclick="reset_chat()" id="ChatrestB">Reset chat</button><br>
+            <button onclick="getStats();" id="statsB">Send server stats in chat.</button><button onclick="reset_chat()" id="ChatrestB">Reset chat</button><button onclick="clearDB();">Reset DB</button><br>
             <input type="text" id="sendimgT" placeholder="Paste img url here"><button onclick="sendImage();" id="sendimgB">Send</button><br> 
             <p id="Devnavtext">Send messages in bold/biger</p>
             <input type="text" id="EventMSGT" placeholder="Send message here"><button onclick="EsendMessage();" id="EventMSGB">Send</button>
@@ -103,7 +106,6 @@
             </div>
         </div><br>
         <div id="activenav">
-            <p>add online/offline stuff here</p>
             <div id="accSidenav" class="sidenava">
                 <a href="javascript:void(0)" class="closebtna" onclick="closeaccNav()">×</a>
                 <p id="#logintxt1">Username:</p>
@@ -121,6 +123,9 @@
                 <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
             </div>
             <span id="account" onclick="openaccNav()">☰</span>
+            <div id="online_users" style="color: white;">
+                
+            </div>
         </div>
     </body>
 </html>
