@@ -34,6 +34,7 @@ def get_line_count():
 
 
 def line_blanks():
+    """Send 100 blank lines in chat for testing purposes."""
     add_message(
         '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'
     )
@@ -44,7 +45,7 @@ def line_blanks():
 
 
 def get_stats():
-    # long stats list lol
+    """Return full stats list to chat."""
 
     # get line count
     with open(LOGFILE, "r") as f_in:
@@ -53,15 +54,15 @@ def get_stats():
         lines_b = len(f_in.readlines())
 
     # other stats on the repl
-    p = psutil.Process()
-    with p.oneshot():
-        uptime = timedelta(seconds=time() - p.create_time())
+    p_in = psutil.Process()
+    with p_in.oneshot():
+        uptime = timedelta(seconds=time() - p_in.create_time())
         hours, remainder = divmod(int(uptime.total_seconds()), 3600)
         minutes, seconds = divmod(remainder, 60)
         days, hours = divmod(hours, 24)
-        pname = p.name()
-        thread_count = p.num_threads()
-        mem = p.memory_full_info()
+        pname = p_in.name()
+        thread_count = p_in.num_threads()
+        mem = p_in.memory_full_info()
 
     begin_f = "[SYSTEM]: <font color='#ff7f00'>Server Stats:</font>"
     lines_f = f"Temp logfile: {lines} lines.\nBackup logfile: {lines_b} lines."
@@ -75,6 +76,7 @@ def get_stats():
 
 # Adds the message text to our file containing all the messages
 def add_message(message_text):
+    """Handler for messages so they get logged."""
     with open(LOGFILE, "r") as f_in:
         lines = len(f_in.readlines())
     if lines >= 500:
@@ -85,12 +87,10 @@ def add_message(message_text):
     with open(LOGFILE_B, "a") as f_out:
         date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
         f_out.write(date + message_text + "\n")
-    # This return is not needed, but ensures replit shows the updated
-    # file when it is selected from the file browser
-    return None
 
 
 def reset_chat(message, admin):
+    """Admin function for reseting chat. Also used by the GC."""
     if admin == True:
         with open(LOGFILE, "w") as f_out:
             f_out.write(
@@ -109,10 +109,8 @@ def reset_chat(message, admin):
 
 # force the message text to our file containing all the messages
 def force_message(message_text):
+    """Force send a message to everyone even when chat is locked."""
     with open(LOGFILE, "a") as f_in:
         f_in.write(message_text + "\n")
     with open(LOGFILE_B, "a") as f_out:
         f_out.write(message_text + "\n")
-    # This return is not needed, but ensures replit shows the updated
-    # file when it is selected from the file browser during our demo
-    return None

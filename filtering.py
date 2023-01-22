@@ -19,15 +19,15 @@ def filter_username(message):
 
     # now do the ones that return (so pylint is happy)
     if tags.string in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN'):
-        return
+        return None
     elif tags.string in ('mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD'):
-        return
+        return None
     elif tags.string == "Dev E":
-        return
+        return None
     elif tags.string == "cserver":
-        return
+        return None
     elif tags.string in ('SYSTEM', '[SYSTEM]'):
-        return
+        return None
 
     # back to processing
     messages[0] = str(soup)
