@@ -60,15 +60,13 @@ def get_stats():
         hours, remainder = divmod(int(uptime.total_seconds()), 3600)
         minutes, seconds = divmod(remainder, 60)
         days, hours = divmod(hours, 24)
-        pname = p_in.name()
         thread_count = p_in.num_threads()
-        mem = p_in.memory_full_info()
+        # mem = p_in.memory_full_info()
 
     begin_f = "[SYSTEM]: <font color='#ff7f00'>Server Stats:</font>"
     lines_f = f"Temp logfile: {lines} lines.\nBackup logfile: {lines_b} lines."
     uptime_f = f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds."
-    cpu_info = f"Threads: {thread_count}"
-    longstats = f"{begin_f}<br>{lines_f}<br>{uptime_f}<br>{cpu_info}<br>"
+    longstats = f"{begin_f}<br>{lines_f}<br>{uptime_f}<br>Threads: {thread_count}<br>"
     with open(LOGFILE, "a", encoding="utf8") as f_in:
         f_in.write(longstats)
     return longstats

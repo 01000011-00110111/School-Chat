@@ -21,13 +21,13 @@ def filter_username(message):
     # now do the ones that return (so pylint is happy)
     if tags.string in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN'):
         return None
-    elif tags.string in ('mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD'):
+    if tags.string in ('mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD'):
         return None
-    elif tags.string == "Dev E":
+    if tags.string == "Dev E":
         return None
-    elif tags.string == "cserver":
+    if tags.string == "cserver":
         return None
-    elif tags.string in ('SYSTEM', '[SYSTEM]'):
+    if tags.string in ('SYSTEM', '[SYSTEM]'):
         return None
 
     # back to processing
