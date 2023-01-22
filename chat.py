@@ -4,8 +4,8 @@ from time import time
 from datetime import timedelta, datetime
 from flask_socketio import emit
 
-logfile = "backend/chat.txt"
-logfile_b = "backend/Chat-backup.txt"
+LOGFILE = "backend/chat.txt"
+LOGFILE_B = "backend/Chat-backup.txt"
 
 
 # Returns a list of dictionaries. Each dictionary in the list
@@ -13,7 +13,7 @@ logfile_b = "backend/Chat-backup.txt"
 def get_chat():
     """Return list of chat messages."""
     ret_val = []
-    with open(logfile) as f_in:
+    with open(LOGFILE) as f_in:
         for line in f_in:
             line = line.rstrip("\n\r")
             rec = {"message": line}
@@ -24,9 +24,9 @@ def get_chat():
 def get_line_count():
     """Return the line count in the logfiles."""
     ret_val = []
-    with open(logfile, "r") as f:
+    with open(LOGFILE, "r") as f:
         lines = len(f.readlines())
-    with open(logfile, "a") as f:
+    with open(LOGFILE, "a") as f:
         f.write(
             f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n")
         ret_val = lines
@@ -47,9 +47,9 @@ def get_stats():
     # long stats list lol
 
     # get line count
-    with open(logfile, "r") as f:
+    with open(LOGFILE, "r") as f:
         lines = len(f.readlines())
-    with open(logfile_b, "r") as f:
+    with open(LOGFILE_B, "r") as f:
         lines_b = len(f.readlines())
 
     # other stats on the repl
@@ -68,21 +68,21 @@ def get_stats():
     uptime_f = f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds."
     cpu_info = f"Threads: {thread_count}"
     longstats = f"{begin_f}<br>{lines_f}<br>{uptime_f}<br>{cpu_info}<br>"
-    with open(logfile, "a") as f:
+    with open(LOGFILE, "a") as f:
         f.write(longstats)
     return longstats
 
 
 # Adds the message text to our file containing all the messages
 def add_message(message_text):
-    with open(logfile, "r") as f:
+    with open(LOGFILE, "r") as f:
         lines = len(f.readlines())
     if lines >= 500:
         reset_chat(message_text, False)
     else:
-        with open(logfile, "a") as f:
+        with open(LOGFILE, "a") as f:
             f.write(message_text + "\n")
-    with open(logfile_b, "a") as f_out:
+    with open(LOGFILE_B, "a") as f_out:
         date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
         f_out.write(date + message_text + "\n")
     # This return is not needed, but ensures replit shows the updated
@@ -92,14 +92,14 @@ def add_message(message_text):
 
 def reset_chat(message, admin):
     if admin == True:
-        with open(logfile, "w") as f_out:
+        with open(LOGFILE, "w") as f_out:
             f_out.write(
                 "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n"
             )
             emit("reset_chat", "admin", broadcast=True, namespace="/")
         return "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n"
     else:
-        with open(logfile, "w") as f_out:
+        with open(LOGFILE, "w") as f_out:
             f_out.write(
                 "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n"
                 + message + "\n")
@@ -109,9 +109,9 @@ def reset_chat(message, admin):
 
 # force the message text to our file containing all the messages
 def force_message(message_text):
-    with open(logfile, "a") as f:
+    with open(LOGFILE, "a") as f:
         f.write(message_text + "\n")
-    with open(logfile_b, "a") as f_out:
+    with open(LOGFILE_B, "a") as f_out:
         f_out.write(message_text + "\n")
     # This return is not needed, but ensures replit shows the updated
     # file when it is selected from the file browser during our demo

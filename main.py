@@ -2,8 +2,8 @@
 import os
 import logging
 import json
-import flask
 from time import sleep
+import flask
 from flask import request
 from flask.logging import default_handler
 from flask_socketio import SocketIO, emit
@@ -39,18 +39,15 @@ def index():
     """Serve the main html page, modified if permission is granted."""
     if request.args.get('dev') == os.environ['unknownkey']:
         html_file = flask.render_template("dev-index.html")
-        return html_file
     elif request.args.get('editor') == "true":
         html_file = flask.render_template("editor-index.html")
-        return html_file
     elif request.args.get('mod') == os.environ['Unknownvalue']:
         html_file = flask.render_template("mod-index.html")
-        return html_file
     elif request.args.get('dev') == "true":
         html_file = flask.render_template("chaos-index.html")
-        return html_file
+    else:
+        html_file = flask.render_template("index.html")
 
-    html_file = flask.render_template("index.html")
     return html_file
 
 
@@ -60,11 +57,13 @@ def changelog():
     html_file = flask.render_template('update-log.html')
     return html_file
 
+
 @app.route('/signup')
 def signup():
     """Serve the signup page."""
     html_file = flask.render_template('signup-index.html')
     return html_file
+
 
 ################################################################
 #             Functions handling AJAX interactions             #
@@ -126,6 +125,7 @@ def handle_connect(username):
 
 @socketio.on('disconnect')
 def handle_disconnect():
+    """Remove the user from the online user db on disconnect."""
     socketid = request.sid
     print(socketid)
     print(db.keys())

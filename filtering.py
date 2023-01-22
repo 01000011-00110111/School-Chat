@@ -9,26 +9,27 @@ def filter_username(message):
     soup = BeautifulSoup(messages[0], "html.parser")
     tags = soup.font
 
-    if (tags.string == None):
+    # decide if username matches list of possible options.
+    if tags.string is None:
         tags.string = "Anonymous"
-    elif (tags.string == "Admin" or tags.string == "admin"
-          or tags.string == "[admin]" or tags.string == "[admin]"
-          or tags.string == "[ADMIN]" or tags.string == "ADMIN"):
-        return
-    elif (tags.string == "mod" or tags.string == "Mod"
-          or tags.string == "[mod]" or tags.string == "[Mod]"
-          or tags.string == "[MOD]" or tags.string == "MOD"):
-        return
-    elif (tags.string == "Dev EReal"):
+    elif tags.string == "Dev EReal":
         tags.string = "Dev E"
-    elif (tags.string == "Dev E"):
-        return
-    elif (tags.string == "cserverReal"):
+    elif tags.string == "cserverReal":
         tags.string = "cserver"
-    elif (tags.string == "cserver"):
+
+    # now do the ones that return (so pylint is happy)
+    if tags.string in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN'):
         return
-    elif (tags.string == "SYSTEM" or tags.string == "[SYSTEM]"):
+    elif tags.string in ('mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD'):
         return
+    elif tags.string == "Dev E":
+        return
+    elif tags.string == "cserver":
+        return
+    elif tags.string in ('SYSTEM', '[SYSTEM]'):
+        return
+
+    # back to processing
     messages[0] = str(soup)
     msg = ""
     for message_e in messages:
