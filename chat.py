@@ -1,7 +1,7 @@
 """Handle chat messages."""
-import psutil
 from time import time
 from datetime import timedelta, datetime
+import psutil
 from flask_socketio import emit
 
 LOGFILE = "backend/chat.txt"
@@ -13,7 +13,7 @@ LOGFILE_B = "backend/Chat-backup.txt"
 def get_chat():
     """Return list of chat messages."""
     ret_val = []
-    with open(LOGFILE) as f_in:
+    with open(LOGFILE, "r") as f_in:
         for line in f_in:
             line = line.rstrip("\n\r")
             rec = {"message": line}
@@ -24,10 +24,10 @@ def get_chat():
 def get_line_count():
     """Return the line count in the logfiles."""
     ret_val = []
-    with open(LOGFILE, "r") as f:
-        lines = len(f.readlines())
-    with open(LOGFILE, "a") as f:
-        f.write(
+    with open(LOGFILE, "r") as f_in:
+        lines = len(f_in.readlines())
+    with open(LOGFILE, "a") as f_in:
+        f_in.write(
             f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n")
         ret_val = lines
     return ret_val
@@ -47,10 +47,10 @@ def get_stats():
     # long stats list lol
 
     # get line count
-    with open(LOGFILE, "r") as f:
-        lines = len(f.readlines())
-    with open(LOGFILE_B, "r") as f:
-        lines_b = len(f.readlines())
+    with open(LOGFILE, "r") as f_in:
+        lines = len(f_in.readlines())
+    with open(LOGFILE_B, "r") as f_in:
+        lines_b = len(f_in.readlines())
 
     # other stats on the repl
     p = psutil.Process()
@@ -75,13 +75,13 @@ def get_stats():
 
 # Adds the message text to our file containing all the messages
 def add_message(message_text):
-    with open(LOGFILE, "r") as f:
-        lines = len(f.readlines())
+    with open(LOGFILE, "r") as f_in:
+        lines = len(f_in.readlines())
     if lines >= 500:
         reset_chat(message_text, False)
     else:
-        with open(LOGFILE, "a") as f:
-            f.write(message_text + "\n")
+        with open(LOGFILE, "a") as f_in:
+            f_in.write(message_text + "\n")
     with open(LOGFILE_B, "a") as f_out:
         date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
         f_out.write(date + message_text + "\n")
@@ -109,32 +109,10 @@ def reset_chat(message, admin):
 
 # force the message text to our file containing all the messages
 def force_message(message_text):
-    with open(LOGFILE, "a") as f:
-        f.write(message_text + "\n")
+    with open(LOGFILE, "a") as f_in:
+        f_in.write(message_text + "\n")
     with open(LOGFILE_B, "a") as f_out:
         f_out.write(message_text + "\n")
     # This return is not needed, but ensures replit shows the updated
     # file when it is selected from the file browser during our demo
     return None
-
-
-# returns list of commands.
-# will be run at loading of page
-def get_command_list():
-    ret_val = []
-    with open("backend/commands.txt", "r") as commands:
-        for command in commands:
-            line = command.rstrip("\n\r")
-            rec = {"commands": line}
-            ret_val.append(rec)
-    return ret_val
-
-
-def get_command_defs():
-    ret_val = []
-    with open("backend/cmd_def.txt", "r") as commands:
-        for command in commands:
-            line = command.rstrip("\n\r")
-            rec = {"commands": line}
-            ret_val.append(rec)
-    return ret_val
