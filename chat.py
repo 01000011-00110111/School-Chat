@@ -13,7 +13,7 @@ LOGFILE_B = "backend/Chat-backup.txt"
 def get_chat():
     """Return list of chat messages."""
     ret_val = []
-    with open(LOGFILE, "r") as f_in:
+    with open(LOGFILE, "r", encoding="utf8") as f_in:
         for line in f_in:
             line = line.rstrip("\n\r")
             rec = {"message": line}
@@ -24,9 +24,9 @@ def get_chat():
 def get_line_count():
     """Return the line count in the logfiles."""
     ret_val = []
-    with open(LOGFILE, "r") as f_in:
+    with open(LOGFILE, "r", encoding="utf8") as f_in:
         lines = len(f_in.readlines())
-    with open(LOGFILE, "a") as f_in:
+    with open(LOGFILE, "a", encoding="utf8") as f_in:
         f_in.write(
             f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n")
         ret_val = lines
@@ -48,9 +48,9 @@ def get_stats():
     """Return full stats list to chat."""
 
     # get line count
-    with open(LOGFILE, "r") as f_in:
+    with open(LOGFILE, "r", encoding="utf8") as f_in:
         lines = len(f_in.readlines())
-    with open(LOGFILE_B, "r") as f_in:
+    with open(LOGFILE_B, "r", encoding="utf8") as f_in:
         lines_b = len(f_in.readlines())
 
     # other stats on the repl
@@ -69,48 +69,48 @@ def get_stats():
     uptime_f = f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds."
     cpu_info = f"Threads: {thread_count}"
     longstats = f"{begin_f}<br>{lines_f}<br>{uptime_f}<br>{cpu_info}<br>"
-    with open(LOGFILE, "a") as f:
-        f.write(longstats)
+    with open(LOGFILE, "a", encoding="utf8") as f_in:
+        f_in.write(longstats)
     return longstats
 
 
 # Adds the message text to our file containing all the messages
 def add_message(message_text):
     """Handler for messages so they get logged."""
-    with open(LOGFILE, "r") as f_in:
+    with open(LOGFILE, "r", encoding="utf8") as f_in:
         lines = len(f_in.readlines())
     if lines >= 500:
         reset_chat(message_text, False)
     else:
-        with open(LOGFILE, "a") as f_in:
+        with open(LOGFILE, "a", encoding="utf8") as f_in:
             f_in.write(message_text + "\n")
-    with open(LOGFILE_B, "a") as f_out:
+    with open(LOGFILE_B, "a", encoding="utf8") as f_out:
         date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
         f_out.write(date + message_text + "\n")
 
 
 def reset_chat(message, admin):
     """Admin function for reseting chat. Also used by the GC."""
-    if admin == True:
-        with open(LOGFILE, "w") as f_out:
+    if admin is True:
+        with open(LOGFILE, "w", encoding="utf8") as f_out:
             f_out.write(
                 "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n"
             )
             emit("reset_chat", "admin", broadcast=True, namespace="/")
         return "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n"
-    else:
-        with open(LOGFILE, "w") as f_out:
-            f_out.write(
-                "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n"
-                + message + "\n")
-            emit("reset_chat", "auto", broadcast=True, namespace="/")
-        return "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n" + message + "\n"
+    # if that is not true, run as the GC
+    with open(LOGFILE, "w", encoding="utf8") as f_out:
+        f_out.write(
+            "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n"
+            + message + "\n")
+        emit("reset_chat", "auto", broadcast=True, namespace="/")
+    return "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n" + message + "\n"
 
 
 # force the message text to our file containing all the messages
 def force_message(message_text):
     """Force send a message to everyone even when chat is locked."""
-    with open(LOGFILE, "a") as f_in:
+    with open(LOGFILE, "a", encoding="utf8") as f_in:
         f_in.write(message_text + "\n")
-    with open(LOGFILE_B, "a") as f_out:
+    with open(LOGFILE_B, "a", encoding="utf8") as f_out:
         f_out.write(message_text + "\n")

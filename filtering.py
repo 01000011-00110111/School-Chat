@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 
 
 def filter_username(message):
+    """Filter usernames so they don't fake mods and such."""
     message_profile = message.split("</img>")
     messages = message_profile[1].split("-")
     soup = BeautifulSoup(messages[0], "html.parser")
