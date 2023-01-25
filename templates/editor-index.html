@@ -50,6 +50,14 @@
             <h4><a href="https://docs.google.com/forms/d/e/1FAIpQLSdK8bsgzEn2kzDXQTu4sc-AP2HwK8aCZ_5NYhsKWItnJz2rDQ/viewform">Report Bugs</a></h4>
         </div>
         <span id="topleft" style="font-size:40px;cursor:pointer" onclick="openNav()">&#9776;</span>
+        <div id="devSidenav" class="sidenavR">
+            <br>
+            <a href="javascript:void(0)" class="closebtnR" onclick="devcloseNav()">×</a>
+            <h3 id="Devnavtext">This is the menu used by style editor staff</h3>
+            <input type="text" id="SsendT" placeholder="SONG message:"><br>
+            <button onclick="SsendMessage();" id="SsendB">Send</button>
+        </div>
+        <span id="topright" onclick="devopenNav();">secret menu</span>
         <div id="chat">
             <div id="popup1" class="overlay">
                 <div class="popup">
@@ -71,8 +79,8 @@
                 <button onClick="sendMessage();" id="send">Send</button>
             </div>
         </div><br>
-        <div id="activenav" hidden>
-            <div id="accSidenav" class="sidenava">
+        <div id="activenav">
+            <div id="accSidenav" class="sidenava" hidden>
                 <a href="javascript:void(0)" class="closebtna" onclick="closeaccNav()">×</a>
                 <p id="#logintxt1">Username:</p>
                 <input type="text" id="user" placeholder="Username"><br>
@@ -88,7 +96,7 @@
                 <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
                 <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
             </div>
-            <span id="account" onclick="openaccNav()">☰</span>
+            <span id="account" onclick="openaccNav()" hidden>☰</span>
             <div id="online_users" style="color: white;">
                 
             </div>

@@ -8,6 +8,7 @@
         <script src="static/ajax.js"></script>
         <script src="static/chat.js"></script>
         <script src="static/styles.js"></script>
+        <script src="static/non-admin.js"></script>
         <link rel="stylesheet" href="static/style.css"> 
         <meta charset="utf-8">
         <meta name="description" content="A chat app, what else did you think this is?">
@@ -46,6 +47,14 @@
             <h4><a href="https://docs.google.com/forms/d/e/1FAIpQLSdK8bsgzEn2kzDXQTu4sc-AP2HwK8aCZ_5NYhsKWItnJz2rDQ/viewform">Report Bugs</a></h4>
         </div>
         <span id="topleft" style="font-size:40px;cursor:pointer" onclick="openNav()">&#9776;</span>
+        <div id="devSidenav" class="sidenavR">
+            <br>
+            <a href="javascript:void(0)" class="closebtnR" onclick="devcloseNav()">×</a>
+            <h3 id="Devnavtext">This is the menu used by JOTD staff</h3>
+            <input type="text" id="jsendT" placeholder="JOTD message:"><br>
+            <button onclick="JsendMessage();" id="jsendB">Send</button>
+        </div>
+        <span id="topright" onclick="devopenNav();">secret menu</span>
         <div id="chat">
             <div id="popup1" class="overlay">
                 <div class="popup">

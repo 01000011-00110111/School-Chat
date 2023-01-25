@@ -57,7 +57,7 @@
             <!-- <button onclick="lock_chat();" id="lock">Lock</button><button onclick="unlock_chat();" id="unlock">Unlock</button><br> -->
             <p id="Devnavtext">Enter username in here for muting</p>
             <input type="text" id="muteuserbox" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">Unmute</button><br>
-            <button onclick="ban();" id="ban">Ban</button><br>
+            <button onclick="banHammer();" id="ban">Ban</button><br>
             <p id="Devnavtext">send stats about the chat</p>
             <button onclick='ajaxGetRequest("/chat_count", chat_log_count);' id="chatlineB">Print total line count</button>
             <button onclick="getStats();" id="statsB">Send server stats in chat.</button>
@@ -88,8 +88,8 @@
                 <button onClick="sendMessage();" id="send">Send</button>
             </div>
         </div><br>
-        <div id="activenav" hidden>
-            <div id="accSidenav" class="sidenava">
+        <div id="activenav">
+            <div id="accSidenav" class="sidenava" hidden>
                 <a href="javascript:void(0)" class="closebtna" onclick="closeaccNav()">×</a>
                 <p id="#logintxt1">Username:</p>
                 <input type="text" id="user" placeholder="Username"><br>
@@ -105,7 +105,7 @@
                 <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
                 <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
             </div>
-            <span id="account" onclick="openaccNav()">☰</span>
+            <span id="account" onclick="openaccNav()" hidden>☰</span>
             <div id="online_users" style="color: white;">
                 
             </div>

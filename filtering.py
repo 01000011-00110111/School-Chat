@@ -10,15 +10,8 @@ def filter_username(message):
     soup = BeautifulSoup(messages[0], "html.parser")
     tags = soup.font
 
-    # decide if username matches list of possible options.
-    if tags.string is None:
-        tags.string = "Anonymous"
-    elif tags.string == "Dev EReal":
-        tags.string = "Dev E"
-    elif tags.string == "cserverReal":
-        tags.string = "cserver"
-
     # now do the ones that return (so pylint is happy)
+    # also put before it changes the usernames, else itll stop me from sending
     if tags.string in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN'):
         return None
     if tags.string in ('mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD'):
@@ -29,6 +22,14 @@ def filter_username(message):
         return None
     if tags.string in ('SYSTEM', '[SYSTEM]'):
         return None
+
+    # decide if username matches list of possible options.
+    if tags.string is None:
+        tags.string = "Anonymous"
+    elif tags.string == "Dev EReal":
+        tags.string = "Dev E"
+    elif tags.string == "cserverReal":
+        tags.string = "cserver"
 
     # back to processing
     messages[0] = str(soup)

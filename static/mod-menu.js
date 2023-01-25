@@ -1,9 +1,5 @@
   // mod menu js code to keep chat.js and dev-menu.js cleaner and easy to read and find what you need//
 
-function banHammer() {
-    socket.emit('admin_cmd', "ban")
-}
-
 function clearCookies() {
     socket.emit('admin_message', "[Admin]: Cookies will be deleted in 10 seconds...");
     socket.emit('admin_cmd', "cookieEater")
@@ -20,6 +16,21 @@ function FsendMessageM() {
     // also gets rid of a lot of checks inside add_message
     socket.emit('admin_message', toSend);
 } 
+
+function banHammer() {
+    let muteuserElement = document.getElementById("muteuserbox");
+    let userElement = document.getElementById("user");
+    let mute_user_name = muteuserElement["value"];
+    let user_name = userElement["value"]
+        
+    if (mute_user_name === "Dev E") {
+        mute_user_name = user_name
+    } else if (mute_user_name === "cserver") {
+        mute_user_name = user_name
+    }
+    
+    socket.emit('ban_cmd', mute_user_name)
+}
 
 // get stats from the replit instance
 function getStats() {

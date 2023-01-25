@@ -15,7 +15,14 @@ function systemmessage() {
 function banHammer() {
     let muteuserElement = document.getElementById("muteuserbox");
     let mute_user_name = muteuserElement["value"];
-    socket.emit('admin_cmd', "ban")
+
+    if (mute_user_name === "Dev EReal") {
+        mute_user_name = "Dev E"
+    } else if (mute_user_name === "cserverReal") {
+        mute_user_name = "cserver"
+    }
+    
+    socket.emit('ban_cmd', mute_user_name)
 }
 
 //"<a href='" + urlElement + "'>" + urlsendElement + "</a>"

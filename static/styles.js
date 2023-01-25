@@ -87,6 +87,7 @@ function setLightStyle() {
     let sides = document.getElementById("sides");
     let topleft = document.getElementById("topleft");
     let send = document.getElementById("send");
+    let sidebar = document.getElementById("activenav");
     let sidenav = document.getElementsByClassName("sidenav")[0]
     let snav_text = sidenav.getElementsByTagName("a")
     let snav_iter = snav_text.length;
@@ -96,6 +97,7 @@ function setLightStyle() {
     message.style.color = "#000000";
     chatbox.style.backgroundColor = "#deddda";
     sides.style.backgroundColor = "#c0bfbc";
+    sidebar.style.backgroundColor = "#171717";
     topleft.style.backgroundColor = "#5A5A5A";
     topleft.style.color = "#000000";
     send.style.backgroundColor = "#192080";

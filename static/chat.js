@@ -16,7 +16,7 @@ socket.on("reset_chat", (who) => {
 });
 
 socket.on("force_username", (statement) => {
-    socket.emit("username", getCookie("username"), socket.id);
+    socket.emit("username", getCookie("username"));
 });
 
 socket.on("cookieEater", (statement) => {
@@ -33,12 +33,8 @@ socket.on("cookieEater", (statement) => {
     userElement["value"] = "";
 });
 
-socket.on("ban", (statement) => {
-    bancline();
-});
-
-socket.on("force_username", (statement) => {
-  reload();
+socket.on("ban", (username) => {
+    bancline(username);
 });
 
 socket.on("online", (db) => {
@@ -58,20 +54,15 @@ socket.on("online", (db) => {
     onlineDiv["innerHTML"] = online;
 });
 
-function bancline() {
+function bancline(muteUserName) {
     let userElement = document.getElementById("user");
     let user_name = userElement["value"];
-    let messageElement = document.getElementById("systemsendT")
-    
-    if (user_name === mute_user_name) {
+    console.log(muteUserName);
+    console.log(user_name);
+    if (user_name === muteUserName) {
         let ismutted = 'true'
         document.cookie = "permission=" + ismutted + "; path=/";
     }
-    muteuserElement["value"] = "";
-  
-    banmessage = '<font color="#ff7f00">' + muteuserElement["value"] + "is mutted" + '</font>'
-    let toSend = "[SYSTEM]: " + banmessage
-    socket.emit('message_chat', toSend);
 }
 
 // This function requests the server send it a full chat log
@@ -143,6 +134,7 @@ function runLimitedStartup() {
 function yesTOS() {
     access = 'true';
     document.cookie = "access=" + access + "; path=/";
+    document.cookie = "permission=false; path=/"
     runStartup();
     checkMsgBox();
 }
@@ -236,26 +228,27 @@ function sendMessage() {
     document.cookie = "role=" + role + "; path=/";
 
     // good idea to escape js anyway from here
-   // let isCmd = is_cmd(message);
+    // let isCmd = is_cmd(message);
     let profile_img = "<img style='max-height:25px; max-width:25px; overflow: hidden' src='" + profile_picture + "'></img>";
   
-        /*if (ismutted = 'true') {
-            return;
-        }else*/ if (message === "") {
-            return;
-        } else if (message === " ") {
-            return;
-        } else if (message === "  ") {
-            return;
-        } else if  (user_name === "Shatla") {
-           role = 'Cool Owen GF';
-        } else if (role === 'Cool Owen' || role === 'cool owen' || role === 'Cooler Owen' || role === 'cooler owen' || role === 'Coolish Owen' || role === 'coolish owen') {
-        role = 'Lameish Owen';
-        }
-     
-        
-    // role Founder Cserver
-    // role Founder C7
+    if (ismutted === 'true') {
+        return;
+    }
+    
+    if (message === "") {
+        return;
+    } else if (message === " ") {
+        return;
+    } else if (message === "  ") {
+        return;
+    }
+
+    if (role === "Stoopid" || role === "half stupid-smart" || role === "dumbbbb") {
+        role= "super -smart"
+    }
+
+
+    // wetll too late 
     // the stupid long user_name check
     // now implemented on server side
     // took much longer than it should have

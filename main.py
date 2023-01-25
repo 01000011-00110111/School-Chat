@@ -1,4 +1,4 @@
-"""Main webserver file"""
+    """Main webserver file"""
 import os
 import logging
 import json
@@ -127,9 +127,10 @@ def handle_connect(username):
 def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
     socketid = request.sid
-    print(socketid)
-    print(db.keys())
-    del db[socketid]
+    try:
+        del db[socketid]
+    except KeyError:
+        pass
 
 
 @socketio.on('username_msg')
@@ -148,6 +149,18 @@ def handle_online(username, p_username):
                 return
 
 
+@socketio.on("ban_cmd")
+def ban_user(username):
+    """Ban a user from the chat forever (until cookie wipe.)"""
+    emit("ban", username, broadcast=True)
+    chat.force_message('[SYSTEM]: <font color="#ff7f00">' + username +
+                       " is mutted for an undefned period of time.</font>")
+    emit("message_chat",
+         '[SYSTEM]: <font color="#ff7f00">' + username +
+         " is mutted for an undefned period of time.</font>",
+         broadcast=True)
+
+
 @socketio.on("admin_cmd")
 def handle_admin_stuff(cmd):
     """Admin commands will be sent here."""
@@ -161,7 +174,6 @@ def handle_admin_stuff(cmd):
         emit("message_chat",
              "[Admin]: Cookies have been wiped from all clients online.")
     elif cmd == "ban":
-        print("test")
         emit("ban", "true", broadcast=True)
     elif cmd == "full_status":
         result = chat.get_stats()

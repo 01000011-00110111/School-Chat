@@ -92,8 +92,8 @@
                 <button onclick="sendMessage();" id="send" >Send</button>
             </div>
         </div><br>
-        <div id="activenav" hidden>
-            <div id="accSidenav" class="sidenava">
+        <div id="activenav">
+            <div id="accSidenav" class="sidenava"hidden>
                 <a href="javascript:void(0)" class="closebtna" onclick="closeaccNav()">×</a>
                 <p id="#logintxt1">Username:</p>
                 <input type="text" id="user" placeholder="Username"><br>
@@ -109,7 +109,7 @@
                 <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
                 <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
             </div>
-            <span id="account" onclick="openaccNav()">☰</span>
+            <span id="account" onclick="openaccNav()" hidden>☰</span>
             <div id="online_users" style="color: white;">
                 
             </div>
