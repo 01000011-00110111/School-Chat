@@ -1,6 +1,7 @@
 """Handle chat messages."""
 from time import time
 from datetime import timedelta, datetime
+from typing import List
 import psutil
 from flask_socketio import emit
 
@@ -10,7 +11,7 @@ LOGFILE_B = "backend/Chat-backup.txt"
 
 # Returns a list of dictionaries. Each dictionary in the list
 # is a message that has been sent in our chat server
-def get_chat():
+def get_chat() -> List:
     """Return list of chat messages."""
     ret_val = []
     with open(LOGFILE, "r", encoding="utf8") as f_in:
@@ -21,7 +22,7 @@ def get_chat():
     return ret_val
 
 
-def get_line_count():
+def get_line_count() -> List:
     """Return the line count in the logfiles."""
     ret_val = []
     with open(LOGFILE, "r", encoding="utf8") as f_in:
@@ -33,7 +34,7 @@ def get_line_count():
     return ret_val
 
 
-def line_blanks():
+def line_blanks() -> None:
     """Send 100 blank lines in chat for testing purposes."""
     add_message(
         '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'
@@ -44,7 +45,7 @@ def line_blanks():
     )
 
 
-def get_stats():
+def get_stats() -> str:
     """Return full stats list to chat."""
 
     # get line count
@@ -68,7 +69,7 @@ def get_stats():
     begin_f = "[SYSTEM]: <font color='#ff7f00'>Server Stats:</font>"
     lines_f = f"Temp logfile: {lines} lines.\nBackup logfile: {lines_b} lines."
     uptime_f = f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds."
-    system_s = f"Threads: {thread_count}<br>CPU Usage (%): {cpu_usage}" 
+    system_s = f"Threads: {thread_count}<br>CPU Usage (%): {cpu_usage}"
     # <br>Memory in use (webserver): {mem_virt}
     longstats = f"{begin_f}<br>{lines_f}<br>{uptime_f}<br>{system_s}<br>"
     with open(LOGFILE, "a", encoding="utf8") as f_in:
@@ -77,7 +78,7 @@ def get_stats():
 
 
 # Adds the message text to our file containing all the messages
-def add_message(message_text):
+def add_message(message_text: str) -> None:
     """Handler for messages so they get logged."""
     with open(LOGFILE, "r", encoding="utf8") as f_in:
         lines = len(f_in.readlines())
@@ -91,7 +92,7 @@ def add_message(message_text):
         f_out.write(date + message_text + "\n")
 
 
-def reset_chat(message, admin):
+def reset_chat(message: str, admin: bool) -> str:
     """Admin function for reseting chat. Also used by the GC."""
     if admin is True:
         with open(LOGFILE, "w", encoding="utf8") as f_out:
@@ -110,7 +111,7 @@ def reset_chat(message, admin):
 
 
 # force the message text to our file containing all the messages
-def force_message(message_text):
+def force_message(message_text: str) -> None:
     """Force send a message to everyone even when chat is locked."""
     with open(LOGFILE, "a", encoding="utf8") as f_in:
         f_in.write(message_text + "\n")

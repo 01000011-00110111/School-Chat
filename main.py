@@ -1,4 +1,4 @@
-    """Main webserver file"""
+"""Main webserver file"""
 import os
 import logging
 import json
