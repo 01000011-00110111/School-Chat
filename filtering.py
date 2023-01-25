@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 #from chat import online
 
 
-def filter_username(message):
+def filter_username(message: str) -> str:
     """Filter usernames so they don't fake mods and such."""
     message_profile = message.split("</img>")
     messages = message_profile[1].split("-")

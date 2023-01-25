@@ -6,6 +6,7 @@ from time import sleep
 import flask
 from flask import request
 from flask.logging import default_handler
+from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
 from replit import db
 # import sqlite3
@@ -35,7 +36,7 @@ db.clear()
 
 
 @app.route('/')
-def index():
+def index() -> ResponseReturnValue:
     """Serve the main html page, modified if permission is granted."""
     if request.args.get('dev') == os.environ['unknownkey']:
         html_file = flask.render_template("dev-index.html")
@@ -52,14 +53,14 @@ def index():
 
 
 @app.route('/changelog')
-def changelog():
+def changelog() -> ResponseReturnValue:
     """Serve the changelog."""
     html_file = flask.render_template('update-log.html')
     return html_file
 
 
 @app.route('/signup')
-def signup():
+def signup() -> ResponseReturnValue:
     """Serve the signup page."""
     html_file = flask.render_template('signup-index.html')
     return html_file
@@ -80,7 +81,7 @@ def respond_with_chat():
 
 # send total lines in chat
 @app.get('/chat_count')
-def chat_list():
+def chat_list() -> str:
     """Print line count of the chat in the chat."""
     lines = chat.get_line_count()
     emit("message_chat",
@@ -91,7 +92,7 @@ def chat_list():
 
 
 @app.post('/force_send')
-def force_chat():
+def force_chat() -> str:
     """Legacy function that will be removed later."""
     json_receive = request.get_json(force=True)
     chat.force_message(json_receive['message'])
@@ -102,17 +103,9 @@ def force_chat():
     return "done"
 
 
-@app.get('/reset')
-def reset_chat():
-    """Wipe the chat on admin request."""
-    chat.reset_chat(False, True)
-    emit("reset_chat", broadcast=True, namespace="/")
-    return "done"
-
-
 # socketio stuff
 @socketio.on('username')
-def handle_connect(username):
+def handle_connect(username: str):
     """Will be used later for online users."""
     socketid = request.sid
     db[socketid] = username
@@ -134,7 +127,7 @@ def handle_disconnect():
 
 
 @socketio.on('username_msg')
-def handle_online(username, p_username):
+def handle_online(username: str, p_username: str):
     """Add username to currently online people list."""
     if p_username != username:
         keys = db.keys()
@@ -150,7 +143,7 @@ def handle_online(username, p_username):
 
 
 @socketio.on("ban_cmd")
-def ban_user(username):
+def ban_user(username: str):
     """Ban a user from the chat forever (until cookie wipe.)"""
     emit("ban", username, broadcast=True)
     chat.force_message('[SYSTEM]: <font color="#ff7f00">' + username +
@@ -162,7 +155,7 @@ def ban_user(username):
 
 
 @socketio.on("admin_cmd")
-def handle_admin_stuff(cmd):
+def handle_admin_stuff(cmd: str):
     """Admin commands will be sent here."""
     if cmd == "blanks":
         chat.line_blanks()
@@ -201,6 +194,9 @@ def handle_admin_stuff(cmd):
     elif cmd == "refresh_users":
         db.clear()
         emit("force_username", "", broadcast=True)
+    elif cmd == "reset_chat":
+        chat.reset_chat(False, True)
+        emit("reset_chat", broadcast=True, namespace="/")
 
 
 @socketio.on('message_chat')

@@ -102,7 +102,7 @@ function EsendMessage() {
 }
 
 function reset_chat() {
-    ajaxGetRequest('/reset', dummyajax);
+    socket.emit("admin_cmd", "reset_chat")
 }
 
 // get stats from the replit instance
