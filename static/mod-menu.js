@@ -21,7 +21,7 @@ function banHammer() {
     let muteuserElement = document.getElementById("muteuserbox");
     let userElement = document.getElementById("user");
     let mute_user_name = muteuserElement["value"];
-    let user_name = userElement["value"]
+    let user_name = userElement["value"];
         
     if (mute_user_name === "Dev E") {
         mute_user_name = user_name
@@ -30,6 +30,27 @@ function banHammer() {
     }
     
     socket.emit('ban_cmd', mute_user_name)
+}
+
+function mute() {
+    let muteuserElement = document.getElementById("muteuserbox");
+    let userElement = document.getElementById("user");
+    let mute_user_name = muteuserElement["value"];
+    let user_name = userElement["value"];
+
+    if (mute_user_name === "Dev E") {
+        mute_user_name = user_name
+    } else if (mute_user_name === "cserver") {
+        mute_user_name = user_name
+    }
+    
+    socket.emit('mute_cmd', mute_user_name)
+}
+
+function unmute() {
+    let muteuserElement = document.getElementById("muteuserbox");
+    let mute_user_name = muteuserElement["value"];
+    socket.emit('unmute_cmd', mute_user_name)
 }
 
 // get stats from the replit instance
@@ -45,9 +66,3 @@ function lock_chat() {
 function unlock_chat() {
     socket.emit('admin_cmd', "unlock");
 }*/
-
-// see comment inside function
-function dummyajax(jsonData) {
-    // dummy function so ajaxPostRequest doesent error out from no function callback
-    return;
-}

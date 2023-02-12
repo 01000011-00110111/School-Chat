@@ -33,6 +33,7 @@ socket.on("cookieEater", (statement) => {
     userElement["value"] = "";
 });
 
+
 socket.on("online", (db) => {
     let newline = "<br>"
     let online = "";
@@ -87,16 +88,15 @@ function muteusr(muteUserName) {
 function unmuteusr(muteUserName) {
     let userElement = document.getElementById("user");
     let user_name = userElement["value"];
-    let ismutted = getCookie('permission');
     console.log(muteUserName);
     console.log(user_name);
     if (ismutted === 'true') {
         if (user_name === muteUserName) {
-            let ismutted = 'false';
+            let ismutted = 'flase'
             document.cookie = "permission=" + ismutted + "; path=/";
         }
     } else {
-        let ismutted = 'banned'
+        ismutted = 'banned'
     }
 }
 
@@ -192,7 +192,6 @@ function runStartup() {
     ismutted = getCookie("permission");
     // remove when popup is implemented
     whichEvent(getCookie("theme"));
-    window.localStorage.setItem("permission", "false");
     socket.emit("username", getCookie("username"));
 }
 
@@ -229,9 +228,8 @@ function sendMessage() {
     let messageColorElement = document.getElementById("message_color");
     let roleColorElement = document.getElementById("role_color");
     let userColorElement = document.getElementById("user_color");  
+    let pass = document.getElementById("pass");
     let ismutted = getCookie("permission");
-    window.localStorage.setItem("permission", "false");
-    
   
     // Save the message text 
     let message = messageElement["value"];
@@ -240,8 +238,8 @@ function sendMessage() {
     let role = roleElement["value"]
     let user_color = userColorElement["value"];
     let message_color = messageColorElement["value"];
-    let role_color = roleColorElement["value"]; 
-    console.log(localStorage.getItem("permission"));
+    let role_color = roleColorElement["value"];        
+    let passwd = pass["value"]
 
     //if (theme === 'light' && )
     if (user_color === "#000000") {
@@ -303,13 +301,17 @@ function sendMessage() {
     let role_color_send = "<font color='" + role_color + "'>" + role + "</font>";
     // add profile_picture before user_name after I figure out how to limit how big an image is // i know how
     // still need user chooseable colors, will add to github issue tracker
-    if (role === "") {
-        let toSend = profile_img + user_color_name.toString() + " - " + message_color_send
-        socket.emit('message_chat', toSend);
-        return;
+    if (passwd === 'Sharkbegone') {
+        if (role === "") {
+             let toSend = profile_img + user_color_name.toString() + " - " + message_color_send
+            socket.emit('message_chat', toSend);
+            return;
+        } else {
+            let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" +     " - " + message_color_send
+            socket.emit('message_chat', toSend);
+            return;
+        }
     } else {
-        let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" +     " - " + message_color_send
-        socket.emit('message_chat', toSend);
         return;
     }
 }
@@ -328,7 +330,6 @@ function loadChatStartup(jsonString) {
     }
 
     chatDiv["innerHTML"] = chat;
-    console.log(localStorage.getItem("permission"))
     window.scrollTo(0, document.body.scrollHeight);
 }
 

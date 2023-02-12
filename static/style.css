@@ -15,6 +15,11 @@
 	flex-direction: column;
 }
 
+#online_users {
+    padding-left: 0.5%;
+    color: white;
+}
+
 #in-msg {
 	width: 100%;
 	height: 24px;
@@ -346,6 +351,15 @@
     border-color: #f6d32d;
 }
 
+#ban {
+    background-color: #c61010;
+    color: #f6d32d;
+    font-size: 20px;
+    border-radius: 20px;
+    border-style: dashed;
+    border-color: #f6d32d;
+}
+
 #fsendB:hover {
     colors: #77767b;
 }
@@ -408,6 +422,48 @@
     border-radius: 10px;
 }
 
+#jsendB{
+    background-color:  #D51956;
+    color:  #000000;
+    font-size: 20px;
+    border-radius: 20px;
+}
+
+#jsendT{
+    background-color:  #000000;
+    color:  #ffffff;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
+#SOsendB{
+    background-color:  #08bd71;
+    color:  #000000;
+    font-size: 20px;
+    border-radius: 20px;
+}
+
+#SOsendT{
+    background-color:  #000000;
+    color:  #ffffff;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
+#urlsendT{
+    background-color:  #000000;
+    color:  #ffffff;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
+#urlsendT2{
+    background-color:  #000000;
+    color:  #ffffff;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
 #sendimgB{
     background-color:  #000000;
     color:  #ffffff;
@@ -422,6 +478,13 @@
     border-radius: 10px;
 }
 
+#urlsendB{
+    background-color:  #1c71d8;
+    color:  #000000;
+    font-size: 20px;
+    border-radius: 20px;
+}
+
 #chatlineB{
     background-color:  #54da0b;
     color:  #000000;
@@ -429,8 +492,40 @@
     border-radius: 20px;
 }
 
+#statsB{
+    background-color:  #4ecb0b;
+    color:  #000000;
+    font-size: 20px;
+    border-radius: 20px;
+}
+
+#ChatrestB{
+    background-color:  #ff0000;
+    color:  #ffd500;
+    font-size: 20px;
+    border-radius: 20px;
+    border-style: dashed;
+    border-color: #ffd500;
+}
+
+#resetDB{
+    background-color:  #ad0000;
+    color:  #ffd500;
+    font-size: 20px;
+    border-radius: 20px;
+}
+
+#rfUserDB{
+    background-color:  #ff0000;
+    color:  #ffd500;
+    font-size: 20px;
+    border-radius: 20px;
+    border-style: dashed;
+    border-color: #ffd500;
+}
+
 #chatspamB {
-    background-color:  #a51d2d;
+    background-color:  #ad0000;
     color:  #f5c211;
     font-size: 20px;
     border-radius: 20px;

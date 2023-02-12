@@ -46,10 +46,18 @@ def index() -> ResponseReturnValue:
         html_file = flask.render_template("mod-index.html")
     elif request.args.get('dev') == "true":
         html_file = flask.render_template("chaos-index.html")
+    elif request.args.get('jotd') == "true":
+        html_file = flask.render_template("JOTD-index.html")
     else:
         html_file = flask.render_template("index.html")
 
     return html_file
+
+
+# easter egg time lol
+@app.route("/f")
+def f_but_better() -> ResponseReturnValue:
+    """Not an easter egg I promise."""
 
 
 @app.route('/changelog')
@@ -66,9 +74,28 @@ def signup() -> ResponseReturnValue:
     return html_file
 
 
+@app.route('/logs')
+def get_logs_page() -> ResponseReturnValue:
+    """Serve the chat logs (backup)"""
+    html_file = flask.render_template('Backup-chat.html')
+    return html_file
+
+
 ################################################################
 #             Functions handling AJAX interactions             #
 ################################################################
+
+
+@app.get('/backup_logs')
+def get_backup_chat():
+    """Return the backup-chat.txt contents."""
+    ret_val = []
+    with open("backend/Chat-backup.txt", "r", encoding="utf8") as f_in:
+        for line in f_in:
+            line = line.rstrip("\n\r")
+            rec = {"message": line}
+            ret_val.append(rec)
+    return ret_val
 
 
 @app.get('/chat')
@@ -122,6 +149,11 @@ def handle_disconnect():
     socketid = request.sid
     try:
         del db[socketid]
+        username_list = []
+        keys = db.keys()
+        for key in keys:
+            username_list.append(db[key])
+        emit("online", username_list, broadcast=True)
     except KeyError:
         pass
 
@@ -150,7 +182,31 @@ def ban_user(username: str):
                        " is mutted for an undefned period of time.</font>")
     emit("message_chat",
          '[SYSTEM]: <font color="#ff7f00">' + username +
+         " is Banned for forever.</font>",
+         broadcast=True)
+
+
+@socketio.on("mute_cmd")
+def mute_user(username: str):
+    """mute a user from the chat untilled mutted or until cookie wipe."""
+    emit("mute", username, broadcast=True)
+    chat.force_message('[SYSTEM]: <font color="#ff7f00">' + username +
+                       " is mutted for an undefned period of time.</font>")
+    emit("message_chat",
+         '[SYSTEM]: <font color="#ff7f00">' + username +
          " is mutted for an undefned period of time.</font>",
+         broadcast=True)
+
+
+@socketio.on("unmute_cmd")
+def unmute_user(username: str):
+    """unmute a user from the chat"""
+    emit("unmute", username, broadcast=True)
+    chat.force_message('[SYSTEM]: <font color="#ff7f00">' + username +
+                       " is unmuted.</font>")
+    emit("message_chat",
+         '[SYSTEM]: <font color="#ff7f00">' + username +
+         " is unmutted.</font>",
          broadcast=True)
 
 
@@ -166,8 +222,6 @@ def handle_admin_stuff(cmd: str):
         emit("cookieEater", "true", broadcast=True)
         emit("message_chat",
              "[Admin]: Cookies have been wiped from all clients online.")
-    elif cmd == "ban":
-        emit("ban", "true", broadcast=True)
     elif cmd == "full_status":
         result = chat.get_stats()
         emit("message_chat", result, broadcast=True)
@@ -202,14 +256,10 @@ def handle_admin_stuff(cmd: str):
 @socketio.on('message_chat')
 def handle_message(message):
     """New socketio implemntation for chat message handling."""
-    print(message)
-    if os.path.exists("backend/chat.lock"):
-        pass
-    else:
-        result = filtering.filter_username(message)
-        if result is not None:
-            chat.add_message(result)
-            emit("message_chat", result, broadcast=True)
+    result = filtering.filter_username(message)
+    if result is not True and result is not None:
+        chat.add_message(result)
+        emit("message_chat", result, broadcast=True)
 
 
 # temporary, will be in diffrent namespace soon

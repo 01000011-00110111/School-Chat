@@ -8,6 +8,8 @@
         <script src="static/ajax.js"></script>
         <script src="static/chat.js"></script>
         <script src="static/styles.js"></script>
+        <script src="static/non-admin.js"></script>
+        <script src="static/Cmds.js"></script>
         <link rel="stylesheet" href="static/style.css"> 
         <meta charset="utf-8">
         <meta name="description" content="A chat app, what else did you think this is?">
@@ -54,10 +56,11 @@
             <br>
             <a href="javascript:void(0)" class="closebtnR" onclick="devcloseNav()">×</a>
             <h3 id="Devnavtext">This is the menu used by style editor staff</h3>
-            <input type="text" id="SsendT" placeholder="SONG message:"><br>
-            <button onclick="SsendMessage();" id="SsendB">Send</button>
+            <input type="text" id="SOsendT" placeholder="SONG message:"><br>
+            <button onclick="SOsendMessage();" id="SOsendB">Send</button><br>
+            <button onclick='ajaxGetRequest("/chat_count", dummyajax);' id="chatlineB">Print total line count</button>
         </div>
-        <span id="topright" onclick="devopenNav();">secret menu</span>
+        <span id="topright" onclick="devopenNav();" style="color: white;">&#127925;</span>
         <div id="chat">
             <div id="popup1" class="overlay">
                 <div class="popup">

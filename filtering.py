@@ -1,10 +1,22 @@
 """Filter usernames and make the chat more xss safe"""
+import os
+from typing import Union
 from bs4 import BeautifulSoup
+from flask_socketio import emit
+from chat import force_message
 #from chat import online
 
 
-def filter_username(message: str) -> str:
-    """Filter usernames so they don't fake mods and such."""
+def filter_username(message: str) -> Union[str, bool]:
+    """See if an admin as sending the message, otherwise use normal procedure"""
+    locked = os.path.exists("backend/chat.lock")
+    print(message)
+    if message.startswith("<font color='#08bd71'>[SONG]:"
+                          ) or message.startswith("[Joke of the day]:"):
+        if locked is True:
+            return True
+        return message
+
     message_profile = message.split("</img>")
     messages = message_profile[1].split("-")
     soup = BeautifulSoup(messages[0], "html.parser")
@@ -12,7 +24,8 @@ def filter_username(message: str) -> str:
 
     # now do the ones that return (so pylint is happy)
     # also put before it changes the usernames, else itll stop me from sending
-    if tags.string in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN'):
+    if tags.string in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN',
+                       '[URL]'):
         return None
     if tags.string in ('mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD'):
         return None
@@ -21,6 +34,14 @@ def filter_username(message: str) -> str:
     if tags.string == "cserver":
         return None
     if tags.string in ('SYSTEM', '[SYSTEM]'):
+        return None
+    if tags.string in ("SONG", "[Song]", "[SONG]", "[song]"):
+        return None
+    if tags.string == " ":
+        return None
+    if tags.string == "  ":
+        return None
+    if tags.string == "   ":
         return None
 
     # decide if username matches list of possible options.
@@ -38,4 +59,12 @@ def filter_username(message: str) -> str:
         msg = msg + message_e + "-"
 
     msg = msg.rstrip(msg[-1])
+
+    if tags.string in ("Dev E", "cserver"):
+        force_message(msg)
+        emit("message_chat", msg, broadcast=True, namespace="/")
+        return True
+
+    if locked is True:
+        return True
     return msg

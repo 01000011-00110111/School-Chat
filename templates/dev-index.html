@@ -11,8 +11,10 @@
         <script src="static/ajax.js"></script>
         <script src="static/chat.js"></script>
         <script src="static/styles.js"></script>
+        <script src="static/non-admin.js"></script>
         <script src="static/dev-menu.js"></script>
         <script src="static/accounts.js"></script>
+        <script src="static/Cmds.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <link rel="stylesheet" href="static/style.css"> 
         <meta charset="utf-8">
@@ -66,22 +68,32 @@
             <p id="Devnavtext">Enter username in here for muting</p>
             <input type="text" id="muteuserbox" placeholder="type user to mute here:"><br>
             <button onclick="mute();" id="mute">Mute</button>
-            <button onclick="unmute();" id="unmute">unmute</button>
+            <button onclick="unmute();" id="unmute">Unmute</button>
             <button onclick="banHammer();" id="ban">Ban</button><br>
-            <button onclick="RefreshPG()" id="rpg"
+            <button onclick="RefreshPG()" id="rpg">some button thats never finished</button><br>
             <p id="Devnavtext">Send message as SYSTEM user</p>
-            <input type="text" id="systemsendT" placeholder="Send message as SYSTEM"><button onclick="systemmessage();" id="systemsendB">Send</button><br>
+            <input type="text" id="systemsendT" placeholder="Send message as SYSTEM">
+            <button onclick="systemmessage();" id="systemsendB">Send</button><br><br>
+            <input type="text" id="jsendT" placeholder="JOTD message:">
+            <button onclick="JsendMessage();" id="jsendB">Send</button><br><br>
+            <input type="text" id="SOsendT" placeholder="SONG message:">
+            <button onclick="SOsendMessage();" id="SOsendB">Send</button><br><br>
             <button onclick='ajaxGetRequest("/chat_count", dummyajax);' id="chatlineB">Print total line count</button>
             <button onclick="testChatGC();" id="chatspamB">Send 100 Empty lines</button>
-            <button onclick="getStats();" id="statsB">Send server stats in chat.</button><button onclick="reset_chat()" id="ChatrestB">Reset chat</button><button onclick="clearDB();">Reset DB</button><button onclick="refreshUsers();" onclick="userdbr()">Refresh users DB</button><br>    
+            <button onclick="getStats();" id="statsB">Send server stats in chat</button><button onclick="reset_chat()" id="ChatrestB">Reset chat</button><br>
+            <button onclick="clearDB();" id="resetDB">Reset DB</button><button onclick="refreshUsers();" id="rfUserDB">Refresh users DB</button><br><br>
             <input type="text" id="sendimgT" placeholder="Paste img url here"><button onclick="sendImage();" id="sendimgB">Send</button><br> 
-            <p id="Devnavtext">Send messages in bold/biger</p>
+            <p id="Devnavtext">Send messages in bold/biger. (event)</p>
             <input type="text" id="EventMSGT" placeholder="Send message here"><button onclick="EsendMessage();" id="EventMSGB">Send</button>
-            <input type="text" id="urlsendT" placeholder="paste url here"><input type="text" id="urlsendT2" placeholder="put message here"><button onclick="urlsend()" id="urlsendB">Send</button>
-          <br>
-          <br>
-          <br>
-          <button id="cookieRemoverB" onclick="clearCookies();">Cookie eater</button><button id="cookieRemoverB" onclick="nukeCookies();">Cookie Nuker</button>
+            <p id="Devnavtext">Send a message as a url.</p>
+            <input type="text" id="urlsendT" placeholder="paste url here"><input type="text" id="urlsendT2" placeholder="put message here"><br>
+            <button onclick="urlsend()" id="urlsendB">Send</button>
+            <br>
+            <br>
+            <br>
+            <button id="cookieRemoverB" onclick="clearCookies();">Cookie eater</button><button id="cookieRemoverB" onclick="nukeCookies();">Cookie Nuker</button><br>
+            <button id="csColorsB" onclick="csColors();">COLORS (cs)</button>
+            <button id="devEColorsB" onclick="devEColors();">COLORS (DEV E)</button>
         </div>
         <span id="topright" onclick="devopenNav();">🔧</span>
         <div id="chat"> 
@@ -123,7 +135,7 @@
                 <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
             </div>
             <span id="account" onclick="openaccNav()">☰</span>
-            <div id="online_users" style="color: white;">
+            <div id="online_users">
                 
             </div>
         </div>

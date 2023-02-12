@@ -6,8 +6,9 @@
         <!-- SOCKETIO IMPORT MUST BE HERE, BEFORE CHAT.JS IMPORT. IT BREAKS OTHERWISE -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
         <script src="static/ajax.js"></script>
-        <script src="static/chat.js"></script>
+        <script src="static/chat-EA.js"></script>
         <script src="static/styles.js"></script>
+        <script src="static/Cmds.js"></script>
         <link rel="stylesheet" href="static/style.css"> 
         <meta charset="utf-8">
         <meta name="description" content="A chat app, what else did you think this is?">
@@ -25,7 +26,8 @@
             <a href="#your safe now">Soon</a>
             <input type="text" id="user" name="username" placeholder="username" maxlength="12"></input><br/>
             <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture" hidden>
-            <input type="text" id="role" name="role" placeholder="role" maxlength="18"><br>
+            <input type="text" id="role" name="role" placeholder="role" maxlength="48"><br>
+            <input type="text" id="pass" placeholder="password"><br>
             <div class="colorDropdown">
                 <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
                 <div id="myDropdown" class="dropdown-content">

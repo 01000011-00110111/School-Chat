@@ -1,4 +1,4 @@
-// set the theme
+    // set the theme
 function setTheme(theme) {
     // set theme when button is pressed
     // other style function will change this, not directly called
@@ -65,7 +65,7 @@ function setDarkStyle() {
     sides.style.backgroundColor = "#121212";
     sidebar.style.backgroundColor = "#171717";
     topleft.style.backgroundColor = "#f5f2f2";
-    topleft.style.color = "#696969";
+    topleft.style.color = "#f0574d";
     send.style.backgroundColor = "#192080";
     send.style.color = "#ffffff";
     sidenav.style.backgroundColor = "#111";
@@ -99,7 +99,7 @@ function setLightStyle() {
     sides.style.backgroundColor = "#c0bfbc";
     sidebar.style.backgroundColor = "#171717";
     topleft.style.backgroundColor = "#5A5A5A";
-    topleft.style.color = "#000000";
+    topleft.style.color = "#1b0670";
     send.style.backgroundColor = "#192080";
     send.style.color = "#ffffff";
     sidenav.style.backgroundColor = "#b9c6c9";
@@ -464,16 +464,16 @@ function setTestingStyle3() {
     let snav_text = sidenav.getElementsByTagName("a")
     let snav_iter = snav_text.length;
     // then set the color to what it is in the css document
-    body.style.backgroundColor = "#434270";
-    chat.style.color = "#000000";
+    body.style.backgroundColor = "#910410";
+    chat.style.color = "#fafcfb";
     message.style.color = "#000000";
-    chatbox.style.backgroundColor = "#deddda";
-    sides.style.backgroundColor = "#c0bfbc";
-    topleft.style.backgroundColor = "#5A5A5A";
-    topleft.style.color = "#000000";
-    send.style.backgroundColor = "#343cad";
+    chatbox.style.backgroundColor = "#d41320";
+    sides.style.backgroundColor = "#910410";
+    topleft.style.backgroundColor = "#d41320";
+    topleft.style.color = "#ed0968";
+    send.style.backgroundColor = "#ed0968";
     send.style.color = "#ffffff";
-    sidenav.style.backgroundColor = "#729fcf";
+    sidenav.style.backgroundColor = "#d41320";
     // for loop to cycle thru links in sidebar
     for (let i = 0; i < snav_iter; i++) {
         snav_text[i].style.color = "#313536";

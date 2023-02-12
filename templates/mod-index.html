@@ -8,7 +8,9 @@
         <script src="static/ajax.js"></script>
         <script src="static/chat.js"></script>
         <script src="static/styles.js"></script>
-        <script src="static/mod-menu.js"></script> 
+        <script src="static/mod-menu.js"></script>
+        <script src="static/non-admin.js"></script>
+        <script src="static/Cmds.js"></script>
         <link rel="stylesheet" href="static/style.css"> 
         <meta charset="utf-8">
         <meta name="description" content="A chat app, what else did you think this is?">
@@ -59,7 +61,7 @@
             <input type="text" id="muteuserbox" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">Unmute</button><br>
             <button onclick="banHammer();" id="ban">Ban</button><br>
             <p id="Devnavtext">send stats about the chat</p>
-            <button onclick='ajaxGetRequest("/chat_count", chat_log_count);' id="chatlineB">Print total line count</button>
+            <button onclick='ajaxGetRequest("/chat_count", dummyajax);' id="chatlineB">Print total line count</button>
             <button onclick="getStats();" id="statsB">Send server stats in chat.</button>
             <br>
             <br>

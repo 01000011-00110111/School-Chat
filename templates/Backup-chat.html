@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Backup chat.txt</title>
+        <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+        <!-- SOCKETIO IMPORT MUST BE HERE, BEFORE CHAT.JS IMPORT. IT BREAKS OTHERWISE -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+        <script src="static/ajax.js"></script>
+        <script src="static/chatlog.js"></script>
+        <link rel="stylesheet" href="static/style.css"> 
+        <meta charset="utf-8">
+        <meta name="description" content="A chat app, what else did you think this is?">
+        <meta name="author" content="C7, cserver">
+        <meta name="googlebot" content="noindex,nofollow,nositelinkssearchbox,nopagereadaloud,notranslate">
+	</head>
+    <body id="body" onload="ajaxGetRequest('/backup_logs', loadBackupChat);" style="background-color: black; color: white;">
+        <div id="chat">
+        </div>
+    </body>
+</html>

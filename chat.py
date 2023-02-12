@@ -116,4 +116,5 @@ def force_message(message_text: str) -> None:
     with open(LOGFILE, "a", encoding="utf8") as f_in:
         f_in.write(message_text + "\n")
     with open(LOGFILE_B, "a", encoding="utf8") as f_out:
-        f_out.write(message_text + "\n")
+        date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
+        f_out.write(date + message_text + "\n")

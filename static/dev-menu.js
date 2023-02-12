@@ -25,6 +25,25 @@ function banHammer() {
     socket.emit('ban_cmd', mute_user_name)
 }
 
+function mute() {
+    let muteuserElement = document.getElementById("muteuserbox");
+    let mute_user_name = muteuserElement["value"];
+
+    if (mute_user_name === "Dev EReal") {
+        mute_user_name = "Dev E"
+    } else if (mute_user_name === "cserverReal") {
+        mute_user_name = "cserver"
+    }
+    
+    socket.emit('mute_cmd', mute_user_name)
+}
+
+function unmute() {
+    let muteuserElement = document.getElementById("muteuserbox");
+    let mute_user_name = muteuserElement["value"];
+    socket.emit('unmute_cmd', mute_user_name)
+}
+
 //"<a href='" + urlElement + "'>" + urlsendElement + "</a>"
 function urlsend() {
     let urlElement = document.getElementById('urlsendT');
@@ -90,6 +109,30 @@ function testChatGC() {
     socket.emit('admin_cmd', "blanks");
 }
 
+function csColors() {
+    let user_color = document.getElementById("user_color");
+    let message_color = document.getElementById("message_color");
+    let role_color = document.getElementById("role_color");
+    user_color["value"] = "#f47106";
+    message_color["value"] = "#c36004";
+    role_color["value"] = "#f47106";
+    document.cookie = "user_color=#f47106; path=/";
+    document.cookie = "message_color=#c36004; path=/";
+    document.cookie = "role_color=#f47106; path=/";
+}
+
+function devEColors() {
+    let user_color = document.getElementById("user_color");
+    let message_color = document.getElementById("message_color");
+    let role_color = document.getElementById("role_color");
+    user_color["value"] = "#f40606";
+    message_color["value"] = "#0000ff";
+    role_color["value"] = "#ffffff";
+    document.cookie = "user_color=#f47106; path=/";
+    document.cookie = "message_color=#c36004; path=/";
+    document.cookie = "role_color=#f47106; path=/";
+}
+
 function EsendMessage() {
     // just bits and pieces from sendMessage
     let messageElement = document.getElementById("EventMSGT");
@@ -126,10 +169,4 @@ function lock_chat() {
 // unlocks chat
 function unlock_chat() {
     socket.emit('admin_cmd', "unlock");
-}
-
-// see comment inside function
-function dummyajax(jsonData) {
-    // dummy function so ajaxPostRequest doesent error out from no function callback
-    return;
 }
