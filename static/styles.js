@@ -1,8 +1,8 @@
-    // set the theme
+// set the theme
 function setTheme(theme) {
     // set theme when button is pressed
     // other style function will change this, not directly called
-    document.cookie = "theme=" + theme + "; path=/";
+    window.localStorage.setItem("theme", theme);
 }
 
 // for event theme
@@ -22,7 +22,7 @@ function whichEvent(event = "dark") {
         setThanksTheme();
     } else if (event === "hollow") {
         setHollowTheme();
-    }else if (event === "newyears") {
+    } else if (event === "newyears") {
         setNewyearsTheme();
     } else if (event === "") {
         whichEvent();

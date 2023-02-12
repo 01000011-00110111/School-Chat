@@ -16,7 +16,7 @@ socket.on("reset_chat", (who) => {
 });
 
 socket.on("force_username", (statement) => {
-    socket.emit("username", getCookie("username"));
+    socket.emit("username", window.localStorage.getItem("username"));
 });
 
 socket.on("cookieEater", (statement) => {
@@ -40,6 +40,8 @@ socket.on("online", (db) => {
     for (onlineUser of db) {
         if (onlineUser === "cserverReal") {
             onlineUser = "cserver"
+        } else if (onlineUser === null) {
+            onlineUser = "Anonymous"
         } else if (onlineUser === "") {
             onlineUser = "Anonymous"
         } else if (onlineUser === "Dev EReal") {
@@ -134,14 +136,14 @@ function getCookie(name) {
 
 // the startup for cookies after the first time
 function runCheckStartup() {
-    whichEvent(getCookie('theme'));
-    access = getCookie("access");
+    whichEvent(window.localStorage.getItem("theme"));
+    access = window.localStorage.getItem("access");
     if (access === 'true') {
         runStartup();
         checkMsgBox();
     
     } else {
-        // mush be here, otherwise popup could be bypased
+        // must be here, otherwise popup could be bypased
         let message_box = document.getElementById('message');
         let send = document.getElementById('send');
         let sidenav = document.getElementById('topleft');
@@ -163,12 +165,12 @@ function runLimitedStartup() {
     send.disabled = true;
     message_box.disabled = true;
     // let access = 'false'
-    document.cookie = "access=" + access + "; path=/";
+    window.localStorage.setItem("access", "false");
 }
 
 function yesTOS() {
     access = 'true';
-    document.cookie = "access=" + access + "; path=/";
+    window.localStorage.setItem("access", "true");
     document.cookie = "permission=false; path=/";
     runStartup();
     checkMsgBox();
@@ -184,16 +186,16 @@ function runStartup() {
     let message_color = document.getElementById("message_color");
     let role_color = document.getElementById("role_color");
     let roleElement = document.getElementById("role");
-    user_color["value"] = getCookie("user_color");
-    message_color["value"] = getCookie("message_color");
-    role_color["value"] = getCookie("role_color");
-    roleElement["value"] = getCookie("role");
-    userElement["value"] = getCookie("username");
+    user_color["value"] = window.localStorage.getItem("user_color");
+    message_color["value"] = window.localStorage.getItem("message_color");
+    role_color["value"] = window.localStorage.getItem("role_color");
+    roleElement["value"] = window.localStorage.getItem("role");
+    userElement["value"] = window.localStorage.getItem("username");
     ismutted = getCookie("permission");
     // remove when popup is implemented
-    whichEvent(getCookie("theme"));
-    window.localStorage.setItem("permission", "false");
-    socket.emit("username", getCookie("username"));
+    whichEvent(window.localStorage.getItem("theme"));
+    window.localStorage.getItem("permission");
+    socket.emit("username", window.localStorage.getItem("username"));
 }
 
 function checkMsgBox() {
@@ -241,17 +243,18 @@ function sendMessage() {
     let user_color = userColorElement["value"];
     let message_color = messageColorElement["value"];
     let role_color = roleColorElement["value"]; 
-    console.log(localStorage.getItem("permission"));
 
     //if (theme === 'light' && )
     if (user_color === "#000000") {
-        user_color = "#ffffff"
+        user_color = "#ffffff";
     }
+
     if (message_color === "#000000") {
-        message_color = "#ffffff"
+        message_color = "#ffffff";
     }
+
     if (role_color === "#000000") {
-        role_color = "#ffffff"
+        role_color = "#ffffff";
     }
 
     // needs to be here, otherwise cookie is overriten
@@ -265,8 +268,15 @@ function sendMessage() {
     document.cookie = "role_color=" + role_color + "; path=/";
     document.cookie = "role=" + role + "; path=/";
 
-    // good idea to escape js anyway from here
-    // let isCmd = is_cmd(message);
+    // session stuff goes here
+    window.localStorage.setItem("role", role);
+    window.localStorage.setItem("role_color", role_color);
+    window.localStorage.setItem("message_color", message_color);
+    window.localStorage.setItem("user_color", user_color);
+    window.localStorage.setItem("username", user_name);
+    window.localStorage.setItem("profile_picture", profile_picture);
+    
+
     let profile_img = "<img style='max-height:25px; max-width:25px; overflow: hidden' src='" + profile_picture + "'></img>";
   
     if (ismutted === 'true') {
@@ -284,7 +294,7 @@ function sendMessage() {
     }
 
     if (role === "Stoopid" || role === "half stupid-smart" || role === "dumbbbb") {
-        role= "super -smart"
+        role = "super -smart"
     }
 
 
@@ -308,7 +318,7 @@ function sendMessage() {
         socket.emit('message_chat', toSend);
         return;
     } else {
-        let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" +     " - " + message_color_send
+        let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" + " - " + message_color_send
         socket.emit('message_chat', toSend);
         return;
     }
