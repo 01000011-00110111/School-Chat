@@ -25,14 +25,9 @@ def filter_username(message: str) -> Union[str, bool]:
     # now do the ones that return (so pylint is happy)
     # also put before it changes the usernames, else itll stop me from sending
     if tags.string in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN',
-                       '[URL]'):
-        return None
-    if tags.string in ('mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD',
-                       'SYSTEM', '[SYSTEM]'):
-        return None
-    if tags.string in ("Dev E", "cserver"):
-        return None
-    if tags.string in ("SONG", "[Song]", "[SONG]", "[song]", " ", "  ", "   "):
+                       '[URL]', 'mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD',
+                       'SYSTEM', '[SYSTEM]', "SONG", "[Song]", "[SONG]",
+                       "[song]", " ", "  ", "   ", "Dev E", "cserver"):
         return None
 
     # decide if username matches list of possible options.
