@@ -27,21 +27,12 @@ def filter_username(message: str) -> Union[str, bool]:
     if tags.string in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN',
                        '[URL]'):
         return None
-    if tags.string in ('mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD'):
+    if tags.string in ('mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD',
+                       'SYSTEM', '[SYSTEM]'):
         return None
-    if tags.string == "Dev E":
+    if tags.string in ("Dev E", "cserver"):
         return None
-    if tags.string == "cserver":
-        return None
-    if tags.string in ('SYSTEM', '[SYSTEM]'):
-        return None
-    if tags.string in ("SONG", "[Song]", "[SONG]", "[song]"):
-        return None
-    if tags.string == " ":
-        return None
-    if tags.string == "  ":
-        return None
-    if tags.string == "   ":
+    if tags.string in ("SONG", "[Song]", "[SONG]", "[song]", " ", "  ", "   "):
         return None
 
     # decide if username matches list of possible options.

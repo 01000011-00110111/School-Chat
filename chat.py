@@ -11,10 +11,10 @@ LOGFILE_B = "backend/Chat-backup.txt"
 
 # Returns a list of dictionaries. Each dictionary in the list
 # is a message that has been sent in our chat server
-def get_chat() -> List:
+def get_chat(file: str) -> List:
     """Return list of chat messages."""
     ret_val = []
-    with open(LOGFILE, "r", encoding="utf8") as f_in:
+    with open(f"backend/{file}.txt", "r", encoding="utf8") as f_in:
         for line in f_in:
             line = line.rstrip("\n\r")
             rec = {"message": line}

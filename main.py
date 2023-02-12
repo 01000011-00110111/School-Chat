@@ -89,19 +89,14 @@ def get_logs_page() -> ResponseReturnValue:
 @app.get('/backup_logs')
 def get_backup_chat():
     """Return the backup-chat.txt contents."""
-    ret_val = []
-    with open("backend/Chat-backup.txt", "r", encoding="utf8") as f_in:
-        for line in f_in:
-            line = line.rstrip("\n\r")
-            rec = {"message": line}
-            ret_val.append(rec)
+    ret_val = chat.get_chat("Chat-backup")
     return ret_val
 
 
 @app.get('/chat')
 def respond_with_chat():
     """Legacy function only used now for inital chat load."""
-    messages = chat.get_chat()
+    messages = chat.get_chat("chat")
     ret_val = json.dumps(messages)
     return ret_val
 
