@@ -7,7 +7,7 @@ function setTheme(theme) {
 
 // for event theme
 // set what event is currently being used
-function whichEvent(event = "dark") {
+function whichEvent(event = "special1") {
     // SET WHAT EVENT IS HAPPENING HERE
     // MUST BE ALL LOWERCASE TO WORK
 
@@ -26,8 +26,10 @@ function whichEvent(event = "dark") {
         setNewyearsTheme();
     } else if (event === "") {
         whichEvent();
-    } else if (event === "special1" || event === "special2") {
+    } else if (event === "special1") {
         setSpecalStyle();
+    } else if (event === "valstyle") {
+         valstyle();
     } else if (event === "dev") {
         setDevStyle();
     } else if (event === "testing1") {
@@ -65,7 +67,7 @@ function setDarkStyle() {
     sides.style.backgroundColor = "#121212";
     sidebar.style.backgroundColor = "#171717";
     topleft.style.backgroundColor = "#f5f2f2";
-    topleft.style.color = "#f0574d";
+    topleft.style.color = "#192080";
     send.style.backgroundColor = "#192080";
     send.style.color = "#ffffff";
     sidenav.style.backgroundColor = "#111";
@@ -105,7 +107,7 @@ function setLightStyle() {
     sidenav.style.backgroundColor = "#b9c6c9";
     // for loop to cycle thru links in sidebar
     for (let i = 0; i < snav_iter; i++) {
-        snav_text[i].style.color = "#313536";
+        snav_text[i].style.color = "#192080";
     }
 }
 
@@ -124,6 +126,7 @@ function setChristmasTheme() {
     let sides = document.getElementById("sides");
     let topleft = document.getElementById("topleft");
     let send = document.getElementById("send");
+    let sidebar = document.getElementById("activenav");
     let sidenav = document.getElementsByClassName("sidenav")[0]
     let snav_text = sidenav.getElementsByTagName("a")
     let snav_iter = snav_text.length;
@@ -133,6 +136,7 @@ function setChristmasTheme() {
     message.style.color = "#4c0606";
     chatbox.style.backgroundColor = "#a91919";
     sides.style.backgroundColor = "#176d38";
+    sidebar.style.backgroundColor = "#171717";
     topleft.style.backgroundColor = "#176d38";
     topleft.style.color = "#c2bcbc";
     send.style.backgroundColor = "#6caa55";
@@ -155,6 +159,7 @@ function setNewyearsTheme() {
     let sides = document.getElementById("sides");
     let topleft = document.getElementById("topleft");
     let send = document.getElementById("send");
+    let sidebar = document.getElementById("activenav");
     let sidenav = document.getElementsByClassName("sidenav")[0]
     let snav_text = sidenav.getElementsByTagName("a")
     let snav_iter = snav_text.length;
@@ -165,6 +170,7 @@ function setNewyearsTheme() {
     message.style.color = "#4c0606";
     chatbox.style.backgroundColor = "#a91919";
     sides.style.backgroundColor = "#176d38";
+    sidebar.style.backgroundColor = "#171717";
     topleft.style.backgroundColor = "#176d38";
     topleft.style.color = "#c2bcbc";
     send.style.backgroundColor = "#6caa55";
@@ -188,6 +194,7 @@ function setThanksTheme() {
     let sides = document.getElementById("sides");
     let topleft = document.getElementById("topleft");
     let send = document.getElementById("send");
+    let sidebar = document.getElementById("activenav");
     let sidenav = document.getElementsByClassName("sidenav")[0]
     let snav_text = sidenav.getElementsByTagName("a")
     let snav_iter = snav_text.length;
@@ -197,6 +204,7 @@ function setThanksTheme() {
     message.style.color = "#000000";
     chatbox.style.backgroundColor = "#e26831";
     sides.style.backgroundColor = "#44220b";
+    sidebar.style.backgroundColor = "#171717";
     // ADD styling elements to css file from here
     topleft.style.backgroundColor = "#176d38";
     topleft.style.color = "#c2bcbc";
@@ -222,6 +230,7 @@ function setHollowTheme() {
     let sides = document.getElementById("sides");
     let topleft = document.getElementById("topleft");
     let send = document.getElementById("send");
+    let sidebar = document.getElementById("activenav");
     let sidenav = document.getElementsByClassName("sidenav")[0]
     let snav_text = sidenav.getElementsByTagName("a")
     let snav_iter = snav_text.length;
@@ -231,6 +240,7 @@ function setHollowTheme() {
     message.style.color = "#e66100";
     chatbox.style.backgroundColor = "#2c2525";
     sides.style.backgroundColor = "#2c2525";
+    sidebar.style.backgroundColor = "#171717";
     // ADD styling elements to css file from here
     topleft.style.backgroundColor = "#176d38";
     topleft.style.color = "#35312a";
@@ -256,6 +266,7 @@ function setThanksTheme() {
     let sides = document.getElementById("sides");
     let topleft = document.getElementById("topleft");
     let send = document.getElementById("send");
+    let sidebar = document.getElementById("activenav");
     let sidenav = document.getElementsByClassName("sidenav")[0]
     let snav_text = sidenav.getElementsByTagName("a")
     let snav_iter = snav_text.length;
@@ -265,6 +276,7 @@ function setThanksTheme() {
     message.style.color = "#000000";
     chatbox.style.backgroundColor = "#e26831";
     sides.style.backgroundColor = "#44220b";
+    sidebar.style.backgroundColor = "#171717";
     // ADD styling elements to css file from here
     topleft.style.backgroundColor = "#176d38";
     topleft.style.color = "#c2bcbc";
@@ -280,11 +292,6 @@ function setThanksTheme() {
 
 // sets theme to specal style
 function setSpecalStyle() {
-    // ig this easter egg
-    let userElement = document.getElementById("user");
-    let user_name = userElement["value"];
-    if (user_name === "DLHTCS") { // put your username here sir // how dare you sir
-        // set theme in cookie
         setTheme("special1");
         // get all id tags
         let body = document.getElementById("body");
@@ -294,6 +301,7 @@ function setSpecalStyle() {
         let sides = document.getElementById("sides");
         let topleft = document.getElementById("topleft");
         let send = document.getElementById("send");
+        let sidebar = document.getElementById("activenav");
         let sidenav = document.getElementsByClassName("sidenav")[0]
         let snav_text = sidenav.getElementsByTagName("a")
         let snav_iter = snav_text.length;
@@ -303,6 +311,7 @@ function setSpecalStyle() {
         message.style.color = "#2c9696";
         chatbox.style.backgroundColor = "#0d4242";
         sides.style.backgroundColor = "#024a7d";
+        sidebar.style.backgroundColor = "#171717";
         // ADD styling elements to css file from here
         topleft.style.backgroundColor = "#024a7d";
         topleft.style.color = "#0481d9";
@@ -314,37 +323,38 @@ function setSpecalStyle() {
         for (let i = 0; i < snav_iter; i++) {
             snav_text[i].style.color = "#818181";
         }
-    } else if (user_name === "lovetheme") { // wow // I know i hate it too
+    } 
+
+function valstyle() {
         // set theme in cookie
-        setTheme("special2");
+    setTheme("valstyle");
         // get all id tags
-        let body = document.getElementById("body");
-        let chat = document.getElementById("chat");
-        let message = document.getElementById("message");
-        let chatbox = document.getElementById("chatbox");
-        let sides = document.getElementById("sides");
-        let topleft = document.getElementById("topleft");
-        let send = document.getElementById("send");
-        let sidenav = document.getElementsByClassName("sidenav")[0]
-        let snav_text = sidenav.getElementsByTagName("a")
-        let snav_iter = snav_text.length;
+    let body = document.getElementById("body");
+    let chat = document.getElementById("chat");
+    let message = document.getElementById("message");
+    let chatbox = document.getElementById("chatbox");
+    let sides = document.getElementById("sides");
+    let topleft = document.getElementById("topleft");
+    let send = document.getElementById("send");
+    let sidebar = document.getElementById("activenav");
+    let sidenav = document.getElementsByClassName("sidenav")[0]
+    let snav_text = sidenav.getElementsByTagName("a")
+    let snav_iter = snav_text.length;
         // then set the color to what it is in the css document
-        body.style.backgroundColor = "#d10d7c";
-        chat.style.color = "#ffffff";
-        message.style.color = "";
-        chatbox.style.backgroundColor = "#c711d1";
-        sides.style.backgroundColor = "#d10d7c";
-        // ADD styling elements to css file from here
-        topleft.style.backgroundColor = "d10d7c";
-        topleft.style.color = "ffffff";
-        sidenav.style.backgroundColor = "";
-        // to here
-        send.style.backgroundColor = "";
-        send.style.color = "";
-        // for loop to cycle thru links in sidebar
-        for (let i = 0; i < snav_iter; i++) {
-            snav_text[i].style.color = "#818181";
-        }
+    body.style.backgroundColor = "#910410";
+    chat.style.color = "#fafcfb";
+    message.style.color = "#000000";
+    chatbox.style.backgroundColor = "#d41320";
+    sides.style.backgroundColor = "#910410";
+    sidebar.style.backgroundColor = "#171717";
+    topleft.style.backgroundColor = "#d41320";
+    topleft.style.color = "#ed0968";
+    send.style.backgroundColor = "#ed0968";
+    send.style.color = "#ffffff";
+    sidenav.style.backgroundColor = "#d41320";
+    // for loop to cycle thru links in sidebar
+    for (let i = 0; i < snav_iter; i++) {
+        snav_text[i].style.color = "#313536";
     }
 }
 
@@ -398,6 +408,7 @@ function setTestingStyle1() {
     let sides = document.getElementById("sides");
     let topleft = document.getElementById("topleft");
     let send = document.getElementById("send");
+    let sidebar = document.getElementById("activenav");
     let sidenav = document.getElementsByClassName("sidenav")[0]
     let snav_text = sidenav.getElementsByTagName("a")
     let snav_iter = snav_text.length;
@@ -407,6 +418,7 @@ function setTestingStyle1() {
     message.style.color = "#000000";
     chatbox.style.backgroundColor = "#deddda";
     sides.style.backgroundColor = "#c0bfbc";
+    sidebar.style.backgroundColor = "#171717";
     topleft.style.backgroundColor = "#5A5A5A";
     topleft.style.color = "#000000";
     send.style.backgroundColor = "#343cad";
@@ -429,6 +441,7 @@ function setTestingStyle2() {
     let sides = document.getElementById("sides");
     let topleft = document.getElementById("topleft");
     let send = document.getElementById("send");
+    let sidebar = document.getElementById("activenav");
     let sidenav = document.getElementsByClassName("sidenav")[0]
     let snav_text = sidenav.getElementsByTagName("a")
     let snav_iter = snav_text.length;
@@ -438,6 +451,7 @@ function setTestingStyle2() {
     message.style.color = "#000000";
     chatbox.style.backgroundColor = "#413f5e";
     sides.style.backgroundColor = "#413f5e";
+    sidebar.style.backgroundColor = "#171717";
     topleft.style.backgroundColor = "#5A5A5A";
     topleft.style.color = "#413f5e";
     send.style.backgroundColor = "#f59218";
@@ -460,6 +474,7 @@ function setTestingStyle3() {
     let sides = document.getElementById("sides");
     let topleft = document.getElementById("topleft");
     let send = document.getElementById("send");
+    let sidebar = document.getElementById("activenav");
     let sidenav = document.getElementsByClassName("sidenav")[0]
     let snav_text = sidenav.getElementsByTagName("a")
     let snav_iter = snav_text.length;
@@ -469,6 +484,7 @@ function setTestingStyle3() {
     message.style.color = "#000000";
     chatbox.style.backgroundColor = "#d41320";
     sides.style.backgroundColor = "#910410";
+    sidebar.style.backgroundColor = "#171717";
     topleft.style.backgroundColor = "#d41320";
     topleft.style.color = "#ed0968";
     send.style.backgroundColor = "#ed0968";
@@ -491,6 +507,7 @@ function setTestingStyle4() {
     let sides = document.getElementById("sides");
     let topleft = document.getElementById("topleft");
     let send = document.getElementById("send");
+    let sidebar = document.getElementById("activenav");
     let sidenav = document.getElementsByClassName("sidenav")[0]
     let snav_text = sidenav.getElementsByTagName("a")
     let snav_iter = snav_text.length;
@@ -500,6 +517,7 @@ function setTestingStyle4() {
     message.style.color = "#000000";
     chatbox.style.backgroundColor = "#deddda";
     sides.style.backgroundColor = "#c0bfbc";
+    sidebar.style.backgroundColor = "#171717";
     topleft.style.backgroundColor = "#5A5A5A";
     topleft.style.color = "#000000";
     send.style.backgroundColor = "#343cad";

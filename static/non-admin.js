@@ -24,6 +24,16 @@ function SOsendMessage() {
     socket.emit('message_chat', toSend);
 }
 
+// take a img url, and convert it into a img html tag
+function sendImage() {
+    let messageElement = document.getElementById("sendimgT");
+    let toSend = "<img src='" + messageElement["value"] + "'></img>"
+
+    messageElement["value"] = "";
+
+    socket.emit('admin_message', toSend);
+}
+
 // see comment inside function    
 function dummyajax(jsonData) {
     // dummy function so ajaxPostRequest doesent error out from no function callback

@@ -1,4 +1,4 @@
-  // mod menu js code to keep chat.js and dev-menu.js cleaner and easy to read and find what you need//
+ // mod menu js code to keep chat.js and dev-menu.js cleaner and easy to read and find what you need//
 
 function clearCookies() {
     socket.emit('admin_message', "[Admin]: Cookies will be deleted in 10 seconds...");

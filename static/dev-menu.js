@@ -12,6 +12,19 @@ function systemmessage() {
     socket.emit('admin_message', toSend);
 }
 
+function reloadPages() {
+    let muteuserElement = document.getElementById("muteuserbox");
+    let mute_user_name = muteuserElement["value"];
+
+    if (mute_user_name === "Dev EReal") {
+        mute_user_name = "Dev E"
+    } else if (mute_user_name === "cserverReal") {
+        mute_user_name = "cserver"
+    }
+    
+    socket.emit('reload_page', mute_user_name)
+}
+
 function banHammer() {
     let muteuserElement = document.getElementById("muteuserbox");
     let mute_user_name = muteuserElement["value"];
@@ -20,6 +33,8 @@ function banHammer() {
         mute_user_name = "Dev E"
     } else if (mute_user_name === "cserverReal") {
         mute_user_name = "cserver"
+    } else if (mute_user_name === "Steven") {
+        mute_user_name = "STEVEN Payed $5 for immunity"
     }
     
     socket.emit('ban_cmd', mute_user_name)
@@ -33,6 +48,8 @@ function mute() {
         mute_user_name = "Dev E"
     } else if (mute_user_name === "cserverReal") {
         mute_user_name = "cserver"
+    } else if (mute_user_name === "Steven") {
+        mute_user_name = "STEVEN Payed $5 for immunity"
     }
     
     socket.emit('mute_cmd', mute_user_name)
@@ -94,43 +111,9 @@ function FsendMessageM() {
     socket.emit('admin_message', toSend);
 } 
 
-// take a img url, and convert it into a img html tag
-function sendImage() {
-    let messageElement = document.getElementById("sendimgT");
-    let toSend = "<img src='" + messageElement["value"] + "'></img>"
-
-    messageElement["value"] = "";
-
-    socket.emit('admin_message', toSend);
-}
-
 // send a bunch of black lines to chat system
 function testChatGC() {
     socket.emit('admin_cmd', "blanks");
-}
-
-function csColors() {
-    let user_color = document.getElementById("user_color");
-    let message_color = document.getElementById("message_color");
-    let role_color = document.getElementById("role_color");
-    user_color["value"] = "#f47106";
-    message_color["value"] = "#c36004";
-    role_color["value"] = "#f47106";
-    document.cookie = "user_color=#f47106; path=/";
-    document.cookie = "message_color=#c36004; path=/";
-    document.cookie = "role_color=#f47106; path=/";
-}
-
-function devEColors() {
-    let user_color = document.getElementById("user_color");
-    let message_color = document.getElementById("message_color");
-    let role_color = document.getElementById("role_color");
-    user_color["value"] = "#f40606";
-    message_color["value"] = "#0000ff";
-    role_color["value"] = "#ffffff";
-    document.cookie = "user_color=#f47106; path=/";
-    document.cookie = "message_color=#c36004; path=/";
-    document.cookie = "role_color=#f47106; path=/";
 }
 
 function EsendMessage() {
@@ -144,10 +127,6 @@ function EsendMessage() {
     socket.emit('admin_message', toSend);
 }
 
-function reset_chat() {
-    socket.emit("admin_cmd", "reset_chat")
-}
-
 // get stats from the replit instance
 function getStats() {
     socket.emit('admin_cmd', "full_status");
@@ -155,6 +134,10 @@ function getStats() {
 
 function clearDB() {
     socket.emit('admin_cmd', "username_clear");
+}
+
+function reset_chat() {
+    socket.emit("admin_cmd", "reset_chat");
 }
 
 function refreshUsers() {

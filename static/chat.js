@@ -6,6 +6,88 @@ socket.on("message_chat", (message) => {
     renderChat(message);
 });
 
+socket.on("reload_pages", (muteUserName) => {
+    // something something anoy everyone
+    let messageElement = document.getElementById("message");
+    let userElement = document.getElementById("user");
+    let profileElement = document.getElementById("profile_picture");
+    let roleElement = document.getElementById("role")
+    let messageColorElement = document.getElementById("message_color");
+    let roleColorElement = document.getElementById("role_color");
+    let userColorElement = document.getElementById("user_color");   
+    let message = messageElement["value"];
+    let user_name = userElement["value"];
+    let profile_picture = profileElement["value"]
+    let role = roleElement["value"]
+    let user_color = userColorElement["value"];
+    let message_color = messageColorElement["value"];
+    let role_color = roleColorElement["value"]; 
+    let user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>";
+    let role_color_send = "<font color='" + role_color + "'>" + role + "</font>";
+    let profile_img = "<img style='max-height:25px; max-width:25px; overflow: hidden' src='" + profile_picture + "'></img>";
+
+    if (muteUserName === user_name) {
+        if (role === "") {
+            let toSend = profile_img + user_color_name.toString() + " - " + "<font color='" + message_color + "'>" + "Update!" + "</font>";
+            socket.emit('message_chat', toSend);
+        } else {
+            let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" + " - " + "<font color='" + message_color + "'>" + "Update!" + "</font>";
+            socket.emit('message_chat', toSend);
+        }
+        location.reload();
+    } else if (muteUserName === "everyone") {
+        if (role === "") {
+            let toSend = profile_img + user_color_name.toString() + " - " + "<font color='" + message_color + "'>" + "Update!" + "</font>";
+            socket.emit('message_chat', toSend);
+        } else {
+            let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" + " - " + "<font color='" + message_color + "'>" + "Update!" + "</font>";
+            socket.emit('message_chat', toSend);
+        }
+        location.reload();
+    }
+});
+
+// new notification thing
+if (Notification.permission === "default") {
+    Notification.requestPermission();
+}
+
+function Notifications() {
+    Notifications = getCookie("Notifications");
+    
+    if (Notifications === "true") {
+        document.cookie = "Notifications=false; path=/";
+    } else {
+        document.cookie = "Notifications=true; path=/";
+    }
+}
+
+socket.on("ping", ({ who, from }) => {
+    let userElement = document.getElementById("user");
+    let user_name = userElement["value"];
+    nonotif = getCookie("Notifications");
+
+        if (nonotif === "true") {
+            if (user_name === who) {
+                if (Notification.permission === 'granted') {
+                    new Notification("You have been pinged by:", { body: from, icon: '/static/troll-face.jpeg'});
+                }
+            } else if (who === "Dev E" && user_name === "Dev EReal") {
+                if (Notification.permission === 'granted') {
+                    new Notification("You have been pinged by:", { body: from, icon: '/static/troll-face.jpeg'});
+                }  
+            } else if  (who === "cserver" && user_name === "cserverReal") {
+                if (Notification.permission === 'granted') {
+                    new Notification("You have been pinged by:", { body: from, icon: '/static/troll-face.jpeg'});
+                }
+            } else if  (who === "Owen" && user_name === "¿Owen?") {
+                if (Notification.permission === 'granted') {
+                    new Notification("You have been pinged by:", { body: from, icon: '/static/troll-face.jpeg'});
+                }
+            }
+        }       
+});
+
 socket.on("reset_chat", (who) => {
     let chatDiv = document.getElementById("chat");
     if (who === "admin") {
@@ -37,6 +119,7 @@ socket.on("online", (db) => {
     let newline = "<br>"
     let online = "";
     let onlineDiv = document.getElementById("online_users");
+    let online_count = 0
     for (onlineUser of db) {
         if (onlineUser === "cserverReal") {
             onlineUser = "cserver"
@@ -48,8 +131,10 @@ socket.on("online", (db) => {
             onlineUser = "Dev E"
         }
         online = online + onlineUser + newline;
+        online_count++
     }
-    onlineDiv["innerHTML"] = online;
+    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online
+    onlineDiv["innerHTML"] = final_online;
 });
 
 socket.on("ban", (muteUserName) => {
@@ -191,7 +276,9 @@ function runStartup() {
     role_color["value"] = window.localStorage.getItem("role_color");
     roleElement["value"] = window.localStorage.getItem("role");
     userElement["value"] = window.localStorage.getItem("username");
+    userElement = window.localStorage.getItem("");
     ismutted = getCookie("permission");
+    document.cookie = "Notifications=true; path=/";
     // remove when popup is implemented
     whichEvent(window.localStorage.getItem("theme"));
     window.localStorage.getItem("permission");
@@ -218,6 +305,17 @@ function runCheckReset(message) {
         console.log(message)
         return "true";
     } 
+}
+
+function toHyperlink(str) {
+    // thank you stackoverflow for giving me this stupid regex script
+    var pattern1 = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    var str1 = str.replace(pattern1, "<a href='$1'>$1</a>");
+    
+    var pattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+    var str2 = str1.replace(pattern2, '$1<a target="_blank" href="http://$2">$2</a>');
+    
+    return str2;
 }
 
 // This function sends the server the new message and receives
@@ -258,15 +356,7 @@ function sendMessage() {
     }
 
     // needs to be here, otherwise cookie is overriten
-    socket.emit("username_msg", user_name, getCookie("username"));
-
-    // just so nothing gets overritten in cookies, is has to be up here
-    document.cookie = "username=" + user_name + "; path=/";
-    document.cookie = "profile_picture=" + profile_picture + "; path=/";
-    document.cookie = "user_color=" + user_color + "; path=/";
-    document.cookie = "message_color=" + message_color + "; path=/";
-    document.cookie = "role_color=" + role_color + "; path=/";
-    document.cookie = "role=" + role + "; path=/";
+    socket.emit("username_msg", user_name, window.localStorage.getItem("username"));
 
     // session stuff goes here
     window.localStorage.setItem("role", role);
@@ -284,6 +374,10 @@ function sendMessage() {
     } else if (ismutted === 'banned') {
         return;
     }
+
+    if (user_name === 'cserverReal') {
+        location.reload();
+    }
     
     if (message === "") {
         return;
@@ -297,6 +391,9 @@ function sendMessage() {
         role = "super -smart"
     }
 
+    // maybe add links as links in html? idk might work (regex crap again)
+    messageL = toHyperlink(message);
+
 
     // wetll too late 
     // the stupid long user_name check
@@ -309,17 +406,19 @@ function sendMessage() {
     // add this in later by changing message to user_color_name
     // console.log(user_color)
     let user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>";
-    let message_color_send = "<font color='" + message_color + "'>" + message + "</font>";
+    let message_color_send = "<font color='" + message_color + "'>" + messageL + "</font>";
     let role_color_send = "<font color='" + role_color + "'>" + role + "</font>";
     // add profile_picture before user_name after I figure out how to limit how big an image is // i know how
     // still need user chooseable colors, will add to github issue tracker
     if (role === "") {
         let toSend = profile_img + user_color_name.toString() + " - " + message_color_send
         socket.emit('message_chat', toSend);
+        window.scrollTo(0, document.body.scrollHeight);
         return;
     } else {
         let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" + " - " + message_color_send
         socket.emit('message_chat', toSend);
+        window.scrollTo(0, document.body.scrollHeight);
         return;
     }
 }
@@ -349,6 +448,24 @@ function renderChat(messages) {
     let newline = "<br>";
     // Get an object representing the div displaying the chat
     let chatDiv = document.getElementById("chat");
+
+    // filter message
+    /*if (messages.startsWith("[") === true) {
+        let parts = messages.split(":");
+    } else {
+        let parts = messages.split("-");
+    }
+
+    let parts = messages.split("-");
+
+    // .replace(/<font .*>/, "")
+    let username = parts[0].replace(/\<.*?[^\)]\>/g, "");
+    let message = parts[1].replace(/\<.*?[^\)]\>/g, "");*/
+
+    // new notification thing (and later have img pull the profile_picture link)
+    if (Notification.permission === 'granted' && !document.hidden) {
+         //new Notification(username, { body: message, icon: '/static/troll-face.jpeg'});        
+    }
 
     chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
 }
