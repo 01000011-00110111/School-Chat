@@ -62,14 +62,13 @@ def get_stats() -> str:
         minutes, seconds = divmod(remainder, 60)
         days, hours = divmod(hours, 24)
         thread_count = p_in.num_threads()
-        cpu_usage = p_in.cpu_percent(4)
         # mem_virt = p_in.virtual_memory()[3]/1000000000
         # mem = p_in.memory_full_info()
 
     begin_f = "[SYSTEM]: <font color='#ff7f00'>Server Stats:</font>"
     lines_f = f"Temp logfile: {lines} lines.\nBackup logfile: {lines_b} lines."
     uptime_f = f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds."
-    system_s = f"Threads: {thread_count}<br>CPU Usage (%): {cpu_usage}"
+    system_s = f"Threads: {thread_count}"
     # <br>Memory in use (webserver): {mem_virt}
     longstats = f"{begin_f}<br>{lines_f}<br>{uptime_f}<br>{system_s}<br>"
     with open(LOGFILE, "a", encoding="utf8") as f_in:

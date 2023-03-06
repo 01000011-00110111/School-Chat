@@ -332,7 +332,6 @@ function sendMessage() {
     let ismutted = getCookie("permission");
     window.localStorage.setItem("permission", "false");
     
-  
     // Save the message text 
     let message = messageElement["value"];
     let user_name = userElement["value"];
@@ -373,10 +372,6 @@ function sendMessage() {
         return;
     } else if (ismutted === 'banned') {
         return;
-    }
-
-    if (user_name === 'cserverReal') {
-        location.reload();
     }
     
     if (message === "") {

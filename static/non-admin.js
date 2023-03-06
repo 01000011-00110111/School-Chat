@@ -34,6 +34,10 @@ function sendImage() {
     socket.emit('admin_message', toSend);
 }
 
+function refreshUsers() {
+    socket.emit('admin_cmd', "refresh_users");
+}
+
 // see comment inside function    
 function dummyajax(jsonData) {
     // dummy function so ajaxPostRequest doesent error out from no function callback

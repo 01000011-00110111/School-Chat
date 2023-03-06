@@ -40,7 +40,7 @@ def index() -> ResponseReturnValue:
     """Serve the main html page, modified if permission is granted."""
     if request.args.get('dev') == os.environ['unknownkey']:
         html_file = flask.render_template("dev-index.html")
-    elif request.args.get('editor') == "true":
+    elif request.args.get('editor') == "begonenotowens":
         html_file = flask.render_template("editor-index.html")
     elif request.args.get('mod') == os.environ['Unknownvalue']:
         html_file = flask.render_template("mod-index.html")
@@ -78,6 +78,13 @@ def signup() -> ResponseReturnValue:
 def get_logs_page() -> ResponseReturnValue:
     """Serve the chat logs (backup)"""
     html_file = flask.render_template('Backup-chat.html')
+    return html_file
+
+
+@app.route("/view")
+def viewer_page() -> ResponseReturnValue:
+    """Serve the viewer page."""
+    html_file = flask.render_template('viewer.html')
     return html_file
 
 

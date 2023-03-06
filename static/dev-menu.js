@@ -140,10 +140,6 @@ function reset_chat() {
     socket.emit("admin_cmd", "reset_chat");
 }
 
-function refreshUsers() {
-    socket.emit('admin_cmd', "refresh_users");
-}
-
 // lock/unlock chat helper functions
 function lock_chat() {
     socket.emit('admin_cmd', "lock");

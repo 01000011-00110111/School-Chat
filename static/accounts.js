@@ -25,3 +25,5 @@ socket.on("login2", (aproved) => {
 });
 
 function failedlogin() {
+    // sigh depression
+}

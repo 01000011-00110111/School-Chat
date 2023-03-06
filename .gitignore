@@ -11,4 +11,3 @@ backend/muted.txt
 # running files
 __pycache__/*
 venv/*
-plan.txt

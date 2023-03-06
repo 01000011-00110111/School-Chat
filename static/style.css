@@ -20,6 +20,12 @@
     color: white;
 }
 
+/*#pfp {
+    max-height:25px; 
+    max-width:25px; 
+    overflow: hidden;
+}*/
+
 #in-msg {
 	width: 100%;
 	height: 24px;

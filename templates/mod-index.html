@@ -52,21 +52,21 @@
         <div id="devSidenav" class="sidenavR">
             <br>
             <a href="javascript:void(0)" class="closebtnR" onclick="devcloseNav()">×</a>
-            <h3 id="Devnavtext">This is the mod menu use for admistrating chat</h3><!-- edit the text later to look nicer -->
+            <h3 id="Devnavtext">This is the mod menu use for admistrating chat</h3>
             <p id="Devnavtext">Enter message here and send as mod</p>
             <input type="text" id="fsendT" placeholder="Force Send message:"><br>
             <button onclick="FsendMessageM();" id="fsendB">Force Send</button>
-            <!-- <button onclick="lock_chat();" id="lock">Lock</button><button onclick="unlock_chat();" id="unlock">Unlock</button><br> -->
             <p id="Devnavtext">Enter username in here for muting</p>
             <input type="text" id="muteuserbox" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">Unmute</button><br>
             <button onclick="banHammer();" id="ban">Ban</button><br>
             <p id="Devnavtext">send stats about the chat</p>
             <button onclick='ajaxGetRequest("/chat_count", dummyajax);' id="chatlineB">Print total line count</button>
-            <button onclick="getStats();" id="statsB">Send server stats in chat.</button>
+            <button onclick="getStats();" id="statsB">Send server stats in chat.</button><br>
+            <button onclick="reset_chat()" id="ChatrestB">Reset chat</button><button onclick="refreshUsers();" id="rfUserDB">Refresh users DB</button><br><br>
+            <input type="text" id="sendimgT" placeholder="Paste img url here"><button onclick="sendImage();" id="sendimgB">Send</button><br> 
             <br>
             <br>
-            <br>
-            <button id="cookieRemoverB">Cookie eater</button><p color: white; >not functional sorry cole</p>
+            <button id="cookieRemoverB">Cookie eater</button><p style="color: white;">not functional sorry cole</p>
         </div>
         <span id="topright" onclick="devopenNav();">🛡</span>
         <div id="chat">

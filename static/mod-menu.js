@@ -1,4 +1,4 @@
- // mod menu js code to keep chat.js and dev-menu.js cleaner and easy to read and find what you need//
+// mod menu js code to keep chat.js and dev-menu.js cleaner and easy to read and find what you need//
 
 function clearCookies() {
     socket.emit('admin_message', "[Admin]: Cookies will be deleted in 10 seconds...");
@@ -58,11 +58,6 @@ function getStats() {
     socket.emit('admin_cmd', "full_status");
 }
 
-/*
-function lock_chat() {
-    socket.emit('admin_cmd', "lock");
+function reset_chat() {
+    socket.emit("admin_cmd", "reset_chat");
 }
-
-function unlock_chat() {
-    socket.emit('admin_cmd', "unlock");
-}*/
