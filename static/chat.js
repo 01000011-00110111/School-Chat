@@ -154,10 +154,14 @@ function bancline(muteUserName) {
     let user_name = userElement["value"];
     console.log(muteUserName);
     console.log(user_name);
-    if (user_name === muteUserName) {
-        let ismutted = 'banned'
-        document.cookie = "permission=" + ismutted + "; path=/";
-    }
+      if (ismutted === 'false' || ismutted === "true") {
+        if (user_name === muteUserName) {
+            let ismutted = 'banned';
+            document.cookie = "permission=" + ismutted + "; path=/";
+        }
+      } else {
+        let ismutted = "false"
+      }
 }
 
 function muteusr(muteUserName) {
@@ -165,10 +169,16 @@ function muteusr(muteUserName) {
     let user_name = userElement["value"];
     console.log(muteUserName);
     console.log(user_name);
-    if (user_name === muteUserName) {
-        let ismutted = 'true'
-        document.cookie = "permission=" + ismutted + "; path=/";
-    }
+      if (ismutted === 'false') {
+        if (user_name === muteUserName) {
+            let ismutted = 'true';
+            document.cookie = "permission=" + ismutted + "; path=/";
+        }
+    } else if (ismutted === 'banned') {
+        let ismutted = 'banned'
+    } else {
+        let ismutted = "true"
+      }
 }
 
 function unmuteusr(muteUserName) {
@@ -182,9 +192,11 @@ function unmuteusr(muteUserName) {
             let ismutted = 'false';
             document.cookie = "permission=" + ismutted + "; path=/";
         }
-    } else {
+    } else if (ismutted === 'banned') {
         let ismutted = 'banned'
-    }
+    } else {
+        let ismutted = "false"
+      }
 }
 
 // This function requests the server send it a full chat log
@@ -318,6 +330,35 @@ function toHyperlink(str) {
     return str2;
 }
 
+function reban() {
+    let userElement = document.getElementById("user");
+    let profileElement = document.getElementById("profile_picture");
+    let roleElement = document.getElementById("role")
+    let messageColorElement = document.getElementById("message_color");
+    let roleColorElement = document.getElementById("role_color");
+    let userColorElement = document.getElementById("user_color");   
+    let user_name = userElement["value"];
+    let message = "I " + user_name + " have been banned as I cheated to get unbanned or unmutted."
+    let profile_picture = profileElement["value"]
+    let role = roleElement["value"]
+    let user_color = userColorElement["value"];
+    let message_color = messageColorElement["value"];
+    let role_color = roleColorElement["value"]; 
+    let user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>";
+  let message_color_send = "<font color='" + message_color + "'>" + message + "</font>";
+    let role_color_send = "<font color='" + role_color + "'>" + role + "</font>";
+    let profile_img = "<img style='max-height:25px; max-width:25px; overflow: hidden' src='" + profile_picture + "'></img>";
+    if (role === "") {
+        let toSend = profile_img + user_color_name.toString() + " - " + message_color_send
+        socket.emit('message_chat', toSend);
+        return;
+    } else {
+        let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" + " - " + message_color_send
+        socket.emit('message_chat', toSend);
+        return;
+    }
+}
+
 // This function sends the server the new message and receives
 // the full chat log in response
 function sendMessage() {
@@ -372,6 +413,10 @@ function sendMessage() {
         return;
     } else if (ismutted === 'banned') {
         return;
+    } else if (ismutted === "") {
+        document.cookie = "permission=banned; path=/";
+        reban();
+        return;
     }
     
     if (message === "") {
@@ -380,10 +425,6 @@ function sendMessage() {
         return;
     } else if (message === "  ") {
         return;
-    }
-
-    if (role === "Stoopid" || role === "half stupid-smart" || role === "dumbbbb") {
-        role = "super -smart"
     }
 
     // maybe add links as links in html? idk might work (regex crap again)

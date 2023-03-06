@@ -3,6 +3,7 @@ import os
 import logging
 import json
 from time import sleep
+import hashlib
 import flask
 from flask import request
 from flask.logging import default_handler
@@ -38,11 +39,17 @@ db.clear()
 @app.route('/')
 def index() -> ResponseReturnValue:
     """Serve the main html page, modified if permission is granted."""
-    if request.args.get('dev') == os.environ['unknownkey']:
+    dev = request.args.get('dev')
+    mod = request.args.get('mod')
+    # this is probaby overengineered, but it works and works well
+    if hashlib.sha224(bytes((dev if dev is not None else "none"),
+                            'utf-8')).hexdigest() == os.environ['unknownkey']:
         html_file = flask.render_template("dev-index.html")
     elif request.args.get('editor') == "begonenotowens":
         html_file = flask.render_template("editor-index.html")
-    elif request.args.get('mod') == os.environ['Unknownvalue']:
+    elif hashlib.sha224(bytes(
+        (mod if mod is not None else "none"),
+            'utf-8')).hexdigest() == os.environ['Unknownvalue']:
         html_file = flask.render_template("mod-index.html")
     elif request.args.get('dev') == "true":
         html_file = flask.render_template("chaos-index.html")
@@ -74,7 +81,7 @@ def signup() -> ResponseReturnValue:
     return html_file
 
 
-@app.route('/logs')
+@app.route('/backup')
 def get_logs_page() -> ResponseReturnValue:
     """Serve the chat logs (backup)"""
     html_file = flask.render_template('Backup-chat.html')

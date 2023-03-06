@@ -61,3 +61,12 @@ function getStats() {
 function reset_chat() {
     socket.emit("admin_cmd", "reset_chat");
 }
+
+function lock_chat() {
+    socket.emit('admin_cmd', "lock");
+}
+
+/*// unlocks chat
+function unlock_chat() {
+    socket.emit('admin_cmd', "unlock");
+}*/
