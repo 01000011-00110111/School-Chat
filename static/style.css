@@ -22,6 +22,11 @@
     color: white;
 }
 
+#notif {
+  font-size: 22px;
+  background-color: red;
+}
+
 /*#pfp {
     max-height:25px; 
     max-width:25px; 

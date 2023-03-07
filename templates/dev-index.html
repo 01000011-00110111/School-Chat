@@ -51,7 +51,7 @@
             <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
             <p id="user_colorTXT">Message: </p>
             <input type="color" value="#ffffff" id="message_color" name="color choser">
-            <br>
+            <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
             <h3><a href="mailto:harperom62@k12louisa.org">Contact us</a></h3>
         </div>
         <span id="topleft" onclick="openNav()">☰</span>
@@ -68,7 +68,7 @@
             <button onclick="mute();" id="mute">Mute</button>
             <button onclick="unmute();" id="unmute">Unmute</button>
             <button onclick="banHammer();" id="ban">Ban</button><br>
-            <button onclick="RefreshPG()" id="rpg">Need to readd</button><br>
+            <button onclick="reloadPages()" id="rpg">Reload client(s)</button><br>
             <p id="Devnavtext">Send message as SYSTEM user</p>
             <input type="text" id="systemsendT" placeholder="Send message as SYSTEM">
             <button onclick="systemmessage();" id="systemsendB">Send</button><br><br>

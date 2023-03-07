@@ -8,59 +8,36 @@ socket.on("message_chat", (message) => {
 
 socket.on("reload_pages", (muteUserName) => {
     // something something anoy everyone
-    let messageElement = document.getElementById("message");
     let userElement = document.getElementById("user");
-    let profileElement = document.getElementById("profile_picture");
-    let roleElement = document.getElementById("role")
-    let messageColorElement = document.getElementById("message_color");
-    let roleColorElement = document.getElementById("role_color");
-    let userColorElement = document.getElementById("user_color");   
-    let message = messageElement["value"];
     let user_name = userElement["value"];
-    let profile_picture = profileElement["value"]
-    let role = roleElement["value"]
-    let user_color = userColorElement["value"];
-    let message_color = messageColorElement["value"];
-    let role_color = roleColorElement["value"]; 
-    let user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>";
-    let role_color_send = "<font color='" + role_color + "'>" + role + "</font>";
-    let profile_img = "<img style='max-height:25px; max-width:25px; overflow: hidden' src='" + profile_picture + "'></img>";
 
     if (muteUserName === user_name) {
-        if (role === "") {
-            let toSend = profile_img + user_color_name.toString() + " - " + "<font color='" + message_color + "'>" + "Update!" + "</font>";
-            socket.emit('message_chat', toSend);
-        } else {
-            let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" + " - " + "<font color='" + message_color + "'>" + "Update!" + "</font>";
-            socket.emit('message_chat', toSend);
-        }
         location.reload();
     } else if (muteUserName === "everyone") {
-        if (role === "") {
-            let toSend = profile_img + user_color_name.toString() + " - " + "<font color='" + message_color + "'>" + "Update!" + "</font>";
-            socket.emit('message_chat', toSend);
-        } else {
-            let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" + " - " + "<font color='" + message_color + "'>" + "Update!" + "</font>";
-            socket.emit('message_chat', toSend);
-        }
         location.reload();
     }
 });
+
 
 // new notification thing
 if (Notification.permission === "default") {
     Notification.requestPermission();
 }
 
-function Notifications() {
+function NotificationsB() {
     Notifications = getCookie("Notifications");
+    let notifB = document.getElementById("notif");
     
-    if (Notifications === "true") {
-        document.cookie = "Notifications=false; path=/";
-    } else {
-        document.cookie = "Notifications=true; path=/";
-    }
-}
+  if (Notifications === "true") {
+      document.cookie = "Notifications=false; path=/";
+      notifB.value = "Enable notifications";
+      notifB.style.backgroundColor = "green";
+  } else {
+      document.cookie = "Notifications=true; path=/";
+      notifB.value = "Disable notifications";
+      notifB.style.backgroundColor = "red";
+  }
+} 
 
 socket.on("ping", ({ who, from }) => {
     let userElement = document.getElementById("user");
@@ -152,30 +129,26 @@ socket.on("unmute", (muteUserName) => {
 function bancline(muteUserName) {
     let userElement = document.getElementById("user");
     let user_name = userElement["value"];
-    console.log(muteUserName);
-    console.log(user_name);
       if (ismutted === 'false' || ismutted === "true") {
         if (user_name === muteUserName) {
-            window.localStorage.setItem("permission", "banned");
+            document.cookie = "permission=banned; path=/";
         }
       } else {
-        window.localStorage.setItem("permission", "false");
+        document.cookie = "permission=false; path=/";
       }
 }
 
 function muteusr(muteUserName) {
     let userElement = document.getElementById("user");
     let user_name = userElement["value"];
-    console.log(muteUserName);
-    console.log(user_name);
       if (ismutted === 'false') {
         if (user_name === muteUserName) {
-            window.localStorage.setItem("permission", "true");
+            document.cookie = "permission=true; path=/";
         }
     } else if (ismutted === 'banned') {
-        window.localStorage.setItem("permission", "banned");
+        document.cookie = "permission=banned; path=/";
     } else {
-        window.localStorage.setItem("permission", "true");
+        document.cookie = "permission=true; path=/";
       }
 }
 
@@ -183,16 +156,15 @@ function unmuteusr(muteUserName) {
     let userElement = document.getElementById("user");
     let user_name = userElement["value"];
     let ismutted = getCookie('permission');
-    console.log(muteUserName);
-    console.log(user_name);
     if (ismutted === 'true') {
         if (user_name === muteUserName) {
-            window.localStorage.setItem("permission", "false");
+            document.cookie = "permission=false; path=/";
         }
     } else if (ismutted === 'banned') {
-        window.localStorage.setItem("permission", "banned");
+        document.cookie = "permission=banned; path=/";
     } else {
-        window.localStorage.setItem("permission", "false");
+        
+        document.cookie = "permission=false; path=/";
       }
 }
 
@@ -230,7 +202,10 @@ function getCookie(name) {
 
 // the startup for cookies after the first time
 function runCheckStartup() {
-    whichEvent(window.localStorage.getItem("theme"));
+   let theme = whichEvent(window.localStorage.getItem("theme"));
+  if (theme === "") {
+    whichEvent();
+  }
     access = window.localStorage.getItem("access");
     if (access === 'true') {
         runStartup();
@@ -268,6 +243,7 @@ function yesTOS() {
     document.cookie = "permission=false; path=/";
     runStartup();
     checkMsgBox();
+    setDarkStyle();
 }
 
 // stuff to run at startup and what happens when you do agree to the rules
@@ -290,7 +266,6 @@ function runStartup() {
     document.cookie = "Notifications=true; path=/";
     // remove when popup is implemented
     whichEvent(window.localStorage.getItem("theme"));
-    window.localStorage.getItem("permission");
     socket.emit("username", window.localStorage.getItem("username"));
 }
 
@@ -342,7 +317,7 @@ function reban() {
     let message_color = messageColorElement["value"];
     let role_color = roleColorElement["value"]; 
     let user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>";
-  let message_color_send = "<font color='" + message_color + "'>" + message + "</font>";
+    let message_color_send = "<font color='" + message_color + "'>" + message + "</font>";
     let role_color_send = "<font color='" + role_color + "'>" + role + "</font>";
     let profile_img = "<img style='max-height:25px; max-width:25px; overflow: hidden' src='" + profile_picture + "'></img>";
     if (role === "") {
@@ -367,7 +342,7 @@ function sendMessage() {
     let messageColorElement = document.getElementById("message_color");
     let roleColorElement = document.getElementById("role_color");
     let userColorElement = document.getElementById("user_color");  
-    let ismutted = window.localStorage.getItem("permission");
+    let ismutted = getCookie("permission");
     //window.localStorage.setItem("permission", "false");
     
     // Save the message text 
@@ -379,7 +354,7 @@ function sendMessage() {
     let message_color = messageColorElement["value"];
     let role_color = roleColorElement["value"]; 
 
-    //if (theme === 'light')  no use but we will need one day pro
+    //if (theme === 'light')  no use but we will need one day prob    
     if (user_color === "#000000") {
         user_color = "#ffffff";
     }
@@ -411,7 +386,8 @@ function sendMessage() {
     } else if (ismutted === 'banned') {
         return;
     } else if (ismutted === "") {
-        window.localStorage.setItem("permission", "banned");
+        let ismutted = "banned"
+        document.cookie = "permission=banned; path=/";
         reban();
         return;
     }

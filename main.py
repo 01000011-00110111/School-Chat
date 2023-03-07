@@ -5,12 +5,11 @@ import json
 from time import sleep
 import hashlib
 import flask
+import pymongo
 from flask import request
 from flask.logging import default_handler
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
-from replit import db
-import sqlite3
 import chat
 import filtering
 
@@ -26,11 +25,13 @@ root.addHandler(default_handler)
 # make this load from replit secrets later
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# who is online, why no one use my chat program
-db.clear()
-connection = sqlite3.connect("AC.db")
-#connection.execute("CREATE TABLE IF NOT EXISTS (id STRING PRIMARY KEY, STRING);")
-# cursor = connection.cursor("SELECT * FROM online")
+client = pymongo.MongoClient(os.environ["acmongo_key"])
+# needs to be dbm, else it conflicts with replit db, will replace replit db with mongo later
+dbm = client.Chat
+
+# clear db, so that old users don't stay
+dbm.Online.delete_many({})
+
 ################################################################
 #       Functions needed to allow clients to access files      #
 ################################################################
@@ -41,18 +42,18 @@ def index() -> ResponseReturnValue:
     """Serve the main html page, modified if permission is granted."""
     dev = request.args.get('dev')
     mod = request.args.get('mod')
+    editor = request.args.get('editor')
     # this is probaby overengineered, but it works and works well
     if hashlib.sha224(bytes((dev if dev is not None else "none"),
-                            'utf-8')).hexdigest() == os.environ['unknownkey']:
+                            'utf-8')).hexdigest() == os.environ['dev_key']:
         html_file = flask.render_template("dev-index.html")
-    elif request.args.get('editor') == "begonenotowens":
+    elif hashlib.sha224(
+            bytes((editor if editor is not None else "none"),
+                  'utf-8')).hexdigest() == os.environ['editor_key']:
         html_file = flask.render_template("editor-index.html")
-    elif hashlib.sha224(bytes(
-        (mod if mod is not None else "none"),
-            'utf-8')).hexdigest() == os.environ['Unknownvalue']:
+    elif hashlib.sha224(bytes((mod if mod is not None else "none"),
+                              'utf-8')).hexdigest() == os.environ['mod_key']:
         html_file = flask.render_template("mod-index.html")
-    elif request.args.get('dev') == "true":
-        html_file = flask.render_template("chaos-index.html")
     elif request.args.get('jotd') == "true":
         html_file = flask.render_template("JOTD-index.html")
     else:
@@ -65,6 +66,7 @@ def index() -> ResponseReturnValue:
 @app.route("/f")
 def f_but_better() -> ResponseReturnValue:
     """Not an easter egg I promise."""
+    return "HI"
 
 
 @app.route('/changelog')
@@ -151,11 +153,10 @@ def force_chat() -> str:
 def handle_connect(username: str):
     """Will be used later for online users."""
     socketid = request.sid
-    db[socketid] = username
     username_list = []
-    keys = db.keys()
-    for key in keys:
-        username_list.append(db[key])
+    dbm.Online.insert_one({"username": username, "socketid": socketid})
+    for key in dbm.Online.find():
+        username_list.append(key["username"])
     emit("online", username_list, broadcast=True)
 
 
@@ -164,11 +165,10 @@ def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
     socketid = request.sid
     try:
-        del db[socketid]
+        dbm.Online.delete_one({"socketid": socketid})
         username_list = []
-        keys = db.keys()
-        for key in keys:
-            username_list.append(db[key])
+        for key in dbm.Online.find():
+            username_list.append(key["username"])
         emit("online", username_list, broadcast=True)
     except KeyError:
         pass
@@ -178,16 +178,15 @@ def handle_disconnect():
 def handle_online(username: str, p_username: str):
     """Add username to currently online people list."""
     if p_username != username:
-        keys = db.keys()
-        for key in keys:
-            if db[key] == p_username:
-                db[key] = username
-                username_list = []
-                # rewrite in a second, because it makes no sense lol
-                for key in keys:
-                    username_list.append(db[key])
-                emit("online", username_list, broadcast=True)
-                return
+        dbm.Online.update_one({"socketid": request.sid},
+                              {"$set": {
+                                  "username": username
+                              }})
+        username_list = []
+        # rewrite in a second, because it makes no sense lol
+        for key in dbm.Online.find():
+            username_list.append(key["username"])
+        emit("online", username_list, broadcast=True)
 
 
 @socketio.on("ban_cmd")
@@ -260,13 +259,18 @@ def handle_admin_stuff(cmd: str):
                 "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>",
                 broadcast=True)
     elif cmd == "username_clear":
-        db.clear()
+        dbm.Online.delete_many({})
     elif cmd == "refresh_users":
-        db.clear()
+        dbm.Online.delete_many({})
         emit("force_username", "", broadcast=True)
     elif cmd == "reset_chat":
         chat.reset_chat(False, True)
         emit("reset_chat", broadcast=True, namespace="/")
+
+
+@socketio.on("reload_page")
+def handle_cilent_refresh(muteuser):
+    emit("reload_pages", muteuser, broadcast=True, namespace="/")
 
 
 @socketio.on('message_chat')

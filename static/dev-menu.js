@@ -34,6 +34,7 @@ function banHammer() {
     } else if (mute_user_name === "cserverReal") {
         mute_user_name = "cserver"
     } else if (mute_user_name === "Steven") {
+        // do not remove this or ELSE
         mute_user_name = "STEVEN Payed $5 for immunity"
     }
     
