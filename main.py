@@ -10,7 +10,7 @@ from flask.logging import default_handler
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
 from replit import db
-# import sqlite3
+import sqlite3
 import chat
 import filtering
 
@@ -28,8 +28,8 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 # who is online, why no one use my chat program
 db.clear()
-# connection = sqlite3.connect("myDatabase.db")
-# connection.execute("CREATE TABLE IF NOT EXISTS online (id STRING PRIMARY KEY, username STRING);")
+connection = sqlite3.connect("AC.db")
+#connection.execute("CREATE TABLE IF NOT EXISTS (id STRING PRIMARY KEY, STRING);")
 # cursor = connection.cursor("SELECT * FROM online")
 ################################################################
 #       Functions needed to allow clients to access files      #
@@ -92,6 +92,13 @@ def get_logs_page() -> ResponseReturnValue:
 def viewer_page() -> ResponseReturnValue:
     """Serve the viewer page."""
     html_file = flask.render_template('viewer.html')
+    return html_file
+
+
+@app.route("/aboutus")
+def aboutus_page() -> ResponseReturnValue:
+    """The about page"""
+    html_file = flask.render_template('about-us.html')
     return html_file
 
 
