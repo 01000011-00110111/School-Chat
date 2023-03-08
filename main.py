@@ -177,7 +177,10 @@ def handle_disconnect():
 @socketio.on('login')
 def login_handle():
     """make the login work."""
-    pass
+    username_list = []
+    for login in dbm.Accounts.find():
+        # IDK wh
+        username_list.append(key["username"])
 
 
 @socketio.on('username_msg')

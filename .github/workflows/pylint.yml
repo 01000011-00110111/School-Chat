@@ -21,3 +21,7 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         pylint --disable=E0401 --disable=C0301 --disable=R0914 $(git ls-files '*.py')
+
+    - name: Type Checking with mypy
+      run: |
+        mypy $(git ls-files '*.py')
