@@ -170,7 +170,7 @@ function unmuteusr(muteUserName) {
 
 // This function requests the server send it a full chat log
 function loadChat() {
-    ajaxGetRequest("/chat", loadChatStartup); 
+    ajaxGetRequest("/chat_logs", loadChatStartup); 
 }
 
 function deleteAllCookies() {

@@ -1,4 +1,0 @@
-A help command, what else did you think this is
-Mute a user (semi-well)
-Unmute a user (might work, uses cookies maybe?)
-Useful server stats?

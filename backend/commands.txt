@@ -1,4 +1,0 @@
-help
-mute
-unmute
-stats

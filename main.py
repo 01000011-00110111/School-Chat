@@ -57,7 +57,7 @@ def index() -> ResponseReturnValue:
     elif request.args.get('jotd') == "true":
         html_file = flask.render_template("JOTD-index.html")
     else:
-        html_file = flask.render_template("index.html")
+        html_file = flask.render_template("update-log.html")
 
     return html_file
 
@@ -69,10 +69,10 @@ def f_but_better() -> ResponseReturnValue:
     return "HI"
 
 
-@app.route('/changelog')
+@app.route('/chat')
 def changelog() -> ResponseReturnValue:
-    """Serve the changelog."""
-    html_file = flask.render_template('update-log.html')
+    """Serve the main chat, stops bypass bans."""
+    html_file = flask.render_template('index.html')
     return html_file
 
 
@@ -116,7 +116,7 @@ def get_backup_chat():
     return ret_val
 
 
-@app.get('/chat')
+@app.get('/chat_logs')
 def respond_with_chat():
     """Legacy function only used now for inital chat load."""
     messages = chat.get_chat("chat")
@@ -172,6 +172,12 @@ def handle_disconnect():
         emit("online", username_list, broadcast=True)
     except KeyError:
         pass
+
+
+@socketio.on('login')
+def login_handle():
+    """make the login work."""
+    pass
 
 
 @socketio.on('username_msg')
@@ -270,6 +276,7 @@ def handle_admin_stuff(cmd: str):
 
 @socketio.on("reload_page")
 def handle_cilent_refresh(muteuser):
+    """Send command to refresh all clients."""
     emit("reload_pages", muteuser, broadcast=True, namespace="/")
 
 
