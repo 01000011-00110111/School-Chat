@@ -179,8 +179,8 @@ def login_handle():
     """make the login work."""
     username_list = []
     for login in dbm.Accounts.find():
-        # IDK wh
-        username_list.append(key["username"])
+        # IDK what im doing this code like most others is mad and ran on wish and prayors
+        username_list.append(login["username"])
 
 
 @socketio.on('username_msg')
