@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
 	<head>
-        <title>Class Chat STYLER/ARTIST</title>
-        <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+        <title>Desmos | Graphing Calculator</title>
+        <link rel="icon" type="image/x-icon" href="https://help.desmos.com/hc/en-us/article_attachments/4413863846413/desmos_icon_square.png">
         <!-- SOCKETIO IMPORT MUST BE HERE, BEFORE CHAT.JS IMPORT. IT BREAKS OTHERWISE -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
         <script src="static/ajax.js"></script>
         <script src="static/chat.js"></script>
         <script src="static/styles.js"></script>
         <script src="static/non-admin.js"></script>
+        <script src="static/accounts.js"></script>
         <script src="static/Cmds.js"></script>
         <link rel="stylesheet" href="static/style.css"> 
         <meta charset="utf-8">
@@ -25,30 +26,6 @@
             <a href="https://tux.school-chat.us/changelog">Update log</a>
             <a href="#no more pranks">Soon</a>
             <a href="#your safe now">Soon</a>
-            <input type="text" id="user" name="username" placeholder="username" maxlength="12"></input><br/>
-            <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture" hidden>
-            <input type="text" id="role" name="role" placeholder="role" maxlength="18"><br>
-            <div class="colorDropdown">
-                <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
-                <div id="myDropdown" class="dropdown-content">
-                    <a id="dark" onclick="setDarkStyle();">Dark</a>
-                    <a id="light" onclick="setLightStyle();">Light</a>
-                    <a id="specal1" onclick="setSpecalStyle();">Special</a>
-                    <a id="event" onclick="whichEvent();">Event</a>
-                    <a id="event" onclick="setTestingStyle1();">Test style 1</a>
-                    <a id="event" onclick="setTestingStyle2();">Test style 2</a>
-                    <a id="event" onclick="setTestingStyle3();">Test style 3</a>
-                    <a id="event" onclick="setTestingStyle4();">Test style 4</a>
-                </div><br>
-                <h3 id="user_colorTXT">CHOOSE YOUR COLOR:</h3>
-                <p id="user_colorTXT">Username: </p>
-                <input type="color" value="#ff00ff" id="user_color" name="color choser"><br>
-                <p id="user_colorTXT">Role: </p>
-                <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
-                <p id="user_colorTXT">Message: </p>
-                <input type="color" value="#ff00ff" id="message_color" name="color choser">
-                <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
-            </div>
             <h3><a href="mailto:harperom62@k12louisa.org">Contact us</a></h3>
             <h4><a href="https://docs.google.com/forms/d/e/1FAIpQLSdK8bsgzEn2kzDXQTu4sc-AP2HwK8aCZ_5NYhsKWItnJz2rDQ/viewform">Report Bugs</a></h4>
         </div>

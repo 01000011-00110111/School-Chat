@@ -27,6 +27,8 @@ function banHammer() {
         mute_user_name = user_name
     } else if (mute_user_name === "cserver") {
         mute_user_name = user_name
+    } else if (mute_user_name === "Steven") {
+        mute_user_name = "STEVEN Payed a box of poptarts and gummys for immunity"
     }
     
     socket.emit('ban_cmd', mute_user_name)
@@ -42,6 +44,8 @@ function mute() {
         mute_user_name = user_name
     } else if (mute_user_name === "cserver") {
         mute_user_name = user_name
+    } else if (mute_user_name === "Steven") {
+        mute_user_name = "STEVEN Payed a box of poptarts and gummys for immunity"
     }
     
     socket.emit('mute_cmd', mute_user_name)

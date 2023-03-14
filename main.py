@@ -4,6 +4,8 @@ import logging
 import json
 from time import sleep
 import hashlib
+import cmd
+from multiprocessing import Process
 import flask
 import pymongo
 from flask import request
@@ -31,6 +33,16 @@ dbm = client.Chat
 
 # clear db, so that old users don't stay
 dbm.Online.delete_many({})
+
+
+class Console(cmd.Cmd):
+
+    def do_greet(self, line):
+        print("hello")
+
+    def do_EOF(self, line):
+        return True
+
 
 ################################################################
 #       Functions needed to allow clients to access files      #
@@ -170,17 +182,42 @@ def handle_disconnect():
         for key in dbm.Online.find():
             username_list.append(key["username"])
         emit("online", username_list, broadcast=True)
-    except KeyError:
+    except TypeError:
         pass
 
 
 @socketio.on('login')
-def login_handle():
+def login_handle(username, password):
     """make the login work."""
-    username_list = []
-    for login in dbm.Accounts.find():
-        # IDK what im doing this code like most others is mad and ran on wish and prayors
-        username_list.append(login["username"])
+    try:
+        # not 100% sure this will catch a failed attempt, doesnt get them
+        user = dbm.Accounts.find_one({"username": username})
+    except TypeError:
+        emit("login_att", "failed", namespace="/")
+    if username == user["username"] and hashlib.sha384(bytes(
+            password, 'utf-8')).hexdigest() == user["password"]:
+        emit("login_att", "true", namespace="/")
+    else:
+        emit("login_att", "failed", namespace="/")
+
+
+@socketio.on('get_prefs')
+def return_user_prefs(username):
+    """Return roles, colors, and theme to logged in user."""
+    user = dbm.Accounts.find_one({"username": username})
+
+    try:
+        emit("return_prefs", {
+            "displayName": user["displayName"],
+            "role": user["role"],
+            "userColor": user["userColor"],
+            "theme": user["theme"],
+            "messageColor": user["messageColor"],
+            "roleColor": user["roleColor"]
+        },
+             namespace="/")
+    except TypeError:
+        emit("return_prefs", {"failed": True}, namespace="/")
 
 
 @socketio.on('username_msg')
@@ -292,6 +329,18 @@ def handle_message(message):
         emit("message_chat", result, broadcast=True)
 
 
+@socketio.on('wisper_chat')
+def handle_wisper(message, to, sender):
+    """Wisper a message to another user."""
+    try:
+        user = dbm.Online.find_one({"username": to})
+    except TypeError:
+        return
+    message_comp = "<i><b>" + sender + "</b>  wispers to you: </i>" + message
+
+    emit("message_chat", message_comp, namespace="/", to=user["socketid"])
+
+
 # temporary, will be in diffrent namespace soon
 @socketio.on('admin_message')
 def handle_admin_message(message):
@@ -306,3 +355,5 @@ def handle_admin_message(message):
 
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=8080)
+    p = Process(target=Console().cmdloop())
+    p.start()

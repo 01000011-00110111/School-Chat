@@ -29,29 +29,6 @@
             <a href="https://replit.com/@School-chat-room/School-Chat">Code Page</a>
             <a href="https://stackoverflow.com">Need help with code?</a>
             <a href="change-to-flask-please">Webserver info</a>
-            <!--<input type="text" id="user" name="username" placeholder="username" maxlength="12"><br>
-            <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
-            <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">-->
-            <div class="colorDropdown">
-                <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
-                <div id="myDropdown" class="dropdown-content">
-                    <a id="dark" onclick="setDarkStyle();">Dark</a>
-                    <a id="light" onclick="setLightStyle();">Light</a>
-                    <a id="specal1" onclick="setSpecalStyle();">Specal</a>
-                    <a id="event" onclick="whichEvent();">Event</a>
-                    <a id="dark" onclick="setDevStyle()">Dev</a>
-                    <!--  <button id="specal2" onclick="">Soon</button>-->
-                </div>
-                
-            </div><br>
-            <h3 id="user_colorTXT" >CHOOSE YOUR COLOR:</h3>
-            <p id="user_colorTXT">Username: </p>
-            <input type="color" value="#ffffff" id="user_color" name="color choser"><br>
-            <p id="user_colorTXT">Role: </p>
-            <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
-            <p id="user_colorTXT">Message: </p>
-            <input type="color" value="#ffffff" id="message_color" name="color choser">
-            <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
             <h3><a href="mailto:harperom62@k12louisa.org">Contact us</a></h3>
         </div>
         <span id="topleft" onclick="openNav()">☰</span>
@@ -116,19 +93,51 @@
         <div id="activenav">
             <div id="accSidenav" class="sidenava">
                 <a href="javascript:void(0)" class="closebtna" onclick="closeaccNav()">×</a>
-                <p id="#logintxt1">Username:</p>
-                <input type="text" id="user" placeholder="Username"><br>
-                <p id="#logintxt1">Password:</p>
-                <input type="text" id="pass" placeholder="Password"><br>
-                <button id="login">Login</button>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <input type="text" name="username" placeholder="username"><br>
-                <input type="text" id="role" name="role" placeholder="role"><button onclick="Testrole()">testrole</button><br>
-                <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
+                <div id="loginStuff">
+                    <p>Username:</p>
+                    <input type="text" id="user" placeholder="Username"><br>
+                    <p>Password:</p>
+                    <input type="text" id="pass" placeholder="Password"><br>
+                    <button id="login" onclick="login();">Login</button>
+                </div>
+                <div id="logoutStuff" style="display: none;">
+                    <p>Wisper to another user</p>
+                    <input type="text" id="private_user" name="wisper_user" placeholder="Wisper to:"><br>
+                    <input type="text" id="private_msg" name="wisper_msg" placeholder="Message"><br>
+                    <button id="wisper_send" onclick="wisperMessage();">Send</button>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <div id="userstats">
+
+                    </div>
+                    <input type="text" id="role" name="role" placeholder="role"><br>
+                    <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture"><br>
+                    <div class="colorDropdown">
+                <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
+                <div id="myDropdown" class="dropdown-content">
+                    <a id="dark" onclick="setDarkStyle();">Dark</a>
+                    <a id="light" onclick="setLightStyle();">Light</a>
+                    <a id="specal1" onclick="setSpecalStyle();">Specal</a>
+                    <a id="event" onclick="whichEvent();">Event</a>
+                    <a id="dark" onclick="setDevStyle()">Dev</a>
+                </div>
+            </div><br>
+                        <h3 id="user_colorTXT" >CHOOSE YOUR COLOR:</h3>
+            <p id="user_colorTXT">Username: </p>
+            <input type="color" value="#ffffff" id="user_color" name="color choser"><br>
+            <p id="user_colorTXT">Role: </p>
+            <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
+            <p id="user_colorTXT">Message: </p>
+            <input type="color" value="#ffffff" id="message_color" name="color choser">
+            <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
+                    <br>
+                    <br>
+                    <br>
+                    <button id='logout' onclick="logout();">logout</button>
+                </div>
             </div>
             <span id="account" onclick="openaccNav()">☰</span>
             <div id="online_users">

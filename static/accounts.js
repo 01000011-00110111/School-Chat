@@ -9,30 +9,68 @@ function login() {
     let loginuser = loginuserElement["value"];
     let passwd = passwordElement["value"]
 
+    if (loginuser === "" || passwd === "") {
+        return;
+    }
+
     socket.emit('login', loginuser, passwd);
 }
 
-//add start of socketio
-socket.on("login2", (aproved) => {
-  if (aproved === 'true') {
-      enteraccount(accid);
-  } else {
-      failedlogin();
-  }
+
+socket.on("login_att", (state) => {
+    if (state === 'true') {
+        enteraccount();
+    } else {
+        failedlogin();
+    }
+});
+
+socket.on("return_prefs", (Obj) => {
+    // must check if the dicgt only has a failed attempt thing first
+    if ('failed' in Obj) {
+        // do something here to tell the user it failed, maybe retry?
+        return;
+    }
+    // set values of localstorage vars here
+     window.localStorage.setItem("username", displayName);
+     window.localStorage.setItem("role", role);
 });
 
 function failedlogin() {
-    if (failedattempts = "") {
-      let failedattempts = "1" 
-    }else if (failedattempts = "1") {
-      let failedattempts = "2" 
-    } else if (failedattempts = "2") {
-      let failedattempts = "3" 
-    } else if (failedattempts = "3") {
-      window.refresh()
+    let failedattempts = window.localStorage.getItem("login_att");
+    if (failedattempts === "") {
+        window.sessionStorage.setItem("login_att", "1");
+        return;
+    } else if (failedattempts === "1") {
+        window.sessionStorage.setItem("login_att", "2");
+        return;
+    } else if (failedattempts === "2") {
+        window.sessionStorage.setItem("login_att", "3");
+        return;
+    } else if (failedattempts === "3") {
+        document.getElementById("loginStuff").style.display = "block";
+        window.sessionStorage.setItem("login_att", "");
     }
 }
 
-function enteraccount(accid) {
-  // oneday will have somting here  
+// ea sports its in the game
+//
+function enteraccount() {
+    document.getElementById("loginStuff").style.display = "none";
+    document.getElementById("logoutStuff").style.display = "block";
+    socket.emit('fetch_prefs', document.getElementById("user")["value"]);
+}
+
+
+function logout() {
+    document.getElementById("loginStuff").style.display = "block";
+    document.getElementById("logoutStuff").style.display = "none";
+    let passwdElement =  document.getElementById("user");
+    let usernmElement =  document.getElementById("pass");
+    let roleElement =  document.getElementById("role");
+
+    usernmElement["value"] = "";
+    passwdElement["value"] = "";
+    roleElement["value"] = "";
+    // location.reload();
 }

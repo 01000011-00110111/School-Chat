@@ -35,7 +35,7 @@ function banHammer() {
         mute_user_name = "cserver"
     } else if (mute_user_name === "Steven") {
         // do not remove this or ELSE
-        mute_user_name = "STEVEN Payed $5 for immunity"
+        mute_user_name = "STEVEN Payed a box of poptarts and gummys for immunity"
     }
     
     socket.emit('ban_cmd', mute_user_name)
@@ -50,7 +50,7 @@ function mute() {
     } else if (mute_user_name === "cserverReal") {
         mute_user_name = "cserver"
     } else if (mute_user_name === "Steven") {
-        mute_user_name = "STEVEN Payed $5 for immunity"
+        mute_user_name = "STEVEN Payed a box of poptarts and gummys for immunity"
     }
     
     socket.emit('mute_cmd', mute_user_name)

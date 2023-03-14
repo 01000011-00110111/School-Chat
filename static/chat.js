@@ -36,6 +36,7 @@ function NotificationsB() {
       document.cookie = "Notifications=true; path=/";
       notifB.value = "Disable notifications";
       notifB.style.backgroundColor = "red";
+      
   }
 } 
 
@@ -202,6 +203,7 @@ function getCookie(name) {
 
 // the startup for cookies after the first time
 function runCheckStartup() {
+  // document.getElementById("accountStuff").style.visibility = "hidden";
    let theme = whichEvent(window.localStorage.getItem("theme"));
   if (theme === "") {
     whichEvent();
@@ -213,6 +215,7 @@ function runCheckStartup() {
     
     } else {
         // must be here, otherwise popup could be bypased
+        
         let message_box = document.getElementById('message');
         let send = document.getElementById('send');
         let sidenav = document.getElementById('topleft');
@@ -251,11 +254,11 @@ function runStartup() {
     // load previous chat messages
     loadChat();
     // add the username currently in a cookie unless there is none
-    let userElement = document.getElementById("user"); 
+    // let userElement = document.getElementById("user"); 
     let user_color = document.getElementById("user_color");
     let message_color = document.getElementById("message_color");
     let role_color = document.getElementById("role_color");
-    let roleElement = document.getElementById("role");
+    // let roleElement = document.getElementById("role");
     user_color["value"] = window.localStorage.getItem("user_color");
     message_color["value"] = window.localStorage.getItem("message_color");
     role_color["value"] = window.localStorage.getItem("role_color");
@@ -302,7 +305,7 @@ function toHyperlink(str) {
     return str2;
 }
 
-function reban() {
+/*function reban() {
     let userElement = document.getElementById("user");
     let profileElement = document.getElementById("profile_picture");
     let roleElement = document.getElementById("role")
@@ -329,6 +332,28 @@ function reban() {
         socket.emit('message_chat', toSend);
         return;
     }
+}*/
+
+
+function wisperMessage() {
+    let user = document.getElementById("user")["value"];
+    let message = document.getElementById("private_msg")["value"];
+    let sender = document.getElementById("private_user")["value"];
+    let userColor = document.getElementById("user_color")["value"];
+    let messageColor = document.getElementById("message_color")["value"];
+    if (user === "cserverReal") {
+        user = "cserver";
+    } else if (user === "Dev EReal") {
+        user = "Dev E"
+    }
+    let messageL = toHyperlink(message);
+    let user_color_name = "<font color='" + userColor + "'>" + user + "</font>";
+    let message_color_send = "<font color='" + messageColor + "'>" + messageL + "</font>";
+
+
+    // insert some joke here
+
+    socket.emit("wisper_chat", message_color_send, sender, user_color_name);
 }
 
 // This function sends the server the new message and receives
@@ -371,7 +396,7 @@ function sendMessage() {
     socket.emit("username_msg", user_name, window.localStorage.getItem("username"));
 
     // session stuff goes here
-    window.localStorage.setItem("role", role);
+    // window.localStorage.setItem("role", role);
     window.localStorage.setItem("role_color", role_color);
     window.localStorage.setItem("message_color", message_color);
     window.localStorage.setItem("user_color", user_color);
@@ -385,12 +410,12 @@ function sendMessage() {
         return;
     } else if (ismutted === 'banned') {
         return;
-    } else if (ismutted === "") {
+    } /*else if (user_name === "") {
         let ismutted = "banned"
         document.cookie = "permission=banned; path=/";
         reban();
         return;
-    }
+    }*/
     
     if (message === "") {
         return;

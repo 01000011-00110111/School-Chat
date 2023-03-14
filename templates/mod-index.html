@@ -10,6 +10,7 @@
         <script src="static/styles.js"></script>
         <script src="static/mod-menu.js"></script>
         <script src="static/non-admin.js"></script>
+        <script src="static/accounts.js"></script>
         <script src="static/Cmds.js"></script>
         <link rel="stylesheet" href="static/style.css"> 
         <meta charset="utf-8">
@@ -26,26 +27,6 @@
             <a href="https://tux.school-chat.us/changelog">Update log</a>
             <a href="https://docs.google.com/document/d/17JESl1yq2wxHypgCRimOauFCQIJboKFX1D0Jga0OYGw/edit?usp=sharing">Rules</a>
             <a href="#your safe now">Soon</a>
-            <input type="text" id="user" name="username" placeholder="username" maxlength="12"></input><br/>
-            <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture" hidden>
-            <input type="text" id="role" name="role" placeholder="role" maxlength="18"><br>
-            <div class="colorDropdown">
-                <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
-                <div id="myDropdown" class="dropdown-content">
-                    <a id="dark" onclick="setDarkStyle();">Dark</a>
-                    <a id="light" onclick="setLightStyle();">Light</a>
-                    <a id="specal1" onclick="setSpecalStyle();">Special</a>
-                    <a id="event" onclick="whichEvent();">Event</a>
-                </div><br>
-                <h3 id="user_colorTXT">CHOOSE YOUR COLOR:</h3>
-                <p id="user_colorTXT">Username: </p>
-                <input type="color" value="#ff00ff" id="user_color" name="color choser"><br>
-                <p id="user_colorTXT">Role: </p>
-                <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
-                <p id="user_colorTXT">Message: </p>
-                <input type="color" value="#ff00ff" id="message_color" name="color choser">
-                <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
-            </div>
             <h3><a href="mailto:harperom62@k12louisa.org">Contact us</a></h3>
             <h4><a href="https://docs.google.com/forms/d/e/1FAIpQLSdK8bsgzEn2kzDXQTu4sc-AP2HwK8aCZ_5NYhsKWItnJz2rDQ/viewform">Report Bugs</a></h4>
         </div>
@@ -91,25 +72,53 @@
                 <button onClick="sendMessage();" id="send">Send</button>
             </div>
         </div><br>
-        <div id="activenav">
-            <div id="accSidenav" class="sidenava" hidden>
+         <div id="activenav">
+            <div id="accSidenav" class="sidenava">
                 <a href="javascript:void(0)" class="closebtna" onclick="closeaccNav()">×</a>
-                <p id="#logintxt1">Username:</p>
-                <input type="text" id="user" placeholder="Username"><br>
-                <p id="#logintxt1">Password:</p>
-                <input type="text" id="pass" placeholder="Password"><br>
-                <button id="login">Login</button>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <input type="text" name="username" placeholder="username" maxlength="12"><br>
-                <input type="text" id="role" name="role" placeholder="role" maxlength="50"><br>
-                <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture">
+                <div id="loginStuff">
+                    <p>Username:</p>
+                    <input type="text" id="user" placeholder="Username"><br>
+                    <p>Password:</p>
+                    <input type="text" id="pass" placeholder="Password"><br>
+                    <button id="login" onclick="login();">Login</button>
+                </div>
+                <div id="logoutStuff" style="display: none;">
+                    <p>Wisper to another user</p>
+                    <input type="text" id="private_user" name="wisper_user" placeholder="Wisper to:"><br>
+                    <input type="text" id="private_msg" name="wisper_msg" placeholder="Message"><br>
+                    <button id="wisper_send" onclick="wisperMessage();">Send</button>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <input type="text" id="role" name="role" placeholder="role"><br>
+                    <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture"><br>
+                    <div class="colorDropdown">
+                <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
+                <div id="myDropdown" class="dropdown-content">
+                    <a id="dark" onclick="setDarkStyle();">Dark</a>
+                    <a id="light" onclick="setLightStyle();">Light</a>
+                    <a id="specal1" onclick="setSpecalStyle();">Specal</a>
+                    <a id="event" onclick="whichEvent();">Event</a>
+                </div>
+            </div><br>
+                        <h3 id="user_colorTXT" >CHOOSE YOUR COLOR:</h3>
+            <p id="user_colorTXT">Username: </p>
+            <input type="color" value="#ffffff" id="user_color" name="color choser"><br>
+            <p id="user_colorTXT">Role: </p>
+            <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
+            <p id="user_colorTXT">Message: </p>
+            <input type="color" value="#ffffff" id="message_color" name="color choser">
+            <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
+                    <br>
+                    <br>
+                    <br>
+                    <button id='logout' onclick="logout();">logout</button>
+                </div>
             </div>
-            <span id="account" onclick="openaccNav()" hidden>☰</span>
-            <div id="online_users" style="color: white;">
+            <span id="account" onclick="openaccNav()">☰</span>
+            <div id="online_users">
                 
             </div>
         </div>
