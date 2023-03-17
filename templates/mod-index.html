@@ -11,7 +11,6 @@
         <script src="static/mod-menu.js"></script>
         <script src="static/non-admin.js"></script>
         <script src="static/accounts.js"></script>
-        <script src="static/Cmds.js"></script>
         <link rel="stylesheet" href="static/style.css"> 
         <meta charset="utf-8">
         <meta name="description" content="A chat app, what else did you think this is?">
@@ -21,14 +20,56 @@
   
     <body onload="runCheckStartup();" id="body">
         <div id="mySidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSfdCGMUhy6RwT2yMtM7Egd8bC3VNAE5_-w_8wZzyXwBX9daVg/viewform">Share ideas</a>
-            <a href="https://trello.com/b/ndht1H9F/chat-plans">Trello</a>
-            <a href="https://tux.school-chat.us/changelog">Update log</a>
             <a href="https://docs.google.com/document/d/17JESl1yq2wxHypgCRimOauFCQIJboKFX1D0Jga0OYGw/edit?usp=sharing">Rules</a>
-            <a href="#your safe now">Soon</a>
+            <a href="https://trello.com/b/ndht1H9F/chat-plans">Trello (outdated)</a>
+            <a href="https://tux.school-chat.us/changelog">Update log</a>
             <h3><a href="mailto:harperom62@k12louisa.org">Contact us</a></h3>
             <h4><a href="https://docs.google.com/forms/d/e/1FAIpQLSdK8bsgzEn2kzDXQTu4sc-AP2HwK8aCZ_5NYhsKWItnJz2rDQ/viewform">Report Bugs</a></h4>
+            <hr style="border: 5px solid grey;">
+            <div id="loginStuff">
+                <p>Username:</p>
+                <input type="text" id="user" placeholder="Username"><br>
+                <p>Password:</p>
+                <input type="text" id="pass" placeholder="Password"><br>
+                <button id="login" onclick="login();">Login</button>
+            </div>
+            <div id="logoutStuff" style="display: none;">
+                <p>Wisper to another user</p>
+                <input type="text" id="private_user" name="wisper_user" placeholder="Wisper to:"><br>
+                <input type="text" id="private_msg" name="wisper_msg" placeholder="Message"><br>
+                <button id="wisper_send" onclick="wisperMessage();">Send</button>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <input type="text" id="role" name="role" placeholder="role" hidden><input type="text" id="username" name="role" placeholder="role" hidden><br>
+                <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture"><br>
+                <div class="colorDropdown">
+                    <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
+                    <div id="myDropdown" class="dropdown-content">
+                        <a id="dark" onclick="setDarkStyle();">Dark</a>
+                        <a id="light" onclick="setLightStyle();">Light</a>
+                        <a id="specal1" onclick="setSpecalStyle();">Specal</a>
+                        <a id="event" onclick="whichEvent();">Event</a>
+                    </div>
+                </div><br>
+                <h3 id="user_colorTXT" >CHOOSE YOUR COLOR:</h3>
+                <p id="user_colorTXT">Username: </p>
+                <input type="color" value="#ffffff" id="user_color" name="color choser"><br>
+                <p id="user_colorTXT">Role: </p>
+                <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
+                <p id="user_colorTXT">Message: </p>
+                <input type="color" value="#ffffff" id="message_color" name="color choser">
+                <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
+                <br>
+                <br>
+                <br>
+                <button id='logout' onclick="logout();">logout</button>
+                <br><br><br><br><br><br><br>
+            </div>
         </div>
         <span id="topleft" style="font-size:40px;cursor:pointer" onclick="openNav()">&#9776;</span>
         <div id="devSidenav" class="sidenavR">
@@ -73,51 +114,7 @@
             </div>
         </div><br>
          <div id="activenav">
-            <div id="accSidenav" class="sidenava">
-                <a href="javascript:void(0)" class="closebtna" onclick="closeaccNav()">×</a>
-                <div id="loginStuff">
-                    <p>Username:</p>
-                    <input type="text" id="user" placeholder="Username"><br>
-                    <p>Password:</p>
-                    <input type="text" id="pass" placeholder="Password"><br>
-                    <button id="login" onclick="login();">Login</button>
-                </div>
-                <div id="logoutStuff" style="display: none;">
-                    <p>Wisper to another user</p>
-                    <input type="text" id="private_user" name="wisper_user" placeholder="Wisper to:"><br>
-                    <input type="text" id="private_msg" name="wisper_msg" placeholder="Message"><br>
-                    <button id="wisper_send" onclick="wisperMessage();">Send</button>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    <input type="text" id="role" name="role" placeholder="role"><br>
-                    <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture"><br>
-                    <div class="colorDropdown">
-                <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
-                <div id="myDropdown" class="dropdown-content">
-                    <a id="dark" onclick="setDarkStyle();">Dark</a>
-                    <a id="light" onclick="setLightStyle();">Light</a>
-                    <a id="specal1" onclick="setSpecalStyle();">Specal</a>
-                    <a id="event" onclick="whichEvent();">Event</a>
-                </div>
-            </div><br>
-                        <h3 id="user_colorTXT" >CHOOSE YOUR COLOR:</h3>
-            <p id="user_colorTXT">Username: </p>
-            <input type="color" value="#ffffff" id="user_color" name="color choser"><br>
-            <p id="user_colorTXT">Role: </p>
-            <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
-            <p id="user_colorTXT">Message: </p>
-            <input type="color" value="#ffffff" id="message_color" name="color choser">
-            <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
-                    <br>
-                    <br>
-                    <br>
-                    <button id='logout' onclick="logout();">logout</button>
-                </div>
-            </div>
-            <span id="account" onclick="openaccNav()">☰</span>
+            <br><br>
             <div id="online_users">
                 
             </div>

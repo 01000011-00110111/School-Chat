@@ -82,9 +82,16 @@ def f_but_better() -> ResponseReturnValue:
 
 
 @app.route('/chat')
-def changelog() -> ResponseReturnValue:
+def chat_page() -> ResponseReturnValue:
     """Serve the main chat, stops bypass bans."""
     html_file = flask.render_template('index.html')
+    return html_file
+
+
+@app.route('/changelog')
+def changoelog_page() -> ResponseReturnValue:
+    """Serve the changelog, so old links don't break (after making the main page be the changelog)."""
+    html_file = flask.render_template('update-log.html')
     return html_file
 
 
@@ -201,6 +208,24 @@ def login_handle(username, password):
         emit("login_att", "failed", namespace="/")
 
 
+# stop doing this, they go in the function, not the decorator
+@socketio.on('signup')
+def signup_handle(SUsername, SDesplayname, SPassword, SRole):
+    """make the signup work."""
+    dbm.Accounts.insert_one({
+        "username": SUsername,
+        "password": SPassword,
+        "role": SRole,
+        "theme": "dark",
+        "displayName": SDesplayname,
+        "messageColor": "#ffffff",
+        "roleColor": "#ffffff",
+        "userColor": "#ffffff",
+        "permission": "true",
+    })
+    emit("signup_pass", namespace="/")
+
+
 @socketio.on('get_prefs')
 def return_user_prefs(username):
     """Return roles, colors, and theme to logged in user."""
@@ -213,7 +238,8 @@ def return_user_prefs(username):
             "userColor": user["userColor"],
             "theme": user["theme"],
             "messageColor": user["messageColor"],
-            "roleColor": user["roleColor"]
+            "roleColor": user["roleColor"],
+            "permission": user["permission"]
         },
              namespace="/")
     except TypeError:
@@ -239,6 +265,10 @@ def handle_online(username: str, p_username: str):
 def ban_user(username: str):
     """Ban a user from the chat forever (until cookie wipe.)"""
     emit("ban", username, broadcast=True)
+    dbm.Accounts.update_one({"displayName": username},
+                            {"$set": {
+                                "permission": "banned"
+                            }})
     chat.force_message('[SYSTEM]: <font color="#ff7f00">' + username +
                        " is mutted for an undefned period of time.</font>")
     emit("message_chat",
@@ -251,6 +281,10 @@ def ban_user(username: str):
 def mute_user(username: str):
     """mute a user from the chat untilled mutted or until cookie wipe."""
     emit("mute", username, broadcast=True)
+    dbm.Accounts.update_one({"displayName": username},
+                            {"$set": {
+                                "permission": "muted"
+                            }})
     chat.force_message('[SYSTEM]: <font color="#ff7f00">' + username +
                        " is mutted for an undefned period of time.</font>")
     emit("message_chat",
@@ -263,6 +297,10 @@ def mute_user(username: str):
 def unmute_user(username: str):
     """unmute a user from the chat"""
     emit("unmute", username, broadcast=True)
+    dbm.Accounts.update_one({"displayName": username},
+                            {"$set": {
+                                "permission": "true"
+                            }})
     chat.force_message('[SYSTEM]: <font color="#ff7f00">' + username +
                        " is unmuted.</font>")
     emit("message_chat",
@@ -332,13 +370,13 @@ def handle_message(message):
 @socketio.on('wisper_chat')
 def handle_wisper(message, to, sender):
     """Wisper a message to another user."""
-    try:
-        user = dbm.Online.find_one({"username": to})
-    except TypeError:
-        return
+    user = dbm.Online.find_one({"username": to})
     message_comp = "<i><b>" + sender + "</b>  wispers to you: </i>" + message
 
-    emit("message_chat", message_comp, namespace="/", to=user["socketid"])
+    try:
+        emit("message_chat", message_comp, namespace="/", to=user["socketid"])
+    except TypeError:
+        return
 
 
 # temporary, will be in diffrent namespace soon

@@ -30,7 +30,7 @@ function banHammer() {
     let mute_user_name = muteuserElement["value"];
 
     if (mute_user_name === "Dev EReal") {
-        mute_user_name = "Dev E"
+        mute_user_name = "Dev EReal"
     } else if (mute_user_name === "cserverReal") {
         mute_user_name = "cserver"
     } else if (mute_user_name === "Steven") {
@@ -46,7 +46,7 @@ function mute() {
     let mute_user_name = muteuserElement["value"];
 
     if (mute_user_name === "Dev EReal") {
-        mute_user_name = "Dev E"
+        mute_user_name = "Dev EReal"
     } else if (mute_user_name === "cserverReal") {
         mute_user_name = "cserver"
     } else if (mute_user_name === "Steven") {

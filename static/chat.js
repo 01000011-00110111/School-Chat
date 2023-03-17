@@ -8,7 +8,7 @@ socket.on("message_chat", (message) => {
 
 socket.on("reload_pages", (muteUserName) => {
     // something something anoy everyone
-    let userElement = document.getElementById("user");
+    let userElement = document.getElementById("username");
     let user_name = userElement["value"];
 
     if (muteUserName === user_name) {
@@ -41,7 +41,7 @@ function NotificationsB() {
 } 
 
 socket.on("ping", ({ who, from }) => {
-    let userElement = document.getElementById("user");
+    let userElement = document.getElementById("username");
     let user_name = userElement["value"];
     nonotif = getCookie("Notifications");
 
@@ -81,7 +81,7 @@ socket.on("force_username", (statement) => {
 
 socket.on("cookieEater", (statement) => {
     deleteAllCookies();
-    let userElement = document.getElementById("user"); 
+    let userElement = document.getElementById("username"); 
     let user_color = document.getElementById("user_color");
     let message_color = document.getElementById("message_color");
     let role_color = document.getElementById("role_color");
@@ -128,44 +128,47 @@ socket.on("unmute", (muteUserName) => {
 });
 
 function bancline(muteUserName) {
-    let userElement = document.getElementById("user");
+    let permissionElement = document.getElementById("permission"); 
+    let userElement = document.getElementById("username");
     let user_name = userElement["value"];
+    let ismutted = permissionElement["value"]
       if (ismutted === 'false' || ismutted === "true") {
         if (user_name === muteUserName) {
-            document.cookie = "permission=banned; path=/";
+            document.getElementById("permission")["value"] = "banned"
         }
-      } else {
-        document.cookie = "permission=false; path=/";
       }
 }
 
 function muteusr(muteUserName) {
-    let userElement = document.getElementById("user");
+    let permissionElement = document.getElementById("permission"); 
+    let userElement = document.getElementById("username");
     let user_name = userElement["value"];
+    let ismutted = permissionElement["value"]
       if (ismutted === 'false') {
         if (user_name === muteUserName) {
-            document.cookie = "permission=true; path=/";
+            document.getElementById("permission")["value"] = "false"
         }
     } else if (ismutted === 'banned') {
-        document.cookie = "permission=banned; path=/";
+        document.getElementById("permission")["value"] = "banned"
     } else {
-        document.cookie = "permission=true; path=/";
+        document.getElementById("permission")["value"] = "false"
       }
 }
 
 function unmuteusr(muteUserName) {
-    let userElement = document.getElementById("user");
+    let permissionElement = document.getElementById("permission"); 
+    let userElement = document.getElementById("username");
     let user_name = userElement["value"];
-    let ismutted = getCookie('permission');
+    let ismutted = permissionElement["value"]
     if (ismutted === 'true') {
         if (user_name === muteUserName) {
-            document.cookie = "permission=false; path=/";
+            document.getElementById("permission")["value"] = "true"
         }
     } else if (ismutted === 'banned') {
-        document.cookie = "permission=banned; path=/";
+        document.getElementById("permission")["value"] = "banned"
     } else {
         
-        document.cookie = "permission=false; path=/";
+        document.getElementById("permission")["value"] = "true"
       }
 }
 
@@ -254,22 +257,10 @@ function runStartup() {
     // load previous chat messages
     loadChat();
     // add the username currently in a cookie unless there is none
-    // let userElement = document.getElementById("user"); 
-    let user_color = document.getElementById("user_color");
-    let message_color = document.getElementById("message_color");
-    let role_color = document.getElementById("role_color");
-    // let roleElement = document.getElementById("role");
-    user_color["value"] = window.localStorage.getItem("user_color");
-    message_color["value"] = window.localStorage.getItem("message_color");
-    role_color["value"] = window.localStorage.getItem("role_color");
-    roleElement["value"] = window.localStorage.getItem("role");
-    userElement["value"] = window.localStorage.getItem("username");
-    userElement = window.localStorage.getItem("");
-    ismutted = getCookie("permission");
+    // userElement = window.localStorage.getItem("");
     document.cookie = "Notifications=true; path=/";
     // remove when popup is implemented
-    whichEvent(window.localStorage.getItem("theme"));
-    socket.emit("username", window.localStorage.getItem("username"));
+    // socket.emit("username", window.localStorage.getItem("username"));
 }
 
 function checkMsgBox() {
@@ -336,7 +327,7 @@ function toHyperlink(str) {
 
 
 function wisperMessage() {
-    let user = document.getElementById("user")["value"];
+    let user = document.getElementById("username")["value"];
     let message = document.getElementById("private_msg")["value"];
     let sender = document.getElementById("private_user")["value"];
     let userColor = document.getElementById("user_color")["value"];
@@ -344,7 +335,7 @@ function wisperMessage() {
     if (user === "cserverReal") {
         user = "cserver";
     } else if (user === "Dev EReal") {
-        user = "Dev E"
+        user = "Dev E";
     }
     let messageL = toHyperlink(message);
     let user_color_name = "<font color='" + userColor + "'>" + user + "</font>";
@@ -352,6 +343,7 @@ function wisperMessage() {
 
 
     // insert some joke here
+    message = "";
 
     socket.emit("wisper_chat", message_color_send, sender, user_color_name);
 }
@@ -361,20 +353,20 @@ function wisperMessage() {
 function sendMessage() {
     // Get an object representing the text box (where we get the user and msg to get sent)
     let messageElement = document.getElementById("message");
-    let userElement = document.getElementById("user");
+    let userElement = document.getElementById("username");
     let profileElement = document.getElementById("profile_picture");
     let roleElement = document.getElementById("role")
     let messageColorElement = document.getElementById("message_color");
     let roleColorElement = document.getElementById("role_color");
     let userColorElement = document.getElementById("user_color");  
-    let ismutted = getCookie("permission");
+    let ismutted = window.localStorage.getItem("permission");
     //window.localStorage.setItem("permission", "false");
     
     // Save the message text 
     let message = messageElement["value"];
     let user_name = userElement["value"];
     let profile_picture = profileElement["value"]
-    let role = roleElement["value"]
+    let role = roleElement["value"];
     let user_color = userColorElement["value"];
     let message_color = messageColorElement["value"];
     let role_color = roleColorElement["value"]; 
@@ -396,7 +388,7 @@ function sendMessage() {
     socket.emit("username_msg", user_name, window.localStorage.getItem("username"));
 
     // session stuff goes here
-    // window.localStorage.setItem("role", role);
+    window.localStorage.setItem("role", role);
     window.localStorage.setItem("role_color", role_color);
     window.localStorage.setItem("message_color", message_color);
     window.localStorage.setItem("user_color", user_color);
@@ -406,7 +398,7 @@ function sendMessage() {
 
     let profile_img = "<img style='max-height:25px; max-width:25px; overflow: hidden' src='" + profile_picture + "'></img>";
   
-    if (ismutted === 'true') {
+    if (ismutted === 'muted') {
         return;
     } else if (ismutted === 'banned') {
         return;
@@ -445,12 +437,12 @@ function sendMessage() {
     // add profile_picture before user_name after I figure out how to limit how big an image is // i know how
     // still need user chooseable colors, will add to github issue tracker
     if (role === "") {
-        let toSend = profile_img + user_color_name.toString() + " - " + message_color_send
+        let toSend = profile_img + user_color_name.toString() + " - " + message_color_send;
         socket.emit('message_chat', toSend);
         window.scrollTo(0, document.body.scrollHeight);
         return;
     } else {
-        let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" + " - " + message_color_send
+        let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" + " - " + message_color_send;
         socket.emit('message_chat', toSend);
         window.scrollTo(0, document.body.scrollHeight);
         return;
@@ -471,7 +463,6 @@ function loadChatStartup(jsonString) {
     }
 
     chatDiv["innerHTML"] = chat;
-    console.log(localStorage.getItem("permission"))
     window.scrollTo(0, document.body.scrollHeight);
 }
 
@@ -532,13 +523,6 @@ function devcloseNav() {
     document.getElementById("devSidenav").style.paddingLeft = "0";
 }
 
-function openaccNav() {
-    document.getElementById("accSidenav").style.width = "250px";
-}
-
-function closeaccNav() {          
-    document.getElementById("accSidenav").style.width = "0";
-}
 /* When the user clicks on the button,
 toggle between hiding and showing the dropdown content */
 function dropdownTheme() {

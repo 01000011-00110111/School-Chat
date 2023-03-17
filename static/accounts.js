@@ -7,13 +7,13 @@ function login() {
     let loginuserElement = document.getElementById("user");
     let passwordElement = document.getElementById("pass");
     let loginuser = loginuserElement["value"];
-    let passwd = passwordElement["value"]
+    let passwd = passwordElement["value"];
 
     if (loginuser === "" || passwd === "") {
         return;
+    } else {
+        socket.emit('login', loginuser, passwd);
     }
-
-    socket.emit('login', loginuser, passwd);
 }
 
 
@@ -26,14 +26,25 @@ socket.on("login_att", (state) => {
 });
 
 socket.on("return_prefs", (Obj) => {
-    // must check if the dicgt only has a failed attempt thing first
     if ('failed' in Obj) {
         // do something here to tell the user it failed, maybe retry?
         return;
     }
-    // set values of localstorage vars here
-     window.localStorage.setItem("username", displayName);
-     window.localStorage.setItem("role", role);
+    // set values of localstorage vars here (and the other ones aswell)
+    window.localStorage.setItem("username", Obj["displayName"]);
+    window.localStorage.setItem("role", Obj["role"]);
+    window.localStorage.setItem("role_color", Obj["roleColor"]);
+    window.localStorage.setItem("user_color", Obj["userColor"]);
+    window.localStorage.setItem("message_color", Obj["messageColor"]);
+    window.localStorage.setItem("theme", Obj["theme"]);
+    window.localStorage.setItem("permission", Obj["permission"]);
+    document.getElementById("role_color")["value"] = Obj["roleColor"];
+    document.getElementById("username")["value"] = Obj["displayName"]; 
+    document.getElementById("role")["value"] = Obj["role"];
+    document.getElementById("user_color")["value"] = Obj["userColor"];
+    document.getElementById("message_color")["value"] = Obj["messageColor"];
+    // call the finction to change themes
+    whichEvent(Obj["theme"]);
 });
 
 function failedlogin() {
@@ -58,19 +69,49 @@ function failedlogin() {
 function enteraccount() {
     document.getElementById("loginStuff").style.display = "none";
     document.getElementById("logoutStuff").style.display = "block";
-    socket.emit('fetch_prefs', document.getElementById("user")["value"]);
+    socket.emit('get_prefs', document.getElementById("user")["value"]);
 }
 
 
 function logout() {
     document.getElementById("loginStuff").style.display = "block";
     document.getElementById("logoutStuff").style.display = "none";
-    let passwdElement =  document.getElementById("user");
-    let usernmElement =  document.getElementById("pass");
-    let roleElement =  document.getElementById("role");
-
+    let usernmElement = document.getElementById("user");
+    let passwdElement = document.getElementById("pass");
+    let roleElement = document.getElementById("role");
+  
+    window.localStorage.setItem("username", "");
+    window.localStorage.setItem("role", "");
+    window.localStorage.setItem("role_color", "#ffffff");
+    window.localStorage.setItem("user_color", "#ffffff");
+    window.localStorage.setItem("message_color", "#ffffff");// why set in local set in sesson
+    window.localStorage.setItem("theme", 'dark');
+    document.getElementById("role")["value"] = "";
+    document.getElementById("user_color")["value"] = "#ffffff";
+    document.getElementById("message_color")["value"] = "#ffffff";
+    document.getElementById("username")["value"] = "";
+    whichEvent("dark");
+  
     usernmElement["value"] = "";
     passwdElement["value"] = "";
     roleElement["value"] = "";
     // location.reload();
+}
+
+function signup() {
+    SUsernameElement = document.getElementById("SUsername");
+    SDesplaynameElement = document.getElementById("SDesplayname");
+    SPasswordElement = document.getElementById("SPassword");
+    SPassword2Element = document.getElementById("SPassword 2nd time");
+    SRoleElement = document.getElementById("SRole");
+
+  SUsernameElement["value"] = SUsername
+  SDesplaynameElement["value"] = SDesplayname
+  SPasswordElement["value"] = SPassword
+  SPassword2Element["value"] = SPassword2
+  SRoleElement["value"] = SRole
+
+    if (SPassword === SPassword2) {
+        socket.emit('signup', SUsername, SDesplayname, SPassword, SRole);
+    }
 }
