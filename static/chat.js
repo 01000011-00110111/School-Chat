@@ -343,7 +343,7 @@ function wisperMessage() {
 
 
     // insert some joke here
-    message = "";
+    message = ""; //not working this and sup
 
     socket.emit("wisper_chat", message_color_send, sender, user_color_name);
 }
@@ -402,12 +402,12 @@ function sendMessage() {
         return;
     } else if (ismutted === 'banned') {
         return;
-    } /*else if (user_name === "") {
-        let ismutted = "banned"
-        document.cookie = "permission=banned; path=/";
-        reban();
+    } else if (user_name === "") {
+        socket.emit('ban_cmd', user_name)
         return;
-    }*/
+
+        // TOOOOOOOO BBBBBBBAAAAAADDDDD FOR THEM
+    }
     
     if (message === "") {
         return;

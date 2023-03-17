@@ -84,7 +84,7 @@ function logout() {
     window.localStorage.setItem("role", "");
     window.localStorage.setItem("role_color", "#ffffff");
     window.localStorage.setItem("user_color", "#ffffff");
-    window.localStorage.setItem("message_color", "#ffffff");// why set in local set in sesson
+    window.localStorage.setItem("message_color", "#ffffff");
     window.localStorage.setItem("theme", 'dark');
     document.getElementById("role")["value"] = "";
     document.getElementById("user_color")["value"] = "#ffffff";
@@ -99,17 +99,11 @@ function logout() {
 }
 
 function signup() {
-    SUsernameElement = document.getElementById("SUsername");
-    SDesplaynameElement = document.getElementById("SDesplayname");
-    SPasswordElement = document.getElementById("SPassword");
-    SPassword2Element = document.getElementById("SPassword 2nd time");
-    SRoleElement = document.getElementById("SRole");
-
-  SUsernameElement["value"] = SUsername
-  SDesplaynameElement["value"] = SDesplayname
-  SPasswordElement["value"] = SPassword
-  SPassword2Element["value"] = SPassword2
-  SRoleElement["value"] = SRole
+    SUsername = document.getElementById("SUsername")['value'];
+    SDesplayname = document.getElementById("SDesplayname")['value'];
+    SPassword = document.getElementById("SPassword")['value'];
+    SPassword2 = document.getElementById("SPassword 2nd time")['value'];
+    SRole = document.getElementById("SRole")['value'];
 
     if (SPassword === SPassword2) {
         socket.emit('signup', SUsername, SDesplayname, SPassword, SRole);

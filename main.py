@@ -208,20 +208,29 @@ def login_handle(username, password):
         emit("login_att", "failed", namespace="/")
 
 
-# stop doing this, they go in the function, not the decorator
+# 
 @socketio.on('signup')
 def signup_handle(SUsername, SDesplayname, SPassword, SRole):
     """make the signup work."""
     dbm.Accounts.insert_one({
-        "username": SUsername,
-        "password": SPassword,
-        "role": SRole,
-        "theme": "dark",
-        "displayName": SDesplayname,
-        "messageColor": "#ffffff",
-        "roleColor": "#ffffff",
-        "userColor": "#ffffff",
-        "permission": "true",
+        "username":
+        SUsername,
+        "password":
+        hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
+        "role":
+        SRole,
+        "theme":
+        "dark",
+        "displayName":
+        SDesplayname,
+        "messageColor":
+        "#ffffff",
+        "roleColor":
+        "#ffffff",
+        "userColor":
+        "#ffffff",
+        "permission":
+        "true",
     })
     emit("signup_pass", namespace="/")
 
