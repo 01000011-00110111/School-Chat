@@ -11,3 +11,7 @@ backend/muted.txt
 # running files
 __pycache__/*
 venv/*
+.mypy_cache/*
+node_modules/*
+.upm/*
+.config/*
