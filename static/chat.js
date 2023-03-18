@@ -27,7 +27,7 @@ if (Notification.permission === "default") {
 function NotificationsB() {
     Notifications = getCookie("Notifications");
     let notifB = document.getElementById("notif");
-    
+
   if (Notifications === "true") {
       document.cookie = "Notifications=false; path=/";
       notifB.value = "Enable notifications";
@@ -36,42 +36,42 @@ function NotificationsB() {
       document.cookie = "Notifications=true; path=/";
       notifB.value = "Disable notifications";
       notifB.style.backgroundColor = "red";
-      
+
   }
-} 
+}
 
 socket.on("ping", ({ who, from }) => {
     let userElement = document.getElementById("username");
-    let user_name = userElement["value"];
+    let user_name = userElement.value;
     nonotif = getCookie("Notifications");
 
         if (nonotif === "true") {
             if (user_name === who) {
-                if (Notification.permission === 'granted') {
-                    new Notification("You have been pinged by:", { body: from, icon: '/static/troll-face.jpeg'});
+                if (Notification.permission === "granted") {
+                    new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
                 }
             } else if (who === "Dev E" && user_name === "Dev EReal") {
-                if (Notification.permission === 'granted') {
-                    new Notification("You have been pinged by:", { body: from, icon: '/static/troll-face.jpeg'});
-                }  
+                if (Notification.permission === "granted") {
+                    new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
+                }
             } else if  (who === "cserver" && user_name === "cserverReal") {
-                if (Notification.permission === 'granted') {
-                    new Notification("You have been pinged by:", { body: from, icon: '/static/troll-face.jpeg'});
+                if (Notification.permission === "granted") {
+                    new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
                 }
             } else if  (who === "Owen" && user_name === "¿Owen?") {
-                if (Notification.permission === 'granted') {
-                    new Notification("You have been pinged by:", { body: from, icon: '/static/troll-face.jpeg'});
+                if (Notification.permission === "granted") {
+                    new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
                 }
             }
-        }       
+        }     
 });
 
 socket.on("reset_chat", (who) => {
     let chatDiv = document.getElementById("chat");
     if (who === "admin") {
-        chatDiv["innerHTML"] = "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font><br>"
+        chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font><br>";
     } else if (who === "auto") {
-        chatDiv["innerHTML"] = "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font><br>"
+        chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font><br>";
     }
 });
 
@@ -81,7 +81,7 @@ socket.on("force_username", (statement) => {
 
 socket.on("cookieEater", (statement) => {
     deleteAllCookies();
-    let userElement = document.getElementById("username"); 
+    let userElement = document.getElementById("username");
     let user_color = document.getElementById("user_color");
     let message_color = document.getElementById("message_color");
     let role_color = document.getElementById("role_color");
@@ -97,7 +97,7 @@ socket.on("online", (db) => {
     let newline = "<br>"
     let online = "";
     let onlineDiv = document.getElementById("online_users");
-    let online_count = 0
+    let online_count = 0;
     for (onlineUser of db) {
         if (onlineUser === "cserverReal") {
             onlineUser = "cserver"
@@ -402,12 +402,10 @@ function sendMessage() {
         return;
     } else if (ismutted === 'banned') {
         return;
-    } else if (user_name === "") {
+    } /*else if (user_name === "") {
         socket.emit('ban_cmd', user_name)
-        return;
-
-        // TOOOOOOOO BBBBBBBAAAAAADDDDD FOR THEM
-    }
+        return; 
+    }*/
     
     if (message === "") {
         return;
@@ -427,23 +425,20 @@ function sendMessage() {
     // took much longer than it should have
     // Let the user "see" the message was sent by clearing the textbox
     messageElement["value"] = "";
-    // We will send the message as a JSON encoding of an obejct.
-    // This will simplify what is needed for future improvements
-    // add this in later by changing message to user_color_name
-    // console.log(user_color)
     let user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>";
     let message_color_send = "<font color='" + message_color + "'>" + messageL + "</font>";
     let role_color_send = "<font color='" + role_color + "'>" + role + "</font>";
-    // add profile_picture before user_name after I figure out how to limit how big an image is // i know how
-    // still need user chooseable colors, will add to github issue tracker
+    // stop compiling the string on the client side, and let the server do it (less filtering crap on the server)
     if (role === "") {
         let toSend = profile_img + user_color_name.toString() + " - " + message_color_send;
-        socket.emit('message_chat', toSend);
+        // socket.emit('message_chat', toSend);
+        socket.emit('message_chat', user_name, user_color, role, role_color, message, message_color, profile_img);
         window.scrollTo(0, document.body.scrollHeight);
         return;
     } else {
         let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" + " - " + message_color_send;
-        socket.emit('message_chat', toSend);
+        // socket.emit('message_chat', toSend);
+        socket.emit('message_chat', user_name, user_color, role, role_color, message, message_color, profile_img);
         window.scrollTo(0, document.body.scrollHeight);
         return;
     }

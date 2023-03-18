@@ -1,7 +1,7 @@
-function pass() {
-    ismutted = 'false'
-    document.cookie = "permission=" + ismutted + "; path=/";
-}
+// this is needed, because we have to create the socket here, but not load chat.js (where the socket would be created originally)
+// define socketio connection
+const socket = io();
+// here too cause why not
 
 function login() {
     let loginuserElement = document.getElementById("user");
@@ -38,13 +38,14 @@ socket.on("return_prefs", (Obj) => {
     window.localStorage.setItem("message_color", Obj["messageColor"]);
     window.localStorage.setItem("theme", Obj["theme"]);
     window.localStorage.setItem("permission", Obj["permission"]);
+    document.getElementById("Ausername")["value"] = document.getElementById("user")["value"];
+    document.getElementById("Apassword")["value"] = document.getElementById("pass")["value"];
     document.getElementById("role_color")["value"] = Obj["roleColor"];
     document.getElementById("username")["value"] = Obj["displayName"]; 
     document.getElementById("role")["value"] = Obj["role"];
     document.getElementById("user_color")["value"] = Obj["userColor"];
     document.getElementById("message_color")["value"] = Obj["messageColor"];
     // call the finction to change themes
-    whichEvent(Obj["theme"]);
 });
 
 function failedlogin() {
@@ -68,18 +69,15 @@ function failedlogin() {
 //
 function enteraccount() {
     document.getElementById("loginStuff").style.display = "none";
-    document.getElementById("logoutStuff").style.display = "block";
+    document.getElementById("chatStuff").style.display = "block";
+    document.getElementById("accountStuff").style.display = "block";
     socket.emit('get_prefs', document.getElementById("user")["value"]);
 }
-
-function updateacc() {
-    socket.emit('get_prefs', document.getElementById("user")["value"]);
-}
-
 
 function logout() {
     document.getElementById("loginStuff").style.display = "block";
-    document.getElementById("logoutStuff").style.display = "none";
+    document.getElementById("chatStuff").style.display = "none";
+    document.getElementById("accountStuff").style.display = "none";
     let usernmElement = document.getElementById("user");
     let passwdElement = document.getElementById("pass");
     let roleElement = document.getElementById("role");
@@ -100,4 +98,16 @@ function logout() {
     passwdElement["value"] = "";
     roleElement["value"] = "";
     // location.reload();
+}
+
+function update() {
+    let loginuser = document.getElementById("user")["value"];
+    let Euser = document.getElementById("username")["value"];
+    let Erole = document.getElementById("role")["value"];
+    let Cmessage = document.getElementById("message_color")["value"];//HOW IS IT NOT DEFINED
+    let Crole = document.getElementById("role_color")["value"];
+    let Cuser = document.getElementById("user_color")["value"];
+    let Auser = document.getElementById("Ausername")["value"];
+    let Apass = document.getElementById("Apassword")["value"];
+    socket.emit('update', Euser, Erole, Cmessage, Crole, Cuser, Auser, Apass, loginuser);
 }

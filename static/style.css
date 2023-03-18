@@ -769,3 +769,66 @@
     width: 100%;
     background-color: #c84646;
 }
+
+
+/* signup page */
+.signuptext {
+    border-radius: 20px;
+    height: 30px;
+    width: 30%;
+    margin-bottom: 10px;
+    text-align: center;
+    margin-left: 37%;
+}
+
+.signupbtn {
+    margin-top: 30px;
+    width: 15%;
+    border-radius: 20px;
+    height: 30px;
+    border-color: black;
+    color: white;
+    background: darkgray;
+    margin-left: 45%;
+}
+
+#SPassword:hover {
+    background: green;
+}
+
+#SPassword\ 2nd\ time:hover {
+    background: green;
+}
+
+#SUsername:hover {
+    background: green;
+}
+
+#SDesplayname:hover {
+    background: green;
+}
+
+#SRole:hover {
+    background: green;
+}
+
+#SPassword {
+    background: red;
+}
+
+#SPassword\ 2nd\ time {
+    background: orangered;
+}
+
+#SUsername {
+    background: blue;
+    margin-top: 11%;
+}
+
+#SDesplayname {
+    background: cyan;
+}
+
+#SRole {
+    background: gold;
+}

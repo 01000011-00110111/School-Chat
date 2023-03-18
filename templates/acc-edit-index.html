@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <title>Class chat account customize page</title>
+        <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+        <!-- SOCKETIO IMPORT MUST BE HERE, BEFORE acc-edit.JS IMPORT. IT BREAKS OTHERWISE -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+        <script src="static/acc-edit.js"></script>
+        <link rel="stylesheet" href="static/style.css"> 
+	</head>
+
+    <body id="body">
+        <div id="loginStuff">
+            <p>Username:</p>
+            <input type="text" class="login" id="user" placeholder="Username"><br>
+            <p>Password:</p>
+            <input type="text" class="login" id="pass" placeholder="Password"><br>
+            <button id="login" onclick="login();">Login</button>
+        </div>
+        <div id="chatStuff" style="display: none;">
+            <h3 id="user_colorTXT">message settings</h3>
+                    <p id="user_colorTXT">Username: </p>
+                    <input type="text" id="username" name="Username" placeholder="Username" ><br>
+                    <input type="color" value="#ffffff" id="user_color" name="color choser"><br>
+                    <p id="user_colorTXT">Role: </p>
+                    <input type="text" id="role" name="role" placeholder="role" disabled><br>
+                    <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
+                    <p id="user_colorTXT">Message: </p>
+                    <input type="color" value="#ffffff" id="message_color" name="color choser"><br>
+        </div>
+        <div id="accountStuff" style="display: none;">
+            <p id="user_colorTXT">Login username:</p><br>
+            <input type="text" id="Ausername" placeholder="login username"<br>
+            <p id="user_colorTXT">Password:</p><br>
+            <input type="text" id="Apassword" placeholder="Password"><br>
+            <br>
+            <button onclick="update()" id="change">update</button><br>
+            <br>
+            <br>
+            <br>
+            <button id='logout' onclick="logout();">logout</button>
+        </div>
+    </body>
+</html>

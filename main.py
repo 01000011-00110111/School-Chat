@@ -81,6 +81,12 @@ def f_but_better() -> ResponseReturnValue:
     return "HI"
 
 
+@app.route("/linter")
+def linter_bugs_page() -> ResponseReturnValue:
+    """Host the jslint page for viewing (manually added)"""
+    return flask.render_template('jslint_report.html')
+
+
 @app.route('/chat')
 def chat_page() -> ResponseReturnValue:
     """Serve the main chat, stops bypass bans."""
@@ -106,6 +112,13 @@ def signup() -> ResponseReturnValue:
 def get_logs_page() -> ResponseReturnValue:
     """Serve the chat logs (backup)"""
     html_file = flask.render_template('Backup-chat.html')
+    return html_file
+
+
+@app.route('/customize')
+def customize_accounts() -> ResponseReturnValue:
+    """customize the accounts"""
+    html_file = flask.render_template('acc-edit-index.html')
     return html_file
 
 
@@ -208,7 +221,6 @@ def login_handle(username, password):
         emit("login_att", "failed", namespace="/")
 
 
-# 
 @socketio.on('signup')
 def signup_handle(SUsername, SDesplayname, SPassword, SRole):
     """make the signup work."""
@@ -233,6 +245,24 @@ def signup_handle(SUsername, SDesplayname, SPassword, SRole):
         "true",
     })
     emit("signup_pass", namespace="/")
+
+
+@socketio.on('update')
+def update_handle(Euser, Erole, Cmessage, Crole, Cuser, Auser, Apass,
+                  loginuser):
+    """make the signup work."""
+    dbm.Accounts.update_one({"username": loginuser}, {
+        "$set": {
+            "messageColor": Cmessage,
+            "roleColor": Crole,
+            "userColor": Cuser,
+            "displayName": Euser,
+            "role": Erole,
+            "username": Auser,
+            "password": hashlib.sha384(bytes(Apass, 'utf-8')).hexdigest(),
+        }
+    })
+    emit("update_acc", namespace="/")
 
 
 @socketio.on('get_prefs')
@@ -368,9 +398,11 @@ def handle_cilent_refresh(muteuser):
 
 
 @socketio.on('message_chat')
-def handle_message(message):
+def handle_message(user_name, user_color, role, role_color, message,
+                   message_color, profile_img):
     """New socketio implemntation for chat message handling."""
-    result = filtering.filter_username(message)
+    result = filtering.create_username(user_name, user_color, role, role_color,
+                                       message, message_color, profile_img)
     if result is not True and result is not None:
         chat.add_message(result)
         emit("message_chat", result, broadcast=True)
