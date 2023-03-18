@@ -1,6 +1,9 @@
 # file for excluding files from git repo (dev files)
 backend/Backups/*
 
+# linter stuff
+templates/jslint_report.html
+
 # chatlog
 backend/chat.txt
 backend/chat.lock

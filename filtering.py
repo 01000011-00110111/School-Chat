@@ -39,8 +39,11 @@ def create_username(user_name, user_color, role, role_color, message,
     if locked == True:
         return True
     # don't look at this too closely, its to make it impossible to impersonate (also gets arround line 13 problems)
-    if user_color in ("[SONG]", "[Joke of the day]: "):
+    if user_color == "[Joke of the day]: ":
         msg = user_color + "<font color='" + message_color + "'>" + message + "</font>"
+        return msg
+    elif user_color == "[SONG]: ":
+        msg = "<font color='" + message_color + "'>" + user_color + message + "</font>"
         return msg
     return msg
     """
