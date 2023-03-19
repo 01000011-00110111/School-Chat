@@ -246,7 +246,7 @@ function runLimitedStartup() {
 function yesTOS() {
     access = 'true';
     window.localStorage.setItem("access", "true");
-    document.cookie = "permission=false; path=/";
+    // document.cookie = "permission=false; path=/";
     runStartup();
     checkMsgBox();
     setDarkStyle();

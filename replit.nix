@@ -1,5 +1,6 @@
 { pkgs }: {
   deps = [
+    pkgs.zip
     pkgs.python38Full
   ];
   env = {

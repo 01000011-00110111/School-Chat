@@ -40,6 +40,8 @@ function whichEvent(event = "special1") {
         setTestingStyle3();
     } else if (event === "testing4") {
         setTestingStyle4();
+    } else if (event === "4th") {
+        set4thStyle();
     }
 }
   
@@ -411,6 +413,40 @@ function valstyle() {
     // for loop to cycle thru links in sidebar
     for (let i = 0; i < snav_iter; i++) {
         snav_text[i].style.color = "#313536";
+    }
+}
+
+function set4thStyle() {
+    // set theme in cookie
+    setTheme("4th");
+    // get all id tags
+    let body = document.getElementById("body");
+    let chat = document.getElementById("chat");
+    let message = document.getElementById("message");
+    let chatbox = document.getElementById("chatbox");
+    let sides = document.getElementById("sides");
+    let topleft = document.getElementById("topleft");
+    let send = document.getElementById("send");
+    let sidebar = document.getElementById("activenav");
+    let sidenav = document.getElementsByClassName("sidenav")[0]
+    let snav_text = sidenav.getElementsByTagName("a")
+    let snav_iter = snav_text.length;
+    // then set the color to what it is in the css document
+    body.style.backgroundColor = "#0000FF";
+    chat.style.color = "#ffffff";
+    message.style.color = "#000000";
+    chatbox.style.backgroundColor = "#181616";
+    sides.style.backgroundColor = "#121212";
+    sidebar.style.backgroundColor = "#171717"
+    sidebar.style.color = "#ffffff"
+    topleft.style.backgroundColor = "#121212";
+    topleft.style.color = "#696969";
+    send.style.backgroundColor = "#192080";
+    send.style.color = "#ffffff";
+    sidenav.style.backgroundColor = "#111";
+    // for loop to cycle thru links in sidebar
+    for (let i = 0; i < snav_iter; i++) {
+        snav_text[i].style.color = "#818181";
     }
 }
 
