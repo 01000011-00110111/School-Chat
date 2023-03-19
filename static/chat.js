@@ -1,6 +1,7 @@
 // define socketio connection
 const socket = io();
 
+
 // add messages as they are recieved
 socket.on("message_chat", (message) => {
     renderChat(message);
@@ -63,7 +64,7 @@ socket.on("ping", ({ who, from }) => {
                     new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
                 }
             }
-        }     
+        }
 });
 
 socket.on("reset_chat", (who) => {
@@ -97,8 +98,8 @@ socket.on("online", (db) => {
     let newline = "<br>"
     let online = "";
     let onlineDiv = document.getElementById("online_users");
-    let online_count = 0;
-    for (onlineUser of db) {
+    /*ignore jslint start*/
+    for (let i = 0; i < onlineUser.length; i++) {
         if (onlineUser === "cserverReal") {
             onlineUser = "cserver"
         } else if (onlineUser === null) {
@@ -109,9 +110,9 @@ socket.on("online", (db) => {
             onlineUser = "Dev E"
         }
         online = online + onlineUser + newline;
-        online_count++
     }
-    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online
+    /*ignore jslint end*/
+    let final_online = "<font size=5%>Online: " + onlineUser.length + "</font><br><br>" + online
     onlineDiv["innerHTML"] = final_online;
 });
 
@@ -128,7 +129,7 @@ socket.on("unmute", (muteUserName) => {
 });
 
 function bancline(muteUserName) {
-    let permissionElement = document.getElementById("permission"); 
+    let permissionElement = document.getElementById("permission");
     let userElement = document.getElementById("username");
     let user_name = userElement["value"];
     let ismutted = permissionElement["value"]
@@ -140,7 +141,7 @@ function bancline(muteUserName) {
 }
 
 function muteusr(muteUserName) {
-    let permissionElement = document.getElementById("permission"); 
+    let permissionElement = document.getElementById("permission");
     let userElement = document.getElementById("username");
     let user_name = userElement["value"];
     let ismutted = permissionElement["value"]
@@ -156,7 +157,7 @@ function muteusr(muteUserName) {
 }
 
 function unmuteusr(muteUserName) {
-    let permissionElement = document.getElementById("permission"); 
+    let permissionElement = document.getElementById("permission");
     let userElement = document.getElementById("username");
     let user_name = userElement["value"];
     let ismutted = permissionElement["value"]
@@ -167,25 +168,26 @@ function unmuteusr(muteUserName) {
     } else if (ismutted === 'banned') {
         document.getElementById("permission")["value"] = "banned"
     } else {
-        
+
         document.getElementById("permission")["value"] = "true"
       }
 }
 
 // This function requests the server send it a full chat log
 function loadChat() {
-    ajaxGetRequest("/chat_logs", loadChatStartup); 
+    ajaxGetRequest("/chat_logs", loadChatStartup);
 }
 
 function deleteAllCookies() {
     const cookies = document.cookie.split(";");
-
+    /*ignore jslint start*/
     for (let i = 0; i < cookies.length; i++) {
         const cookie = cookies[i];
         const eqPos = cookie.indexOf("=");
         const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
         document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
+    /*ignore jslint end*/
 }
 
 // get specific cookie value
@@ -215,10 +217,10 @@ function runCheckStartup() {
     if (access === 'true') {
         runStartup();
         checkMsgBox();
-    
+
     } else {
         // must be here, otherwise popup could be bypased
-        
+
         let message_box = document.getElementById('message');
         let send = document.getElementById('send');
         let sidenav = document.getElementById('topleft');
@@ -282,17 +284,17 @@ function runCheckReset(message) {
         chatDiv["innerHTML"] = "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font><br>"
         console.log(message)
         return "true";
-    } 
+    }
 }
 
 function toHyperlink(str) {
     // thank you stackoverflow for giving me this stupid regex script
     var pattern1 = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
     var str1 = str.replace(pattern1, "<a href='$1'>$1</a>");
-    
+
     var pattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
     var str2 = str1.replace(pattern2, '$1<a target="_blank" href="http://$2">$2</a>');
-    
+
     return str2;
 }
 
@@ -302,14 +304,14 @@ function toHyperlink(str) {
     let roleElement = document.getElementById("role")
     let messageColorElement = document.getElementById("message_color");
     let roleColorElement = document.getElementById("role_color");
-    let userColorElement = document.getElementById("user_color");   
+    let userColorElement = document.getElementById("user_color");
     let user_name = userElement["value"];
     let message = "I " + user_name + " have been banned as I cheated to get unbanned or unmutted."
     let profile_picture = profileElement["value"]
     let role = roleElement["value"]
     let user_color = userColorElement["value"];
     let message_color = messageColorElement["value"];
-    let role_color = roleColorElement["value"]; 
+    let role_color = roleColorElement["value"];
     let user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>";
     let message_color_send = "<font color='" + message_color + "'>" + message + "</font>";
     let role_color_send = "<font color='" + role_color + "'>" + role + "</font>";
@@ -358,20 +360,20 @@ function sendMessage() {
     let roleElement = document.getElementById("role")
     let messageColorElement = document.getElementById("message_color");
     let roleColorElement = document.getElementById("role_color");
-    let userColorElement = document.getElementById("user_color");  
+    let userColorElement = document.getElementById("user_color");
     let ismutted = window.localStorage.getItem("permission");
     //window.localStorage.setItem("permission", "false");
-    
-    // Save the message text 
+
+    // Save the message text
     let message = messageElement["value"];
     let user_name = userElement["value"];
     let profile_picture = profileElement["value"]
     let role = roleElement["value"];
     let user_color = userColorElement["value"];
     let message_color = messageColorElement["value"];
-    let role_color = roleColorElement["value"]; 
+    let role_color = roleColorElement["value"];
 
-    //if (theme === 'light')  no use but we will need one day prob    
+    //if (theme === 'light')  no use but we will need one day prob
     if (user_color === "#000000") {
         user_color = "#ffffff";
     }
@@ -394,19 +396,19 @@ function sendMessage() {
     window.localStorage.setItem("user_color", user_color);
     window.localStorage.setItem("username", user_name);
     window.localStorage.setItem("profile_picture", profile_picture);
-    
+
 
     let profile_img = "<img style='max-height:25px; max-width:25px; overflow: hidden' src='" + profile_picture + "'></img>";
-  
+
     if (ismutted === 'muted') {
         return;
     } else if (ismutted === 'banned') {
         return;
     } /*else if (user_name === "") {
         socket.emit('ban_cmd', user_name)
-        return; 
+        return;
     }*/
-    
+
     if (message === "") {
         return;
     } else if (message === " ") {
@@ -419,7 +421,7 @@ function sendMessage() {
     messageL = toHyperlink(message);
 
 
-    // wetll too late 
+    // wetll too late
     // the stupid long user_name check
     // now implemented on server side
     // took much longer than it should have
@@ -484,7 +486,7 @@ function renderChat(messages) {
 
     // new notification thing (and later have img pull the profile_picture link)
     if (Notification.permission === 'granted' && !document.hidden) {
-         //new Notification(username, { body: message, icon: '/static/troll-face.jpeg'});        
+         //new Notification(username, { body: message, icon: '/static/troll-face.jpeg'});
     }
 
     chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
@@ -504,7 +506,7 @@ function openNav() {
     document.getElementById("mySidenav").style.width = "250px";
 }
 
-function closeNav() {          
+function closeNav() {
     document.getElementById("mySidenav").style.width = "0";
 }
 
@@ -513,7 +515,7 @@ function devopenNav() {
     document.getElementById("devSidenav").style.paddingLeft = "5%";
 }
 
-function devcloseNav() {          
+function devcloseNav() {
     document.getElementById("devSidenav").style.width = "0";
     document.getElementById("devSidenav").style.paddingLeft = "0";
 }
@@ -532,7 +534,7 @@ window.onclick = function(event) {
             var openDropdown = dropdowns[i];
             if (openDropdown.classList.contains('show')) {
                 openDropdown.classList.remove('show');
-            } 
+            }
         }
     } else if (!event.target.matches('.mySidenav')) {
         // whenever i can get sidenav-content (hidden element) implemented in css
