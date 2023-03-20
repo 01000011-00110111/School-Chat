@@ -38,11 +38,11 @@ socket.on("return_prefs", (Obj) => {
     window.localStorage.setItem("message_color", Obj["messageColor"]);
     window.localStorage.setItem("theme", Obj["theme"]);
     window.localStorage.setItem("permission", Obj["permission"]);
-    document.getElementById("role_color")["value"] = Obj["roleColor"];
-    document.getElementById("username")["value"] = Obj["displayName"]; 
-    document.getElementById("role")["value"] = Obj["role"];
-    document.getElementById("user_color")["value"] = Obj["userColor"];
-    document.getElementById("message_color")["value"] = Obj["messageColor"];
+     document.getElementById("role_color")["value"] = Obj["roleColor"];
+     document.getElementById("username")["value"] = Obj["displayName"]; 
+     document.getElementById("role")["value"] = Obj["role"];
+     document.getElementById("user_color")["value"] = Obj["userColor"];
+     document.getElementById("message_color")["value"] = Obj["messageColor"];
     // call the finction to change themes
     whichEvent(Obj["theme"]);
 });

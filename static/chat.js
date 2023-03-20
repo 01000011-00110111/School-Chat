@@ -98,8 +98,8 @@ socket.on("online", (db) => {
     let newline = "<br>"
     let online = "";
     let onlineDiv = document.getElementById("online_users");
-    /*ignore jslint start*/
-    for (let i = 0; i < onlineUser.length; i++) {
+    let online_count = db.length
+    for (onlineUser of db) {
         if (onlineUser === "cserverReal") {
             onlineUser = "cserver"
         } else if (onlineUser === null) {
@@ -111,8 +111,7 @@ socket.on("online", (db) => {
         }
         online = online + onlineUser + newline;
     }
-    /*ignore jslint end*/
-    let final_online = "<font size=5%>Online: " + onlineUser.length + "</font><br><br>" + online
+    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online
     onlineDiv["innerHTML"] = final_online;
 });
 
@@ -133,9 +132,10 @@ function bancline(muteUserName) {
     let userElement = document.getElementById("username");
     let user_name = userElement["value"];
     let ismutted = permissionElement["value"]
-      if (ismutted === 'false' || ismutted === "true") {
+      if (ismutted === 'muted' || ismutted === "true") {
         if (user_name === muteUserName) {
             document.getElementById("permission")["value"] = "banned"
+            window.localStorage.setItem("permission", "banned");
         }
       }
 }
@@ -145,14 +145,17 @@ function muteusr(muteUserName) {
     let userElement = document.getElementById("username");
     let user_name = userElement["value"];
     let ismutted = permissionElement["value"]
-      if (ismutted === 'false') {
+      if (ismutted === 'true') {
         if (user_name === muteUserName) {
-            document.getElementById("permission")["value"] = "false"
+            document.getElementById("permission")["value"] = "muted"
+            window.localStorage.setItem("permission", "muted");
         }
     } else if (ismutted === 'banned') {
         document.getElementById("permission")["value"] = "banned"
+          window.localStorage.setItem("permission", "banned");
     } else {
-        document.getElementById("permission")["value"] = "false"
+        document.getElementById("permission")["value"] = "true"
+          window.localStorage.setItem("permission", "true");
       }
 }
 
@@ -161,15 +164,18 @@ function unmuteusr(muteUserName) {
     let userElement = document.getElementById("username");
     let user_name = userElement["value"];
     let ismutted = permissionElement["value"]
-    if (ismutted === 'true') {
+    if (ismutted === 'muted') {
         if (user_name === muteUserName) {
             document.getElementById("permission")["value"] = "true"
+            window.localStorage.setItem("permission", "true");
         }
     } else if (ismutted === 'banned') {
         document.getElementById("permission")["value"] = "banned"
+        window.localStorage.setItem("permission", "banned");
     } else {
 
         document.getElementById("permission")["value"] = "true"
+        window.localStorage.setItem("permission", "true");
       }
 }
 
@@ -330,22 +336,27 @@ function toHyperlink(str) {
 
 function wisperMessage() {
     let user = document.getElementById("username")["value"];
-    let message = document.getElementById("private_msg")["value"];
+    let message = document.getElementById("private_msg");
     let sender = document.getElementById("private_user")["value"];
     let userColor = document.getElementById("user_color")["value"];
     let messageColor = document.getElementById("message_color")["value"];
+
+    if (ismuted === "banned" || ismuted === "muted") {
+        return;
+    }
+    
     if (user === "cserverReal") {
         user = "cserver";
     } else if (user === "Dev EReal") {
         user = "Dev E";
     }
-    let messageL = toHyperlink(message);
+    let messageL = toHyperlink(message.value);
     let user_color_name = "<font color='" + userColor + "'>" + user + "</font>";
     let message_color_send = "<font color='" + messageColor + "'>" + messageL + "</font>";
 
 
     // insert some joke here
-    message = ""; //not working this and sup
+    message.value = "";
 
     socket.emit("wisper_chat", message_color_send, sender, user_color_name);
 }
@@ -373,7 +384,6 @@ function sendMessage() {
     let message_color = messageColorElement["value"];
     let role_color = roleColorElement["value"];
 
-    //if (theme === 'light')  no use but we will need one day prob
     if (user_color === "#000000") {
         user_color = "#ffffff";
     }
@@ -389,11 +399,6 @@ function sendMessage() {
     // needs to be here, otherwise cookie is overriten
     socket.emit("username_msg", user_name, window.localStorage.getItem("username"));
 
-    // session stuff goes here
-    window.localStorage.setItem("role", role);
-    window.localStorage.setItem("role_color", role_color);
-    window.localStorage.setItem("message_color", message_color);
-    window.localStorage.setItem("user_color", user_color);
     window.localStorage.setItem("username", user_name);
     window.localStorage.setItem("profile_picture", profile_picture);
 
@@ -431,19 +436,8 @@ function sendMessage() {
     let message_color_send = "<font color='" + message_color + "'>" + messageL + "</font>";
     let role_color_send = "<font color='" + role_color + "'>" + role + "</font>";
     // stop compiling the string on the client side, and let the server do it (less filtering crap on the server)
-    if (role === "") {
-        let toSend = profile_img + user_color_name.toString() + " - " + message_color_send;
-        // socket.emit('message_chat', toSend);
-        socket.emit('message_chat', user_name, user_color, role, role_color, message, message_color, profile_img);
-        window.scrollTo(0, document.body.scrollHeight);
-        return;
-    } else {
-        let toSend = profile_img + user_color_name.toString() + " (" + role_color_send + ")" + " - " + message_color_send;
-        // socket.emit('message_chat', toSend);
-        socket.emit('message_chat', user_name, user_color, role, role_color, message, message_color, profile_img);
-        window.scrollTo(0, document.body.scrollHeight);
-        return;
-    }
+    socket.emit('message_chat', user_name, user_color, role, role_color, message, message_color, profile_img);
+    window.scrollTo(0, document.body.scrollHeight);
 }
 
 // ran at startup so you get previous messages

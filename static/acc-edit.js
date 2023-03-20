@@ -31,13 +31,13 @@ socket.on("return_prefs", (Obj) => {
         return;
     }
     // set values of localstorage vars here (and the other ones aswell)
-    window.localStorage.setItem("username", Obj["displayName"]);
-    window.localStorage.setItem("role", Obj["role"]);
-    window.localStorage.setItem("role_color", Obj["roleColor"]);
-    window.localStorage.setItem("user_color", Obj["userColor"]);
-    window.localStorage.setItem("message_color", Obj["messageColor"]);
-    window.localStorage.setItem("theme", Obj["theme"]);
-    window.localStorage.setItem("permission", Obj["permission"]);
+    // window.localStorage.setItem("username", Obj["displayName"]);
+    // window.localStorage.setItem("role", Obj["role"]);
+    // window.localStorage.setItem("role_color", Obj["roleColor"]);
+    // window.localStorage.setItem("user_color", Obj["userColor"]);
+    // window.localStorage.setItem("message_color", Obj["messageColor"]);
+    // window.localStorage.setItem("theme", Obj["theme"]);
+    // window.localStorage.setItem("permission", Obj["permission"]);
     document.getElementById("Ausername")["value"] = document.getElementById("user")["value"];
     document.getElementById("Apassword")["value"] = document.getElementById("pass")["value"];
     document.getElementById("role_color")["value"] = Obj["roleColor"];
@@ -45,7 +45,6 @@ socket.on("return_prefs", (Obj) => {
     document.getElementById("role")["value"] = Obj["role"];
     document.getElementById("user_color")["value"] = Obj["userColor"];
     document.getElementById("message_color")["value"] = Obj["messageColor"];
-    // call the finction to change themes
 });
 
 function failedlogin() {
@@ -104,7 +103,7 @@ function update() {
     let loginuser = document.getElementById("user")["value"];
     let Euser = document.getElementById("username")["value"];
     let Erole = document.getElementById("role")["value"];
-    let Cmessage = document.getElementById("message_color")["value"];//HOW IS IT NOT DEFINED
+    let Cmessage = document.getElementById("message_color")["value"];
     let Crole = document.getElementById("role_color")["value"];
     let Cuser = document.getElementById("user_color")["value"];
     let Auser = document.getElementById("Ausername")["value"];

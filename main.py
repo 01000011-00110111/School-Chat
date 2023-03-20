@@ -332,6 +332,13 @@ def mute_user(username: str):
          broadcast=True)
 
 
+# @socketio.on("muted_list")
+# def check_muted():
+    # """grab all people permission to put on a list"""    
+     # dbm.Accounts.find_one({}),
+    
+
+
 @socketio.on("unmute_cmd")
 def unmute_user(username: str):
     """unmute a user from the chat"""

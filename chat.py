@@ -9,6 +9,7 @@ LOGFILE = "backend/chat.txt"
 LOGFILE_B = "backend/Chat-backup.txt"
 
 
+
 # Returns a list of dictionaries. Each dictionary in the list
 # is a message that has been sent in our chat server
 def get_chat(file: str) -> List:

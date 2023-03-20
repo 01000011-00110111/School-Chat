@@ -1,7 +1,7 @@
 """Filter usernames and make the chat more xss safe"""
 import os
+import re
 from typing import Union
-from bs4 import BeautifulSoup
 from flask_socketio import emit
 from chat import force_message
 
@@ -27,6 +27,17 @@ def create_username(user_name, user_color, role, role_color, message,
     user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>"
     message_color_send = "<font color='" + message_color + "'>" + message + "</font>"
     role_color_send = "<font color='" + role_color + "'>" + role + "</font>"
+
+    pings = re.findall(r'(?<=\[).+?(?=\])', message_color_send)
+
+    for ping in pings:
+        emit("ping", {
+            "who": ping,
+            "from": user_name
+        },
+             namespace="/",
+             broadcast=True)
+
     if role == "":
         msg = user_color_name + " - " + message_color_send
     else:
@@ -38,13 +49,14 @@ def create_username(user_name, user_color, role, role_color, message,
 
     if locked == True:
         return True
-    # don't look at this too closely, its to make it impossible to impersonate (also gets arround line 13 problems)
+    # don't look at this too closely, its to make it impossible to impersonate (also gets arround line 12 problems)
     if user_color == "[Joke of the day]: ":
         msg = user_color + "<font color='" + message_color + "'>" + message + "</font>"
         return msg
     elif user_color == "[SONG]: ":
         msg = "<font color='" + message_color + "'>" + user_color + message + "</font>"
         return msg
+
     return msg
     """
     locked = os.path.exists("backend/chat.lock")
