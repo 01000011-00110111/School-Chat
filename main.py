@@ -36,11 +36,14 @@ dbm.Online.delete_many({})
 
 
 class Console(cmd.Cmd):
+    """Console commands parent class."""
 
     def do_greet(self, line):
-        print("hello")
+        """Testing line, to see if the console starts"""
+        print("hello" + line)
 
-    def do_EOF(self, line):
+    def do_EOF(self, _):  # pylint: disable=C0103
+        """Exit console when just enter is sent (or ctrl-d I belive)"""
         return True
 
 
@@ -247,6 +250,7 @@ def signup_handle(SUsername, SDesplayname, SPassword, SRole):
     emit("signup_pass", namespace="/")
 
 
+# pylint: disable=C0103, R0913
 @socketio.on('update')
 def update_handle(Euser, Erole, Cmessage, Crole, Cuser, Auser, Apass,
                   loginuser):
@@ -263,6 +267,9 @@ def update_handle(Euser, Erole, Cmessage, Crole, Cuser, Auser, Apass,
         }
     })
     emit("update_acc", namespace="/")
+
+
+# pylint: enable=C0103, R0913
 
 
 @socketio.on('get_prefs')
@@ -334,9 +341,8 @@ def mute_user(username: str):
 
 # @socketio.on("muted_list")
 # def check_muted():
-    # """grab all people permission to put on a list"""    
-     # dbm.Accounts.find_one({}),
-    
+# """grab all people permission to put on a list"""
+# dbm.Accounts.find_one({}),
 
 
 @socketio.on("unmute_cmd")
@@ -404,6 +410,7 @@ def handle_cilent_refresh(muteuser):
     emit("reload_pages", muteuser, broadcast=True, namespace="/")
 
 
+# pylint: disable=C0103
 @socketio.on('message_chat')
 def handle_message(user_name, user_color, role, role_color, message,
                    message_color, profile_img):
@@ -413,6 +420,9 @@ def handle_message(user_name, user_color, role, role_color, message,
     if result is not True and result is not None:
         chat.add_message(result)
         emit("message_chat", result, broadcast=True)
+
+
+# pylint: enable=C0103
 
 
 @socketio.on('wisper_chat')
