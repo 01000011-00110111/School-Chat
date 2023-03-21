@@ -2,6 +2,7 @@
 import os
 import re
 from typing import Union
+from better_profanity import profanity
 from flask_socketio import emit
 from chat import force_message
 
@@ -23,9 +24,11 @@ def create_username(user_name, user_color, role, role_color, message,
     elif user_name == "cserverReal":
         user_name = "cserver"
 
+    messageC = profanity.censor(message)
+
     locked = os.path.exists("backend/chat.lock")
     user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>"
-    message_color_send = "<font color='" + message_color + "'>" + message + "</font>"
+    message_color_send = "<font color='" + message_color + "'>" + messageC + "</font>"
     role_color_send = "<font color='" + role_color + "'>" + role + "</font>"
 
     pings = re.findall(r'(?<=\[).+?(?=\])', message_color_send)
@@ -51,10 +54,10 @@ def create_username(user_name, user_color, role, role_color, message,
         return True
     # don't look at this too closely, its to make it impossible to impersonate (also gets arround line 12 problems)
     if user_color == "[Joke of the day]: ":
-        msg = user_color + "<font color='" + message_color + "'>" + message + "</font>"
+        msg = user_color + "<font color='" + message_color + "'>" + messageC + "</font>"
         return msg
     elif user_color == "[SONG]: ":
-        msg = "<font color='" + message_color + "'>" + user_color + message + "</font>"
+        msg = "<font color='" + message_color + "'>" + user_color + messageC + "</font>"
         return msg
 
     return msg
