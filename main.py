@@ -426,9 +426,9 @@ def handle_message(user_name, user_color, role, role_color, message,
 
 
 @socketio.on('wisper_chat')
-def handle_wisper(message, to, sender):
+def handle_wisper(message, recipient, sender):
     """Wisper a message to another user."""
-    user = dbm.Online.find_one({"username": to})
+    user = dbm.Online.find_one({"username": recipient})
     message_comp = "<i><b>" + sender + "</b>  wispers to you: </i>" + message
 
     try:

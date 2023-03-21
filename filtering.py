@@ -1,6 +1,7 @@
 """Filter usernames and make the chat more xss safe"""
 import os
 import re
+from datetime import datetime, timezone, timedelta
 from typing import Union
 from better_profanity import profanity
 from flask_socketio import emit
@@ -41,10 +42,13 @@ def create_username(user_name, user_color, role, role_color, message,
              namespace="/",
              broadcast=True)
 
+    date_str = datetime.now(timezone(
+        timedelta(hours=-4))).strftime("[%a %I:%M %p] ")
+
     if role == "":
-        msg = user_color_name + " - " + message_color_send
+        msg = date_str + user_color_name + " - " + message_color_send
     else:
-        msg = user_color_name + " (" + role_color_send + ")" + " - " + message_color_send
+        msg = date_str + user_color_name + " (" + role_color_send + ")" + " - " + message_color_send
     if user_name in ("Dev E", "cserver"):
         force_message(msg)
         emit("message_chat", msg, broadcast=True, namespace="/")
