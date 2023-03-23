@@ -39,7 +39,7 @@ socket.on("return_prefs", (Obj) => {
     // window.localStorage.setItem("theme", Obj["theme"]);
     // window.localStorage.setItem("permission", Obj["permission"]);
     document.getElementById("Ausername")["value"] = document.getElementById("user")["value"];
-    document.getElementById("Apassword")["value"] = document.getElementById("pass")["value"];
+    document.getElementById("Apassword")["value"] = ""
     document.getElementById("role_color")["value"] = Obj["roleColor"];
     document.getElementById("username")["value"] = Obj["displayName"]; 
     document.getElementById("role")["value"] = Obj["role"];
@@ -108,5 +108,10 @@ function update() {
     let Cuser = document.getElementById("user_color")["value"];
     let Auser = document.getElementById("Ausername")["value"];
     let Apass = document.getElementById("Apassword")["value"];
+
+    if (Apass === "") {
+      let Apass = document.getElementById("pass")["value"];
+    }
+    
     socket.emit('update', Euser, Erole, Cmessage, Crole, Cuser, Auser, Apass, loginuser);
 }

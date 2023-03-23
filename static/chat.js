@@ -215,10 +215,10 @@ function getCookie(name) {
 // the startup for cookies after the first time
 function runCheckStartup() {
   // document.getElementById("accountStuff").style.visibility = "hidden";
-   let theme = whichEvent(window.localStorage.getItem("theme"));
-  if (theme === "") {
-    whichEvent();
-  }
+    let theme = whichEvent(window.localStorage.getItem("theme"));
+    if (theme === "") {
+        whichEvent();
+    }
     access = window.localStorage.getItem("access");
     if (access === 'true') {
         runStartup();
@@ -345,11 +345,26 @@ function wisperMessage() {
     if (ismutted === "banned" || ismutted === "muted") {
         return;
     }
+
+    if (message === "") {
+        return;
+    }
     
     if (user === "cserverReal") {
         user = "cserver";
     } else if (user === "Dev EReal") {
         user = "Dev E";
+    }
+
+    let sender_f = ""
+    if (sender === "cserver") {
+        sender_f = "cserverReal";
+    } else if (sender === "Dev E") {
+        sender_f = "Dev EReal";
+    } else if (sender === "Owen") {
+        sender_f = "¿Owen?";
+    } else {
+        sender_f = sender;
     }
     let messageL = toHyperlink(message.value);
     let user_color_name = "<font color='" + userColor + "'>" + user + "</font>";
@@ -357,11 +372,10 @@ function wisperMessage() {
 
 
     // insert some joke here
-    message.value = "";
-    
-    socket.emit("wisper_chat", message_color_send, sender, user_color_name);
-    let messages = message_color_send + sender + user_color_name;
-    renderChat(messages)
+    message.value = ""; // 
+    socket.emit("wisper_chat", message_color_send, sender_f, user_color_name);
+    let messages = "<i>You wispered to " + "<font color='#c47302'>" + sender + "</font>" + " about: </i>" + message_color_send;
+    renderChat(messages);
 }
 
 // This function sends the server the new message and receives

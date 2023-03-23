@@ -19,6 +19,7 @@ profanity.load_censor_words(whitelist_words=[
     'piss',
     'wtf',
     'stroke',
+    'suck',
 ])
 profanity.add_censor_words([
     'sh!t',
@@ -41,7 +42,7 @@ def create_username(user_name, user_color, role, role_color, message,
         #user_name = "Anonymous"
         return
     elif user_name == "Dev EReal":
-        user_name = "Dev E"
+        user_name = "<b>Dev E</b>"
     elif user_name == "cserverReal":
         user_name = "cserver"
 
