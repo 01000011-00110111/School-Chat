@@ -55,11 +55,11 @@ socket.on("ping", ({ who, from }) => {
                 if (Notification.permission === "granted") {
                     new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
                 }
-            } else if  (who === "cserver" && user_name === "cserverReal") {
+            } else if  (who === "cserver" && user_name === "cserver") {
                 if (Notification.permission === "granted") {
                     new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
                 }
-            } else if  (who === "Owen" && user_name === "¿Owen?") {
+            } else if  (who === "Owen" || who === "owen" && user_name === "¿Owen?") {
                 if (Notification.permission === "granted") {
                     new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
                 }
@@ -340,8 +340,9 @@ function wisperMessage() {
     let sender = document.getElementById("private_user")["value"];
     let userColor = document.getElementById("user_color")["value"];
     let messageColor = document.getElementById("message_color")["value"];
+    let ismutted = window.localStorage.getItem("permission");
 
-    if (ismuted === "banned" || ismuted === "muted") {
+    if (ismutted === "banned" || ismutted === "muted") {
         return;
     }
     
@@ -357,8 +358,10 @@ function wisperMessage() {
 
     // insert some joke here
     message.value = "";
-
+    
     socket.emit("wisper_chat", message_color_send, sender, user_color_name);
+    let messages = message_color_send + sender + user_color_name;
+    renderChat(messages)
 }
 
 // This function sends the server the new message and receives

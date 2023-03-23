@@ -104,7 +104,7 @@ def changoelog_page() -> ResponseReturnValue:
     return html_file
 
 
-@app.route('/signup')
+@app.route('/devsignup')
 def signup() -> ResponseReturnValue:
     """Serve the signup page."""
     html_file = flask.render_template('signup-index.html')

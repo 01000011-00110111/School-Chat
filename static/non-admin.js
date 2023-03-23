@@ -1,12 +1,12 @@
 function JsendMessage() {
     let message = document.getElementById('jsendT');
-    socket.emit('message_chat', "", "[Joke of the day]: ", "", "", message.value, "#D51956", "");
+    socket.emit('message_chat', "aaaaaaaaaaaaaaaa", "[Joke of the day]: ", "", "", message.value, "#D51956", "");
     message.value = "";
 }
 
 function SOsendMessage() {
     let messageElement = document.getElementById('SOsendT');
-    socket.emit('message_chat', "", "[SONG]: ", "", "", messageElement.value, "#08bd71", "");
+    socket.emit('message_chat', "aaaaaaaaaaaaaaa", "[SONG]: ", "", "", messageElement.value, "#08bd71", "");
     messageElement.value = "";
 }
 

@@ -86,6 +86,14 @@ function clearCookies() {
     socket.emit('admin_cmd', "cookieEater")
 }
 
+function pingmasterez() {
+    // because I can
+    let i = 0;
+    while (i < 98) {
+        new Notification("You have been pinged by:", { body: 'cserver', icon: "/static/troll-face.jpeg"});
+        i++;
+    }
+}
 
 //the force send code need a better info here
 function FsendMessageA() {

@@ -7,6 +7,25 @@ from better_profanity import profanity
 from flask_socketio import emit
 from chat import force_message
 
+# get our custom whitelist words (that shouldnot be banned in the first place)
+profanity.load_censor_words(whitelist_words=[
+    'crap',
+    'god',
+    'LMAO',
+    'lmao',
+    'omg',
+    'stupid',
+    'dumb',
+    'piss',
+    'wtf',
+    'stroke',
+])
+profanity.add_censor_words([
+    'sh!t',
+    'dumba',
+    'dam',
+])  # add your custom words here (will be in a separate file someday)
+
 
 def create_username(user_name, user_color, role, role_color, message,
                     message_color, profile_img) -> Union[str, bool]:
@@ -19,7 +38,8 @@ def create_username(user_name, user_color, role, role_color, message,
         return None
 
     if user_name == '':
-        user_name = "Anonymous"
+        #user_name = "Anonymous"
+        return
     elif user_name == "Dev EReal":
         user_name = "Dev E"
     elif user_name == "cserverReal":
@@ -31,8 +51,7 @@ def create_username(user_name, user_color, role, role_color, message,
     user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>"
     message_color_send = "<font color='" + message_color + "'>" + messageC + "</font>"
     role_color_send = "<font color='" + role_color + "'>" + role + "</font>"
-
-    pings = re.findall(r'(?<=\[).+?(?=\])', message_color_send)
+    """pings = re.findall(r'(?<=\[).+?(?=\])', message_color_send)
 
     for ping in pings:
         emit("ping", {
@@ -40,7 +59,7 @@ def create_username(user_name, user_color, role, role_color, message,
             "from": user_name
         },
              namespace="/",
-             broadcast=True)
+             broadcast=True)"""
 
     date_str = datetime.now(timezone(
         timedelta(hours=-4))).strftime("[%a %I:%M %p] ")
