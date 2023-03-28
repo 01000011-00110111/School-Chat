@@ -380,7 +380,6 @@ function sendMessage() {
     let roleColorElement = document.getElementById("role_color");
     let userColorElement = document.getElementById("user_color");
     let ismutted = window.localStorage.getItem("permission");
-    //window.localStorage.setItem("permission", "false");
 
     // Save the message text
     let message = messageElement["value"];
@@ -402,9 +401,6 @@ function sendMessage() {
     if (role_color === "#000000") {
         role_color = "#ffffff";
     }
-
-    // well it gets overwritten anyway by login system, can't compare anymore becaue of how login works
-    // socket.emit("username_msg", user_name, window.localStorage.getItem("username"));
 
     window.localStorage.setItem("username", user_name);
     window.localStorage.setItem("profile_picture", profile_picture);
@@ -432,17 +428,8 @@ function sendMessage() {
     // maybe add links as links in html? idk might work (regex crap again)
     messageL = toHyperlink(message);
 
-
-    // wetll too late
-    // the stupid long user_name check
-    // now implemented on server side
-    // took much longer than it should have
     // Let the user "see" the message was sent by clearing the textbox
     messageElement["value"] = "";
-    //let user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>";
-    //let message_color_send = "<font color='" + message_color + "'>" + messageL + "</font>";
-    //let role_color_send = "<font color='" + role_color + "'>" + role + "</font>";
-    // stop compiling the string on the client side, and let the server do it (less filtering crap on the server)
     socket.emit('message_chat', user_name, user_color, role, role_color, messageL, message_color, profile_img);
     window.scrollTo(0, document.body.scrollHeight);
 }

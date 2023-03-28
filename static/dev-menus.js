@@ -81,20 +81,6 @@ function urlsend() {
 // let hrefurlElement = "<a href='" + urlElement + "'>" + urlsendElement + "</a>"
 // let message = hrefurlElement
 
-function clearCookies() {
-    socket.emit('admin_message', "[Admin]: Cookies will be deleted in 10 seconds...");
-    socket.emit('admin_cmd', "cookieEater")
-}
-
-function pingmasterez() {
-    // because I can
-    let i = 0;
-    while (i < 98) {
-        new Notification("You have been pinged by:", { body: 'cserver', icon: "/static/troll-face.jpeg"});
-        i++;
-    }
-}
-
 //the force send code need a better info here
 function FsendMessageA() {
     let messageElement = document.getElementById('fsendT');
