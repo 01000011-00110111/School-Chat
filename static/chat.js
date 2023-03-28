@@ -46,29 +46,19 @@ socket.on("ping", ({ who, from }) => {
     let user_name = userElement.value;
     nonotif = getCookie("Notifications");
 
-        if (nonotif === "true") {
-            if (user_name === who) {
-                if (Notification.permission === "granted") {
-                    new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
-                }
-            } else if (who === "Dev E" && user_name === "Dev EReal") {
-                if (Notification.permission === "granted") {
-                    new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
-                }
-            } else if  (who === "cserver" && user_name === "cserverReal") {
-                if (Notification.permission === "granted") {
-                    new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
-                }
-            } else if ((who === "Owen" || who === "owen") && user_name === "¿Owen?") {
-                if (Notification.permission === "granted") {
-                    new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
-                }
-            } else if (who === "everyone") {
-                if (Notification.permission === "granted") {
-                    new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
-                }
-            }
+    if ((nonotif === "true") && (Notification.permission === "granted")) {
+        if (user_name === who) {
+            new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
+        } else if (who === "Dev E" && user_name === "Dev EReal") {
+            new Notification("You have been pinged by:", { body: "Dev E", icon: "/static/troll-face.jpeg"});
+        } else if (who === "cserver" && user_name === "cserverReal") {
+            new Notification("You have been pinged by:", { body: "cserver", icon: "/static/troll-face.jpeg"});
+        } else if ((who === "Owen" || who === "owen") && user_name === "¿Owen?") {
+            new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
+        } else if (who === "everyone") {
+            new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
         }
+    }
 });
 
 socket.on("reset_chat", (who) => {
