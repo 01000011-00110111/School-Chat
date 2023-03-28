@@ -55,11 +55,15 @@ socket.on("ping", ({ who, from }) => {
                 if (Notification.permission === "granted") {
                     new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
                 }
-            } else if  (who === "cserver" && user_name === "cserver") {
+            } else if  (who === "cserver" && user_name === "cserverReal") {
                 if (Notification.permission === "granted") {
                     new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
                 }
-            } else if  (who === "Owen" || who === "owen" && user_name === "¿Owen?") {
+            } else if ((who === "Owen" || who === "owen") && user_name === "¿Owen?") {
+                if (Notification.permission === "granted") {
+                    new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
+                }
+            } else if (who === "everyone") {
                 if (Notification.permission === "granted") {
                     new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
                 }
@@ -101,13 +105,13 @@ socket.on("online", (db) => {
     let online_count = db.length
     for (onlineUser of db) {
         if (onlineUser === "cserverReal") {
-            onlineUser = "cserver"
+            onlineUser = "cserver";
         } else if (onlineUser === null) {
-            onlineUser = "Anonymous"
+            onlineUser = "Anonymous";
         } else if (onlineUser === "") {
-            onlineUser = "Anonymous"
+            onlineUser = "Anonymous";
         } else if (onlineUser === "Dev EReal") {
-            onlineUser = "Dev E"
+            onlineUser = "<br>";
         }
         online = online + onlineUser + newline;
     }
@@ -267,8 +271,7 @@ function runStartup() {
     // add the username currently in a cookie unless there is none
     // userElement = window.localStorage.getItem("");
     document.cookie = "Notifications=true; path=/";
-    // remove when popup is implemented
-    // socket.emit("username", window.localStorage.getItem("username"));
+    socket.emit("username", "");
 }
 
 function checkMsgBox() {
@@ -413,8 +416,8 @@ function sendMessage() {
         role_color = "#ffffff";
     }
 
-    // needs to be here, otherwise cookie is overriten
-    socket.emit("username_msg", user_name, window.localStorage.getItem("username"));
+    // well it gets overwritten anyway by login system, can't compare anymore becaue of how login works
+    // socket.emit("username_msg", user_name, window.localStorage.getItem("username"));
 
     window.localStorage.setItem("username", user_name);
     window.localStorage.setItem("profile_picture", profile_picture);
@@ -449,11 +452,11 @@ function sendMessage() {
     // took much longer than it should have
     // Let the user "see" the message was sent by clearing the textbox
     messageElement["value"] = "";
-    let user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>";
-    let message_color_send = "<font color='" + message_color + "'>" + messageL + "</font>";
-    let role_color_send = "<font color='" + role_color + "'>" + role + "</font>";
+    //let user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>";
+    //let message_color_send = "<font color='" + message_color + "'>" + messageL + "</font>";
+    //let role_color_send = "<font color='" + role_color + "'>" + role + "</font>";
     // stop compiling the string on the client side, and let the server do it (less filtering crap on the server)
-    socket.emit('message_chat', user_name, user_color, role, role_color, message, message_color, profile_img);
+    socket.emit('message_chat', user_name, user_color, role, role_color, messageL, message_color, profile_img);
     window.scrollTo(0, document.body.scrollHeight);
 }
 

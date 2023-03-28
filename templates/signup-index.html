@@ -10,9 +10,10 @@
 	</head>
 
     <body id="body">
-        <input type="text" class="signuptext" id="SUsername" placeholder="Username:"><br>
-        <input type="text" class="signuptext" id="SDesplayname" placeholder="Displayname:"><br>
-        <input type="text" class="signuptext" id="SRole" placeholder="Role:"><br>
+        <p>1 no spaces (it breaks code)<br> 2 must be at max 8 letters (to not overflow sizing)<br> 3 no usernames with code in them (so it will not break code and let people send whispers to you)</p><br>
+        <input type="text" class="signuptext" id="SUsername" placeholder="Username:" maxlength="25"><br>
+        <input type="text" class="signuptext" id="SDesplayname" placeholder="Displayname:" maxlength="15"><br>
+        <input type="text" class="signuptext" id="SRole" placeholder="Role:" maxlength="18"><br>
         <input type="text" class="signuptext" id="SPassword" placeholder="Password:"><br>
         <input type="text" class="signuptext" id="SPassword 2nd time" placeholder="Password:"><br>
         <button onclick="signup()" class="signupbtn" id="signup">Signup</button>

@@ -12,25 +12,26 @@
     <body id="body">
         <div id="loginStuff">
             <p>Username:</p>
-            <input type="text" class="login" id="user" placeholder="Username"><br>
-            <p>Password:</p>
-            <input type="text" class="login" id="pass" placeholder="Password"><br>
+                <input type="text" id="user" placeholder="Username" autocomplete="off"><br>
+                <p>Password:</p>
+                <input type="password" id="pass" placeholder="Password" autocomplete="off"><br>
             <button id="login" onclick="login();">Login</button>
         </div>
         <div id="chatStuff" style="display: none;">
+            <p>1 no spaces (it breaks code)<br> 2 your displayname must be at max 12 letters (to not overflow sizing)<br> 3 no usernames with code in them (so it will not break code and let people send whispers to you)</p><br>
             <h3 id="user_colorTXT">message settings</h3>
                     <p id="user_colorTXT">Username: </p>
-                    <input type="text" id="username" name="Username" placeholder="Username" ><br>
+                    <input type="text" id="username" name="Username" placeholder="Username" maxlength="12"><br>
                     <input type="color" value="#ffffff" id="user_color" name="color choser"><br>
                     <p id="user_colorTXT">Role: </p>
-                    <input type="text" id="role" name="role" placeholder="role" disabled><br>
+                    <input type="text" id="role" name="role" placeholder="role" maxlength="18"><br>
                     <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
                     <p id="user_colorTXT">Message: </p>
                     <input type="color" value="#ffffff" id="message_color" name="color choser"><br>
         </div>
         <div id="accountStuff" style="display: none;">
             <p id="user_colorTXT">Login username:</p><br>
-            <input type="text" id="Ausername" placeholder="login username"<br>
+            <input type="text" id="Ausername" placeholder="login username" maxlength="15" disabled><br>
             <p id="user_colorTXT">Password:</p><br>
             <input type="text" id="Apassword" placeholder="Password"><br>
             <br>

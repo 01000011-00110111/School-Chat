@@ -293,18 +293,17 @@ def return_user_prefs(username):
 
 
 @socketio.on('username_msg')
-def handle_online(username: str, p_username: str):
+def handle_online(username: str):
     """Add username to currently online people list."""
-    if p_username != username:
-        dbm.Online.update_one({"socketid": request.sid},
-                              {"$set": {
-                                  "username": username
-                              }})
-        username_list = []
-        # rewrite in a second, because it makes no sense lol
-        for key in dbm.Online.find():
-            username_list.append(key["username"])
-        emit("online", username_list, broadcast=True)
+    dbm.Online.update_one({"socketid": request.sid},
+                          {"$set": {
+                              "username": username
+                          }})
+    username_list = []
+    # lets see if this works
+    for key in dbm.Online.find():
+        username_list.append(key["username"])
+    emit("online", username_list, broadcast=True)
 
 
 @socketio.on("ban_cmd")

@@ -20,11 +20,14 @@ profanity.load_censor_words(whitelist_words=[
     'wtf',
     'stroke',
     'suck',
+    'hebe',
 ])
 profanity.add_censor_words([
     'sh!t',
     'dumba',
     'dam',
+    'boobie',
+    '',
 ])  # add your custom words here (will be in a separate file someday)
 
 
@@ -52,7 +55,7 @@ def create_username(user_name, user_color, role, role_color, message,
     user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>"
     message_color_send = "<font color='" + message_color + "'>" + messageC + "</font>"
     role_color_send = "<font color='" + role_color + "'>" + role + "</font>"
-    """pings = re.findall(r'(?<=\[).+?(?=\])', message_color_send)
+    pings = re.findall(r'(?<=\[).+?(?=\])', message_color_send)
 
     for ping in pings:
         emit("ping", {
@@ -60,7 +63,7 @@ def create_username(user_name, user_color, role, role_color, message,
             "from": user_name
         },
              namespace="/",
-             broadcast=True)"""
+             broadcast=True)
 
     date_str = datetime.now(timezone(
         timedelta(hours=-4))).strftime("[%a %I:%M %p] ")
