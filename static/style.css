@@ -356,16 +356,6 @@
     color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
-    border-style: dashed;
-}
-
-#fsendB {
-    background-color: #a51d2d;
-    color: #f6d32d;
-    font-size: 20px;
-    border-radius: 20px;
-    border-style: dashed;
-    border-color: #f6d32d;
 }
 
 #fsendTM {
@@ -398,22 +388,38 @@
     colors: #77767b;
 }
 
-#lock {
-    background-color:  #c61010;
-    color:  #000000;
+.dashed_btn {
+    border-style: dashed;
+    border-color: #f6d32d;
+}
+
+.std_btn {
     font-size: 20px;
     border-radius: 20px;
+}
+
+.red_btn {
+    background-color:  #c61010;
+    color:  #ffd500;
+}
+
+.warn_btn {
+    background-color:  #ff0000;
+    color:  #ffd500;
+}
+
+.green_btn {
+    background-color:  #54da0b;
+    color:  #000000;
+}
+
+.blue_btn {
+    background-color:  #1c71d8;
+    color:  #000000;
 }
 
 #lock:hover {
     colors: #77767b;
-}
-
-#unlock {
-    background-color:  #54da0b;
-    color:  #000000;
-    font-size: 20px;
-    border-radius: 20px;
 }
 
 #unlock:hover {
@@ -448,13 +454,6 @@
     font-size: 20px;
     border-radius: 10px;
     border-style: dotted;
-}
-
-#systemsendB {
-    background-color:  #1c71d8;
-    color:  #000000;
-    font-size: 20px;
-    border-radius: 20px;
 }
 
 #systemsendT {
@@ -548,25 +547,25 @@
     border-radius: 10px;
 }
 
-#urlsendB {
-    background-color:  #1c71d8;
-    color:  #000000;
+#sendimgTE {
+    background-color:  #000000;
+    color:  #ffffff;
     font-size: 20px;
-    border-radius: 20px;
+    border-radius: 10px;
 }
 
-#chatlineB {
-    background-color:  #54da0b;
-    color:  #000000;
+#sendimgTJ {
+    background-color:  #000000;
+    color:  #ffffff;
     font-size: 20px;
-    border-radius: 20px;
+    border-radius: 10px;
 }
 
-#statsB {
-    background-color:  #4ecb0b;
-    color:  #000000;
+#sendimgTM {
+    background-color:  #000000;
+    color:  #ffffff;
     font-size: 20px;
-    border-radius: 20px;
+    border-radius: 10px;
 }
 
 #ChatrestB {
@@ -585,44 +584,20 @@
     border-radius: 20px;
 }
 
-#rfUserDB {
+/*#rfUserDB {
     background-color:  #ff0000;
     color:  #ffd500;
     font-size: 20px;
     border-radius: 20px;
     border-style: dashed;
     border-color: #ffd500;
-}
-
-#chatspamB {
-    background-color:  #ad0000;
-    color:  #f5c211;
-    font-size: 20px;
-    border-radius: 20px;
-    border-style: dotted;
-}
+}*/
 
 #EventMSGT {
     background-color:  #000000;
     color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
-}
-
-#EventMSGB {
-    background-color:  #1c71d8;
-    color:  #000000;
-    font-size: 20px;
-    border-radius: 20px;
-}
-
-#cookieRemoverB {
-    background-color: #a51d2d;
-    color: #f6d32d;
-    font-size: 50px;
-    border-radius: 20px;
-    border-style: dashed;
-    border-color: #f6d32d;
 }
 
 /* The message text color dropdown button */

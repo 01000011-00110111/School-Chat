@@ -1,58 +1,18 @@
-function JsendMessage() {
-    let message = document.getElementById('jsendT');
+function JsendMessage(elem) {
+    let message = document.getElementById(elem);
     socket.emit('message_chat', "aaaaaaaaaaaaaaaa", "[Joke of the day]: ", "", "", message.value, "#D51956", "");
     message.value = "";
 }
 
-// needed so JOTD still works
-function JsendMessageJ() {
-    let message = document.getElementById('jsendTJ');
-    socket.emit('message_chat', "aaaaaaaaaaaaaaaa", "[Joke of the day]: ", "", "", message.value, "#D51956", "");
-    message.value = "";
-}
-
-function SOsendMessage() {
-    let messageElement = document.getElementById('SOsendT');
-    socket.emit('message_chat', "aaaaaaaaaaaaaaa", "[SONG]: ", "", "", messageElement.value, "#08bd71", "");
-    messageElement.value = "";
-}
-
-function SOsendMessageE() {
-    let messageElement = document.getElementById('SOsendTE');
+function SOsendMessage(elem) {
+    let messageElement = document.getElementById(elem);
     socket.emit('message_chat', "aaaaaaaaaaaaaaa", "[SONG]: ", "", "", messageElement.value, "#08bd71", "");
     messageElement.value = "";
 }
 
 // take a img url, and convert it into a img html tag
-function sendImage() {
-    let messageElement = document.getElementById("sendimgT");
-    let toSend = "<img src='" + messageElement["value"] + "'></img>"
-
-    messageElement["value"] = "";
-
-    socket.emit('admin_message', toSend);
-}
-
-function sendImageJ() {
-    let messageElement = document.getElementById("sendimgTJ");
-    let toSend = "<img src='" + messageElement["value"] + "'></img>"
-
-    messageElement["value"] = "";
-
-    socket.emit('admin_message', toSend);
-}
-
-function sendImageE() {
-    let messageElement = document.getElementById("sendimgTE");
-    let toSend = "<img src='" + messageElement["value"] + "'></img>"
-
-    messageElement["value"] = "";
-
-    socket.emit('admin_message', toSend);
-}
-
-function sendImageM() {
-    let messageElement = document.getElementById("sendimgTM");
+function sendImage(elem) {
+    let messageElement = document.getElementById(elem);
     let toSend = "<img src='" + messageElement["value"] + "'></img>"
 
     messageElement["value"] = "";
