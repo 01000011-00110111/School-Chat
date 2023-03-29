@@ -71,6 +71,7 @@ function failedlogin() {
 function enteraccount() {
     document.getElementById("loginStuff").style.display = "none";
     document.getElementById("logoutStuff").style.display = "block";
+    SpecialMenu(); // what if they don't want it on
     socket.emit('get_prefs', document.getElementById("user")["value"]);
 }
 
@@ -102,5 +103,44 @@ function logout() {
     passwdElement["value"] = "";
     roleElement["value"] = "";
     socket.emit("username_msg", "");
+    // needed to ensure the menu disappears after logout
+    document.getElementById("toprightE").style.display = "none";
+    document.getElementById("toprightD").style.display = "none";
+    document.getElementById("toprightM").style.display = "none";
+    document.getElementById("toprightJ").style.display = "none";
+    document.getElementById("DevStuff").style.display = "none";
+    document.getElementById("modStuff").style.display = "none";
+    document.getElementById("editorStuff").style.display = "none";// need to hide the menu's
+    devcloseNav();
+    EditcloseNav();
+    JOTDcloseNav();
+    ModcloseNav();
     // location.reload();
+}
+
+function SpecialMenu() {
+    let username = document.getElementById("user")["value"];
+    // later I should just make the server respond with the menu that needs to be loaded, so it responds to login changes, but this works for now
+    if (username === "C7" || username === "cserverReal") {
+        // yep something along the lines of what I was going to do
+        const script = document.createElement('script');
+        script.src = 'static/dev-menus.js';
+        script.type = 'text/javascript';
+        document.body.appendChild(script);
+        document.getElementById("DevStuff").style.display = "block";
+        document.getElementById("toprightD").style.display = "block";
+    } else if (username === "Cole") {
+        const script = document.createElement('script');
+        script.src = 'static/mod-menu.js';
+        script.type = 'text/javascript';
+        document.body.appendChild(script);
+        document.getElementById("modStuff").style.display = "block";
+        document.getElementById("toprightM").style.display = "block"; 
+    } else if (username === "Shayla (The Midget)") {
+        document.getElementById("toprightJ").style.display = "block";
+        document.getElementById("JOTDStuff").style.display = "block";
+    } else if (username === "Owen...") {
+        document.getElementById("toprightE").style.display = "block";
+        document.getElementById("editorStuff").style.display = "block";
+    }
 }

@@ -55,26 +55,9 @@ class Console(cmd.Cmd):
 @app.route('/')
 def index() -> ResponseReturnValue:
     """Serve the main html page, modified if permission is granted."""
-    dev = request.args.get('dev')
-    mod = request.args.get('mod')
-    editor = request.args.get('editor')
-    # this is probaby overengineered, but it works and works well
-    if hashlib.sha224(bytes((dev if dev is not None else "none"),
-                            'utf-8')).hexdigest() == os.environ['dev_key']:
-        html_file = flask.render_template("dev-index.html")
-    elif hashlib.sha224(
-            bytes((editor if editor is not None else "none"),
-                  'utf-8')).hexdigest() == os.environ['editor_key']:
-        html_file = flask.render_template("editor-index.html")
-    elif hashlib.sha224(bytes((mod if mod is not None else "none"),
-                              'utf-8')).hexdigest() == os.environ['mod_key']:
-        html_file = flask.render_template("mod-index.html")
-    elif request.args.get('jotd') == "true":
-        html_file = flask.render_template("JOTD-index.html")
-    else:
-        html_file = flask.render_template("update-log.html")
-
-    return html_file
+    return flask.render_template('update-log.html')
+    # html_file = flask.render_template("update-log.html")
+    # return html_file
 
 
 # easter egg time lol

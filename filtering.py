@@ -42,8 +42,8 @@ def create_username(user_name, user_color, role, role_color, message,
         return None
 
     if user_name == '':
-        #user_name = "Anonymous"
-        return
+        user_name = "Anonymous"
+        #return
     elif user_name == "Dev EReal":
         user_name = "<b>Dev E</b>"
     elif user_name == "cserverReal":

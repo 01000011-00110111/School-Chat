@@ -101,7 +101,7 @@ socket.on("online", (db) => {
         } else if (onlineUser === "") {
             onlineUser = "Anonymous";
         } else if (onlineUser === "Dev EReal") {
-            onlineUser = "<br>";
+            onlineUser = "C7";
         }
         online = online + onlineUser + newline;
     }
@@ -412,7 +412,7 @@ function sendMessage() {
         return;
     } else if (ismutted === 'banned') {
         return;
-    } /*else if (user_name === "") {
+    } /*else if (ismutted === "") {
         socket.emit('ban_cmd', user_name)
         return;
     }*/
@@ -499,13 +499,43 @@ function closeNav() {
 }
 
 function devopenNav() {
-    document.getElementById("devSidenav").style.width = "550px";
-    document.getElementById("devSidenav").style.paddingLeft = "5%";
+    document.getElementById("DevStuff").style.width = "550px";
+    document.getElementById("DevStuff").style.paddingLeft = "5%";
 }
 
 function devcloseNav() {
-    document.getElementById("devSidenav").style.width = "0";
-    document.getElementById("devSidenav").style.paddingLeft = "0";
+    document.getElementById("DevStuff").style.width = "0";
+    document.getElementById("DevStuff").style.paddingLeft = "0";
+}
+
+function EditopenNav() {
+    document.getElementById("editorStuff").style.width = "550px";
+    document.getElementById("editorStuff").style.paddingLeft = "5%";
+}
+
+function EditcloseNav() {
+    document.getElementById("editorStuff").style.width = "0";
+    document.getElementById("editorStuff").style.paddingLeft = "0";
+}
+
+function JOTDopenNav() {
+    document.getElementById("editorStuff").style.width = "550px";
+    document.getElementById("editorStuff").style.paddingLeft = "5%";
+}
+
+function JOTDcloseNav() {
+    document.getElementById("editorStuff").style.width = "0";
+    document.getElementById("editorStuff").style.paddingLeft = "0";
+}
+
+function ModopenNav() {
+    document.getElementById("modStuff").style.width = "550px";
+    document.getElementById("modStuff").style.paddingLeft = "5%";
+}
+
+function ModcloseNav() {
+    document.getElementById("modStuff").style.width = "0";
+    document.getElementById("modStuff").style.paddingLeft = "0";
 }
 
 /* When the user clicks on the button,
@@ -524,7 +554,7 @@ window.onclick = function(event) {
                 openDropdown.classList.remove('show');
             }
         }
-    } else if (!event.target.matches('.mySidenav')) {
+    } else if (!event.target.matches('.mySidenav')) { // what was this for
         // whenever i can get sidenav-content (hidden element) implemented in css
         // simillar to dropdown-content, but with some widths changed and other stuff
         //var dropdowns = document.getElementsByClassName("dropdown-content");

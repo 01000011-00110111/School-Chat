@@ -1,5 +1,6 @@
 *{
   font-family: sans-serif;
+  scrollbar-width: none;
 }
 
 #body {
@@ -124,7 +125,7 @@
     cursor:pointer
 }
 
-#topright {
+.topright {
     position: fixed;
     width: 0%;
     margin-left: 85%;
@@ -132,6 +133,7 @@
     margin-bottom: 1%;
     font-size:30px;
     cursor: pointer;
+    color: white;
 }
 
 
@@ -297,8 +299,8 @@
 /* nav menu right */
 
 .sidenavR {
-    height: 45%;
-    right: 0;
+    height: 65%;
+    right: 12%;
     width: 0;
     position: fixed;
     z-index: 1;
@@ -307,6 +309,7 @@
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
+    scrollbar-width: none;
 }
 
 .sidenavR a {
@@ -341,6 +344,7 @@
 #Devnavtext {
     color: #bbb4b4;
 }
+
 
 
 
