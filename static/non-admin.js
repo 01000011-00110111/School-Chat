@@ -31,7 +31,34 @@ function sendImage() {
     messageElement["value"] = "";
 
     socket.emit('admin_message', toSend);
- =} //need to make of this
+}
+
+function sendImageJ() {
+    let messageElement = document.getElementById("sendimgTJ");
+    let toSend = "<img src='" + messageElement["value"] + "'></img>"
+
+    messageElement["value"] = "";
+
+    socket.emit('admin_message', toSend);
+}
+
+function sendImageE() {
+    let messageElement = document.getElementById("sendimgTE");
+    let toSend = "<img src='" + messageElement["value"] + "'></img>"
+
+    messageElement["value"] = "";
+
+    socket.emit('admin_message', toSend);
+}
+
+function sendImageM() {
+    let messageElement = document.getElementById("sendimgTM");
+    let toSend = "<img src='" + messageElement["value"] + "'></img>"
+
+    messageElement["value"] = "";
+
+    socket.emit('admin_message', toSend);
+}
 
 function refreshUsers() {
     socket.emit('admin_cmd', "refresh_users");
