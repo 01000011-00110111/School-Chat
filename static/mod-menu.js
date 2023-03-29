@@ -1,12 +1,7 @@
 // mod menu js code to keep chat.js and dev-menu.js cleaner and easy to read and find what you need//
 
-function clearCookies() {
-    socket.emit('admin_message', "[Admin]: Cookies will be deleted in 10 seconds...");
-    socket.emit('admin_cmd', "cookieEater")
-}
-
 function FsendMessageM() {
-    let messageElement = document.getElementById('fsendT');
+    let messageElement = document.getElementById('fsendTM');
     // 100% CPU usage lol on tablet lol
     //console.log(document.getElementById("user_name"));
     let toSend = "[Mod]: " + messageElement.value
@@ -18,7 +13,7 @@ function FsendMessageM() {
 } 
 
 function banHammer() {
-    let muteuserElement = document.getElementById("muteuserbox");
+    let muteuserElement = document.getElementById("muteuserboxM");
     let userElement = document.getElementById("user");
     let mute_user_name = muteuserElement["value"];
     let user_name = userElement["value"];
@@ -35,7 +30,7 @@ function banHammer() {
 }
 
 function mute() {
-    let muteuserElement = document.getElementById("muteuserbox");
+    let muteuserElement = document.getElementById("muteuserboxM");
     let userElement = document.getElementById("user");
     let mute_user_name = muteuserElement["value"];
     let user_name = userElement["value"];
@@ -52,7 +47,7 @@ function mute() {
 }
 
 function unmute() {
-    let muteuserElement = document.getElementById("muteuserbox");
+    let muteuserElement = document.getElementById("muteuserboxM");
     let mute_user_name = muteuserElement["value"];
     socket.emit('unmute_cmd', mute_user_name)
 }

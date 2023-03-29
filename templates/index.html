@@ -106,7 +106,7 @@
             <button onclick="urlsend()" id="urlsendB">Send</button>
             <br>
         </div>
-        <div id="editorStuff" class="sidenavR" style="display: none;">
+        <div id="EditorStuff" class="sidenavR" style="display: none;">
             <br>
             <a href="javascript:void(0)" class="closebtnR" onclick="EditcloseNav()">×</a>
             <h3 id="Devnavtext">This is the menu used by style editor staff</h3>
@@ -120,21 +120,21 @@
             <br>
             <a href="javascript:void(0)" class="closebtnR" onclick="JOTDcloseNav()">×</a>
             <h3 id="Devnavtext">This is the menu used by JOTD staff</h3>
-            <input type="text" id="jsendT" placeholder="JOTD message:"><br>
-            <button onclick="JsendMessage();" id="jsendB">Send</button>
+            <input type="text" id="jsendTJ" placeholder="JOTD message:"><br>
+            <button onclick="JsendMessageJ();" id="jsendBJ">Send</button>
             <input type="text" id="sendimgT" placeholder="Paste img url here"><button onclick="sendImage();" id="sendimgB">Send</button><br> 
             <button onclick='ajaxGetRequest("/chat_count", dummyajax);' id="chatlineB">Print total line count</button>
             <button onclick="refreshUsers();" id="rfUserDB">Refresh users DB</button><br><br>
         </div>
-        <div id="modStuff" class="sidenavR" style="display: none;">
+        <div id="ModStuff" class="sidenavR" style="display: none;">
             <br>
             <a href="javascript:void(0)" class="closebtnR" onclick="ModcloseNav()">×</a>
             <h3 id="Devnavtext">This is the mod menu use for admistrating chat</h3>
             <p id="Devnavtext">Enter message here and send as mod</p>
-            <input type="text" id="fsendT" placeholder="Force Send message:"><br>
-            <button onclick="FsendMessageM();" id="fsendB">Force Send</button><br><button onclick="lock_chat();" id="lock">Lock</button><br>
+            <input type="text" id="fsendTM" placeholder="Force Send message:"><br>
+            <button onclick="FsendMessageM();" id="fsendBM">Force Send</button><br><button onclick="lock_chat();" id="lock">Lock</button><br>
             <p id="Devnavtext">Enter username in here for muting</p>
-            <input type="text" id="muteuserbox" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">Unmute</button><br>
+            <input type="text" id="muteuserboxM" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">Unmute</button><br>
             <button onclick="banHammer();" id="ban">Ban</button><br>
             <p id="Devnavtext">send stats about the chat</p>
             <button onclick='ajaxGetRequest("/chat_count", dummyajax);' id="chatlineB">Print total line count</button>

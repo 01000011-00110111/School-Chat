@@ -2,7 +2,6 @@
 import os
 import logging
 import json
-from time import sleep
 import hashlib
 import cmd
 from multiprocessing import Process
@@ -268,7 +267,8 @@ def return_user_prefs(username):
             "theme": user["theme"],
             "messageColor": user["messageColor"],
             "roleColor": user["roleColor"],
-            "permission": user["permission"]
+            "permission": user["permission"],
+            "SPermission": user["SPermission"]
         },
              namespace="/")
     except TypeError:

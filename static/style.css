@@ -368,6 +368,23 @@
     border-color: #f6d32d;
 }
 
+#fsendTM {
+    background-color:  #000000;
+    color:  #ffffff;
+    font-size: 20px;
+    border-radius: 10px;
+    border-style: dashed;
+}
+
+#fsendBM {
+    background-color: #a51d2d;
+    color: #f6d32d;
+    font-size: 20px;
+    border-radius: 20px;
+    border-style: dashed;
+    border-color: #f6d32d;
+}
+
 #ban {
     background-color: #c61010;
     color: #f6d32d;
@@ -410,14 +427,14 @@
     border-radius: 20px;
 }
 
-#unmute{
+#unmute {
     background-color:  #62a0ea;
     color:  #000000;
     font-size: 20px;
     border-radius: 20px;
 }
 
-#muteuserbox{
+#muteuserbox {
     background-color:  #000000;
     color:  #ffffff;
     font-size: 20px;
@@ -425,98 +442,120 @@
     border-style: dotted;
 }
 
-#systemsendB{
+#muteuserboxM {
+    background-color:  #000000;
+    color:  #ffffff;
+    font-size: 20px;
+    border-radius: 10px;
+    border-style: dotted;
+}
+
+#systemsendB {
     background-color:  #1c71d8;
     color:  #000000;
     font-size: 20px;
     border-radius: 20px;
 }
 
-#systemsendT{
+#systemsendT {
     background-color:  #000000;
     color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
-#jsendB{
+#jsendB {
     background-color:  #D51956;
     color:  #000000;
     font-size: 20px;
     border-radius: 20px;
 }
 
-#jsendT{
+#jsendT {
     background-color:  #000000;
     color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
-#SOsendB{
+#jsendBJ {
+    background-color:  #D51956;
+    color:  #000000;
+    font-size: 20px;
+    border-radius: 20px;
+}
+
+#jsendTJ {
+    background-color:  #000000;
+    color:  #ffffff;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
+#SOsendB {
     background-color:  #08bd71;
     color:  #000000;
     font-size: 20px;
     border-radius: 20px;
 }
 
-#SOsendT{
+#SOsendT {
     background-color:  #000000;
     color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
-#urlsendT{
+#urlsendT {
     background-color:  #000000;
     color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
-#urlsendT2{
+#urlsendT2 {
     background-color:  #000000;
     color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
-#sendimgB{
+#sendimgB {
     background-color:  #000000;
     color:  #ffffff;
     font-size: 20px;
     border-radius: 20px;
 }
 
-#sendimgT{
+#sendimgT {
     background-color:  #000000;
     color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
-#urlsendB{
+#urlsendB {
     background-color:  #1c71d8;
     color:  #000000;
     font-size: 20px;
     border-radius: 20px;
 }
 
-#chatlineB{
+#chatlineB {
     background-color:  #54da0b;
     color:  #000000;
     font-size: 20px;
     border-radius: 20px;
 }
 
-#statsB{
+#statsB {
     background-color:  #4ecb0b;
     color:  #000000;
     font-size: 20px;
     border-radius: 20px;
 }
 
-#ChatrestB{
+#ChatrestB {
     background-color:  #ff0000;
     color:  #ffd500;
     font-size: 20px;
@@ -525,14 +564,14 @@
     border-color: #ffd500;
 }
 
-#resetDB{
+#resetDB {
     background-color:  #ad0000;
     color:  #ffd500;
     font-size: 20px;
     border-radius: 20px;
 }
 
-#rfUserDB{
+#rfUserDB {
     background-color:  #ff0000;
     color:  #ffd500;
     font-size: 20px;

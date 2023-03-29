@@ -43,6 +43,8 @@ socket.on("return_prefs", (Obj) => {
     document.getElementById("role")["value"] = Obj["role"];
     document.getElementById("user_color")["value"] = Obj["userColor"];
     document.getElementById("message_color")["value"] = Obj["messageColor"];
+    SPermission = Obj["SPermission"]
+    SpecialMenu(SPermission);
     // set online user
     socket.emit("username_msg", Obj["displayName"]);
     // call the finction to change themes
@@ -71,7 +73,6 @@ function failedlogin() {
 function enteraccount() {
     document.getElementById("loginStuff").style.display = "none";
     document.getElementById("logoutStuff").style.display = "block";
-    SpecialMenu(); // what if they don't want it on
     socket.emit('get_prefs', document.getElementById("user")["value"]);
 }
 
@@ -109,19 +110,22 @@ function logout() {
     document.getElementById("toprightM").style.display = "none";
     document.getElementById("toprightJ").style.display = "none";
     document.getElementById("DevStuff").style.display = "none";
-    document.getElementById("modStuff").style.display = "none";
-    document.getElementById("editorStuff").style.display = "none";// need to hide the menu's
+    document.getElementById("ModStuff").style.display = "none";
+    document.getElementById("EditorStuff").style.display = "none";// need to hide the menu's
+    document.getElementById("JOTDStuff").style.display = "block";
     devcloseNav();
     EditcloseNav();
     JOTDcloseNav();
     ModcloseNav();
+    document.title = "OCD wleb Potato man Skill Issue!!!1!";
     // location.reload();
 }
 
-function SpecialMenu() {
-    let username = document.getElementById("user")["value"];
+function SpecialMenu(SPermission) {
+    // let username = document.getElementById("user")["value"];
     // later I should just make the server respond with the menu that needs to be loaded, so it responds to login changes, but this works for now
-    if (username === "C7" || username === "cserverReal") {
+    if (SPermission === "Dev") {
+        document.title = "Class Chat Dev";
         // yep something along the lines of what I was going to do
         const script = document.createElement('script');
         script.src = 'static/dev-menus.js';
@@ -129,22 +133,24 @@ function SpecialMenu() {
         document.body.appendChild(script);
         document.getElementById("DevStuff").style.display = "block";
         document.getElementById("toprightD").style.display = "block";
-    } else if (username === "Cole") {
+    } else if (SPermission === "Mod") {
+        document.title = "Class Chat Mod";
         const script = document.createElement('script');
         script.src = 'static/mod-menu.js';
         script.type = 'text/javascript';
         document.body.appendChild(script);
-        document.getElementById("modStuff").style.display = "block";
+        document.getElementById("ModStuff").style.display = "block";
         document.getElementById("toprightM").style.display = "block"; 
-    } else if (username === "Shayla (The Midget)") {
+    } else if (SPermission === "JOTD") {
+        document.title = "Class Chat JOTD";
         document.getElementById("toprightJ").style.display = "block";
         document.getElementById("JOTDStuff").style.display = "block";
-    } else if (username === "Owen...") {
+    } else if (SPermission === "Editor") {
         // so owen is not mad
         document.title = "Desmos | Graphing Calculator";
         document.querySelector("link[rel='shortcut icon']").href = "https://help.desmos.com/hc/en-us/article_attachments/4413863846413/desmos_icon_square.png";
-        document.querySelector("link[rel*='icon']").href = "https://help.desmos.com/hc/en-us/article_attachments/4413863846413/desmos_icon_square.png";
+        // document.querySelector("link[rel*='icon']").href = "https://help.desmos.com/hc/en-us/article_attachments/4413863846413/desmos_icon_square.png";
         document.getElementById("toprightE").style.display = "block";
-        document.getElementById("editorStuff").style.display = "block";
+        document.getElementById("EditorStuff").style.display = "block";
     }
 }

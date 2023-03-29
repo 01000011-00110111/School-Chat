@@ -485,33 +485,33 @@ function devcloseNav() {
 }
 
 function EditopenNav() {
-    document.getElementById("editorStuff").style.width = "550px";
-    document.getElementById("editorStuff").style.paddingLeft = "5%";
+    document.getElementById("EditorStuff").style.width = "550px";
+    document.getElementById("EditorStuff").style.paddingLeft = "5%";
 }
 
 function EditcloseNav() {
-    document.getElementById("editorStuff").style.width = "0";
-    document.getElementById("editorStuff").style.paddingLeft = "0";
+    document.getElementById("EditorStuff").style.width = "0";
+    document.getElementById("EditorStuff").style.paddingLeft = "0";
 }
 
 function JOTDopenNav() {
-    document.getElementById("editorStuff").style.width = "550px";
-    document.getElementById("editorStuff").style.paddingLeft = "5%";
+    document.getElementById("JOTDStuff").style.width = "550px";
+    document.getElementById("JOTDStuff").style.paddingLeft = "5%";
 }
 
 function JOTDcloseNav() {
-    document.getElementById("editorStuff").style.width = "0";
-    document.getElementById("editorStuff").style.paddingLeft = "0";
+    document.getElementById("JOTDStuff").style.width = "0";
+    document.getElementById("JOTDStuff").style.paddingLeft = "0";
 }
 
 function ModopenNav() {
-    document.getElementById("modStuff").style.width = "550px";
-    document.getElementById("modStuff").style.paddingLeft = "5%";
+    document.getElementById("ModStuff").style.width = "550px";
+    document.getElementById("ModStuff").style.paddingLeft = "5%";
 }
 
 function ModcloseNav() {
-    document.getElementById("modStuff").style.width = "0";
-    document.getElementById("modStuff").style.paddingLeft = "0";
+    document.getElementById("ModStuff").style.width = "0";
+    document.getElementById("ModStuff").style.paddingLeft = "0";
 }
 
 /* When the user clicks on the button,
