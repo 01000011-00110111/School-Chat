@@ -506,6 +506,20 @@
     border-radius: 10px;
 }
 
+#SOsendBE {
+    background-color:  #08bd71;
+    color:  #000000;
+    font-size: 20px;
+    border-radius: 20px;
+}
+
+#SOsendTE {
+    background-color:  #000000;
+    color:  #ffffff;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
 #urlsendT {
     background-color:  #000000;
     color:  #ffffff;
