@@ -74,20 +74,6 @@ socket.on("force_username", (statement) => {
     socket.emit("username", window.localStorage.getItem("username"));
 });
 
-socket.on("cookieEater", (statement) => {
-    deleteAllCookies();
-    let userElement = document.getElementById("username");
-    let user_color = document.getElementById("user_color");
-    let message_color = document.getElementById("message_color");
-    let role_color = document.getElementById("role_color");
-    let roleElement = document.getElementById("role");
-    user_color["value"] = "#000000";
-    message_color["value"] = "#000000";
-    role_color["value"] = "#000000";
-    roleElement["value"] = "";
-    userElement["value"] = "";
-});
-
 socket.on("online", (db) => {
     let newline = "<br>"
     let online = "";
@@ -175,16 +161,6 @@ function unmuteusr(muteUserName) {
 // This function requests the server send it a full chat log
 function loadChat() {
     ajaxGetRequest("/chat_logs", loadChatStartup);
-}
-
-function deleteAllCookies() {
-    const cookies = document.cookie.split(";");
-    for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i];
-        const eqPos = cookie.indexOf("=");
-        const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    }
 }
 
 // get specific cookie value
