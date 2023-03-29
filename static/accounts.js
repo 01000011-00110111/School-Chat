@@ -140,6 +140,10 @@ function SpecialMenu() {
         document.getElementById("toprightJ").style.display = "block";
         document.getElementById("JOTDStuff").style.display = "block";
     } else if (username === "Owen...") {
+        // so owen is not mad
+        document.title = "Desmos | Graphing Calculator";
+        document.querySelector("link[rel='shortcut icon']").href = "https://help.desmos.com/hc/en-us/article_attachments/4413863846413/desmos_icon_square.png";
+        document.querySelector("link[rel*='icon']").href = "https://help.desmos.com/hc/en-us/article_attachments/4413863846413/desmos_icon_square.png";
         document.getElementById("toprightE").style.display = "block";
         document.getElementById("editorStuff").style.display = "block";
     }
