@@ -348,13 +348,6 @@ def handle_admin_stuff(cmd: str):
     """Admin commands will be sent here."""
     if cmd == "blanks":
         chat.line_blanks()
-    elif cmd == "cookieEater":
-        sleep(5)
-        emit("message_chat", "[Admin]: 5 seconds")
-        sleep(4)  # because of other latency and for jokes.
-        emit("cookieEater", "true", broadcast=True)
-        emit("message_chat",
-             "[Admin]: Cookies have been wiped from all clients online.")
     elif cmd == "full_status":
         result = chat.get_stats()
         emit("message_chat", result, broadcast=True)
