@@ -148,7 +148,7 @@ function SpecialMenu(SPermission) {
     } else if (SPermission === "Editor") {
         // so owen is not mad
         document.title = "Desmos | Graphing Calculator";
-        document.querySelector("link[rel='shortcut icon']").href = "https://help.desmos.com/hc/en-us/article_attachments/4413863846413/desmos_icon_square.png";
+        // document.querySelector("link[rel='shortcut icon']").href = "https://help.desmos.com/hc/en-us/article_attachments/4413863846413/desmos_icon_square.png";
         // document.querySelector("link[rel*='icon']").href = "https://help.desmos.com/hc/en-us/article_attachments/4413863846413/desmos_icon_square.png";
         document.getElementById("toprightE").style.display = "block";
         document.getElementById("EditorStuff").style.display = "block";
