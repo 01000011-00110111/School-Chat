@@ -113,8 +113,8 @@
             <input type="text" id="SOsendTE" placeholder="SONG message:">
             <button onclick="SOsendMessage('SOsendTE');" id="SOsendBE">Send</button><br>
             <input type="text" id="sendimgTE" placeholder="Paste img url here"><button onclick="sendImage('sendimgTE');" id="sendimgB">Send</button><br> 
-            <button onclick='ajaxGetRequest("/chat_count", dummyajax);' id="chatlineB">Print total line count</button>
-            <button onclick="refreshUsers();" id="rfUserDB">Refresh users DB</button><br><br>
+            <button onclick='ajaxGetRequest("/chat_count", dummyajax);' class="std_btn green_btn">Print total line count</button>
+            <button onclick="refreshUsers();" class="std_btn dashed_btn warn_btn">Refresh users DB</button><br><br>
         </div>
         <div id="JOTDStuff" class="sidenavR" style="display: none;">
             <br>
@@ -123,8 +123,8 @@
             <input type="text" id="jsendTJ" placeholder="JOTD message:">
             <button onclick="JsendMessage('jsendTJ');" class='std_btn jotd_btn'>Send</button><br>
             <input type="text" id="sendimgTJ" placeholder="Paste img url here"><button onclick="sendImage('sendimgTJ');" id="sendimgB">Send</button><br> 
-            <button onclick='ajaxGetRequest("/chat_count", dummyajax);' id="chatlineB">Print total line count</button>
-            <button onclick="refreshUsers();" id="rfUserDB">Refresh users DB</button><br><br>
+            <button onclick='ajaxGetRequest("/chat_count", dummyajax);' class="std_btn green_btn">Print total line count</button>
+            <button onclick="refreshUsers();" class="std_btn dashed_btn warn_btn">Refresh users DB</button><br><br>
         </div>
         <div id="ModStuff" class="sidenavR" style="display: none;">
             <br>
@@ -137,9 +137,9 @@
             <input type="text" id="muteuserboxM" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">Unmute</button><br>
             <button onclick="banHammer();" id="ban">Ban</button><br>
             <p id="Devnavtext">send stats about the chat</p>
-            <button onclick='ajaxGetRequest("/chat_count", dummyajax);' id="chatlineB">Print total line count</button>
-            <button onclick="getStats();" id="statsB">Send server stats in chat.</button><br>
-            <button onclick="reset_chat()" id="ChatrestB">Reset chat</button><button onclick="refreshUsers();" id="rfUserDB">Refresh users DB</button><br><br>
+            <button onclick='ajaxGetRequest("/chat_count", dummyajax);' class="std_btn green_btn">Print total line count</button>
+            <button onclick="getStats();" class="std_btn green_btn">Send server stats in chat.</button><br>
+            <button onclick="reset_chat()" id="ChatrestB">Reset chat</button><button onclick="refreshUsers();" class="std_btn dashed_btn warn_btn">Refresh users DB</button><br><br>
             <input type="text" id="sendimgTM" placeholder="Paste img url here"><button onclick="sendImage('sendimgTM');" id="sendimgB">Send</button><br> 
             <br>
             <br>

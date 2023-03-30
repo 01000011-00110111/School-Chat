@@ -13,11 +13,11 @@ socket.on("reload_pages", (muteUserName) => {
     let user_name = userElement["value"];
 
     if (muteUserName === user_name) {
-        // location.reload();
-        youfoundanotheregg();
+        location.reload();
+        // youfoundanotheregg();
     } else if (muteUserName === "everyone") {
-        // location.reload();
-        youfoundanotheregg();
+        location.reload();
+        // youfoundanotheregg();
     }
 });
 
@@ -487,7 +487,7 @@ function youfounddaegg() {
 
 function youfoundanotheregg() {
     let body = document.getElementById("body");
-    body.style.webkitAnimation = "rainbow 5s infinite";
+    body.style.webkitAnimation = "rainbowb 5s infinite";
 }
 
   // Nav menu //
