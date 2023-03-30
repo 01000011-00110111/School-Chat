@@ -5,8 +5,8 @@
 
 #body {
   margin: 0;
-  background-color: #000000;
-  color: #dd7016;
+  background-background-color: #000000;
+  background-color: #dd7016;
 }
 
 #main {
@@ -20,12 +20,12 @@
 
 #online_users {
     padding-left: 0.5%;
-    color: white;
+    background-color: white;
 }
 
 #notif {
   font-size: 22px;
-  background-color: red;
+  background-background-color: red;
 }
 
 /*#pfp {
@@ -58,7 +58,7 @@
 }
 
 #user_name {
-    color: #d4af37;
+    background-color: #d4af37;
 }
 
 /* id start by getting the text above the area the text box is */
@@ -100,7 +100,7 @@
 }
 
 #send:hover {
-    color: #787773;
+    background-color: #787773;
 }
 
 #user-title {
@@ -120,7 +120,7 @@
     position: fixed;
     width: 0%;
     padding-top: .5%;
-    /*color: #c2bcbc;*/
+    /*background-color: #c2bcbc;*/
     font-size:40px;
     cursor:pointer
 }
@@ -133,7 +133,7 @@
     margin-bottom: 1%;
     font-size:30px;
     cursor: pointer;
-    color: white;
+    background-color: white;
 }
 
 
@@ -148,7 +148,7 @@
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #292;
+    background-background-color: #292;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -158,13 +158,13 @@
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
-    color: #d0c8c8;
+    background-color: #d0c8c8;
     display: block;
     transition: 0.3s;
 }
 
 .sidenav a:hover {
-    color: #f1f1f1;
+    background-color: #f1f1f1;
 }
 
 .sidenav .closebtn {
@@ -186,75 +186,75 @@
 /* Menu options */
 
 #user {
-    color: #000000;
+    background-color: #000000;
     font-size: 30px;
     width: 100%;
 }
 
 #dark {
-    background-color: #000000;
-    color: #ffffff;
+    background-background-color: #000000;
+    background-color: #ffffff;
     font-size: 30px;
     display: flex;
 }
 
 #light {
-    background-color: #9a9996; 
-    color: #ffffff;
+    background-background-color: #9a9996; 
+    background-color: #ffffff;
     font-size: 30px;
     display: flex;
 }
 
 #specal1 {
-    background-color: #3d3846;
-    color: #ffffff;
+    background-background-color: #3d3846;
+    background-color: #ffffff;
     font-size: 30px;
     display: flex;
 }
 
 #event {
-    background-color: #62a0ea;
-    color: #ffffff;
+    background-background-color: #62a0ea;
+    background-color: #ffffff;
     font-size: 30px;
     display: flex;
 }
 
 #val {
-    background-color: #ff33e4;
-    color: #8a0a7f;
+    background-background-color: #ff33e4;
+    background-color: #8a0a7f;
     font-size: 30px;
     display: flex;
 }
 
 #specal2 {
-    background-color: #3d3846;
-    color: #ffffff;
+    background-background-color: #3d3846;
+    background-color: #ffffff;
     font-size: 30px;
     display: flex;
 }
 
 #login {
-    background-color: #e59e24;
-    color: #2d8633;
+    background-background-color: #e59e24;
+    background-color: #2d8633;
     font-size: 20px;
     border-radius: 20px;
 }
 
-#user_colorTXT {
-    color: #d0c8c8;
+#user_background-colorTXT {
+    background-color: #d0c8c8;
 }
 
 
 
 
 /* Dropdown Button */
-#colorDropdown {
+#background-colorDropdown {
     border-radius: 20px;
 }
     
 .dropbtn {
-    background-color: #3498DB;
-    color: white;
+    background-background-color: #3498DB;
+    background-color: white;
     padding: 16px;
     font-size: 16px;
     border: none;
@@ -263,7 +263,7 @@
 
 /* Dropdown button on hover & focus */
 .dropbtn:hover, .dropbtn:focus {
-    background-color: #26a269;
+    background-background-color: #26a269;
 }
 
 /* The container <div> - needed to position the dropdown content */
@@ -276,7 +276,7 @@
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #323538;
+    background-background-color: #323538;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
@@ -284,14 +284,14 @@
 
 /* Links inside the dropdown */
 .dropdown-content a {
-    color: black;
+    background-color: black;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
 }
 
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd;}
+/* Change background-color of dropdown links on hover */
+.dropdown-content a:hover {background-background-color: #ddd;}
 
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
 .show {display:block;}
@@ -305,7 +305,7 @@
     position: fixed;
     z-index: 1;
     top: 0;
-    background-color: #241f31;
+    background-background-color: #241f31;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -316,13 +316,13 @@
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
-    color: #d0c8c8;
+    background-color: #d0c8c8;
     display: block;
     transition: 0.3s;
 }
 
 .sidenavR a:hover {
-    color: #f1f1f1;
+    background-color: #f1f1f1;
 }
 
 .sidenavR .closebtnR {
@@ -342,7 +342,7 @@
 /* Dev menu text */
 
 #Devnavtext {
-    color: #bbb4b4;
+    background-color: #bbb4b4;
 }
 
 
@@ -352,45 +352,36 @@
 /* Right menu options*/
 
 #fsendT {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
 #fsendTM {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
     border-style: dashed;
 }
 
 #fsendBM {
-    background-color: #a51d2d;
-    color: #f6d32d;
+    background-background-color: #a51d2d;
+    background-color: #f6d32d;
     font-size: 20px;
     border-radius: 20px;
     border-style: dashed;
-    border-color: #f6d32d;
-}
-
-#ban {
-    background-color: #c61010;
-    color: #f6d32d;
-    font-size: 20px;
-    border-radius: 20px;
-    border-style: dashed;
-    border-color: #f6d32d;
+    border-background-color: #f6d32d;
 }
 
 #fsendB:hover {
-    colors: #77767b;
+    background-colors: #77767b;
 }
 
 .dashed_btn {
     border-style: dashed;
-    border-color: #f6d32d;
+    border-background-color: #f6d32d;
 }
 
 .std_btn {
@@ -399,212 +390,201 @@
 }
 
 .red_btn {
-    background-color:  #c61010;
-    color:  #ffd500;
+    background-background-color:  #c61010;
+    background-color:  #ffd500;
 }
 
 .warn_btn {
-    background-color:  #ff0000;
-    color:  #ffd500;
+    background-background-color:  #ff0000;
+    background-color:  #ffd500;
 }
 
 .green_btn {
-    background-color:  #54da0b;
-    color:  #000000;
+    background-background-color:  #54da0b;
+    background-color:  #000000;
 }
 
 .blue_btn {
-    background-color:  #1c71d8;
-    color:  #000000;
+    background-background-color:  #1c71d8;
+    background-color:  #000000;
+}
+
+.jotd_btn {
+    background-background-color:  #D51956;
+    background-color:  #000000;
 }
 
 #lock:hover {
-    colors: #77767b;
+    background-colors: #77767b;
 }
 
 #unlock:hover {
-    colors: #77767b;
+    background-colors: #77767b;
 }
 
 #mute {
-    background-color:  #77767b;
-    color:  #000000;
-    font-size: 20px;
-    border-radius: 20px;
-}
-
-#unmute {
-    background-color:  #62a0ea;
-    color:  #000000;
-    font-size: 20px;
-    border-radius: 20px;
+    background-background-color:  #77767b;
+    background-color:  #000000;
 }
 
 #muteuserbox {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
     border-style: dotted;
 }
 
 #muteuserboxM {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
     border-style: dotted;
 }
 
 #systemsendT {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
-#jsendB {
-    background-color:  #D51956;
-    color:  #000000;
-    font-size: 20px;
-    border-radius: 20px;
-}
-
 #jsendT {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
 #jsendBJ {
-    background-color:  #D51956;
-    color:  #000000;
+    background-background-color:  #D51956;
+    background-color:  #000000;
     font-size: 20px;
     border-radius: 20px;
 }
 
 #jsendTJ {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
 #SOsendB {
-    background-color:  #08bd71;
-    color:  #000000;
+    background-background-color:  #08bd71;
+    background-color:  #000000;
     font-size: 20px;
     border-radius: 20px;
 }
 
 #SOsendT {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
 #SOsendBE {
-    background-color:  #08bd71;
-    color:  #000000;
+    background-background-color:  #08bd71;
+    background-color:  #000000;
     font-size: 20px;
     border-radius: 20px;
 }
 
 #SOsendTE {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
 #urlsendT {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
 #urlsendT2 {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
 #sendimgB {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 20px;
 }
 
 #sendimgT {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
 #sendimgTE {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
 #sendimgTJ {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
 #sendimgTM {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
 #ChatrestB {
-    background-color:  #ff0000;
-    color:  #ffd500;
+    background-background-color:  #ff0000;
+    background-color:  #ffd500;
     font-size: 20px;
     border-radius: 20px;
     border-style: dashed;
-    border-color: #ffd500;
+    border-background-color: #ffd500;
 }
 
 #resetDB {
-    background-color:  #ad0000;
-    color:  #ffd500;
+    background-background-color:  #ad0000;
+    background-color:  #ffd500;
     font-size: 20px;
     border-radius: 20px;
 }
 
 /*#rfUserDB {
-    background-color:  #ff0000;
-    color:  #ffd500;
+    background-background-color:  #ff0000;
+    background-color:  #ffd500;
     font-size: 20px;
     border-radius: 20px;
     border-style: dashed;
-    border-color: #ffd500;
+    border-background-color: #ffd500;
 }*/
 
 #EventMSGT {
-    background-color:  #000000;
-    color:  #ffffff;
+    background-background-color:  #000000;
+    background-color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
 }
 
-/* The message text color dropdown button */
+/* The message text background-color dropdown button */
 
 .dropbtnTXT {
-    background-color: #111111;
-    color: black;
+    background-background-color: #111111;
+    background-color: black;
     padding: -16px;
     font-size: 16px;
     border: none;
@@ -613,7 +593,7 @@
 }
 
 .dropbtnTXT:hover, .dropbtn:focus {
-    background-color: #2980B9;
+    background-background-color: #2980B9;
 }
 
 .dropdown {
@@ -624,7 +604,7 @@
 .dropdown-contentTXT {
     display: none;
     position: absolute;
-    background-color: #3f3f3f;
+    background-background-color: #3f3f3f;
     min-width: 90px;
     max-height: -80px;
     overflow: auto;
@@ -634,13 +614,13 @@
 }
 
 .dropdown-contentTXT a {
-    color: black;
+    background-color: black;
     padding: 12px -16px;
     text-decoration: none;
     display: block;
 }
 
-.dropdown a:hover {background-color: #ddd;}
+.dropdown a:hover {background-background-color: #ddd;}
 
 .showTXT {display: block;}
 
@@ -668,7 +648,7 @@
 
 .popup h2 {
     margin-top: 0;
-    color: #333;
+    background-color: #333;
     font-family: Tahoma, Arial, sans-serif;
 }
 
@@ -680,7 +660,7 @@
     font-size: 30px;
     font-weight: bold;
     text-decoration: none;
-    color: #333;
+    background-color: #333;
 }
 
 .popup .limited_close {
@@ -691,11 +671,11 @@
     font-size: 30px;
     font-weight: bold;
     text-decoration: none;
-    color: #333;
+    background-color: #333;
 }
 
 /*.popup .close:hover {
-    color: orange;
+    background-color: orange;
 }*/
 
 .popup .content {
@@ -727,7 +707,7 @@
 
 
 #account{
-    color: white;
+    background-color: white;
     font-size: 36px;
     paddin: 
 }
@@ -739,7 +719,7 @@
     position: fixed;
     z-index: 1;
     top: 0;
-    background-color: #241f31;
+    background-background-color: #241f31;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -749,13 +729,13 @@
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
-    color: #d0c8c8;
+    background-color: #d0c8c8;
     display: block;
     transition: 0.3s;
 }
 
 .sidenava a:hover {
-    color: #f1f1f1;
+    background-color: #f1f1f1;
 }
 
 .sidenava .closebtna {
@@ -779,27 +759,27 @@
 }
 
 #logintxt1 {
+    background-background-color: wheat;
     background-color: wheat;
-    color: wheat;
 }
 
 #logintxt2 {
+    background-background-color: wheat;
     background-color: wheat;
-    color: wheat;
 }
 
 #user {
-    color: #000000;
+    background-color: #000000;
     font-size: 30px;
     width: 100%;
-    background-color: #40be37ff;
+    background-background-color: #40be37ff;
 }
 
 #pass {
-    color: #000000;
+    background-color: #000000;
     font-size: 30px;
     width: 100%;
-    background-color: #c84646;
+    background-background-color: #c84646;
 }
 
 
@@ -818,8 +798,8 @@
     width: 15%;
     border-radius: 20px;
     height: 30px;
-    border-color: black;
-    color: white;
+    border-background-color: black;
+    background-color: white;
     background: darkgray;
     margin-left: 45%;
 }
@@ -864,3 +844,27 @@
 #SRole {
     background: gold;
 }
+
+
+.rainbow-text-loop {
+  font-size: 1.5rem;
+  display: inline-block;
+  margin-top: 1rem;
+  text-shadow: 2px 2px 4px #000000;
+  -webkit-animation: rainbow 5s infinite; 
+}
+
+@-webkit-keyframes rainbow{
+  0%{background-color: orange;}  
+  10%{background-color: purple;} 
+  20%{background-color: red;}
+  30%{background-color: CadetBlue;}
+  40%{background-color: yellow;}
+  50%{background-color: coral;}
+  60%{background-color: green;}
+  70%{background-color: cyan;}
+  80%{background-color: DeepPink;}
+  90%{background-color: DodgerBlue;}
+  100%{background-color: orange;}
+}
+

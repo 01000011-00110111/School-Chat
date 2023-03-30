@@ -13,9 +13,11 @@ socket.on("reload_pages", (muteUserName) => {
     let user_name = userElement["value"];
 
     if (muteUserName === user_name) {
-        location.reload();
+        // location.reload();
+        youfoundanotheregg();
     } else if (muteUserName === "everyone") {
-        location.reload();
+        // location.reload();
+        youfoundanotheregg();
     }
 });
 
@@ -50,9 +52,9 @@ socket.on("ping", ({ who, from }) => {
         if (user_name === who) {
             new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
         } else if (who === "Dev E" && user_name === "Dev EReal") {
-            new Notification("You have been pinged by:", { body: "Dev E", icon: "/static/troll-face.jpeg"});
+            new Notification("You have been pinged by:", { body: from , icon: "/static/troll-face.jpeg"});
         } else if (who === "cserver" && user_name === "cserverReal") {
-            new Notification("You have been pinged by:", { body: "cserver", icon: "/static/troll-face.jpeg"});
+            new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
         } else if ((who === "Owen" || who === "owen") && user_name === "¿Owen?") {
             new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
         } else if (who === "everyone") {
@@ -116,6 +118,7 @@ function bancline(muteUserName) {
         if (user_name === muteUserName) {
             document.getElementById("permission")["value"] = "banned";
             window.localStorage.setItem("permission", "banned");
+            updateacc();
         }
     }
 }
@@ -129,6 +132,7 @@ function muteusr(muteUserName) {
         if (user_name === muteUserName) {
             document.getElementById("permission")["value"] = "muted";
             window.localStorage.setItem("permission", "muted");
+            updateacc();
         }
     } else if (ismutted === 'banned') {
         document.getElementById("permission")["value"] = "banned";
@@ -148,6 +152,7 @@ function unmuteusr(muteUserName) {
         if (user_name === muteUserName) {
             document.getElementById("permission")["value"] = "true";
             window.localStorage.setItem("permission", "true");
+            updateacc();
         }
     } else if (ismutted === 'banned') {
         document.getElementById("permission")["value"] = "banned";
@@ -462,6 +467,27 @@ function checkKey() {
     if (event.key === "Enter") {
         sendMessage();
     }
+}
+
+
+function youfounddaegg() {
+    let i = 0
+    while (i > 600) {
+        setTimeout(setChristmasTheme, 1000);
+        setTimeout(setDarkStyle, 1000);
+        setTimeout(setLightStyle, 1000);
+        setTimeout(setThanksTheme, 1000);
+        setTimeout(setHollowTheme, 1000);
+        setTimeout(setNewyearsTheme, 1000);
+        setTimeout(setSpecalStyle, 1000);
+        i++
+        // not needed, will go forever
+    }
+}
+
+function youfoundanotheregg() {
+    let body = document.getElementById("body");
+    body.style.webkitAnimation = "rainbow 5s infinite";
 }
 
   // Nav menu //

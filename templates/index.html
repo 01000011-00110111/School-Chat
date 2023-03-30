@@ -83,15 +83,15 @@
             <button onclick="lock_chat();" id="lock" class="std_btn red_btn">Lock</button><button onclick="unlock_chat();" id="unlock" class="std_btn green_btn">Unlock</button><br>
             <p id="Devnavtext">Enter username in here for muting</p>
             <input type="text" id="muteuserbox" placeholder="type user to mute here:"><br>
-            <button onclick="mute();" id="mute">Mute</button>
-            <button onclick="unmute();" id="unmute">Unmute</button>
-            <button onclick="banHammer();" id="ban">Ban</button><br>
-            <button onclick="reloadPages()" id="rpg">Reload client(s)</button><br>
+            <button onclick="mute();" id="mute" class="std_btn">Mute</button>
+            <button onclick="unmute();" class="std_btn blue_btn">Unmute</button>
+            <button onclick="banHammer();" class="std_btn warn_btn dashed_btn">Ban</button><br>
+            <button onclick="reloadPages()" class="std_btn warn_btn dashed_btn">Reload client(s)</button><br>
             <p id="Devnavtext">Send message as SYSTEM user</p>
             <input type="text" id="systemsendT" placeholder="Send message as SYSTEM">
             <button onclick="systemmessage();" id="systemsendB" class="std_btn blue_btn">Send</button><br><br>
             <input type="text" id="jsendT" placeholder="JOTD message:">
-            <button onclick="JsendMessage('jsendT');" id="jsendB">Send</button><br><br>
+            <button onclick="JsendMessage('jsendT');" class="std_btn jotd_btn">Send</button><br><br>
             <input type="text" id="SOsendT" placeholder="SONG message:">
             <button onclick="SOsendMessage('SOsendT');" id="SOsendB">Send</button><br><br>
             <button onclick='ajaxGetRequest("/chat_count", dummyajax);' class='std_btn green_btn'>Print total line count</button>
@@ -121,7 +121,7 @@
             <a href="javascript:void(0)" class="closebtnR" onclick="JOTDcloseNav()">×</a>
             <h3 id="Devnavtext">This is the menu used by JOTD staff</h3>
             <input type="text" id="jsendTJ" placeholder="JOTD message:">
-            <button onclick="JsendMessage('jsendTJ');" id="jsendBJ">Send</button><br>
+            <button onclick="JsendMessage('jsendTJ');" class='std_btn jotd_btn'>Send</button><br>
             <input type="text" id="sendimgTJ" placeholder="Paste img url here"><button onclick="sendImage('sendimgTJ');" id="sendimgB">Send</button><br> 
             <button onclick='ajaxGetRequest("/chat_count", dummyajax);' id="chatlineB">Print total line count</button>
             <button onclick="refreshUsers();" id="rfUserDB">Refresh users DB</button><br><br>
