@@ -252,6 +252,14 @@ def update_handle(Euser, Erole, Cmessage, Crole, Cuser, Auser, Apass,
 
 
 # pylint: enable=C0103, R0913
+@socketio.on('get_perms')
+def return_perms():
+    "get perms for menus"
+    Dev = os.environ["dev_key"]
+    Mod = os.environ["mod_key"]
+    Edit = os.environ["edit_key"]
+    JOTD = os.environ["JOTD_key"]
+    emit("return_perms", (Dev, Mod, Edit, JOTD), namespace="/")
 
 
 @socketio.on('get_prefs')
