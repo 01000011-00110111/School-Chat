@@ -366,15 +366,6 @@
     border-style: dashed;
 }
 
-#fsendBM {
-    background-color: #a51d2d;
-    color: #f6d32d;
-    font-size: 20px;
-    border-radius: 20px;
-    border-style: dashed;
-    border-color: #f6d32d;
-}
-
 #fsendB:hover {
     colors: #77767b;
 }
@@ -412,6 +403,16 @@
 .jotd_btn {
     background-color:  #D51956;
     color:  #000000;
+}
+
+.song_btn {
+    background-color:  #08bd71;
+    color:  #000000;
+}
+
+.black_btn {
+    background-color:  #000000;
+    color:  #ffffff;
 }
 
 #lock:hover {
@@ -457,13 +458,6 @@
     border-radius: 10px;
 }
 
-#jsendBJ {
-    background-color:  #D51956;
-    color:  #000000;
-    font-size: 20px;
-    border-radius: 20px;
-}
-
 #jsendTJ {
     background-color:  #000000;
     color:  #ffffff;
@@ -471,25 +465,11 @@
     border-radius: 10px;
 }
 
-#SOsendB {
-    background-color:  #08bd71;
-    color:  #000000;
-    font-size: 20px;
-    border-radius: 20px;
-}
-
 #SOsendT {
     background-color:  #000000;
     color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
-}
-
-#SOsendBE {
-    background-color:  #08bd71;
-    color:  #000000;
-    font-size: 20px;
-    border-radius: 20px;
 }
 
 #SOsendTE {
@@ -547,31 +527,6 @@
     font-size: 20px;
     border-radius: 10px;
 }
-
-#ChatrestB {
-    background-color:  #ff0000;
-    color:  #ffd500;
-    font-size: 20px;
-    border-radius: 20px;
-    border-style: dashed;
-    border-color: #ffd500;
-}
-
-#resetDB {
-    background-color:  #ad0000;
-    color:  #ffd500;
-    font-size: 20px;
-    border-radius: 20px;
-}
-
-/*#rfUserDB {
-    background-color:  #ff0000;
-    color:  #ffd500;
-    font-size: 20px;
-    border-radius: 20px;
-    border-style: dashed;
-    border-color: #ffd500;
-}*/
 
 #EventMSGT {
     background-color:  #000000;

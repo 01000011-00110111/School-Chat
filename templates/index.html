@@ -80,7 +80,7 @@
             <p id="Devnavtext">Enter message here and send as admin</p>
             <input type="text" id="fsendT" placeholder="Force Send message:"><br>
             <button onclick="FsendMessageA();" class="std_btn blue_btn">Force Send</button>
-            <button onclick="lock_chat();" id="lock" class="std_btn red_btn">Lock</button><button onclick="unlock_chat();" id="unlock" class="std_btn green_btn">Unlock</button><br>
+            <button onclick="lock_chat();" class="std_btn red_btn">Lock</button><button onclick="unlock_chat();" id="unlock" class="std_btn green_btn">Unlock</button><br>
             <p id="Devnavtext">Enter username in here for muting</p>
             <input type="text" id="muteuserbox" placeholder="type user to mute here:"><br>
             <button onclick="mute();" id="mute" class="std_btn">Mute</button>
@@ -93,17 +93,17 @@
             <input type="text" id="jsendT" placeholder="JOTD message:">
             <button onclick="JsendMessage('jsendT');" class="std_btn jotd_btn">Send</button><br><br>
             <input type="text" id="SOsendT" placeholder="SONG message:">
-            <button onclick="SOsendMessage('SOsendT');" id="SOsendB">Send</button><br><br>
+            <button onclick="SOsendMessage('SOsendT');" class='std_btn song_btn'>Send</button><br><br>
             <button onclick='ajaxGetRequest("/chat_count", dummyajax);' class='std_btn green_btn'>Print total line count</button>
-            <button onclick="testChatGC();" id="chatspamB" class="std_btn red_btn dashed_btn">Send 100 Empty lines</button>
-            <button onclick="getStats();" class="std_btn green_btn">Send server stats in chat</button><button onclick="reset_chat()" id="ChatrestB">Reset chat</button><br>
-            <button onclick="clearDB();" id="resetDB">Reset DB</button><button onclick="refreshUsers();" class="std_btn dashed_btn warn_btn">Refresh users DB</button><br><br>
-            <input type="text" id="sendimgT" placeholder="Paste img url here"><button onclick="sendImage('sendimgT');" id="sendimgB">Send</button><br> 
+            <button onclick="testChatGC();" class="std_btn red_btn dashed_btn">Send 100 Empty lines</button>
+            <button onclick="getStats();" class="std_btn green_btn">Send server stats in chat</button><button onclick="reset_chat()" class='std_btn dashed_btn warn_btn'>Reset chat</button><br>
+            <button onclick="clearDB();" class='std_btn red_btn'>Reset DB</button><button onclick="refreshUsers();" class="std_btn dashed_btn warn_btn">Refresh users DB</button><br><br>
+            <input type="text" id="sendimgT" placeholder="Paste img url here"><button onclick="sendImage('sendimgT');" class='std_btn black_btn'>Send</button><br> 
             <p id="Devnavtext">Send messages in bold/biger. (event)</p>
             <input type="text" id="EventMSGT" placeholder="Send message here"><button onclick="EsendMessage();" id="EventMSGB" class="std_btn blue_btn">Send</button>
             <p id="Devnavtext">Send a message as a url.</p>
             <input type="text" id="urlsendT" placeholder="paste url here"><input type="text" id="urlsendT2" placeholder="put message here"><br>
-            <button onclick="urlsend()" id="urlsendB" class="std_btn blue_btn">Send</button>
+            <button onclick="urlsend()" class="std_btn blue_btn">Send</button>
             <br>
         </div>
         <div id="EditorStuff" class="sidenavR" style="display: none;">
@@ -111,8 +111,8 @@
             <a href="javascript:void(0)" class="closebtnR" onclick="EditcloseNav()">×</a>
             <h3 id="Devnavtext">This is the menu used by style editor staff</h3>
             <input type="text" id="SOsendTE" placeholder="SONG message:">
-            <button onclick="SOsendMessage('SOsendTE');" id="SOsendBE">Send</button><br>
-            <input type="text" id="sendimgTE" placeholder="Paste img url here"><button onclick="sendImage('sendimgTE');" id="sendimgB">Send</button><br> 
+            <button onclick="SOsendMessage('SOsendTE');" class='std_btn song_btn'>Send</button><br>
+            <input type="text" id="sendimgTE" placeholder="Paste img url here"><button onclick="sendImage('sendimgTE');" class='std_btn black_btn'>Send</button><br> 
             <button onclick='ajaxGetRequest("/chat_count", dummyajax);' class="std_btn green_btn">Print total line count</button>
             <button onclick="refreshUsers();" class="std_btn dashed_btn warn_btn">Refresh users DB</button><br><br>
         </div>
@@ -122,7 +122,7 @@
             <h3 id="Devnavtext">This is the menu used by JOTD staff</h3>
             <input type="text" id="jsendTJ" placeholder="JOTD message:">
             <button onclick="JsendMessage('jsendTJ');" class='std_btn jotd_btn'>Send</button><br>
-            <input type="text" id="sendimgTJ" placeholder="Paste img url here"><button onclick="sendImage('sendimgTJ');" id="sendimgB">Send</button><br> 
+            <input type="text" id="sendimgTJ" placeholder="Paste img url here"><button onclick="sendImage('sendimgTJ');" class='std_btn black_btn'>Send</button><br> 
             <button onclick='ajaxGetRequest("/chat_count", dummyajax);' class="std_btn green_btn">Print total line count</button>
             <button onclick="refreshUsers();" class="std_btn dashed_btn warn_btn">Refresh users DB</button><br><br>
         </div>
@@ -132,15 +132,16 @@
             <h3 id="Devnavtext">This is the mod menu use for admistrating chat</h3>
             <p id="Devnavtext">Enter message here and send as mod</p>
             <input type="text" id="fsendTM" placeholder="Force Send message:"><br>
-            <button onclick="FsendMessageM();" id="fsendBM">Force Send</button><br><button onclick="lock_chat();" id="lock">Lock</button><br>
+            <button onclick="FsendMessageM();" class="std_btn blue_btn">Force Send</button><br><button onclick="lock_chat();" class="std_btn red_btn">Lock</button><br>
             <p id="Devnavtext">Enter username in here for muting</p>
-            <input type="text" id="muteuserboxM" placeholder="type user to mute here:"><button onclick="mute();" id="mute">Mute</button><button onclick="unmute();" id="unmute">Unmute</button><br>
-            <button onclick="banHammer();" id="ban">Ban</button><br>
+            <input type="text" id="muteuserboxM" placeholder="type user to mute here:"><button onclick="mute();" id="mute" class="std_btn">Mute</button>
+            <button onclick="unmute();" class="std_btn blue_btn">Unmute</button><br>
+            <button onclick="banHammer();" class="std_btn warn_btn dashed_btn">Ban</button><br>
             <p id="Devnavtext">send stats about the chat</p>
             <button onclick='ajaxGetRequest("/chat_count", dummyajax);' class="std_btn green_btn">Print total line count</button>
             <button onclick="getStats();" class="std_btn green_btn">Send server stats in chat.</button><br>
-            <button onclick="reset_chat()" id="ChatrestB">Reset chat</button><button onclick="refreshUsers();" class="std_btn dashed_btn warn_btn">Refresh users DB</button><br><br>
-            <input type="text" id="sendimgTM" placeholder="Paste img url here"><button onclick="sendImage('sendimgTM');" id="sendimgB">Send</button><br> 
+            <button onclick="reset_chat()" class='std_btn dashed_btn warn_btn'>Reset chat</button><button onclick="refreshUsers();" class="std_btn dashed_btn warn_btn">Refresh users DB</button><br><br>
+            <input type="text" id="sendimgTM" placeholder="Paste img url here"><button onclick="sendImage('sendimgTM');" class='std_btn black_btn'>Send</button><br> 
             <br>
             <br>
         </div>
