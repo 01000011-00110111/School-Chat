@@ -46,18 +46,25 @@ def create_username(user_name, user_color, role, role_color, message,
         #return
     elif user_name == "Dev EReal":
         user_name = "<b>Dev E</b>"
+        # return
     elif user_name == "cserverReal":
         user_name = "cserver"
 
     messageC = profanity.censor(message)
 
     locked = os.path.exists("backend/chat.lock")
-    user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>"
+    if user_color == "ff0000":
+        user_color_name = "<a class='rainbow-text-loop'>" + user_name + "</a>"
+    else:
+        user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>"
     if message_color == '#0000ff':
         message_color_send = "<a class='rainbow-text-loop'>" + messageC + "</a>"
     else:
         message_color_send = "<font color='" + message_color + "'>" + messageC + "</font>"
-    role_color_send = "<font color='" + role_color + "'>" + role + "</font>"
+    if role_color == "00ff00":
+        role_color_send = "<a class='rainbow-text-loop'>" + role + "</a>"
+    else:
+        role_color_send = "<font color='" + role_color + "'>" + role + "</font>"
     pings = re.findall(r'(?<=\[).+?(?=\])', message_color_send)
 
     for ping in pings:

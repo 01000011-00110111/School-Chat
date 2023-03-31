@@ -116,7 +116,6 @@ function bancline(muteUserName) {
     let ismutted = permissionElement["value"];
     if (ismutted === 'muted' || ismutted === "true") {
         if (user_name === muteUserName) {
-            document.getElementById("permission")["value"] = "banned";
             window.localStorage.setItem("permission", "banned");
             updateacc();
         }
@@ -130,15 +129,12 @@ function muteusr(muteUserName) {
     let ismutted = permissionElement["value"];
     if (ismutted === 'true') {
         if (user_name === muteUserName) {
-            document.getElementById("permission")["value"] = "muted";
             window.localStorage.setItem("permission", "muted");
             updateacc();
         }
     } else if (ismutted === 'banned') {
-        document.getElementById("permission")["value"] = "banned";
         window.localStorage.setItem("permission", "banned");
     } else {
-        document.getElementById("permission")["value"] = "true";
         window.localStorage.setItem("permission", "true");
     }
 }
