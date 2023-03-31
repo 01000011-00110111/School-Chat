@@ -351,23 +351,11 @@
 
 /* Right menu options*/
 
-#fsendT {
+.std_box {
     background-color:  #000000;
     color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
-}
-
-#fsendTM {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-    border-style: dashed;
-}
-
-#fsendB:hover {
-    colors: #77767b;
 }
 
 .dashed_btn {
@@ -415,110 +403,9 @@
     color:  #ffffff;
 }
 
-#lock:hover {
-    colors: #77767b;
-}
-
-#unlock:hover {
-    colors: #77767b;
-}
-
 #mute {
     background-color:  #77767b;
     color:  #000000;
-}
-
-#muteuserbox {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-    border-style: dotted;
-}
-
-#muteuserboxM {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-    border-style: dotted;
-}
-
-#systemsendT {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-}
-
-#jsendT {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-}
-
-#jsendTJ {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-}
-
-#SOsendT {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-}
-
-#SOsendTE {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-}
-
-#urlsendT {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-}
-
-#urlsendT2 {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-}
-
-#sendimgT {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-}
-
-#sendimgTE {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-}
-
-#sendimgTJ {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-}
-
-#sendimgTM {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
 }
 
 #EventMSGT {

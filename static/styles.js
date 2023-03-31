@@ -7,7 +7,7 @@ function setTheme(theme) {
 
 // for event theme
 // set what event is currently being used
-function whichEvent(event = "special1") {
+function whichEvent(event = "A1st") {
     // SET WHAT EVENT IS HAPPENING HERE
     // MUST BE ALL LOWERCASE TO WORK
 
@@ -32,8 +32,10 @@ function whichEvent(event = "special1") {
          valstyle();
     } else if (event === "dev") {
         setDevStyle();
-    } else if (event === "testing1") {
-        setTestingStyle1();
+    } else if (event === "A1st") {
+        A1st();
+    } else if (event === "WKfix") {
+        webkitAnimationfix();
     } else if (event === "testing2") {
         setTestingStyle2();
     } else if (event === "testing3") {
@@ -488,10 +490,10 @@ function setDevStyle() {
 
 
 
-//owens testing styles for all themes
-function setTestingStyle1() {
+
+function A1st() {
     // set theme in cookie
-    setTheme("testing1");
+    setTheme("A1st");
     // get all id tags
     let body = document.getElementById("body");
     let chat = document.getElementById("chat");
@@ -505,23 +507,59 @@ function setTestingStyle1() {
     let snav_text = sidenav.getElementsByTagName("a")
     let snav_iter = snav_text.length;
     // then set the color to what it is in the css document
-    body.style.backgroundColor = "#434270";
-    chat.style.color = "#000000";
+    body.style.webkitAnimation = "rainbowb 5s infinite";
+    chat.style.color = "#ffffff";
     message.style.color = "#000000";
-    chatbox.style.backgroundColor = "#deddda";
-    sides.style.backgroundColor = "#c0bfbc";
-    sidebar.style.backgroundColor = "#171717";
-    topleft.style.backgroundColor = "#5A5A5A";
-    topleft.style.color = "#000000";
-    send.style.backgroundColor = "#343cad";
+    chatbox.style.webkitAnimation = "rainbowb 5s infinite";
+    sides.style.webkitAnimation = "rainbowb 5s infinite";
+    sidebar.style.webkitAnimation = "rainbowb 5s infinite";
+    topleft.style.webkitAnimation = "rainbowb 5s infinite";
+    topleft.style.color = "#192080";
+    send.style.webkitAnimation = "rainbowb 5s infinite";
     send.style.color = "#ffffff";
-    sidenav.style.backgroundColor = "#729fcf";
+    sidenav.style.webkitAnimation = "rainbowb 5s infinite";
     // for loop to cycle thru links in sidebar
     for (let i = 0; i < snav_iter; i++) {
-        snav_text[i].style.color = "#313536";
+        snav_text[i].style.color = "#818181";
     }
 }
 
+
+function webkitAnimationfix() {
+    // set theme in cookie
+    setTheme("WKfix");
+    // get all id tags
+    let body = document.getElementById("body");
+    let chat = document.getElementById("chat");
+    let message = document.getElementById("message");
+    let chatbox = document.getElementById("chatbox");
+    let sides = document.getElementById("sides");
+    let topleft = document.getElementById("topleft");
+    let send = document.getElementById("send");
+    let sidebar = document.getElementById("activenav");
+    let sidenav = document.getElementsByClassName("sidenav")[0]
+    let snav_text = sidenav.getElementsByTagName("a")
+    let snav_iter = snav_text.length;
+    // then set the color to what it is in the css document
+    body.style.webkitAnimation = "";
+    chat.style.color = "#ffffff";
+    message.style.color = "#000000";
+    chatbox.style.webkitAnimation = "";
+    sides.style.webkitAnimation = "";
+    sidebar.style.webkitAnimation = "";
+    topleft.style.webkitAnimation = "";
+    topleft.style.color = "#192080";
+    send.style.webkitAnimation = "";
+    send.style.color = "#ffffff";
+    sidenav.style.webkitAnimation = "";
+    // for loop to cycle thru links in sidebar
+    for (let i = 0; i < snav_iter; i++) {
+        snav_text[i].style.color = "#818181";
+    }
+}
+
+
+//owens testing styles for all themes
 function setTestingStyle2() {
     // set theme in cookie
     setTheme("testing2");
