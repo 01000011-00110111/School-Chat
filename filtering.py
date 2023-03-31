@@ -53,7 +53,10 @@ def create_username(user_name, user_color, role, role_color, message,
 
     locked = os.path.exists("backend/chat.lock")
     user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>"
-    message_color_send = "<font color='" + message_color + "'>" + messageC + "</font>"
+    if message_color == '#0000ff':
+        message_color_send = "<p class='rainbow-text-loop'>" + messageC + "</p>"
+    else:
+        message_color_send = "<font color='" + message_color + "'>" + messageC + "</font>"
     role_color_send = "<font color='" + role_color + "'>" + role + "</font>"
     pings = re.findall(r'(?<=\[).+?(?=\])', message_color_send)
 
