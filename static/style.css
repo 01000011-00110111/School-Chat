@@ -733,8 +733,8 @@
 }
 
 @-webkit-keyframes Dev_colors {
-  0%{color: orange;}  
+  0%{color: #f47106;}  
   25%{color: blue;} 
   50%{color: green;}
-  100%{color: orange;}
+  100%{color: #f47106;}
 }
