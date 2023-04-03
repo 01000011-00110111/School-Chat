@@ -12,6 +12,10 @@ function systemmessage() {
     socket.emit('admin_message', toSend);
 }
 
+function reloadiframe() {
+    parent.frame1.location.href="http://dev.school-chat.us/chat"
+}
+
 function reloadPages() {
     let muteuserElement = document.getElementById("muteuserbox");
     let mute_user_name = muteuserElement["value"];
