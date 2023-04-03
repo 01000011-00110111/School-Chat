@@ -13,7 +13,7 @@ function systemmessage() {
 }
 
 function reloadiframe() {
-    parent.frame1.location.href="http://dev.school-chat.us/chat"
+    document.getElementById('dev_chat_iframe').src += ''; 
 }
 
 function reloadPages() {
