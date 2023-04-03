@@ -735,6 +735,6 @@
 @-webkit-keyframes Dev_colors {
   0%{color: #f47106;}  
   25%{color: blue;} 
-  50%{color: green;}
+  50%{color: #00FF00;}
   100%{color: #f47106;}
 }

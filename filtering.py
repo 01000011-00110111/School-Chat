@@ -27,7 +27,6 @@ profanity.add_censor_words([
     'dumba',
     'dam',
     'boobie',
-    '',
 ])  # add your custom words here (will be in a separate file someday)
 
 
@@ -61,7 +60,7 @@ def create_username(user_name, user_color, role, role_color, message,
         message_color_send = "<a class='Dev_colors-loop'>" + messageC + "</a>"
     else:
         message_color_send = "<font color='" + message_color + "'>" + messageC + "</font>"
-    if role_color == "#00ff00":
+    if role == "#00FF00":
         role_color_send = "<a class='Dev_colors-loop'>" + role + "</a>"
     else:
         role_color_send = "<font color='" + role_color + "'>" + role + "</font>"
