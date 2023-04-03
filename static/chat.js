@@ -506,6 +506,16 @@ function devcloseNav() {
     document.getElementById("DevStuff").style.paddingLeft = "0";
 }
 
+function opendevchat() {
+    document.getElementById("dev_chat").style.width = "1250px";
+    document.getElementById("dev_chat").style.paddingLeft = "5%";
+}
+
+function closedevchat() {
+    document.getElementById("dev_chat").style.width = "0";
+    document.getElementById("dev_chat").style.paddingLeft = "0";
+}
+
 function EditopenNav() {
     document.getElementById("EditorStuff").style.width = "550px";
     document.getElementById("EditorStuff").style.paddingLeft = "5%";

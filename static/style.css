@@ -312,6 +312,20 @@
     scrollbar-width: none;
 }
 
+.sidenavRC {
+    height: 80%;
+    right: 12%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    background-color: #241f31;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    scrollbar-width: none;
+}
+
 .sidenavR a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
@@ -413,6 +427,11 @@
     color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
+}
+
+#dev_chat {
+    font-size: 20px;
+    background-color: white;
 }
 
 /* The message text color dropdown button */

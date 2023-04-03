@@ -137,6 +137,7 @@ function SpecialMenu(Dev, Mod, Edit, JOTD) {
         document.body.appendChild(script);
         document.getElementById("DevStuff").style.display = "block";
         document.getElementById("toprightD").style.display = "block";
+        document.getElementById("toprightD").style.display = "block";
     } else if (SPermission === Mod) {
         document.title = "Class Chat Mod";
         const script = document.createElement('script');

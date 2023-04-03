@@ -21,6 +21,7 @@ profanity.load_censor_words(whitelist_words=[
     'stroke',
     'suck',
     'hebe',
+    'gay',
 ])
 profanity.add_censor_words([
     'sh!t',
