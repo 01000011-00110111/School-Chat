@@ -97,38 +97,36 @@ socket.on("online", (db) => {
     onlineDiv["innerHTML"] = final_online;
 });
 
-socket.on("ban", (muteUserName) => {
-    bancline(muteUserName);
+socket.on("ban", (mute_user_name) => {
+    bancline(mute_user_name);
 });
 
-socket.on("mute", (muteUserName) => {
-    muteusr(muteUserName);
+socket.on("mute", (mute_user_name) => {
+    muteusr(mute_user_name);
 });
 
-socket.on("unmute", (muteUserName) => {
-    unmuteusr(muteUserName);
+socket.on("unmute", (mute_user_name) => {
+    unmuteusr(mute_user_name);
 });
 
-function bancline(muteUserName) {
-    let permissionElement = document.getElementById("permission");
+function bancline(mute_user_name) {
+    let ismutted = window.localStorage.getItem("permission")
     let userElement = document.getElementById("username");
     let user_name = userElement["value"];
-    let ismutted = permissionElement["value"];
     if (ismutted === 'muted' || ismutted === "true") {
-        if (user_name === muteUserName) {
+        if (user_name === mute_user_name) {
             window.localStorage.setItem("permission", "banned");
             updateacc();
         }
     }
 }
 
-function muteusr(muteUserName) {
-    let permissionElement = document.getElementById("permission");
+function muteusr(mute_user_name) {
+    let ismutted =  window.localStorage.getItem("permission")
     let userElement = document.getElementById("username");
     let user_name = userElement["value"];
-    let ismutted = permissionElement["value"];
     if (ismutted === 'true') {
-        if (user_name === muteUserName) {
+        if (user_name === mute_user_name) {
             window.localStorage.setItem("permission", "muted");
             updateacc();
         }
@@ -139,22 +137,18 @@ function muteusr(muteUserName) {
     }
 }
 
-function unmuteusr(muteUserName) {
-    let permissionElement = document.getElementById("permission");
+function unmuteusr(mute_user_name) {
+    let ismutted = window.localStorage.getItem("permission")
     let userElement = document.getElementById("username");
     let user_name = userElement["value"];
-    let ismutted = permissionElement["value"];
     if (ismutted === 'muted') {
-        if (user_name === muteUserName) {
-            document.getElementById("permission")["value"] = "true";
+        if (user_name === mute_user_name) {
             window.localStorage.setItem("permission", "true");
             updateacc();
         }
     } else if (ismutted === 'banned') {
-        document.getElementById("permission")["value"] = "banned";
         window.localStorage.setItem("permission", "banned");
     } else {
-        document.getElementById("permission")["value"] = "true";
         window.localStorage.setItem("permission", "true");
     }
 }
@@ -230,6 +224,7 @@ function yesTOS() {
 
 // stuff to run at startup and what happens when you do agree to the rules
 function runStartup() {
+    document.getElementById("dev_chat_iframe").src = "";
     // load previous chat messages
     loadChat();
     // add the username currently in a cookie unless there is none
@@ -509,11 +504,13 @@ function devcloseNav() {
 function opendevchat() {
     document.getElementById("dev_chat").style.width = "1250px";
     document.getElementById("dev_chat").style.paddingLeft = "5%";
+    document.getElementById("dev_chat_iframe").src = "https://dev.school-chat.us/chat";
 }
 
 function closedevchat() {
     document.getElementById("dev_chat").style.width = "0";
     document.getElementById("dev_chat").style.paddingLeft = "0";
+    document.getElementById("dev_chat_iframe").src = "";
 }
 
 function EditopenNav() {

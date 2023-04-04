@@ -42,8 +42,8 @@ def create_username(user_name, user_color, role, role_color, message,
         return None
 
     if user_name == '':
-        user_name = "Anonymous"
-        #return
+        #user_name = "Anonymous"
+        return
     elif user_name == "Dev EReal":
         user_name = "<b>Dev E</b>"
         # return
@@ -61,7 +61,7 @@ def create_username(user_name, user_color, role, role_color, message,
         message_color_send = "<a class='Dev_colors-loop'>" + messageC + "</a>"
     else:
         message_color_send = "<font color='" + message_color + "'>" + messageC + "</font>"
-    if role == "#00FF00":
+    if role == "#00ff00":
         role_color_send = "<a class='Dev_colors-loop'>" + role + "</a>"
     else:
         role_color_send = "<font color='" + role_color + "'>" + role + "</font>"
