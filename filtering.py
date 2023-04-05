@@ -42,8 +42,8 @@ def create_username(user_name, user_color, role, role_color, message,
         return None
 
     if user_name == '':
-        #user_name = "Anonymous"
-        return
+        user_name = "Anonymous"
+        #return
     elif user_name == "Dev EReal":
         user_name = "<b>Dev E</b>"
         # return
@@ -66,11 +66,21 @@ def create_username(user_name, user_color, role, role_color, message,
     else:
         role_color_send = "<font color='" + role_color + "'>" + role + "</font>"
     pings = re.findall(r'(?<=\[).+?(?=\])', message_color_send)
+    cmds = re.findall(r'(?<=\$sudo ).+?(?=\</font>)', message_color_send)
 
     for ping in pings:
         emit("ping", {
             "who": ping,
             "from": user_name
+        },
+             namespace="/",
+             broadcast=True)
+
+    for cmd in cmds:
+        emit("cmd", {
+            "cmd": cmd,
+            # "from": user_name,
+            # "who": user_name
         },
              namespace="/",
              broadcast=True)

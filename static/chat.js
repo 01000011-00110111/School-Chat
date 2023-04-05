@@ -91,11 +91,15 @@ socket.on("online", (db) => {
         } else if (onlineUser === "Dev EReal") {
             onlineUser = "C7";
         }
-        online = online + onlineUser + newline;
+        online = online + '<a onclick="openprivchat();">' + onlineUser + '</a>' + newline;
     }
     let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online
     onlineDiv["innerHTML"] = final_online;
 });
+
+function openprivchat() {
+// call this in online for private messaging
+}
 
 socket.on("ban", (mute_user_name) => {
     bancline(mute_user_name);
@@ -318,10 +322,14 @@ function wisperMessage() {
         user = "Dev E";
     }
 
+    // if (sender === user) {
+        // return;
+    // }
+
     let sender_f = ""
     if (sender === "cserver") {
         sender_f = "cserverReal";
-    } else if (sender === "Dev E") {
+    } else if (sender === "Dev E" || sender === "C7") {
         sender_f = "Dev EReal";
     } else if (sender === "Owen") {
         sender_f = "¿Owen?";
