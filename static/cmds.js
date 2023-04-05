@@ -10,6 +10,6 @@ socket.on("cmd", ({cmd}) => {
     } else if (cmd === 'stats') {
         getStats();
     } else if (cmd === 'linect') {
-        
+        ajaxGetRequest("/chat_count", dummyajax);
     }
 });
