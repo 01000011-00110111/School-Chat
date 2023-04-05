@@ -17,6 +17,7 @@ eventlet = "^0.33.2"
 pymongo = "^4.3.3"
 better-profanity = "^0.7.0"
 Flask = "2.2.3"
+emit = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 debugpy = "^1.6.2"
