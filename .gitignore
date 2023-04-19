@@ -18,3 +18,5 @@ venv/*
 node_modules/*
 .upm/*
 .config/*
+replit.nix
+.replit
