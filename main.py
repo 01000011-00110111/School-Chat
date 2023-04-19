@@ -11,6 +11,9 @@ from flask import request
 from flask.logging import default_handler
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
+# because python is weird
+client = pymongo.MongoClient(os.environ["acmongo_key"])
+dbm = client.Chat
 import chat
 import cmds
 import filtering
@@ -26,10 +29,6 @@ root = logging.getLogger()
 root.addHandler(default_handler)
 # make this load from replit secrets later
 socketio = SocketIO(app, cors_allowed_origins="*")
-
-client = pymongo.MongoClient(os.environ["acmongo_key"])
-# needs to be dbm, else it conflicts with replit db, will replace replit db with mongo later
-dbm = client.Chat
 
 # clear db, so that old users don't stay
 dbm.Online.delete_many({})

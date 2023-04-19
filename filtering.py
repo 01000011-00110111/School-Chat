@@ -6,6 +6,7 @@ from typing import Union
 from better_profanity import profanity
 from flask_socketio import emit
 from chat import force_message
+from main import dbm
 
 # get our custom whitelist words (that shouldnot be banned in the first place)
 profanity.load_censor_words(whitelist_words=[
@@ -71,13 +72,15 @@ def create_username(user_name, user_color, role, role_color, message,
              broadcast=True)
 
     for cmd in cmds:
-        emit("cmd", {
-            "cmd": cmd,
-            # "from": user_name,
-            # "who": user_name
-        },
-             namespace="/",
-             broadcast=True)
+        emit(
+            "cmd",
+            {
+                "cmd": cmd,
+                # "from": user_name,
+                # "who": user_name
+            },
+            namespace="/",
+            broadcast=True)
 
     date_str = datetime.now(timezone(
         timedelta(hours=-4))).strftime("[%a %I:%M %p] ")
