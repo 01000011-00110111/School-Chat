@@ -51,7 +51,9 @@ socket.on("ping", ({ who, from }) => {
     if ((nonotif === "true") && (Notification.permission === "granted")) {
         if (user_name === who) {
             new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
-        } else if (who === "Dev E" && user_name === "Dev EReal") {
+        }else if (who === user_name) {
+            return;
+        }else if (who === "Dev E" && user_name === "Dev EReal") {
             new Notification("You have been pinged by:", { body: from , icon: "/static/troll-face.jpeg"});
         } else if (who === "cserver" && user_name === "cserverReal") {
             new Notification("You have been pinged by:", { body: from, icon: "/static/troll-face.jpeg"});
