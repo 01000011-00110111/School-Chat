@@ -1,3 +1,12 @@
 {
-  "files": {}
+  "files": {
+    "static/chat.js": [
+      {
+        "id": "d93e428a-47bc-4e20-ba1a-6ca8bf388b46",
+        "line": 115,
+        "version": 12439,
+        "index": 4074
+      }
+    ]
+  }
 }

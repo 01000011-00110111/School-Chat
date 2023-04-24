@@ -83,6 +83,7 @@ function enteraccount() {
 
 function updateacc() {
     socket.emit('get_prefs', document.getElementById("user")["value"]);
+    socket.emit('get_perms');
 }
 
 

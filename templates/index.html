@@ -36,7 +36,13 @@
             </div>
             <div id="logoutStuff" style="display: none;">
                 <p>Wisper to another user</p>
-                <input type="text" id="private_user" name="wisper_user" class='std_box' placeholder="Wisper to:" style="width: 100%;"><br>
+                <!-- <input type="text" id="private_user" name="wisper_user" class='std_box' placeholder="Wisper to:" style="width: 100%;"><br> -->
+                <div class="dropdown">
+                    <button onclick="Onlinewprls()" class="onelinelsbtn">No user selected</button>
+                        <div id="onlinels" class="droptheme dropdown-content">
+
+                        </div>
+                </div> 
                 <input type="text" id="private_msg" name="wisper_msg" class='std_box' placeholder="Message" style="width: 100%;"><br>
                 <button id="wisper_send" onclick="wisperMessage();">Send</button>
                 <br>
@@ -62,7 +68,7 @@
                 <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
                 <p id="user_colorTXT">Message: </p>
                 <input type="color" value="#ffffff" id="message_color" name="color choser">
-                <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
+                <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br><input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br>
                 <button id="Arefresh" onclick="updateacc()">Refresh</button>
                 <br>
                 <br>

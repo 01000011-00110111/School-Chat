@@ -33,7 +33,7 @@ profanity.add_censor_words([
 
 
 def create_username(user_name, user_color, role, role_color, message,
-                    message_color, profile_img) -> Union[str, bool]:
+                    message_color, profile_picture) -> Union[str, bool]:
     """See if an admin as sending the message, otherwise use normal procedure"""
     # this will be redone so I don't need to use bs4 except for html escaping (maybe)
     if user_name in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[URL]',
@@ -42,31 +42,40 @@ def create_username(user_name, user_color, role, role_color, message,
                      "  ", "   ", "Dev E", "cserver"):
         return None
 
+    # user = dbm.Accounts.find_one({'displayName': user_name})
+    # if user['permission'] == "muted" or user['permission'] == "banned":
+        # return
+
     if user_name == '':
         user_name = "Anonymous"
         #return
     elif user_name == "Dev EReal":
-        user_name = "<b>Dev E</b>"
+        user_name = "Dev E"
         # return
     elif user_name == "cserverReal":
         user_name = "cserver"
 
     messageC = profanity.censor(message)
+    rolec = profanity.censor(role)
 
     locked = os.path.exists("backend/chat.lock")
+    if profile_picture == "":
+        profile_picture = 'static/favicon.ico'
+    profile_img = "<img class='pfp' src='" + profile_picture + "'></img>";
     user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>"
     message_color_send = "<font color='" + message_color + "'>" + messageC + "</font>"
     if role_color == "#00ff00":
-        role_color_send = "<font class='Dev_colors-loop'>" + role + "</font>"
+        role_color_send = "<font class='Dev_colors-loop'>" + rolec + "</font>"
     else:
-        role_color_send = "<font color='" + role_color + "'>" + role + "</font>"
+        role_color_send = "<font color='" + role_color + "'>" + rolec + "</font>"
     pings = re.findall(r'(?<=\[).+?(?=\])', message_color_send)
     cmds = re.findall(r'(?<=\$sudo ).+?(?=\</font>)', message_color_send)
 
     for ping in pings:
         emit("ping", {
             "who": ping,
-            "from": user_name
+            "from": user_name,
+            "pfp": profile_img
         },
              namespace="/",
              broadcast=True)
@@ -86,9 +95,9 @@ def create_username(user_name, user_color, role, role_color, message,
         timedelta(hours=-4))).strftime("[%a %I:%M %p] ")
 
     if role == "":
-        msg = date_str + user_color_name + " - " + message_color_send
+        msg = date_str + profile_img + " " + user_color_name + " - " + message_color_send
     else:
-        msg = date_str + user_color_name + " (" + role_color_send + ")" + " - " + message_color_send
+        msg = date_str + profile_img + " " + user_color_name + " (" + role_color_send + ")" + " - " + message_color_send
     if user_name in ("Dev E", "cserver"):
         force_message(msg)
         emit("message_chat", msg, broadcast=True, namespace="/")

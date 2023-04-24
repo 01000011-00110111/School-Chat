@@ -7,7 +7,7 @@ function setTheme(theme) {
 
 // for event theme
 // set what event is currently being used
-function whichEvent(event = "A1st") {
+function whichEvent(event = "dark") {
     // SET WHAT EVENT IS HAPPENING HERE
     // MUST BE ALL LOWERCASE TO WORK
 

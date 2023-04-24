@@ -4,6 +4,7 @@ import logging
 import json
 import hashlib
 import cmd
+import time
 from multiprocessing import Process
 import flask
 import pymongo
@@ -33,6 +34,13 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # clear db, so that old users don't stay
 dbm.Online.delete_many({})
 
+# def infinite():
+#     while False:
+#         # time.sleep(60)
+#         dbm.Online.delete_many({})
+#         emit("force_username", "", broadcast=True, namespace="/")
+
+# infinite()
 
 class Console(cmd.Cmd):
     """Console commands parent class."""
@@ -84,6 +92,12 @@ def changoelog_page() -> ResponseReturnValue:
     """Serve the changelog, so old links don't break (after making the main page be the changelog)."""
     html_file = flask.render_template('update-log.html')
     return html_file
+
+
+@app.route("/debugmenu")
+def debuging_page() -> ResponseReturnValue:
+    """Host the jslint page for viewing (manually added)"""
+    return flask.render_template('DPM.html')
 
 
 @app.route('/devsignup')
@@ -259,6 +273,7 @@ def return_perms():
     Mod = os.environ["mod_key"]
     Edit = os.environ["edit_key"]
     JOTD = os.environ["JOTD_key"]
+    time.sleep(1)
     emit("return_perms", (Dev, Mod, Edit, JOTD), namespace="/")
 
 

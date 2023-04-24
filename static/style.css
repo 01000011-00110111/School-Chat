@@ -9,6 +9,10 @@
   color: #dd7016;
 }
 
+.debugpage {
+    /* margin-left: 25% /* this can change if you don't like it */
+}
+
 #main {
 	display: flex;
 	width: 100%;
@@ -28,11 +32,20 @@
   background-color: red;
 }
 
-/*#pfp {
-    max-height:25px; 
-    max-width:25px; 
-    overflow: hidden;
-}*/
+#pfpbtn {
+    font-size: 22px;
+    background-color: red;
+}
+
+.pfp {
+    margin: -13px 0;
+    height:35px;
+    width:35px;
+    border-radius:100px;
+    overflow: hidden
+    dragable: false;
+    border: 2px solid #404040;
+}
 
 #in-msg {
 	width: 100%;
@@ -46,7 +59,7 @@
 	padding-left: 5%;
     padding-right: 12%;
     margin-left: 1.5%;
-    line-height: 32px;
+    line-height: 50px;
     padding-bottom: 9%;
     padding-top: 9%;
     word-wrap: break-word;
@@ -118,6 +131,15 @@
 
 #topleft {
     position: fixed;
+    width: 0%;
+    padding-top: .5%;
+    /*color: #c2bcbc;*/
+    font-size:40px;
+    cursor:pointer
+}
+
+#topleftDB {
+    position: absolute;
     width: 0%;
     padding-top: .5%;
     /*color: #c2bcbc;*/
@@ -264,6 +286,24 @@
     font-size: 16px;
     border: none;
     cursor: pointer;
+}
+
+.onelinelsbtn {
+    background-color: #241f31;
+    color: #9a9996;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.droptheme {
+    display: none;
+    position: absolute;
+    background-color: #323538;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
 }
 
 /* Dropdown button on hover & focus */
@@ -500,6 +540,7 @@
     padding: 20px;
     background: #fff;
     border-radius: 5px;
+    line-height: 28px;
     width: 30%;
     position: relative;
 }
@@ -756,8 +797,8 @@
 }
 
 @-webkit-keyframes Dev_colors {
-  0%{color: #f47106;}, 
-  25%{color: #0000ff;},
-  50%{color: #00FF00;},
+  0%{color: #f47106;} 
+  25%{color: blue;}
+  50%{color: #00FF00;}
   100%{color: #f47106;}
 }

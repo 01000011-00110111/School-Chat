@@ -1,27 +1,6 @@
 // define socketio connection
 const socket = io();
 
-
-// add messages as they are recieved
-socket.on("message_chat", (message) => {
-    renderChat(message);
-});
-
-socket.on("reload_pages", (muteUserName) => {
-    // something something anoy everyone
-    let userElement = document.getElementById("username");
-    let user_name = userElement["value"];
-
-    if (muteUserName === user_name) {
-        location.reload();
-        // youfoundanotheregg();
-    } else if (muteUserName === "everyone") {
-        location.reload();
-        // youfoundanotheregg();
-    }
-});
-
-
 // new notification thing
 if (Notification.permission === "default") {
     Notification.requestPermission();
@@ -39,22 +18,6 @@ function NotificationsB() {
       document.cookie = "Notifications=true; path=/";
       notifB.value = "Disable notifications";
       notifB.style.backgroundColor = "red";
-
-  }
-}
-
-
-function ProfilesB() {
-    let pfpbtn = document.getElementById("pfpbtn");
-
-  if (Notifications === "true") {
-      document.getElementById("pfp").style.display = "none";
-      pfpbtn.value = "Enable notifications";
-      pfpbtn.style.backgroundColor = "green";
-  } else {
-      document.getElementById("pfp").style.display = "block";
-      pfpbtn.value = "Disable notifications";
-      pfpbtn.style.backgroundColor = "red";
 
   }
 }
@@ -81,23 +44,13 @@ socket.on("ping", ({ who, from, pfp }) => {
     }
 });
 
-socket.on("reset_chat", (who) => {
-    let chatDiv = document.getElementById("chat");
-    if (who === "admin") {
-        chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font><br>";
-    } else if (who === "auto") {
-        chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font><br>";
-    }
-});
-
 socket.on("force_username", (statement) => {
-    socket.emit("username", window.localStorage.getItem("username"));
+    socket.emit("username", "Debug");
 });
 
 socket.on("online", (db) => {
-    let newline = "<br>";
+    let newline = "<br>"
     let online = "";
-    let onlinels = "";
     let onlineDiv = document.getElementById("online_users");
     let online_count = db.length
     for (onlineUser of db) {
@@ -129,7 +82,7 @@ socket.on("online", (db) => {
     let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online
     onlineDiv["innerHTML"] = final_online;
     // wspronlinels(onlineUser);
-}); // this hurts my eyes
+});
 
 function openprivchat() {
 // call this in online for private messaging
@@ -625,7 +578,7 @@ window.onclick = function(event) {
 
 
 function Onlinewprls() {
-  document.getElementById("onlinels").classList.toggle("show");
+  document.getElementById("wisper_send").classList.toggle("show");
 }
 
 
