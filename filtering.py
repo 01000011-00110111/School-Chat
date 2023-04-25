@@ -23,6 +23,7 @@ profanity.load_censor_words(whitelist_words=[
     'suck',
     'hebe',
     'gay',
+    'screw',
 ])
 profanity.add_censor_words([
     'sh!t',
@@ -61,7 +62,7 @@ def create_username(user_name, user_color, role, role_color, message,
     locked = os.path.exists("backend/chat.lock")
     if profile_picture == "":
         profile_picture = 'static/favicon.ico'
-    profile_img = "<img class='pfp' src='" + profile_picture + "'></img>";
+    profile_img = "<img id='pfp' src='" + profile_picture + "'></img>";
     user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>"
     message_color_send = "<font color='" + message_color + "'>" + messageC + "</font>"
     if role_color == "#00ff00":

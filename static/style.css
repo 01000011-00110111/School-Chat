@@ -37,10 +37,10 @@
     background-color: red;
 }
 
-.pfp {
+#pfp {
     margin: -13px 0;
-    height:35px;
-    width:35px;
+    height:30px;
+    width:30px;
     border-radius:100px;
     overflow: hidden
     dragable: false;
@@ -59,7 +59,7 @@
 	padding-left: 5%;
     padding-right: 12%;
     margin-left: 1.5%;
-    line-height: 50px;
+    line-height: 40px;
     padding-bottom: 9%;
     padding-top: 9%;
     word-wrap: break-word;

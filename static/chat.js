@@ -44,20 +44,22 @@ function NotificationsB() {
 }
 
 
-function ProfilesB() {
-    let pfpbtn = document.getElementById("pfpbtn");
+// function ProfilesB() {
+//     let Profileactive = window.localStorage.getItem("Profileactive")
+//     let Pbutton = document.getElementById("pfpbtn");
 
-  if (Notifications === "true") {
-      document.getElementById("pfp").style.display = "none";
-      pfpbtn.value = "Enable notifications";
-      pfpbtn.style.backgroundColor = "green";
-  } else {
-      document.getElementById("pfp").style.display = "block";
-      pfpbtn.value = "Disable notifications";
-      pfpbtn.style.backgroundColor = "red";
-
-  }
-}
+//   if (Profileactive === "false") {
+//       document.getElementById("pfp").style.display = "none";
+//       document.getElementById("chat").style.lineheight = "32px";
+//       Pbutton.value = "Enable profile pictures";
+//       Pbutton.style.backgroundColor = "green";
+//   } else {
+//       document.getElementById("pfp").style.display = "block";
+//       document.getElementById("chat").style.lineheight = "40";
+//       Pbutton.value = "Disable profile pictures";
+//       Pbutton.style.backgroundColor = "red";
+//   }
+// }
 
 socket.on("ping", ({ who, from, pfp }) => {
     let userElement = document.getElementById("username");
@@ -72,8 +74,6 @@ socket.on("ping", ({ who, from, pfp }) => {
         }else if (who === "Dev E" && user_name === "Dev EReal") {
             new Notification("You have been pinged by:", { body: from , icon: '/static/favicon.ico'});
         } else if (who === "cserver" && user_name === "cserverReal") {
-            new Notification("You have been pinged by:", { body: from, icon: '/static/favicon.ico'});
-        } else if ((who === "Owen" || who === "owen") && user_name === "¿Owen?") {
             new Notification("You have been pinged by:", { body: from, icon: '/static/favicon.ico'});
         } else if (who === "everyone") {
             new Notification("You have been pinged by:", { body: from, icon: '/static/favicon.ico'});
@@ -130,6 +130,11 @@ socket.on("online", (db) => {
     onlineDiv["innerHTML"] = final_online;
     // wspronlinels(onlineUser);
 }); // this hurts my eyes
+
+function showuserwpr(username) {
+    let list = document.getElementById("");
+      list.value = username;
+}
 
 function openprivchat() {
 // call this in online for private messaging
@@ -214,6 +219,7 @@ function getCookie(name) {
 
 // the startup for cookies after the first time
 function runCheckStartup() {
+    window.localStorage.setItem("Profileactive", "true")
     document.getElementById("mySidenav").style.backgroundColor = "#111";
   // document.getElementById("accountStuff").style.visibility = "hidden";
     let theme = whichEvent(window.localStorage.getItem("theme"));
@@ -366,8 +372,6 @@ function wisperMessage() {
         sender_f = "cserverReal";
     } else if (sender === "Dev E" || sender === "C7") {
         sender_f = "Dev EReal";
-    } else if (sender === "Owen") {
-        sender_f = "¿Owen?";
     } else {
         sender_f = sender;
     }

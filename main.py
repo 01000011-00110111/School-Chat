@@ -273,7 +273,7 @@ def return_perms():
     Mod = os.environ["mod_key"]
     Edit = os.environ["edit_key"]
     JOTD = os.environ["JOTD_key"]
-    time.sleep(1)
+    time.sleep(.000001)
     emit("return_perms", (Dev, Mod, Edit, JOTD), namespace="/")
 
 
