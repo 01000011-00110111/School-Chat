@@ -36,13 +36,12 @@
             </div>
             <div id="logoutStuff" style="display: none;">
                 <p>Wisper to another user</p>
-                <input type="text" id="private_user" name="wisper_user" class='std_box' placeholder="Wisper to:" style="width: 100%;"><br>
-                <!--<div class="dropdown">
-                    <button onclick="Onlinewprls()" class="onelinelsbtn">No user selected</button>
+                <div class="dropdown">
+                    <input type="button" onclick="Onlinewprls()" id="onelinelsbtn" class="onelinelsbtn" value="No user selected">
                         <div id="onlinels" class="droptheme dropdown-content">
 
                         </div>
-                </div> -->
+                </div>
                 <input type="text" id="private_msg" name="wisper_msg" class='std_box' placeholder="Message" style="width: 100%;"><br>
                 <button id="wisper_send" onclick="wisperMessage();">Send</button>
                 <br>
@@ -51,7 +50,7 @@
                 <br>
                 <br>
                 <input type="text" id="role" name="role" placeholder="role" hidden><input type="text" id="username" name="role" placeholder="role" hidden><br>
-                <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture" class='std_box' style="width: 100%;"><br>
+                <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture" class='std_box' style="width: 100%;" hidden><br>
                 <div class="colorDropdown">
                     <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
                     <div id="myDropdown" class="dropdown-content">
@@ -68,7 +67,7 @@
                 <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
                 <p id="user_colorTXT">Message: </p>
                 <input type="color" value="#ffffff" id="message_color" name="color choser">
-                <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br><!--<input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br>-->
+                <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br><!--<input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br> -->
                 <button id="Arefresh" onclick="updateacc()">Refresh</button>
                 <br>
                 <br>
@@ -183,6 +182,7 @@
         </div><br>
         <div id="activenav">
             <br><br>
+            <img id="pfplgo"></img><br>
             <div id="online_users">
                 
             </div>

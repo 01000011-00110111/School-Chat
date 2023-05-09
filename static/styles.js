@@ -5,6 +5,30 @@ function setTheme(theme) {
     window.localStorage.setItem("theme", theme);
 }
 
+function ProfilesB() {
+    let Profileactive = window.localStorage.getItem("Profileactive");
+    let Pbutton = document.getElementById("pfpbtn");
+    if (Profileactive === "true") {
+        let pfp = document.getElementsByClassName("pfp")[0];
+        for (let i = 0; i < pfp.length; i++) {
+            pfp[i].style.display = "none";
+        }
+        document.getElementById("chat").style.lineheight = "32";
+        window.localStorage.setItem("Profileactive", "false");
+        Pbutton.value = "Enable profile pictures";
+        Pbutton.style.backgroundColor = "green";
+    } else {
+        let pfp = document.getElementsByClassName("pfp")[0];
+        for (let i = 0; i < pfp.length; i++) {
+            pfp[i].style.display = "";
+        }
+        document.getElementById("chat").style.lineheight = "40";
+        window.localStorage.setItem("Profileactive", "true");
+        Pbutton.value = "Disable profile pictures";
+        Pbutton.style.backgroundColor = "red";
+    }
+}
+
 // for event theme
 // set what event is currently being used
 function whichEvent(event = "dark") {
@@ -81,7 +105,6 @@ function setDarkStyle() {
     }
 }
 
-// sets theme to light mode for those people who are wierd
 function setLightStyle() {
     // set theme in cookie    
     setTheme("light");

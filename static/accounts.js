@@ -27,10 +27,8 @@ socket.on("login_att", (state) => {
 
 socket.on("return_prefs", (Obj) => {
     if ('failed' in Obj) {
-        // do something here to tell the user it failed, maybe retry?
-        return;
+        failedlogin();
     }
-    // set values of localstorage vars here (and the other ones aswell)
     window.localStorage.setItem("username", Obj["displayName"]);
     window.localStorage.setItem("role", Obj["role"]);
     window.localStorage.setItem("role_color", Obj["roleColor"]);
@@ -43,10 +41,9 @@ socket.on("return_prefs", (Obj) => {
     document.getElementById("role")["value"] = Obj["role"];
     document.getElementById("user_color")["value"] = Obj["userColor"];
     document.getElementById("message_color")["value"] = Obj["messageColor"];
+    document.getElementById("profile_picture")["value"] = Obj["profile"];
     window.sessionStorage.setItem("SPermission", Obj["SPermission"]);
-    // set online user
     socket.emit("username_msg", Obj["displayName"]);
-    // call the finction to change themes
     whichEvent(Obj["theme"]);
 });
 
@@ -72,8 +69,6 @@ function failedlogin() {
     }
 }
 
-// ea sports its in the game
-//
 function enteraccount() {
     document.getElementById("loginStuff").style.display = "none";
     document.getElementById("logoutStuff").style.display = "block";
@@ -104,27 +99,26 @@ function logout() {
     document.getElementById("user_color")["value"] = "#ffffff";
     document.getElementById("message_color")["value"] = "#ffffff";
     document.getElementById("username")["value"] = "";
+    document.getElementById("profile_picture")["value"] = "";
     whichEvent("dark");
   
     usernmElement["value"] = "";
     passwdElement["value"] = "";
     roleElement["value"] = "";
     socket.emit("username_msg", "");
-    // needed to ensure the menu disappears after logout
     document.getElementById("toprightE").style.display = "none";
     document.getElementById("toprightD").style.display = "none";
     document.getElementById("toprightM").style.display = "none";
     document.getElementById("toprightJ").style.display = "none";
     document.getElementById("DevStuff").style.display = "none";
     document.getElementById("ModStuff").style.display = "none";
-    document.getElementById("EditorStuff").style.display = "none";// need to hide the menu's
+    document.getElementById("EditorStuff").style.display = "none";
     document.getElementById("JOTDStuff").style.display = "none";
     devcloseNav();
     EditcloseNav();
     JOTDcloseNav();
     ModcloseNav();
     document.title = "OCD wleb Potato man Skill Issue!!!1!";
-    // location.reload();
 }
 
 function SpecialMenu(Dev, Mod, Edit, JOTD) {

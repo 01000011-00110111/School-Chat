@@ -1,7 +1,5 @@
-// this is needed, because we have to create the socket here, but not load chat.js (where the socket would be created originally)
 // define socketio connection
 const socket = io();
-// here too cause why not
 
 function login() {
     let loginuserElement = document.getElementById("user");
@@ -30,21 +28,14 @@ socket.on("return_prefs", (Obj) => {
         // do something here to tell the user it failed, maybe retry?
         return;
     }
-    // set values of localstorage vars here (and the other ones aswell)
-    // window.localStorage.setItem("username", Obj["displayName"]);
-    // window.localStorage.setItem("role", Obj["role"]);
-    // window.localStorage.setItem("role_color", Obj["roleColor"]);
-    // window.localStorage.setItem("user_color", Obj["userColor"]);
-    // window.localStorage.setItem("message_color", Obj["messageColor"]);
-    // window.localStorage.setItem("theme", Obj["theme"]);
-    // window.localStorage.setItem("permission", Obj["permission"]);
     document.getElementById("Ausername")["value"] = document.getElementById("user")["value"];
-    document.getElementById("Apassword")["value"] = ""
+    document.getElementById("Apassword")["value"] = document.getElementById("pass")["value"];
     document.getElementById("role_color")["value"] = Obj["roleColor"];
     document.getElementById("username")["value"] = Obj["displayName"]; 
     document.getElementById("role")["value"] = Obj["role"];
     document.getElementById("user_color")["value"] = Obj["userColor"];
     document.getElementById("message_color")["value"] = Obj["messageColor"];
+    document.getElementById("profile")["value"] = Obj["profile"];
 });
 
 function failedlogin() {
@@ -64,8 +55,6 @@ function failedlogin() {
     }
 }
 
-// ea sports its in the game
-//
 function enteraccount() {
     document.getElementById("loginStuff").style.display = "none";
     document.getElementById("chatStuff").style.display = "block";
@@ -96,7 +85,6 @@ function logout() {
     usernmElement["value"] = "";
     passwdElement["value"] = "";
     roleElement["value"] = "";
-    // location.reload();
 }
 
 function update() {
@@ -108,10 +96,11 @@ function update() {
     let Cuser = document.getElementById("user_color")["value"];
     let Auser = document.getElementById("Ausername")["value"];
     let Apass = document.getElementById("Apassword")["value"];
+    let cprofile = document.getElementById("profile")["value"];
 
     if (Apass === "") {
       let Apass = document.getElementById("pass")["value"];
     }
     
-    socket.emit('update', Euser, Erole, Cmessage, Crole, Cuser, Auser, Apass, loginuser);
+    socket.emit('update', Euser, Erole, Cmessage, Crole, Cuser, Auser, Apass, loginuser, cprofile);
 }

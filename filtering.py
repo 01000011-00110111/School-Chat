@@ -40,7 +40,7 @@ def create_username(user_name, user_color, role, role_color, message,
     if user_name in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[URL]',
                      'mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD', 'SYSTEM',
                      '[SYSTEM]', "SONG", "[Song]", "[SONG]", "[song]", " ",
-                     "  ", "   ", "Dev E", "cserver"):
+                     "  ", "   ", "cseven", "cserver"):
         return None
 
     # user = dbm.Accounts.find_one({'displayName': user_name})
@@ -50,8 +50,8 @@ def create_username(user_name, user_color, role, role_color, message,
     if user_name == '':
         user_name = "Anonymous"
         #return
-    elif user_name == "Dev EReal":
-        user_name = "Dev E"
+    elif user_name == "csevenReal":
+        user_name = "cseven"
         # return
     elif user_name == "cserverReal":
         user_name = "cserver"
@@ -62,11 +62,13 @@ def create_username(user_name, user_color, role, role_color, message,
     locked = os.path.exists("backend/chat.lock")
     if profile_picture == "":
         profile_picture = 'static/favicon.ico'
-    profile_img = "<img id='pfp' src='" + profile_picture + "'></img>";
+    profile_img = "<img class='pfp' src='" + profile_picture + "'></img>";
     user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>"
     message_color_send = "<font color='" + message_color + "'>" + messageC + "</font>"
     if role_color == "#00ff00":
         role_color_send = "<font class='Dev_colors-loop'>" + rolec + "</font>"
+    elif role_color == "#3262a8":
+        role_color_send = "<font class='ow_colors-loop'>" + rolec + "</font>"
     else:
         role_color_send = "<font color='" + role_color + "'>" + rolec + "</font>"
     pings = re.findall(r'(?<=\[).+?(?=\])', message_color_send)
@@ -76,7 +78,8 @@ def create_username(user_name, user_color, role, role_color, message,
         emit("ping", {
             "who": ping,
             "from": user_name,
-            "pfp": profile_img
+            "pfp": profile_img,
+            "message": messageC
         },
              namespace="/",
              broadcast=True)
@@ -99,7 +102,7 @@ def create_username(user_name, user_color, role, role_color, message,
         msg = date_str + profile_img + " " + user_color_name + " - " + message_color_send
     else:
         msg = date_str + profile_img + " " + user_color_name + " (" + role_color_send + ")" + " - " + message_color_send
-    if user_name in ("Dev E", "cserver"):
+    if user_name in ("cseven", "cserver"):
         force_message(msg)
         emit("message_chat", msg, broadcast=True, namespace="/")
         return True

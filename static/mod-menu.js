@@ -7,8 +7,6 @@ function FsendMessageM() {
     let toSend = "[Mod]: " + messageElement.value
 
     messageElement.value = "";
-    // we use a diffrent endpoint, so it doesen't get blocked by the add_message function on the server end
-    // also gets rid of a lot of checks inside add_message
     socket.emit('admin_message', toSend);
 } 
 
@@ -52,7 +50,6 @@ function unmute() {
     socket.emit('unmute_cmd', mute_user_name)
 }
 
-// get stats from the replit instance
 function getStats() {
     socket.emit('admin_cmd', "full_status");
 }
@@ -65,7 +62,7 @@ function lock_chat() {
     socket.emit('admin_cmd', "lock");
 }
 
-/*// unlocks chat
+
 function unlock_chat() {
     socket.emit('admin_cmd', "unlock");
-}*/
+}

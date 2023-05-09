@@ -5,6 +5,7 @@ import json
 import hashlib
 import cmd
 import time
+import re
 from multiprocessing import Process
 import flask
 import pymongo
@@ -41,6 +42,7 @@ dbm.Online.delete_many({})
 #         emit("force_username", "", broadcast=True, namespace="/")
 
 # infinite()
+
 
 class Console(cmd.Cmd):
     """Console commands parent class."""
@@ -100,7 +102,7 @@ def debuging_page() -> ResponseReturnValue:
     return flask.render_template('DPM.html')
 
 
-@app.route('/devsignup')
+@app.route('/signup')
 def signup() -> ResponseReturnValue:
     """Serve the signup page."""
     html_file = flask.render_template('signup-index.html')
@@ -221,7 +223,7 @@ def login_handle(username, password):
 
 
 @socketio.on('signup')
-def signup_handle(SUsername, SDesplayname, SPassword, SRole):
+def signup_handle(SUsername, SDesplayname, SPassword, SRole, Sprofile):
     """make the signup work."""
     dbm.Accounts.insert_one({
         "username":
@@ -230,6 +232,8 @@ def signup_handle(SUsername, SDesplayname, SPassword, SRole):
         hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
         "role":
         SRole,
+        "profile":
+        Sprofile,
         "theme":
         "dark",
         "displayName":
@@ -242,6 +246,8 @@ def signup_handle(SUsername, SDesplayname, SPassword, SRole):
         "#ffffff",
         "permission":
         "true",
+        "SPermission":
+        ""
     })
     emit("signup_pass", namespace="/")
 
@@ -249,7 +255,7 @@ def signup_handle(SUsername, SDesplayname, SPassword, SRole):
 # pylint: disable=C0103, R0913
 @socketio.on('update')
 def update_handle(Euser, Erole, Cmessage, Crole, Cuser, Auser, Apass,
-                  loginuser):
+                  loginuser, Cprofile):
     """make the signup work."""
     dbm.Accounts.update_one({"username": loginuser}, {
         "$set": {
@@ -258,6 +264,7 @@ def update_handle(Euser, Erole, Cmessage, Crole, Cuser, Auser, Apass,
             "userColor": Cuser,
             "displayName": Euser,
             "role": Erole,
+            "profile": Cprofile,
             "username": Auser,
             "password": hashlib.sha384(bytes(Apass, 'utf-8')).hexdigest(),
         }
@@ -286,6 +293,7 @@ def return_user_prefs(username):
         emit("return_prefs", {
             "displayName": user["displayName"],
             "role": user["role"],
+            "profile": user["profile"],
             "userColor": user["userColor"],
             "theme": user["theme"],
             "messageColor": user["messageColor"],
@@ -363,6 +371,18 @@ def handle_wisper(message, recipient, sender):
     """Wisper a message to another user."""
     user = dbm.Online.find_one({"username": recipient})
     message_comp = "<i><b>" + sender + "</b>  wispers to you: </i>" + message
+    pings = re.findall(r'(?<=\[).+?(?=\])', message)
+
+    for ping in pings:
+        emit(
+            "ping",
+            {
+                "who": ping,
+                "from": sender,
+                # "pfp": profile_img
+            },
+            namespace="/",
+            broadcast=True)
 
     try:
         emit("message_chat", message_comp, namespace="/", to=user["socketid"])

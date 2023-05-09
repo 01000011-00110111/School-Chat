@@ -1,16 +1,13 @@
   // Dev menu js code to keep chat.js cleaner and easy to read and find what you need//
 
-// send message as the user [SYSTEM]
 function systemmessage() {
     user = document.getElementById("user")["value"];
     if (user === "C7" || user === "cserverReal") {
-    // just bits and pieces from sendMessage
         let messageElement = document.getElementById("systemsendT");
 
         message = '<font color="#ff7f00">' + messageElement["value"] + '</font>'
         messageElement["value"] = "";
         let toSend = "[SYSTEM]: " + message
-    // send to socketio
         socket.emit('admin_message', toSend)
     }
 }
@@ -49,7 +46,6 @@ function banHammer() {
         } else if (mute_user_name === "cserverReal") {
             mute_user_name = "cserver"
         } else if (mute_user_name === "Steven") {
-            // do not remove this or ELSE
             mute_user_name = "STEVEN Payed a box of poptarts and gummys for immunity"
         }
         
@@ -84,7 +80,6 @@ function unmute() {
     }
 }
 
-//"<a href='" + urlElement + "'>" + urlsendElement + "</a>"
 function urlsend() {
     user = document.getElementById("user")["value"];
     if (user === "C7" || user === "cserverReal") {
@@ -103,10 +98,7 @@ function urlsend() {
         socket.emit('admin_message', toSend);
     }
 }
-// let hrefurlElement = "<a href='" + urlElement + "'>" + urlsendElement + "</a>"
-// let message = hrefurlElement
 
-//the force send code need a better info here
 function FsendMessageA() {
     user = document.getElementById("user")["value"];
     if (user === "C7" || user === "cserverReal") {
@@ -116,8 +108,6 @@ function FsendMessageA() {
         let toSend = "[Admin]: " + messageElement.value
     
         messageElement.value = "";
-        // we use a diffrent endpoint, so it doesen't get blocked by the add_message function on the server end
-        // also gets rid of a lot of checks inside add_message
         socket.emit('admin_message', toSend);
     }
 } 
@@ -131,13 +121,10 @@ function FsendMessageM() {
         let toSend = "[Mod]: " + messageElement.value
     
         messageElement.value = "";
-        // we use a diffrent endpoint, so it doesen't get blocked by the add_message function on the server end
-        // also gets rid of a lot of checks inside add_message
         socket.emit('admin_message', toSend);
     }
 } 
 
-// send a bunch of black lines to chat system
 function testChatGC() {
     user = document.getElementById("user")["value"];
     if (user === "C7" || user === "cserverReal") {
@@ -148,18 +135,15 @@ function testChatGC() {
 function EsendMessage() {
     user = document.getElementById("user")["value"];
     if (user === "C7" || user === "cserverReal") {
-        // just bits and pieces from sendMessage
         let messageElement = document.getElementById("EventMSGT");
     
         message = '<font color="e54e40">' + messageElement["value"] + '</font>' + "</h3>"
         messageElement["value"] = "";
         let toSend = "<h3> [Event]: " + message + "</h3>"
-        // send via socketio
         socket.emit('admin_message', toSend);
     }
 }
 
-// get stats from the replit instance
 function getStats() {
     user = document.getElementById("user")["value"];
     if (user === "C7" || user === "cserverReal") {
@@ -181,7 +165,6 @@ function reset_chat() {
     }
 }
 
-// lock/unlock chat helper functions
 function lock_chat() {
     user = document.getElementById("user")["value"];
     if (user === "C7" || user === "cserverReal") {
@@ -189,7 +172,6 @@ function lock_chat() {
     }
 }
 
-// unlocks chat
 function unlock_chat() {
     user = document.getElementById("user")["value"];
     if (user === "C7" || user === "cserverReal") {

@@ -16,7 +16,6 @@ function SOsendMessage(elem) {
     }
 }
 
-// take a img url, and convert it into a img html tag
 function sendImage(elem) {
     let messageElement = document.getElementById(elem);
     let toSend = "<img src='" + messageElement["value"] + "'></img>"
@@ -29,9 +28,7 @@ function sendImage(elem) {
 function refreshUsers() {
     socket.emit('admin_cmd', "refresh_users");
 }
-
-// see comment inside function    
+   
 function dummyajax(jsonData) {
-    // dummy function so ajaxPostRequest doesent error out from no function callback
     return;
 }

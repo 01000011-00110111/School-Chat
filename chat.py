@@ -27,7 +27,7 @@ def get_line_count() -> List:
     """Return the line count in the logfiles."""
     ret_val = []
     with open(LOGFILE, "r", encoding="utf8") as f_in:
-        lines = len(f_in.readlines())
+        lines = len(f_in.readlines()) + 1
     with open(LOGFILE, "a", encoding="utf8") as f_in:
         f_in.write(
             f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n")

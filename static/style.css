@@ -37,7 +37,7 @@
     background-color: red;
 }
 
-#pfp {
+.pfp {
     margin: -13px 0;
     height:30px;
     width:30px;
@@ -694,6 +694,7 @@
 
 .signupbtn {
     margin-top: 30px;
+    font-size: 20px;
     width: 15%;
     border-radius: 20px;
     height: 30px;
@@ -703,11 +704,15 @@
     margin-left: 45%;
 }
 
+.signupbtn:hover {
+    background: green;
+}
+
 #SPassword:hover {
     background: green;
 }
 
-#SPassword\ 2nd\ time:hover {
+#SPassword2:hover {
     background: green;
 }
 
@@ -724,24 +729,31 @@
 }
 
 #SPassword {
-    background: red;
+    background: white;
+    font-size: 20px;
+    /* height: 50%; */
+    /* width: 50%; */
 }
 
-#SPassword\ 2nd\ time {
-    background: orangered;
+#SPassword2 {
+    background: white;
+    font-size: 20px;
 }
 
 #SUsername {
-    background: blue;
+    background: white;
+    font-size: 20px;
     margin-top: 11%;
 }
 
 #SDesplayname {
-    background: cyan;
+    background: white;
+    font-size: 20px;
 }
 
 #SRole {
-    background: gold;
+    background: white;
+    font-size: 20px;
 }
 
 
@@ -796,9 +808,29 @@
   -webkit-animation: Dev_colors 5s infinite; 
 }
 
+.ow_colors-loop {
+  display: inline-block;
+  text-shadow: 2px 2px 4px #000000;
+  -webkit-animation: ow_colors 10s infinite; 
+}
+
 @-webkit-keyframes Dev_colors {
   0%{color: #f47106;} 
   25%{color: blue;}
   50%{color: #00FF00;}
   100%{color: #f47106;}
+}
+
+@-webkit-keyframes ow_colors {
+  0%{color: orange;}  
+  10%{color: purple;} 
+  20%{color: red;}
+  30%{color: CadetBlue;}
+  40%{color: yellow;}
+  50%{color: coral;}
+  60%{color: green;}
+  70%{color: cyan;}
+  80%{color: DeepPink;}
+  90%{color: DodgerBlue;}
+  100%{color: orange;}
 }
