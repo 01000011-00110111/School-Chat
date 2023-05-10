@@ -88,7 +88,7 @@ socket.on("online", (db) => {
         } else if (onlineUser === "") {
             onlineUser = "Anonymous";
         } else if (onlineUser === "csevenReal") {
-            onlineUser = "C7";
+            onlineUser = "cseven";
         }
         online = online + onlineUser + newline;
         onlinels = onlinels + "<a onclick=changeWisperUser('" + onlineUser + "')>" + onlineUser + '</a>';
@@ -245,13 +245,15 @@ function checkMsgBox() {
 }
 
 function toHyperlink(str) {
-    var pattern1 = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    var pattern1 = /(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
     var str1 = str.replace(pattern1, "<a href='$1'>$1</a>");
     // make it show without the https://
     var pattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
     var str2 = str1.replace(pattern2, '$1<a target="_blank" href="http://$2">$2</a>');
+    var pattern3 = /mailto:([^\?]*)/gm;
+    var str3 = str2.replace(pattern3, "<a href='$1'>$1</a>");
 
-    return str2;
+    return str3;
 }
 
 function wisperMessage() {

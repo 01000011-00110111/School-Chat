@@ -6,6 +6,7 @@ import hashlib
 import cmd
 import time
 import re
+import keys
 from multiprocessing import Process
 import flask
 import pymongo

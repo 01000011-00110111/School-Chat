@@ -9,20 +9,20 @@ function ProfilesB() {
     let Profileactive = window.localStorage.getItem("Profileactive");
     let Pbutton = document.getElementById("pfpbtn");
     if (Profileactive === "true") {
-        let pfp = document.getElementsByClassName("pfp")[0];
-        for (let i = 0; i < pfp.length; i++) {
-            pfp[i].style.display = "none";
+        var element = document.getElementsByClassName("pfp");
+        for(var i = 0; i < element.length; i++) {
+            element[i].style.display = 'none';
         }
-        document.getElementById("chat").style.lineheight = "32";
+        document.getElementById("chat").style.lineheight = "32px";
         window.localStorage.setItem("Profileactive", "false");
         Pbutton.value = "Enable profile pictures";
         Pbutton.style.backgroundColor = "green";
     } else {
-        let pfp = document.getElementsByClassName("pfp")[0];
-        for (let i = 0; i < pfp.length; i++) {
-            pfp[i].style.display = "";
+        var element = document.getElementsByClassName("pfp");
+        for(var i = 0; i < element.length; i++) {
+            element[i].style.display = '';
         }
-        document.getElementById("chat").style.lineheight = "40";
+        document.getElementById("chat").style.lineheight = "40px";
         window.localStorage.setItem("Profileactive", "true");
         Pbutton.value = "Disable profile pictures";
         Pbutton.style.backgroundColor = "red";

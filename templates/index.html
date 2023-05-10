@@ -67,7 +67,7 @@
                 <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
                 <p id="user_colorTXT">Message: </p>
                 <input type="color" value="#ffffff" id="message_color" name="color choser">
-                <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br><!--<input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br> -->
+                <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br><input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br>
                 <button id="Arefresh" onclick="updateacc()">Refresh</button>
                 <br>
                 <br>
@@ -142,7 +142,7 @@
             <h3 id="Devnavtext">This is the mod menu use for admistrating chat</h3>
             <p id="Devnavtext">Enter message here and send as mod</p>
             <input type="text" id="fsendTM" placeholder="Force Send message:" class='std_box'><br>
-            <button onclick="FsendMessageM();" class="std_btn blue_btn">Force Send</button><br><button onclick="lock_chat();" class="std_btn red_btn">Lock</button><br>
+            <button onclick="FsendMessageM();" class="std_btn blue_btn">Force Send</button><br><button onclick="lock_chat();" class="std_btn red_btn">Lock</button><button onclick="unlock_chat();" id="unlock" class="std_btn green_btn">Unlock</button><br>
             <p id="Devnavtext">Enter username in here for muting</p>
             <input type="text" id="muteuserboxM" placeholder="type user to mute here:" class='std_box'><button onclick="mute();" id="mute" class="std_btn">Mute</button>
             <button onclick="unmute();" class="std_btn blue_btn">Unmute</button><br>
