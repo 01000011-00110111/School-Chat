@@ -10,7 +10,7 @@
 }
 
 .debugpage {
-    /* margin-left: 25% /* this can change if you don't like it */
+
 }
 
 #main {
@@ -59,7 +59,7 @@
 	padding-left: 5%;
     padding-right: 12%;
     margin-left: 1.5%;
-    line-height: 40px;
+    /* line-height: 40px; */
     padding-bottom: 9%;
     padding-top: 9%;
     word-wrap: break-word;

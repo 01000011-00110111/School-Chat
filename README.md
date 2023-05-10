@@ -11,6 +11,7 @@ Steps to make the chat run
 - Make a keys.py file andf put your environ keys for mongo and the menus
 - Make chat.txt and backup.txt file 
 - Install all packages needed to run (will add more detail later)
+- Add your ssl pem and key in the chats main folder
 - Run this command: gunicorn --bind YourServerIP:443 -k gevent --certfile 'example.com.pem' --keyfile 'example.com.key' -w 1 main:app
 
 This was created by
