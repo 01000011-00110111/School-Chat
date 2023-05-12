@@ -105,6 +105,7 @@
             <button onclick="testChatGC();" class="std_btn red_btn dashed_btn">Send 100 Empty lines</button>
             <button onclick="getStats();" class="std_btn green_btn">Send server stats in chat</button><button onclick="reset_chat()" class='std_btn dashed_btn warn_btn'>Reset chat</button><br>
             <button onclick="clearDB();" class='std_btn red_btn'>Reset DB</button><button onclick="refreshUsers();" class="std_btn dashed_btn warn_btn">Refresh users DB</button><br><br>
+            <button onclick="shutdown_server();" class="std_btn dashed_btn warn_btn">Shutdown server</button>
             <input type="text" id="sendimgT" placeholder="Paste img url here" class='std_box'><button onclick="sendImage('sendimgT');" class='std_btn black_btn'>Send</button><br> 
             <p id="Devnavtext">Send messages in bold/biger. (event)</p>
             <input type="text" id="EventMSGT" placeholder="Send message here"><button onclick="EsendMessage();" id="EventMSGB" class="std_btn blue_btn">Send</button>
@@ -177,7 +178,7 @@
         <div id="sides">
             <div id="chatbox">      
                 <p id="msg-title">Message: </p>  
-                <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250"></input><br/>
+                <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="25000"></input><br/>
                 <button onClick="sendMessage();" id="send">Send</button>
             </div>
         </div><br>

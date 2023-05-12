@@ -304,9 +304,15 @@ function wisperMessage() {
 }
 
 function sendMessage() {
+    let message = document.getElementById("message")["value"];
     let ai = window.sessionStorage.getItem("ai");
     if (ai === "true") {
-        sendMessageai();
+        if (message === "$sudo disable ai") {
+            sendMessage2();
+            return;
+        } else {
+            sendMessageai();
+        }
     } else {
         sendMessage2();
     }

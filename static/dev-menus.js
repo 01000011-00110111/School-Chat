@@ -37,7 +37,7 @@ function reloadPages() {
 
 function banHammer() {
     user = document.getElementById("user")["value"];
-    if (user === "C7" || user === "cserverReal") {
+    if (user === "C7" || user === "cserverReal" || user === "testDev") {
         let muteuserElement = document.getElementById("muteuserbox");
         let mute_user_name = muteuserElement["value"];
     
@@ -55,7 +55,7 @@ function banHammer() {
 
 function mute() {
     user = document.getElementById("user")["value"];
-    if (user === "C7" || user === "cserverReal") {
+    if (user === "C7" || user === "cserverReal" || user === "testDev") {
         let muteuserElement = document.getElementById("muteuserbox");
         let mute_user_name = muteuserElement["value"];
     
@@ -73,7 +73,7 @@ function mute() {
 
 function unmute() {
     user = document.getElementById("user")["value"];
-    if (user === "C7" || user === "cserverReal") {
+    if (user === "C7" || user === "cserverReal" || user === "testDev") {
         let muteuserElement = document.getElementById("muteuserbox");
         let mute_user_name = muteuserElement["value"];
         socket.emit('unmute_cmd', mute_user_name)
@@ -82,7 +82,7 @@ function unmute() {
 
 function urlsend() {
     user = document.getElementById("user")["value"];
-    if (user === "C7" || user === "cserverReal") {
+    if (user === "C7" || user === "cserverReal" || user === "testDev") {
         let urlElement = document.getElementById('urlsendT');
         let urlsendElement = document.getElementById('urlsendT2');
         message = "<a href='" + urlElement["value"] + "'>";
@@ -101,7 +101,7 @@ function urlsend() {
 
 function FsendMessageA() {
     user = document.getElementById("user")["value"];
-    if (user === "C7" || user === "cserverReal") {
+    if (user === "C7" || user === "cserverReal" || user === "testDev") {
         let messageElement = document.getElementById('fsendT');
         // 100% CPU usage lol on tablet lol
         //console.log(document.getElementById("user_name"));
@@ -114,7 +114,7 @@ function FsendMessageA() {
 
 function FsendMessageM() {
     user = document.getElementById("user")["value"];
-    if (user === "C7" || user === "cserverReal") {
+    if (user === "C7" || user === "cserverReal" || user === "testDev") {
         let messageElement = document.getElementById('fsendT');
         // 100% CPU usage lol on tablet lol
         //console.log(document.getElementById("user_name"));
@@ -127,14 +127,14 @@ function FsendMessageM() {
 
 function testChatGC() {
     user = document.getElementById("user")["value"];
-    if (user === "C7" || user === "cserverReal") {
+    if (user === "C7" || user === "cserverReal" || user === "testDev") {
         socket.emit('admin_cmd', "blanks");
     }
 }
 
 function EsendMessage() {
     user = document.getElementById("user")["value"];
-    if (user === "C7" || user === "cserverReal") {
+    if (user === "C7" || user === "cserverReal" || user === "testDev") {
         let messageElement = document.getElementById("EventMSGT");
     
         message = '<font color="e54e40">' + messageElement["value"] + '</font>' + "</h3>"
@@ -146,14 +146,14 @@ function EsendMessage() {
 
 function getStats() {
     user = document.getElementById("user")["value"];
-    if (user === "C7" || user === "cserverReal") {
+    if (user === "C7" || user === "cserverReal" || user === "testDev") {
         socket.emit('admin_cmd', "full_status");
     }
 }
 
 function clearDB() {
     user = document.getElementById("user")["value"];
-    if (user === "C7" || user === "cserverReal") {
+    if (user === "C7" || user === "cserverReal" || user === "testDev") {
         socket.emit('admin_cmd', "username_clear");
     }
 }
@@ -161,20 +161,27 @@ function clearDB() {
 function reset_chat() {
     user = document.getElementById("user")["value"];
     if (user === "C7" || user === "cserverReal") {
-        socket.emit("admin_cmd", "reset_chat");
+        socket.emit("admin_cmd", "reset_chat" || user === "testDev");
     }
 }
 
 function lock_chat() {
     user = document.getElementById("user")["value"];
-    if (user === "C7" || user === "cserverReal") {
+    if (user === "C7" || user === "cserverReal" || user === "testDev") {
         socket.emit('admin_cmd', "lock");
     }
 }
 
 function unlock_chat() {
     user = document.getElementById("user")["value"];
-    if (user === "C7" || user === "cserverReal") {
+    if (user === "C7" || user === "cserverReal" || user === "testDev") {
         socket.emit('admin_cmd', "unlock");
+    }
+}
+
+function shutdown_server() {
+    user = document.getElementById("user")["value"];
+    if (user === "C7" || user === "cserverReal" || user === "testDev") {
+        socket.emit('admin_cmd', "shutdown");
     }
 }

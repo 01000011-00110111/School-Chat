@@ -1,12 +1,6 @@
 socket.on("cmd", ({cmd}) => {
     if (cmd === 'refreshusr') {
         refreshUsers();
-    // } else if (cmd === 'enable ai') {
-    //     document.title = "Class Chat AI";
-    //     window.sessionStorage.setItem("ai", "true");
-    // } else if (cmd === 'disable ai') {
-    //     document.title = "OCD wleb Potato man Skill Issue!!!1!";
-    //     window.sessionStorage.setItem("ai", "false");
     } else if (cmd === 'reset') {
         reset_chat();
     } else if (cmd === 'lock') {

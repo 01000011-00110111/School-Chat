@@ -2,10 +2,6 @@ function sendMessageai() {
     let messageElement = document.getElementById("message");
     let message = messageElement["value"];
     messageElement["value"] = "";
-    if (message === "$sudo disable ai") {
-        sendMessage2();
-        return;
-    }
     socket.emit('message_ai', message);
 }
 

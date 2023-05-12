@@ -834,3 +834,11 @@
   90%{color: DodgerBlue;}
   100%{color: orange;}
 }
+
+#airesponce {
+    background-color: #343232;
+    width: 1600px;
+    font-size: 20px;
+    color: #c25d0a;
+    /* padding: 50px; */
+}

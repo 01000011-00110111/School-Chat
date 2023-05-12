@@ -1,6 +1,7 @@
 import chat
 from main import dbm
 from flask_socketio import emit
+from time import sleep
 import os
 
 #   aaaaaaaa
@@ -84,6 +85,8 @@ def handle_admin_cmds(cmd: str):
     elif cmd == "reset_chat":
         chat.reset_chat(False, True)
         emit("reset_chat", broadcast=True, namespace="/")
+    elif cmd == "shutdown":
+        run_shutdown()
 
 
 def handle_cilent_refresh(muteuser):
@@ -96,3 +99,14 @@ def handle_admin_message(message):
     """Bypass message filtering, used when chat is locked."""
     chat.force_message(message)
     emit("message_chat", message, broadcast=True, namespace="/")
+
+
+def run_shutdown():
+    """Stop the server, but also tell everyone that the server is going down."""
+    emit(
+        "message_chat",
+        "[SYSTEM]: <font color='#ff7f00'>Server going down in 2 Seconds (unknown ETA on restart)</font>",
+        broadcast=True,
+        namespace='/')
+    sleep(2)
+    os.system('pkill gunicorn')

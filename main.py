@@ -77,6 +77,7 @@ def f_but_better() -> ResponseReturnValue:
     """Not an easter egg I promise."""
     return "HI"
 
+
 @app.route("/gpt")
 def ai_page() -> ResponseReturnValue:
     """The ai page"""
@@ -356,7 +357,7 @@ def handle_admin_stuff(cmd: str):
 def handle_cilent_refresh(user):
     """Send command to refresh all clients."""
     # really should use same system as pinging, so it doesen't send to everyone every time (less server stress)
-    cmds.handle_client_refresh(user)
+    cmds.handle_cilent_refresh(user)
 
 
 # pylint: disable=C0103
