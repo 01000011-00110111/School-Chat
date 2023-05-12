@@ -48,9 +48,9 @@ socket.on("ping", ({ who, from, pfp, message }) => {
     if ((nonotif === "true") && (Notification.permission === "granted")) {
         if (user_name === who) {
             new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
-        }else if (who === user_name) {
+        } else if (who === user_name) {
             return;
-        }else if (who === "cseven" && user_name === "csevenReal") {
+        } else if (who === "cseven" && user_name === "csevenReal") {
             new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
         } else if (who === "cserver" && user_name === "cserverReal") {
             new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
@@ -229,6 +229,7 @@ function yesTOS() {
 
 function runStartup() {
     document.getElementById("dev_chat_iframe").src = "";
+    window.sessionStorage.setItem("ai", "false");
     loadChat();
     // userElement = window.localStorage.getItem("");
     document.cookie = "Notifications=true; path=/";
@@ -251,7 +252,7 @@ function toHyperlink(str) {
     var pattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
     var str2 = str1.replace(pattern2, '$1<a target="_blank" href="http://$2">$2</a>');
     var pattern3 = /mailto:([^\?]*)/gm;
-    var str3 = str2.replace(pattern3, "<a href='$1'>$1</a>");
+    var str3 = str2.replace(pattern3, "<a href='mailto:$1'>$1</a>");
 
     return str3;
 }
@@ -303,6 +304,15 @@ function wisperMessage() {
 }
 
 function sendMessage() {
+    let ai = window.sessionStorage.getItem("ai");
+    if (ai === "true") {
+        sendMessageai();
+    } else {
+        sendMessage2();
+    }
+}
+
+function sendMessage2() {
     let messageElement = document.getElementById("message");
     let userElement = document.getElementById("username");
     let profileElement = document.getElementById("profile_picture");
@@ -319,6 +329,14 @@ function sendMessage() {
     let user_color = userColorElement["value"];
     let message_color = messageColorElement["value"];
     let role_color = roleColorElement["value"];
+
+    if (message === '$sudo enable ai') {
+        document.title = "Class Chat AI";
+        window.sessionStorage.setItem("ai", "true");
+    } else if (message === '$sudo disable ai') {
+        document.title = "OCD wleb Potato man Skill Issue!!!1!";
+        window.sessionStorage.setItem("ai", "false");
+    }
 
     if (user_color === "#000000") {
         user_color = "#ffffff";
@@ -370,6 +388,7 @@ function renderChat(messages) {
     }
 
     chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
+    ProfilesB();
 }
 
 

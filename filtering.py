@@ -45,7 +45,7 @@ def create_username(user_name, user_color, role, role_color, message,
 
     # user = dbm.Accounts.find_one({'displayName': user_name})
     # if user['permission'] == "muted" or user['permission'] == "banned":
-        # return
+    # return
 
     if user_name == '':
         user_name = "Anonymous"
@@ -62,7 +62,7 @@ def create_username(user_name, user_color, role, role_color, message,
     locked = os.path.exists("backend/chat.lock")
     if profile_picture == "":
         profile_picture = 'static/favicon.ico'
-    profile_img = "<img class='pfp' src='" + profile_picture + "'></img>";
+    profile_img = "<img class='pfp' src='" + profile_picture + "'></img>"
     user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>"
     message_color_send = "<font color='" + message_color + "'>" + messageC + "</font>"
     if role_color == "#00ff00":
@@ -93,7 +93,7 @@ def create_username(user_name, user_color, role, role_color, message,
                 # "who": user_name
             },
             namespace="/",
-            broadcast=True)
+            broadcast=False)
 
     date_str = datetime.now(timezone(
         timedelta(hours=-4))).strftime("[%a %I:%M %p] ")

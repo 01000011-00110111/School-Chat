@@ -9,7 +9,7 @@ function ProfilesB() {
     let Profileactive = window.localStorage.getItem("Profileactive");
     let Pbutton = document.getElementById("pfpbtn");
     if (Profileactive === "true") {
-        var element = document.getElementsByClassName("pfp");
+        let element = document.getElementsByClassName("pfp");
         for(var i = 0; i < element.length; i++) {
             element[i].style.display = 'none';
         }
@@ -18,7 +18,7 @@ function ProfilesB() {
         Pbutton.value = "Enable profile pictures";
         Pbutton.style.backgroundColor = "green";
     } else {
-        var element = document.getElementsByClassName("pfp");
+        let element = document.getElementsByClassName("pfp");
         for(var i = 0; i < element.length; i++) {
             element[i].style.display = '';
         }
@@ -28,6 +28,7 @@ function ProfilesB() {
         Pbutton.style.backgroundColor = "red";
     }
 }
+
 
 // for event theme
 // set what event is currently being used

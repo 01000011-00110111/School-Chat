@@ -44,6 +44,7 @@ socket.on("return_prefs", (Obj) => {
     document.getElementById("profile_picture")["value"] = Obj["profile"];
     window.sessionStorage.setItem("SPermission", Obj["SPermission"]);
     socket.emit("username_msg", Obj["displayName"]);
+    ProfilesB()
     whichEvent(Obj["theme"]);
 });
 

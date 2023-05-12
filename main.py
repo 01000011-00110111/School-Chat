@@ -20,6 +20,7 @@ dbm = client.Chat
 import chat
 import cmds
 import filtering
+import ai
 
 app = flask.Flask(__name__)
 app.config['SECRET'] = os.urandom(
@@ -76,6 +77,12 @@ def f_but_better() -> ResponseReturnValue:
     """Not an easter egg I promise."""
     return "HI"
 
+@app.route("/gpt")
+def ai_page() -> ResponseReturnValue:
+    """The ai page"""
+    html_file = flask.render_template('GPT.html')
+    return html_file
+
 
 @app.route("/linter")
 def linter_bugs_page() -> ResponseReturnValue:
@@ -99,7 +106,7 @@ def changoelog_page() -> ResponseReturnValue:
 
 @app.route("/debugmenu")
 def debuging_page() -> ResponseReturnValue:
-    """Host the jslint page for viewing (manually added)"""
+    """Host the menu for devs"""
     return flask.render_template('DPM.html')
 
 
@@ -397,6 +404,18 @@ def handle_admin_message(message):
     """Bypass message filtering, used when chat is locked."""
     chat.force_message(message)
     emit("message_chat", message, broadcast=True, namespace="/")
+
+
+################################################################
+#      AI STUFF FOR TESTING                                    #
+################################################################
+
+
+@socketio.on('message_ai')
+def handle_ai_message(message):
+    """send message for ai to read"""
+    responce = ai.create_responce(message)
+    emit("ai_responce", responce, broadcast=True, namespace="/")
 
 
 ################################################################
