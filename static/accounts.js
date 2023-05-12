@@ -126,14 +126,14 @@ function SpecialMenu(Dev, Mod, Edit, JOTD) {
     let SPermission = window.sessionStorage.getItem("SPermission");
     let username = document.getElementById("user")["value"];
     if (SPermission === Dev) {
-        document.title = "Class Chat Dev";
-        const script = document.createElement('script');
-        script.src = 'static/dev-menus.js';
-        script.type = 'text/javascript';
-        document.body.appendChild(script);
-        document.getElementById("DevStuff").style.display = "block";
-        document.getElementById("toprightD").style.display = "block";
-        document.getElementById("toprightD").style.display = "block";
+        document.title = "Class Chat Dev is down for now!!";
+        // const script = document.createElement('script');
+        // script.src = 'static/dev-menus.js';
+        // script.type = 'text/javascript';
+        // document.body.appendChild(script);
+        // document.getElementById("DevStuff").style.display = "block";
+        // document.getElementById("toprightD").style.display = "block";
+        // document.getElementById("toprightD").style.display = "block";
     } else if (SPermission === Mod) {
         document.title = "Class Chat Mod";
         const script = document.createElement('script');
