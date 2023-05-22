@@ -29,6 +29,23 @@ function ProfilesB() {
     }
 }
 
+function ProfilesE() {
+    let Profileactive = window.localStorage.getItem("Profileactive");
+    let Pbutton = document.getElementById("pfpbtn");
+    if (Profileactive === "true") {
+        let element = document.getElementsByClassName("pfp");
+        for(var i = 0; i < element.length; i++) {
+            element[i].style.display = 'none';
+        }
+        document.getElementById("chat").style.lineheight = "32px";
+        window.localStorage.setItem("Profileactive", "false");
+        Pbutton.value = "Enable profile pictures";
+        Pbutton.style.backgroundColor = "green";
+    } else {
+        return;
+    }
+}
+
 
 // for event theme
 // set what event is currently being used

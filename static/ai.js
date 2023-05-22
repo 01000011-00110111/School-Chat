@@ -1,8 +1,10 @@
 function sendMessageai() {
     let messageElement = document.getElementById("message");
     let message = messageElement["value"];
+    let userElement = document.getElementById("username");
+    let username = userElement["value"];
     messageElement["value"] = "";
-    socket.emit('message_ai', message);
+    socket.emit('message_ai', message, username);
 }
 
 socket.on("ai_responce", (responce) => {

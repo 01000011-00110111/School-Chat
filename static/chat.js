@@ -1,7 +1,9 @@
 // define socketio connection
 const socket = io();
 
-
+socket.on("ping_test", (Obj) => {
+    pingHandle(Obj);
+});
 
 socket.on("message_chat", (message) => {
     renderChat(message);
@@ -22,6 +24,17 @@ socket.on("reload_pages", (muteUserName) => {
 
 if (Notification.permission === "default") {
     Notification.requestPermission();
+}
+
+function pingHandle(Obj=null) {
+    if (Obj === null) {
+        let start = Date.now();
+        socket.emit('pingtest', start);
+    } else {
+        let end = Date.now();
+        let diff = end - Obj['start']
+        socket.emit('admin_message', '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + diff + 'ms RTT</font>');
+    }
 }
 
 function NotificationsB() {
@@ -304,9 +317,9 @@ function wisperMessage() {
 }
 
 function sendMessage() {
-    let message = document.getElementById("message")["value"];
     let ai = window.sessionStorage.getItem("ai");
     if (ai === "true") {
+        let message = document.getElementById("message")["value"];
         if (message === "$sudo disable ai") {
             sendMessage2();
             return;

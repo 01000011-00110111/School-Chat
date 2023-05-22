@@ -5,9 +5,11 @@ import json
 import hashlib
 import cmd
 import time
+from datetime import datetime
 import re
 import keys
-from multiprocessing import Process
+import multiprocessing
+# from multiprocessing import Process
 import flask
 import pymongo
 from flask import request
@@ -21,6 +23,12 @@ import chat
 import cmds
 import filtering
 import ai
+
+# mp = multiprocessing.get_context('spawn')
+# with mp.Pool(processes=4) as pool:
+#     pool.map(function1, function2)
+    
+LOGFILE = "backend/chat.txt"
 
 app = flask.Flask(__name__)
 app.config['SECRET'] = os.urandom(
@@ -36,15 +44,6 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 # clear db, so that old users don't stay
 dbm.Online.delete_many({})
-
-# def infinite():
-#     while False:
-#         # time.sleep(60)
-#         dbm.Online.delete_many({})
-#         emit("force_username", "", broadcast=True, namespace="/")
-
-# infinite()
-
 
 class Console(cmd.Cmd):
     """Console commands parent class."""
@@ -375,6 +374,13 @@ def handle_message(user_name, user_color, role, role_color, message,
 # pylint: enable=C0103
 
 
+@socketio.on('pingtest')
+def handle_ping_tests(start):
+    emit('ping_test', {
+        "start": start,
+    }, namespace='/')
+
+
 @socketio.on('wisper_chat')
 def handle_wisper(message, recipient, sender):
     """Wisper a message to another user."""
@@ -413,10 +419,12 @@ def handle_admin_message(message):
 
 
 @socketio.on('message_ai')
-def handle_ai_message(message):
+def handle_ai_message(message, username):
     """send message for ai to read"""
-    responce = ai.create_responce(message)
+    responce = ai.create_responce(message, username)
     emit("ai_responce", responce, broadcast=True, namespace="/")
+    with open(LOGFILE, "a", encoding="utf8") as f_in:
+        f_in.write(responce + "\n")
 
 
 ################################################################

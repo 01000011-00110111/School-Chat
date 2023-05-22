@@ -44,8 +44,8 @@ socket.on("return_prefs", (Obj) => {
     document.getElementById("profile_picture")["value"] = Obj["profile"];
     window.sessionStorage.setItem("SPermission", Obj["SPermission"]);
     socket.emit("username_msg", Obj["displayName"]);
-    ProfilesB()
     whichEvent(Obj["theme"]);
+    ProfilesE();
 });
 
 
@@ -127,13 +127,13 @@ function SpecialMenu(Dev, Mod, Edit, JOTD) {
     let username = document.getElementById("user")["value"];
     if (SPermission === Dev) {
         document.title = "Class Chat Dev is down for now!!";
-        // const script = document.createElement('script');
-        // script.src = 'static/dev-menus.js';
-        // script.type = 'text/javascript';
-        // document.body.appendChild(script);
-        // document.getElementById("DevStuff").style.display = "block";
-        // document.getElementById("toprightD").style.display = "block";
-        // document.getElementById("toprightD").style.display = "block";
+        const script = document.createElement('script');
+        script.src = 'static/dev.js';
+        script.type = 'text/javascript';
+        document.body.appendChild(script);
+        document.getElementById("DevStuff").style.display = "block";
+        document.getElementById("toprightD").style.display = "block";
+        document.getElementById("toprightD").style.display = "block";
     } else if (SPermission === Mod) {
         document.title = "Class Chat Mod";
         const script = document.createElement('script');
