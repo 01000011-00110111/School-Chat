@@ -27,7 +27,7 @@ import ai
 # mp = multiprocessing.get_context('spawn')
 # with mp.Pool(processes=4) as pool:
 #     pool.map(function1, function2)
-    
+
 LOGFILE = "backend/chat.txt"
 
 app = flask.Flask(__name__)
@@ -44,6 +44,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 # clear db, so that old users don't stay
 dbm.Online.delete_many({})
+
 
 class Console(cmd.Cmd):
     """Console commands parent class."""
@@ -418,13 +419,13 @@ def handle_admin_message(message):
 ################################################################
 
 
-@socketio.on('message_ai')
-def handle_ai_message(message, username):
-    """send message for ai to read"""
-    responce = ai.create_responce(message, username)
-    emit("ai_responce", responce, broadcast=True, namespace="/")
-    with open(LOGFILE, "a", encoding="utf8") as f_in:
-        f_in.write(responce + "\n")
+# @socketio.on('message_ai')
+# def handle_ai_message(message, username):
+#     """send message for ai to read"""
+#     responce = ai.create_responce(message, username)
+#     emit("ai_responce", responce, broadcast=True, namespace="/")
+#     with open(LOGFILE, "a", encoding="utf8") as f_in:
+#         f_in.write(responce + "\n")
 
 
 ################################################################

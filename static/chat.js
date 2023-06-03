@@ -197,6 +197,7 @@ function getCookie(name) {
 
 function runCheckStartup() {
     window.localStorage.setItem("Profileactive", "true")
+    whichEvent("dark")
     document.getElementById("mySidenav").style.backgroundColor = "#111";
   // document.getElementById("accountStuff").style.visibility = "hidden";
     let theme = whichEvent(window.localStorage.getItem("theme"));
@@ -242,7 +243,6 @@ function yesTOS() {
 
 function runStartup() {
     document.getElementById("dev_chat_iframe").src = "";
-    window.sessionStorage.setItem("ai", "false");
     loadChat();
     // userElement = window.localStorage.getItem("");
     document.cookie = "Notifications=true; path=/";
@@ -278,11 +278,7 @@ function wisperMessage() {
     let messageColor = document.getElementById("message_color")["value"];
     let ismutted = window.localStorage.getItem("permission");
 
-    if (ismutted === "banned" || ismutted === "muted") {
-        return;
-    }
-
-    if (message === "") {
+    if (ismutted === "banned" || ismutted === "muted" || message === "") {
         return;
     }
     
@@ -304,6 +300,7 @@ function wisperMessage() {
     } else {
         sender_f = sender;
     }
+    
     let messageL = toHyperlink(message.value);
     let user_color_name = "<font color='" + userColor + "'>" + user + "</font>";
     let message_color_send = "<font color='" + messageColor + "'>" + messageL + "</font>";
@@ -316,22 +313,11 @@ function wisperMessage() {
     renderChat(messages);
 }
 
-function sendMessage() {
-    let ai = window.sessionStorage.getItem("ai");
-    if (ai === "true") {
-        let message = document.getElementById("message")["value"];
-        if (message === "$sudo disable ai") {
-            sendMessage2();
-            return;
-        } else {
-            sendMessageai();
-        }
-    } else {
-        sendMessage2();
-    }
-}
+// function sendMessage() {
+//     sendMessage2();
+// }
 
-function sendMessage2() {
+function sendMessage() {
     let messageElement = document.getElementById("message");
     let userElement = document.getElementById("username");
     let profileElement = document.getElementById("profile_picture");
@@ -348,14 +334,6 @@ function sendMessage2() {
     let user_color = userColorElement["value"];
     let message_color = messageColorElement["value"];
     let role_color = roleColorElement["value"];
-
-    if (message === '$sudo enable ai') {
-        document.title = "Class Chat AI";
-        window.sessionStorage.setItem("ai", "true");
-    } else if (message === '$sudo disable ai') {
-        document.title = "OCD wleb Potato man Skill Issue!!!1!";
-        window.sessionStorage.setItem("ai", "false");
-    }
 
     if (user_color === "#000000") {
         user_color = "#ffffff";
