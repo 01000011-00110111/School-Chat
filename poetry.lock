@@ -30,6 +30,14 @@ python-versions = ">=3.6"
 frozenlist = ">=1.1.0"
 
 [[package]]
+name = "ansicon"
+version = "1.89.0"
+description = "Python wrapper for loading Jason Hood's ANSICON"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "async-timeout"
 version = "4.0.2"
 description = "Timeout context manager for asyncio programs"
@@ -137,6 +145,24 @@ optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
 
 [[package]]
+name = "console"
+version = "0.9907"
+description = "Comprehensive, composable utility library for ANSI terminals. Better, stronger, faster.  Tch-tch-tch-tch…"
+category = "main"
+optional = false
+python-versions = ">=3.4"
+
+[package.dependencies]
+colorama = {version = "*", markers = "os_name == \"nt\" and platform_version < \"10.0.10586\""}
+ezenv = ">=0.92"
+jinxed = {version = "*", markers = "os_name == \"nt\""}
+
+[package.extras]
+all = ["pyfiglet", "webcolors"]
+figlet = ["pyfiglet"]
+webcolors = ["webcolors"]
+
+[[package]]
 name = "debugpy"
 version = "1.6.3"
 description = "An implementation of the Debug Adapter Protocol for Python"
@@ -186,6 +212,14 @@ greenlet = ">=0.3"
 six = ">=1.10.0"
 
 [[package]]
+name = "ezenv"
+version = "0.92"
+description = "A more convenient interface to environment variables."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "flask"
 version = "2.2.3"
 description = "A simple framework for building complex web applications."
@@ -215,6 +249,17 @@ python-versions = ">=3.6"
 [package.dependencies]
 Flask = ">=0.9"
 python-socketio = ">=5.0.2"
+
+[[package]]
+name = "flask-sslify"
+version = "0.1.5"
+description = "Force SSL on your Flask app."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Flask = "*"
 
 [[package]]
 name = "frozenlist"
@@ -312,6 +357,17 @@ MarkupSafe = ">=2.0"
 i18n = ["Babel (>=2.7)"]
 
 [[package]]
+name = "jinxed"
+version = "1.2.0"
+description = "Jinxed Terminal Library"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+ansicon = {version = "*", markers = "platform_system == \"Windows\""}
+
+[[package]]
 name = "markupsafe"
 version = "2.1.1"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -376,6 +432,18 @@ python-versions = ">=3.6"
 [package.extras]
 qa = ["flake8 (==3.8.3)", "mypy (==0.782)"]
 testing = ["docopt", "pytest (<6.0.0)"]
+
+[[package]]
+name = "pillow"
+version = "9.5.0"
+description = "Python Imaging Library (Fork)"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+docs = ["furo", "olefile", "sphinx (>=2.4)", "sphinx-copybutton", "sphinx-inline-tabs", "sphinx-removed-in", "sphinxext-opengraph"]
+tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
 
 [[package]]
 name = "pluggy"
@@ -680,6 +748,17 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "xterm"
+version = "0.7.3"
+description = "Custom keyboard and mouse events for xTerm terminals"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Pillow = "*"
+
+[[package]]
 name = "yapf"
 version = "0.32.0"
 description = "A formatter for Python code."
@@ -714,11 +793,12 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8.0,<3.9"
-content-hash = "50166f6254eeda95937ba943d5221c59ebc13b4b1d222fdd69cc0e72aff42b28"
+content-hash = "11ef5591c14cc5d56ededa5c8b4eb7df58f06205c5cd92ec644452a8f4289bbf"
 
 [metadata.files]
 aiohttp = []
 aiosignal = []
+ansicon = []
 async-timeout = []
 attrs = []
 beautifulsoup4 = []
@@ -729,12 +809,15 @@ certifi = []
 charset-normalizer = []
 click = []
 colorama = []
+console = []
 debugpy = []
 dnspython = []
 emit = []
 eventlet = []
+ezenv = []
 flask = []
 flask-socketio = []
+flask-sslify = []
 frozenlist = []
 greenlet = []
 gunicorn = []
@@ -743,12 +826,14 @@ importlib-metadata = []
 itsdangerous = []
 jedi = []
 jinja2 = []
+jinxed = []
 markupsafe = []
 multidict = []
 numpy = []
 openai = []
 packaging = []
 parso = []
+pillow = []
 pluggy = []
 psutil = []
 pyflakes = []
@@ -772,6 +857,7 @@ ujson = []
 urllib3 = []
 werkzeug = []
 whatthepatch = []
+xterm = []
 yapf = []
 yarl = []
 zipp = []

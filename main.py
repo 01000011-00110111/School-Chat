@@ -20,6 +20,7 @@ from flask_socketio import SocketIO, emit
 client = pymongo.MongoClient(os.environ["acmongo_key"])
 dbm = client.Chat
 import chat
+import link
 import cmds
 import filtering
 import ai

@@ -19,6 +19,9 @@ better-profanity = "^0.7.0"
 Flask = "2.2.3"
 emit = "^0.4.0"
 openai = "^0.27.6"
+xterm = "0.7.3"
+console = "^0.9907"
+Flask-SSLify = "^0.1.5"
 
 [tool.poetry.dev-dependencies]
 debugpy = "^1.6.2"

@@ -29,6 +29,23 @@ function ProfilesB() {
     }
 }
 
+function ProfilesE() {
+    let Profileactive = window.localStorage.getItem("Profileactive");
+    let Pbutton = document.getElementById("pfpbtn");
+    if (Profileactive === "true") {
+        return;
+    } else {
+        let element = document.getElementsByClassName("pfp");
+        for(var i = 0; i < element.length; i++) {
+            element[i].style.display = '';
+        }
+        document.getElementById("chat").style.lineheight = "40px";
+        window.localStorage.setItem("Profileactive", "true");
+        Pbutton.value = "Disable profile pictures";
+        Pbutton.style.backgroundColor = "red";
+    }
+}
+
 // for event theme
 // set what event is currently being used
 function whichEvent(event = "test") {

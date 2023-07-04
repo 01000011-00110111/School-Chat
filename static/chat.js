@@ -385,7 +385,7 @@ function renderChat(messages) {
     }
 
     chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
-    ProfilesB();
+    ProfilesE();
 }
 
 
