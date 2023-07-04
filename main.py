@@ -20,10 +20,8 @@ from flask_socketio import SocketIO, emit
 client = pymongo.MongoClient(os.environ["acmongo_key"])
 dbm = client.Chat
 import chat
-import link
 import cmds
 import filtering
-import ai
 
 # mp = multiprocessing.get_context('spawn')
 # with mp.Pool(processes=4) as pool:
@@ -78,20 +76,6 @@ def f_but_better() -> ResponseReturnValue:
     """Not an easter egg I promise."""
     return "HI"
 
-
-@app.route("/gpt")
-def ai_page() -> ResponseReturnValue:
-    """The ai page"""
-    html_file = flask.render_template('GPT.html')
-    return html_file
-
-
-@app.route("/linter")
-def linter_bugs_page() -> ResponseReturnValue:
-    """Host the jslint page for viewing (manually added)"""
-    return flask.render_template('jslint_report.html')
-
-
 @app.route('/chat')
 def chat_page() -> ResponseReturnValue:
     """Serve the main chat, stops bypass bans."""
@@ -100,7 +84,7 @@ def chat_page() -> ResponseReturnValue:
 
 
 @app.route('/changelog')
-def changoelog_page() -> ResponseReturnValue:
+def changelog_page() -> ResponseReturnValue:
     """Serve the changelog, so old links don't break (after making the main page be the changelog)."""
     html_file = flask.render_template('update-log.html')
     return html_file
@@ -411,21 +395,6 @@ def handle_admin_message(message):
     """Bypass message filtering, used when chat is locked."""
     chat.force_message(message)
     emit("message_chat", message, broadcast=True, namespace="/")
-
-
-################################################################
-#      AI STUFF FOR TESTING                                    #
-################################################################
-
-
-# @socketio.on('message_ai')
-# def handle_ai_message(message, username):
-#     """send message for ai to read"""
-#     responce = ai.create_responce(message, username)
-#     emit("ai_responce", responce, broadcast=True, namespace="/")
-#     with open(LOGFILE, "a", encoding="utf8") as f_in:
-#         f_in.write(responce + "\n")
-
 
 ################################################################
 #      Start the webserver                                     #

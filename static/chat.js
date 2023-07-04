@@ -319,43 +319,7 @@ function wisperMessage() {
 
 function sendMessage() {
     let messageElement = document.getElementById("message");
-    /*let profileElement = document.getElementById("profile_picture");
-    let roleElement = document.getElementById("role")
-    let messageColorElement = document.getElementById("message_color");
-    let roleColorElement = document.getElementById("role_color");
-    let userColorElement = document.getElementById("user_color");
-    let ismutted = window.localStorage.getItem("permission");*/
-
     let message = messageElement["value"];
-    /*let user_name = window.localStorage.getItem("username");
-    let profile_picture = profileElement["value"]
-    let role = roleElement["value"];
-    let user_color = userColorElement["value"];
-    let message_color = messageColorElement["value"];
-    let role_color = roleColorElement["value"];
-
-    if (user_color === "#000000") {
-        user_color = "#ffffff";
-    }
-
-    if (message_color === "#000000") {
-        message_color = "#ffffff";
-    }
-
-    if (role_color === "#000000") {
-        role_color = "#ffffff";
-    }
-
-    window.localStorage.setItem("profile_picture", profile_picture);
-
-    if (message === "") {
-        return;
-    } else if (message === " ") {
-        return;
-    } else if (message === "  ") {
-        return;
-    }*/
-
     messageL = toHyperlink(message);
 
     messageElement["value"] = "";
