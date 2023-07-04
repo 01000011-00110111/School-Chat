@@ -316,19 +316,19 @@ def handle_online(username: str):
 
 @socketio.on("ban_cmd")
 def ban_user(username: str):
-    """Ban a user from the chat forever (until cookie wipe.)"""
+    """Ban a user from the chat forever."""
     cmds.ban_user(username)
 
 
 @socketio.on("mute_cmd")
 def mute_user(username: str):
-    """mute a user from the chat untilled mutted or until cookie wipe."""
+    """mute a user from the chat."""
     cmds.mute_user(username)
 
 
 @socketio.on("unmute_cmd")
 def unmute_user(username: str):
-    """unmute a user from the chat"""
+    """unmute a user from the chat."""
     cmds.unmute_user(username)
 
 

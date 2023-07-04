@@ -1,30 +1,27 @@
+"""All commands ran by devs, mods, users, etc."""
 import chat
 from main import dbm
 from flask_socketio import emit
 from time import sleep
 import os
 
-#   aaaaaaaa
-
 
 def ban_user(username: str):
-    """Ban a user from the chat forever (until cookie wipe.)"""
-    emit("ban", username, broadcast=True)
+    """Ban a user from the chat forever."""
     dbm.Accounts.update_one({"displayName": username},
                             {"$set": {
                                 "permission": "banned"
                             }})
     chat.force_message('[SYSTEM]: <font color="#ff7f00">' + username +
-                       " is mutted for an undefned period of time.</font>")
+                       " has been banned forever.</font>")
     emit("message_chat",
          '[SYSTEM]: <font color="#ff7f00">' + username +
-         " is Banned for forever.</font>",
+         " has been banned forever.</font>",
          broadcast=True)
 
 
 def mute_user(username: str):
-    """mute a user from the chat untilled mutted or until cookie wipe."""
-    emit("mute", username, broadcast=True)
+    """Mute a user from the chat."""
     dbm.Accounts.update_one({"displayName": username},
                             {"$set": {
                                 "permission": "muted"
@@ -38,17 +35,16 @@ def mute_user(username: str):
 
 
 def unmute_user(username: str):
-    """unmute a user from the chat"""
-    emit("unmute", username, broadcast=True)
+    """Unmute a user from the chat"""
     dbm.Accounts.update_one({"displayName": username},
                             {"$set": {
                                 "permission": "true"
                             }})
     chat.force_message('[SYSTEM]: <font color="#ff7f00">' + username +
-                       " is unmuted.</font>")
+                       " ihas been unmuted.</font>")
     emit("message_chat",
          '[SYSTEM]: <font color="#ff7f00">' + username +
-         " is unmutted.</font>",
+         " has been unmuted.</font>",
          broadcast=True)
 
 
