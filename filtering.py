@@ -18,7 +18,7 @@ def run_filter(username, message, dbm):
     locked = check_lock()
     user_muted = check_mute(username, user)
 
-    if user_muted is not 0:
+    if user_muted != 0:
         return ('permission', user_muted)
 
     if user['SPermission'] != "Debugpass":
@@ -50,7 +50,7 @@ def run_filter(username, message, dbm):
 
     return ('msg', final_str)
 
-def check_mute():
+def check_mute(username, user):
     if user["permission"] == "muted":
         return 1
     elif user["permission"] == "banned":
@@ -83,6 +83,7 @@ def find_cmds(message, user):
     for cmd in cmds:
         # send these to sone function in cmds.py, along with the user
         # and have an error handler send back to the room, or maybe just the client? whatever the problem was.
+        pass
 
 def compile_message(message, profile_picture, user, role):
     """Taken from old methold of making messages"""

@@ -319,7 +319,7 @@ function wisperMessage() {
 
 function sendMessage() {
     let messageElement = document.getElementById("message");
-    l/*et profileElement = document.getElementById("profile_picture");
+    /*let profileElement = document.getElementById("profile_picture");
     let roleElement = document.getElementById("role")
     let messageColorElement = document.getElementById("message_color");
     let roleColorElement = document.getElementById("role_color");
@@ -359,7 +359,7 @@ function sendMessage() {
     messageL = toHyperlink(message);
 
     messageElement["value"] = "";
-    socket.emit('message_chat', window.localStorage.getItem("user");, messageL);
+    socket.emit('message_chat', document.getElementById("user")["value"], messageL);
     window.scrollTo(0, document.body.scrollHeight);
 }
 

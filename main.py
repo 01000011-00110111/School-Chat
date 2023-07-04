@@ -366,9 +366,9 @@ def handle_cilent_refresh(user):
 def handle_message(user_name, message):
     """New New chat message handling pipeline."""
     result = filtering.run_filter(user_name, message, dbm)
-    if result is not True and result is not None:
-        chat.add_message(result)
-        emit("message_chat", result, broadcast=True)
+    if result[0] == 'msg':
+        chat.add_message(result[1])
+        emit("message_chat", result[1], broadcast=True)
 
 
 # pylint: enable=C0103
