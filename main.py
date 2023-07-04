@@ -353,6 +353,8 @@ def handle_message(user_name, message):
     if result[0] == 'msg':
         chat.add_message(result[1])
         emit("message_chat", result[1], broadcast=True)
+    else:
+        filtering.failed_message(result)
 
 
 # pylint: enable=C0103

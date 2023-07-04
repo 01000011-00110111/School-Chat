@@ -108,6 +108,21 @@ def do_dev_easter_egg(role, user):
         role_string = "<font color='" + role_color + "'>" + role + "</font>"
     return role_string
 
+def failed_message(result):
+    """Tell the client that your message could not be sent for whatever the reason was."""
+    if result[0] == 'permission':
+        if result[1] == 1:
+            fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you are muted.</font>"
+        elif result[1] == 2:
+            fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you have been banned.</font>"
+        elif result[1] == 3:
+            fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because the chat has been locked by an admin.</font>"
+    elif result[0] == "dev":
+        return
+    # more will be added when error messages become more common (chat rooms TM)
+    # something simmilar to this will be in cmds.py for commands failing.
+    emit("message_chat", fail_str, namespace="/")
+
 """
 if user_name in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[URL]',
                      'mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD', 'SYSTEM',
