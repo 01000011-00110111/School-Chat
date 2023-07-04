@@ -363,11 +363,9 @@ def handle_cilent_refresh(user):
 
 # pylint: disable=C0103
 @socketio.on('message_chat')
-def handle_message(user_name, user_color, role, role_color, message,
-                   message_color, profile_img):
-    """New socketio implemntation for chat message handling."""
-    result = filtering.create_username(user_name, user_color, role, role_color,
-                                       message, message_color, profile_img)
+def handle_message(user_name, message):
+    """New New chat message handling pipeline."""
+    result = filtering.run_filter(user_name, message, dbm)
     if result is not True and result is not None:
         chat.add_message(result)
         emit("message_chat", result, broadcast=True)

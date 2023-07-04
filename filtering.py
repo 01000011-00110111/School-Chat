@@ -6,117 +6,119 @@ from typing import Union
 from better_profanity import profanity
 from flask_socketio import emit
 from chat import force_message
+import profanity_words
 
 # get our custom whitelist words (that shouldnot be banned in the first place)
-profanity.load_censor_words(whitelist_words=[
-    'crap',
-    'god',
-    'LMAO',
-    'lmao',
-    'omg',
-    'stupid',
-    'dumb',
-    'piss',
-    'wtf',
-    'stroke',
-    'suck',
-    'hebe',
-    'gay',
-    'screw',
-])
-profanity.add_censor_words([
-    'sh!t',
-    'dumba',
-    'dam',
-    'boobie',
-])  # add your custom words here (will be in a separate file someday)
+profanity.load_censor_words(whitelist_words=profanity_words.whitelist_words)
+profanity.add_censor_words(profanity_words.censored)
 
+def run_filter(username, message, dbm):
+    """Its simple now, but when chat rooms come this will be more convoluted."""
+    user = dbm.Accounts.find_one({"username": username})
+    locked = check_lock()
+    user_muted = check_mute(username, user)
 
-def create_username(user_name, user_color, role, role_color, message,
-                    message_color, profile_picture) -> Union[str, bool]:
-    """See if an admin as sending the message, otherwise use normal procedure"""
-    # this will be redone so I don't need to use bs4 except for html escaping (maybe)
-    if user_name in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[URL]',
-                     'mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD', 'SYSTEM',
-                     '[SYSTEM]', "SONG", "[Song]", "[SONG]", "[song]", " ",
-                     "  ", "   ", "cseven", "cserver"):
-        return None
+    if user_muted is not 0:
+        return ('permission', user_muted)
 
-    # user = dbm.Accounts.find_one({'displayName': user_name})
-    # if user['permission'] == "muted" or user['permission'] == "banned":
-    # return
-
-    if user_name == '':
-        user_name = "Anonymous"
-        #return
-    elif user_name == "csevenReal":
-        user_name = "cseven"
-        # return
-    elif user_name == "cserverReal":
-        user_name = "cserver"
-
-    messageC = profanity.censor(message)
-    rolec = profanity.censor(role)
-
-    locked = os.path.exists("backend/chat.lock")
-    if profile_picture == "":
-        profile_picture = 'static/favicon.ico'
-    profile_img = "<img class='pfp' src='" + profile_picture + "'></img>"
-    user_color_name = "<font color='" + user_color + "'>" + user_name + "</font>"
-    message_color_send = "<font color='" + message_color + "'>" + messageC + "</font>"
-    if role_color == "#00ff00":
-        role_color_send = "<font class='Dev_colors-loop'>" + rolec + "</font>"
-    elif role_color == "#3262a8":
-        role_color_send = "<font class='ow_colors-loop'>" + rolec + "</font>"
+    if user['SPermission'] != "Debugpass":
+        message = filter_message(message)
+        role = profanity.censor(user['role'])
     else:
-        role_color_send = "<font color='" + role_color + "'>" + rolec + "</font>"
-    pings = re.findall(r'(?<=\[).+?(?=\])', message_color_send)
-    cmds = re.findall(r'(?<=\$sudo ).+?(?=\</font>)', message_color_send)
+        role = user['role']
 
+
+    if user['profile'] == "":
+        profile_picture = 'static/favicon.ico'
+    else:
+        profile_picture = user['profile']
+
+    find_pings(message, user['displayName'], profile_picture)
+    find_cmds(message, user)
+
+    final_str = compile_message(message, profile_picture, user, role)
+
+    if user['SPermission'] == "Debugpass":
+        force_message(final_str)
+        emit("message_chat", final_str, broadcast=True, namespace="/")
+        return ('dev', 0)
+
+    if locked is True:
+        return ("permission", 3)
+
+    # insert the bypass for [SONG] and [JOTD]
+
+    return ('msg', final_str)
+
+def check_mute():
+    if user["permission"] == "muted":
+        return 1
+    elif user["permission"] == "banned":
+        return 2
+    return 0
+
+def check_lock():
+    """For now, its just as simple as this, but when rooms come it will be more complicated."""
+    return os.path.exists("backend/chat.lock")
+
+def filter_message(message):
+    return profanity.censor(message)
+
+def find_pings(message, dispname, profile_picture):
+    pings = re.findall(r'(?<=\[).+?(?=\])', message)
     for ping in pings:
         emit("ping", {
             "who": ping,
-            "from": user_name,
-            "pfp": profile_img,
-            "message": messageC
+            "from": dispname,
+            "pfp": profile_picture,
+            "message": message
         },
              namespace="/",
              broadcast=True)
 
+def find_cmds(message, user):
+    """$sudo commands, will push every cmd found to cmds.py along with the user, so we can check if they can do said command."""
+    # currently we only find commands, have not implmented the other half
+    cmds = re.findall(r'(?<=\$sudo ).+?(?=\</font>)', message)
     for cmd in cmds:
-        emit(
-            "cmd",
-            {
-                "cmd": cmd,
-                # "from": user_name,
-                # "who": user_name
-            },
-            namespace="/",
-            broadcast=False)
+        # send these to sone function in cmds.py, along with the user
+        # and have an error handler send back to the room, or maybe just the client? whatever the problem was.
 
+def compile_message(message, profile_picture, user, role):
+    """Taken from old methold of making messages"""
+    profile = "<img class='pfp' src='" + profile_picture + "'></img>"
+    user_string = "<font color='" + user['userColor'] + "'>" + user['displayName'] + "</font>"
+    message_string = "<font color='" + user['messageColor'] + "'>" + message + "</font>"
+    role_string = do_dev_easter_egg(role, user)
     date_str = datetime.now(timezone(
         timedelta(hours=-4))).strftime("[%a %I:%M %p] ")
 
-    if role == "":
-        msg = date_str + profile_img + " " + user_color_name + " - " + message_color_send
+    # because accounts will now be required, we don't need the check if a role exists for the user
+    return date_str + profile + " " + user_string + " (" + role_string + ")" + " - " + message_string
+
+def do_dev_easter_egg(role, user):
+    """Because we want RAINBOW changing role names."""
+    role_color = user['roleColor']
+    if role_color == "#00ff00":
+        role_string = "<font class='Dev_colors-loop'>" + role + "</font>"
+    elif role_color == "#3262a8":
+        role_string = "<font class='ow_colors-loop'>" + role + "</font>"
     else:
-        msg = date_str + profile_img + " " + user_color_name + " (" + role_color_send + ")" + " - " + message_color_send
-    if user_name in ("cseven", "cserver"):
-        force_message(msg)
-        emit("message_chat", msg, broadcast=True, namespace="/")
-        return True
+        role_string = "<font color='" + role_color + "'>" + role + "</font>"
+    return role_string
 
-    if locked == True:
-        return True
-    # don't look at this too closely, its to make it impossible to impersonate (also gets arround line 12 problems)
-    if user_color == "[Joke of the day]: ":
-        msg = user_color + "<font color='" + message_color + "'>" + messageC + "</font>"
-        return msg
-    if user_color == "[SONG]: ":
-        msg = "<font color='" + message_color + "'>" + user_color + messageC + "</font>"
-        return msg
-
+"""
+if user_name in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[URL]',
+                     'mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD', 'SYSTEM',
+                     '[SYSTEM]', "SONG", "[Song]", "[SONG]", "[song]", " ",
+                     "  ", "   ", "cseven", "cserver"):
+    return None
+# move the above code to account creation/editing
+# adapt below code so [SONG] and [JOTD] work again
+if user_color == "[Joke of the day]: ":
+    msg = user_color + "<font color='" + message_color + "'>" + messageC + "</font>"
     return msg
-
-
-# g
+if user_color == "[SONG]: ":
+    msg = "<font color='" + message_color + "'>" + user_color + messageC + "</font>"
+    return msg
+"""
