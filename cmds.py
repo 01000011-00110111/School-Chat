@@ -32,7 +32,7 @@ def find_command(commands, user):
     elif commands.get('v0') == 'clear':
         handle_admin_cmds("reset_chat", user)
     elif commands.get('v0') == 'lines':
-        handle_admin_cmds("line_ct")
+        handle_admin_cmds("line_ct", user)
         #need to be added here as its just called without a check
     elif commands.get('v0') == 'mute':
         username = commands['v1']
@@ -87,15 +87,13 @@ def handle_admin_cmds(cmd: str, user):
         run_shutdown()
 
 
-def check_if_dev(username):
-    user = dbm.Accounts.find_one({"username": username})
+def check_if_dev(user):
     if user['SPermission'] == 'Debugpass':
         return 1
     return 0
 
 
-def check_if_mod(username):
-    user = dbm.Accounts.find_one({"username": username})
+def check_if_mod(user):
     if user['SPermission'] == 'modpass':
         return 1
     return 0

@@ -97,10 +97,9 @@ def find_cmds(message, user, locked):
         return ("permission", 3)
 
     for cmd in command_split:
-        print(cmd)
         date_str = datetime.now(timezone(
             timedelta(hours=-4))).strftime("[%a %H:%M] ")
-        Lmessage = date_str + "get username here someday:" + cmd
+        Lmessage = date_str + user['username'] + ":" + cmd
         cmds.log_commands(Lmessage)
 
         command = cmd.split()
