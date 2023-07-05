@@ -6,7 +6,6 @@ import hashlib
 import time
 import re
 import keys
-# from multiprocessing import Process
 import flask
 import pymongo
 from flask import request
@@ -35,7 +34,7 @@ root.addHandler(default_handler)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # clear db, so that old users don't stay
-dbm.Online.delete_many({})
+#dbm.Online.delete_many({})
 
 ################################################################
 #       Functions needed to allow clients to access files      #
@@ -54,7 +53,7 @@ def index() -> ResponseReturnValue:
 @app.route("/f")
 def f_but_better() -> ResponseReturnValue:
     """Not an easter egg I promise."""
-    return "HI"
+    return flask.redirect(flask.url_for('signup'))
 
 
 @app.route('/chat')
@@ -77,11 +76,48 @@ def debuging_page() -> ResponseReturnValue:
     return flask.render_template('DPM.html')
 
 
-@app.route('/signup')
+@app.route('/signup', methods=["POST", "GET"])
 def signup() -> ResponseReturnValue:
     """Serve the signup page."""
-    html_file = flask.render_template('signup-index.html')
-    return html_file
+    if request.method == "POST":
+        SUsername = request.form.get("SUsername")
+        SPassword = request.form.get("SPassword")
+        SPassword2 = request.form.get("SPassword2")
+        SRole = request.form.get("SRole")
+        SDesplayname = request.form.get("SDesplayname")
+        if SPassword != SPassword2:
+            return flask.render_template("signup-index.html",
+                                         error='Password boxes do not match!',
+                                         SUsername=SUsername,
+                                         SRole=SRole,
+                                         SDesplayname=SDesplayname)
+        dbm.Accounts.insert_one({
+            "username":
+            SUsername,
+            "password":
+            hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
+            "role":
+            SRole,
+            "profile":
+            "",
+            "theme":
+            "dark",
+            "displayName":
+            SDesplayname,
+            "messageColor":
+            "#ffffff",
+            "roleColor":
+            "#ffffff",
+            "userColor":
+            "#ffffff",
+            "permission":
+            "true",
+            "SPermission":
+            ""
+        })
+        return flask.redirect(flask.url_for('chat_page'))
+    else:
+        return flask.render_template('signup-index.html')
 
 
 @app.route('/backup')
@@ -200,30 +236,6 @@ def login_handle(username, password):
 @socketio.on('signup')
 def signup_handle(SUsername, SDesplayname, SPassword, SRole, Sprofile):
     """make the signup work."""
-    dbm.Accounts.insert_one({
-        "username":
-        SUsername,
-        "password":
-        hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
-        "role":
-        SRole,
-        "profile":
-        Sprofile,
-        "theme":
-        "dark",
-        "displayName":
-        SDesplayname,
-        "messageColor":
-        "#ffffff",
-        "roleColor":
-        "#ffffff",
-        "userColor":
-        "#ffffff",
-        "permission":
-        "true",
-        "SPermission":
-        ""
-    })
     emit("signup_pass", namespace="/")
 
 

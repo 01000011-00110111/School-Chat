@@ -12,6 +12,8 @@ def log_commands(message):
         file.write(message + '\n')
 
 
+# this is literally what sleep() does
+# and this still blocks the thread, like sleep()
 def delay(seconds):
     start_time = time.time()
     while True:

@@ -698,6 +698,10 @@
     margin-left: 37%;
 }
 
+.signuptext:hover {
+    background: green;
+}
+
 .signupbtn {
     margin-top: 30px;
     font-size: 20px;
@@ -708,58 +712,16 @@
     color: white;
     background: darkgray;
     margin-left: 45%;
+    background: white;
+    font-size: 20px;
 }
 
 .signupbtn:hover {
     background: green;
 }
 
-#SPassword:hover {
-    background: green;
-}
-
-#SPassword2:hover {
-    background: green;
-}
-
-#SUsername:hover {
-    background: green;
-}
-
-#SDesplayname:hover {
-    background: green;
-}
-
-#SRole:hover {
-    background: green;
-}
-
-#SPassword {
-    background: white;
-    font-size: 20px;
-    /* height: 50%; */
-    /* width: 50%; */
-}
-
-#SPassword2 {
-    background: white;
-    font-size: 20px;
-}
-
 #SUsername {
-    background: white;
-    font-size: 20px;
     margin-top: 11%;
-}
-
-#SDesplayname {
-    background: white;
-    font-size: 20px;
-}
-
-#SRole {
-    background: white;
-    font-size: 20px;
 }
 
 
