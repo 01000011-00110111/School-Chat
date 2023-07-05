@@ -65,10 +65,12 @@ def check_lock():
 
 
 def filter_message(message):
+    """No one likes profanity, especially flagging systems."""
     return profanity.censor(message)
 
 
 def find_pings(message, dispname, profile_picture):
+    """Gotta catch 'em all!"""
     pings = re.findall(r'(?<=\[).+?(?=\])', message)
     for ping in pings:
         emit("ping", {
@@ -161,7 +163,7 @@ if user_name in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[URL]',
                      '[SYSTEM]', "SONG", "[Song]", "[SONG]", "[song]", " ",
                      "  ", "   ", "cseven", "cserver"):
     return None
-# move the above code to account creation/editing
+# move the above code to account editing
 # adapt below code so [SONG] and [JOTD] work again
 if user_color == "[Joke of the day]: ":
     msg = user_color + "<font color='" + message_color + "'>" + messageC + "</font>"

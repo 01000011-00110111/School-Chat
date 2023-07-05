@@ -22,19 +22,24 @@ import filtering
 LOGFILE = "backend/chat.txt"
 
 app = flask.Flask(__name__)
-app.config['SECRET'] = os.urandom(
-    9001)  #lets hope our hacker does not have a quantum computer
+app.config['SECRET'] = os.urandom(9001)
+#lets hope our hacker does not have a quantum computer
 # lol
 logging.basicConfig(filename="backend/webserver.log",
                     filemode='a',
                     level=logging.INFO)
 root = logging.getLogger()
 root.addHandler(default_handler)
-# make this load from replit secrets later
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # clear db, so that old users don't stay
-#dbm.Online.delete_many({})
+dbm.Online.delete_many({})
+
+banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
+                    '[URL]', 'mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD',
+                    'SYSTEM', '[SYSTEM]', "SONG", "[Song]", "[SONG]", "[song]",
+                    " ", "  ", "   ", "cseven", "cserver", 'system',
+                    '[system]', '[System]', 'System')
 
 ################################################################
 #       Functions needed to allow clients to access files      #
@@ -79,6 +84,8 @@ def debuging_page() -> ResponseReturnValue:
 @app.route('/signup', methods=["POST", "GET"])
 def signup() -> ResponseReturnValue:
     """Serve the signup page."""
+    # I wonder if moving this to filtering.py would work
+    # to be done later TM
     if request.method == "POST":
         SUsername = request.form.get("SUsername")
         SPassword = request.form.get("SPassword")
@@ -91,6 +98,14 @@ def signup() -> ResponseReturnValue:
                                          SUsername=SUsername,
                                          SRole=SRole,
                                          SDesplayname=SDesplayname)
+        possible_user = dbm.Accounts.find_one({"username": SUsername})
+        possible_dispuser = dbm.Accounts.find_one(
+            {"displayName": SDesplayname})
+        if possible_user is not None or possible_dispuser is not None or SUsername in banned_usernames or SDesplayname in banned_usernames:
+            return flask.render_template(
+                "signup-index.html",
+                error='That Username/Display name is already taken!',
+                SRole=SRole)
         dbm.Accounts.insert_one({
             "username":
             SUsername,
@@ -231,12 +246,6 @@ def login_handle(username, password):
         emit("login_att", "true", namespace="/")
     else:
         emit("login_att", "failed", namespace="/")
-
-
-@socketio.on('signup')
-def signup_handle(SUsername, SDesplayname, SPassword, SRole, Sprofile):
-    """make the signup work."""
-    emit("signup_pass", namespace="/")
 
 
 # pylint: disable=C0103, R0913
