@@ -108,7 +108,6 @@ def find_cmds(message, user, locked):
         for index, command in enumerate(command):
             var_name = "v%d" % index
             commands[var_name] = command
-        print(commands)
         if 'v0' in commands:
             cmds.find_command(commands, user)
 

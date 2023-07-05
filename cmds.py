@@ -3,7 +3,6 @@ import chat
 from main import dbm
 from flask_socketio import emit
 from time import sleep
-import time
 import os
 
 
@@ -11,32 +10,14 @@ def log_commands(message):
     with open('backend/command_log.txt', 'a') as file:
         file.write(message + '\n')
 
-
-# this is literally what sleep() does
-# and this still blocks the thread, like sleep()
-def delay(seconds):
-    start_time = time.time()
-    while True:
-        current_time = time.time()
-        elapsed_time = current_time - start_time
-        if elapsed_time >= seconds:
-            break
-
-
 def find_command(commands, user):
     """Send whatever sudo command is issued to its respective function."""
     if commands.get('v0') == 'E':
         print('test')
-    elif commands.get('v0') == 'refresh':
-        handle_admin_cmds("refresh_users", user)
-    elif commands.get('v0') == 'clear':
-        handle_admin_cmds("reset_chat", user)
-    elif commands.get('v0') == 'lines':
-        handle_admin_cmds("line_ct", user)
-        #need to be added here as its just called without a check
+    elif commands.get('v0') == 'help':
+        print('test2')
     elif commands.get('v0') == 'mute':
         username = commands['v1']
-        print(username, " and ", user)
         mute_user(username, user)
     elif commands.get('v0') == 'unmute':
         username = commands['v1']
@@ -44,17 +25,15 @@ def find_command(commands, user):
     elif commands.get('v0') == 'ban':
         username = commands['v1']
         ban_user(username, user)
-    elif commands.get('v0') == 'lock':
-        handle_admin_cmds("lock", user)
-    elif commands.get('v0') == 'unlock':
-        handle_admin_cmds("unlock", user)
+    else:
+        handle_admin_cmds(commands.get('v0'), user)
 
 
 def handle_admin_cmds(cmd: str, user):
     """Admin commands will be sent here."""
     if cmd == "blanks":
         chat.line_blanks()
-    elif cmd == "full_status":
+    elif cmd == "status":
         result = chat.get_stats()
         emit("message_chat", result, broadcast=True)
     elif cmd == "lock":
@@ -75,16 +54,23 @@ def handle_admin_cmds(cmd: str, user):
                 "message_chat",
                 "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>",
                 broadcast=True)
-    elif cmd == "username_clear":
-        dbm.Online.delete_many({})
-    elif cmd == "refresh_users":
+    #elif cmd == "username_clear":  just needs to changed to a new thing
+    #    dbm.Online.delete_many({})  DANGER DANGER DANGER
+    elif cmd == "ronline" or cmd == "ro":
         dbm.Online.delete_many({})
         emit("force_username", "", broadcast=True)
-    elif cmd == "reset_chat":
-        chat.reset_chat(False, True)
-        emit("reset_chat", broadcast=True, namespace="/")
+    elif cmd == "clear" or cmd == 'rc':
+        if check_if_dev(user) == 1 or check_if_mod(user) == 1:
+            chat.reset_chat(False, True)
+            emit("reset_chat", broadcast=True, namespace="/")
     elif cmd == "shutdown":
         run_shutdown()
+    elif cmd == "lines" or cmd == "pstats":
+        lines = chat.get_line_count()
+        emit("message_chat",
+             f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>",
+             broadcast=True,
+             namespace="/")
 
 
 def check_if_dev(user):

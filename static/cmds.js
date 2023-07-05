@@ -23,7 +23,7 @@ function unmute() {
 
 function reset_chat() {
     user = document.getElementById("user")["value"];
-    socket.emit("admin_cmd", "reset_chat", user);
+    socket.emit("admin_cmd", "clear", user);
 }
 
 function lock_chat() {
@@ -45,7 +45,7 @@ function testChatGC() {
 
 function getStats() {
     user = document.getElementById("user")["value"];
-    socket.emit('admin_cmd', "full_status", user);
+    socket.emit('admin_cmd', "status", user);
 }
 
 function shutdown_server() {
@@ -112,7 +112,12 @@ function JsendMessage(elem) {
 
 function refreshUsers() {
     user = document.getElementById("user")["value"];
-    socket.emit('admin_cmd', "refresh_users", user);
+    socket.emit('admin_cmd', "ronline", user);
+}
+
+function getLines() {
+    user = document.getElementById("user")["value"];
+    socket.emit('admin_cmd', "lines", user);
 }
 
 function dummyajax(jsonData) {

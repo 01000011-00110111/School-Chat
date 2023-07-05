@@ -183,18 +183,6 @@ def respond_with_chat():
     return ret_val
 
 
-# send total lines in chat
-@app.get('/chat_count')
-def chat_list() -> str:
-    """Print line count of the chat in the chat."""
-    lines = chat.get_line_count()
-    emit("message_chat",
-         f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>",
-         broadcast=True,
-         namespace="/")
-    return "done"
-
-
 @app.post('/force_send')
 def force_chat() -> str:
     """Legacy function that will be removed later."""
