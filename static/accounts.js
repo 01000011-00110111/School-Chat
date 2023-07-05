@@ -87,13 +87,8 @@ function logout() {
   
     window.localStorage.setItem("username", "");
     window.localStorage.setItem("role", "");
-    window.localStorage.setItem("role_color", "#ffffff");
-    window.localStorage.setItem("user_color", "#ffffff");
-    window.localStorage.setItem("message_color", "#ffffff");
     window.localStorage.setItem("theme", 'dark');
     document.getElementById("role")["value"] = "";
-    document.getElementById("user_color")["value"] = "#ffffff";
-    document.getElementById("message_color")["value"] = "#ffffff";
     document.getElementById("username")["value"] = "";
     document.getElementById("profile_picture")["value"] = "";
     whichEvent("dark");

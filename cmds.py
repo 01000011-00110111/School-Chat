@@ -22,28 +22,30 @@ def delay(seconds):
 
 
 def find_command(commands, user):
-    if 'E' in commands.get('v0'):
+    """Send whatever sudo command is issued to its respective function."""
+    if commands.get('v0') == 'E':
         print('test')
-    elif 'refresh' in commands.get('v0'):
-        handle_admin_cmds("refresh_users", user);
-    elif 'clear' in commands.get('v0'):
-        handle_admin_cmds("reset_chat", user);
-    elif 'lines' in commands.get('v0'):
-        handle_admin_cmds("line_ct");#need to be added here as its just called without a check
-    elif 'mute' in commands.get('v0'):
+    elif commands.get('v0') == 'refresh':
+        handle_admin_cmds("refresh_users", user)
+    elif commands.get('v0') == 'clear':
+        handle_admin_cmds("reset_chat", user)
+    elif commands.get('v0') == 'lines':
+        handle_admin_cmds("line_ct")
+        #need to be added here as its just called without a check
+    elif commands.get('v0') == 'mute':
         username = commands['v1']
         print(username, " and ", user)
-        mute_user(username, user);
-    elif 'unmute' in commands.get('v0'):
+        mute_user(username, user)
+    elif commands.get('v0') == 'unmute':
         username = commands['v1']
-        unmute_user(username, user);
-    elif 'ban' in commands.get('v0'):
+        unmute_user(username, user)
+    elif commands.get('v0') == 'ban':
         username = commands['v1']
-        ban_user(username, user);
-    elif 'lock' in commands.get('v0'):
-        handle_admin_cmds("lock", user);
-    elif 'unlock' in commands.get('v0'):
-        handle_admin_cmds("unlock", user);
+        ban_user(username, user)
+    elif commands.get('v0') == 'lock':
+        handle_admin_cmds("lock", user)
+    elif commands.get('v0') == 'unlock':
+        handle_admin_cmds("unlock", user)
 
 
 def handle_admin_cmds(cmd: str, user):
@@ -89,6 +91,7 @@ def check_if_dev(username):
         return 1
     return 0
 
+
 def check_if_mod(username):
     user = dbm.Accounts.find_one({"username": username})
     if user['SPermission'] == 'modpass':
@@ -105,7 +108,7 @@ def ban_user(username: str, issuer):
     user = dbm.Accounts.find_one({"displayName": username})
     if user['permission'] == 'banned':
         return
-    else:    
+    else:
         dbm.Accounts.update_one({"displayName": username},
                                 {"$set": {
                                     "permission": "banned"
@@ -120,44 +123,43 @@ def ban_user(username: str, issuer):
 
 def mute_user(username: str, issuer):
     """Mute a user from the chat."""
-    if check_if_dev(issuer) != 1:
-        return
-    if check_if_mod(issuer) != 1:
-        return
-    user = dbm.Accounts.find_one({"displayName": username})
-    if user['permission'] in ('banned', 'muted'):
-        return
-    else:
-        dbm.Accounts.update_one({"displayName": username},
-                                {"$set": {
-                                    "permission": "muted"
-                                }})
-        chat.force_message('[SYSTEM]: <font color="#ff7f00">' + username +
-                           " is mutted for an undefned period of time.</font>")
-        emit("message_chat",
-             '[SYSTEM]: <font color="#ff7f00">' + username +
-             " is mutted for an undefned period of time.</font>",
-             broadcast=True)
+    # these need to be run a different way than ban, i wish I could do it like ban but thats not how it works.
+    if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
+        user = dbm.Accounts.find_one({"displayName": username})
+        if user['permission'] in ('banned', 'muted'):
+            return
+        else:
+            dbm.Accounts.update_one({"displayName": username},
+                                    {"$set": {
+                                        "permission": "muted"
+                                    }})
+            chat.force_message(
+                '[SYSTEM]: <font color="#ff7f00">' + username +
+                " is mutted for an undefned period of time.</font>")
+            emit("message_chat",
+                 '[SYSTEM]: <font color="#ff7f00">' + username +
+                 " is mutted for an undefned period of time.</font>",
+                 broadcast=True)
 
 
 def unmute_user(username: str, issuer):
     """Unmute a user from the chat"""
-    if check_if_dev(issuer) != 1 or check_if_mod(issuer) != 1:
-        return
-    user = dbm.Accounts.find_one({"displayName": username})
-    if user['permission'] in ('banned', 'true'):
-        return
-    else:
-        dbm.Accounts.update_one({"displayName": username},
-                                {"$set": {
-                                    "permission": "true"
-                                }})
-        chat.force_message('[SYSTEM]: <font color="#ff7f00">' + username +
-                           " ihas been unmuted.</font>")
-        emit("message_chat",
-             '[SYSTEM]: <font color="#ff7f00">' + username +
-             " has been unmuted.</font>",
-             broadcast=True)
+    # see mute_user for explanation
+    if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
+        user = dbm.Accounts.find_one({"displayName": username})
+        if user['permission'] in ('banned', 'true'):
+            return
+        else:
+            dbm.Accounts.update_one({"displayName": username},
+                                    {"$set": {
+                                        "permission": "true"
+                                    }})
+            chat.force_message('[SYSTEM]: <font color="#ff7f00">' + username +
+                               " ihas been unmuted.</font>")
+            emit("message_chat",
+                 '[SYSTEM]: <font color="#ff7f00">' + username +
+                 " has been unmuted.</font>",
+                 broadcast=True)
 
 
 # why is this here
