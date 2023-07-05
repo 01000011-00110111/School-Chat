@@ -10,6 +10,7 @@ backend/chat.lock
 backend/webserver.log
 backend/Chat-backup.txt
 backend/muted.txt
+backend/command_log.txt
 
 # running files
 __pycache__/*

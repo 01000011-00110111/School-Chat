@@ -81,62 +81,6 @@ function openprivchat() {
 // call this in online for private messaging
 }
 
-socket.on("ban", (mute_user_name) => {
-    bancline(mute_user_name);
-});
-
-socket.on("mute", (mute_user_name) => {
-    muteusr(mute_user_name);
-});
-
-socket.on("unmute", (mute_user_name) => {
-    unmuteusr(mute_user_name);
-});
-
-function bancline(mute_user_name) {
-    let ismutted = window.localStorage.getItem("permission")
-    let userElement = document.getElementById("username");
-    let user_name = userElement["value"];
-    if (ismutted === 'muted' || ismutted === "true") {
-        if (user_name === mute_user_name) {
-            window.localStorage.setItem("permission", "banned");
-            updateacc();
-        }
-    }
-}
-
-function muteusr(mute_user_name) {
-    let ismutted =  window.localStorage.getItem("permission")
-    let userElement = document.getElementById("username");
-    let user_name = userElement["value"];
-    if (ismutted === 'true') {
-        if (user_name === mute_user_name) {
-            window.localStorage.setItem("permission", "muted");
-            updateacc();
-        }
-    } else if (ismutted === 'banned') {
-        window.localStorage.setItem("permission", "banned");
-    } else {
-        window.localStorage.setItem("permission", "true");
-    }
-}
-
-function unmuteusr(mute_user_name) {
-    let ismutted = window.localStorage.getItem("permission")
-    let userElement = document.getElementById("username");
-    let user_name = userElement["value"];
-    if (ismutted === 'muted') {
-        if (user_name === mute_user_name) {
-            window.localStorage.setItem("permission", "true");
-            updateacc();
-        }
-    } else if (ismutted === 'banned') {
-        window.localStorage.setItem("permission", "banned");
-    } else {
-        window.localStorage.setItem("permission", "true");
-    }
-}
-
 function getCookie(name) {
     name = name + "=";
     var cookies = document.cookie.split(';');

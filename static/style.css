@@ -105,6 +105,12 @@
     padding-bottom: 54%;
     margin-left: 88%;
     border-left: 5px solid blue;
+    color: white;
+}
+
+.activenav {
+    color: white;
+    text-decoration: none;
 }
 
 #send {

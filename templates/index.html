@@ -9,7 +9,6 @@
         <script src="static/chat.js"></script>
         <script src="static/styles.js"></script>
         <script src="static/accounts.js"></script>
-        <script src="static/non-admin.js"></script>
         <script src="static/cmds.js"></script>
         <link rel="stylesheet" href="static/style.css"> 
         <meta charset="utf-8">
@@ -21,11 +20,6 @@
     <body onload='runCheckStartup();' id="body">
         <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfdCGMUhy6RwT2yMtM7Egd8bC3VNAE5_-w_8wZzyXwBX9daVg/viewform">Share ideas</a>
-            <a target="_blank" href="https://tux.school-chat.us/customize">customize account</a>
-            <a href="https://tux.school-chat.us/changelog">Update log</a>
-            <h3><a href="mailto:harperom62@k12louisa.org">Contact us</a></h3>
-            <h4><a href="https://docs.google.com/forms/d/e/1FAIpQLSdK8bsgzEn2kzDXQTu4sc-AP2HwK8aCZ_5NYhsKWItnJz2rDQ/viewform">Report Bugs</a></h4>
             <hr style="border: 5px solid grey;">
             <div id="loginStuff">
                 <p>Username:</p>
@@ -60,23 +54,17 @@
                         <a id="event" onclick="whichEvent();">Event</a>
                     </div>
                 </div><br>
-                <h3 id="user_colorTXT" >CHOOSE YOUR COLOR:</h3>
-                <p id="user_colorTXT">Username: </p>
-                <input type="color" value="#ffffff" id="user_color" name="color choser"><br>
-                <p id="user_colorTXT">Role: </p>
-                <input type="color" value="72a1d3" id="role_color" name="color choser"><br>
-                <p id="user_colorTXT">Message: </p>
-                <input type="color" value="#ffffff" id="message_color" name="color choser">
                 <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br><input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br><br><br><br>
                 <button id="Arefresh" onclick="updateacc()">Refresh</button>
                 <br>
-                <br>
-<!--                 <button onclick="SpecialMenu();" id="SpecialE">Special Access enter</button> -->
-                <br>
-                <br>
                 <button id='logout' onclick="logout();" on>logout</button>
-                <br><br><br><br><br><br><br>
-            </div>
+                <br>
+                </div>
+                <div id="extratext">
+                <h6><a href="/changelog">Update log</a></h6>
+                <h6><a href="mailto:harperom62@k12louisa.org">Contact us</a></h6>
+                <h6><a href="https://docs.google.com/forms/d/e/1FAIpQLSdK8bsgzEn2kzDXQTu4sc-AP2HwK8aCZ_5NYhsKWItnJz2rDQ/viewform">Report Bugs</a></h6>
+                </div>
         </div>
         <span id="topleft" style="font-size:40px;cursor:pointer" onclick="openNav()">&#9776;</span>
         <div id="DevStuff" class="sidenavR" style="display: none;">
@@ -92,7 +80,6 @@
             <button onclick="mute();" id="mute" class="std_btn">Mute</button>
             <button onclick="unmute();" class="std_btn blue_btn">Unmute</button>
             <button onclick="banHammer();" class="std_btn warn_btn dashed_btn">Ban</button><br>
-            <button onclick="reloadPages()" class="std_btn warn_btn dashed_btn">Reload client(s)</button><br>
             <p id="Devnavtext">Send message as SYSTEM user</p>
             <input type="text" id="systemsendT" placeholder="Send message as SYSTEM" class='std_box'>
             <button onclick="systemmessage();" id="systemsendB" class="std_btn blue_btn">Send</button><br><br>
@@ -106,17 +93,9 @@
             <button onclick="getStats();" class="std_btn green_btn">Send server stats in chat</button><button onclick="reset_chat()" class='std_btn dashed_btn warn_btn'>Reset chat</button><br>
             <button onclick="clearDB();" class='std_btn red_btn'>Reset DB</button><button onclick="refreshUsers();" class="std_btn dashed_btn warn_btn">Refresh users DB</button><br><br>
             <button onclick="shutdown_server();" class="std_btn dashed_btn warn_btn">Shutdown server</button>
-            <input type="text" id="sendimgT" placeholder="Paste img url here" class='std_box'><button onclick="sendImage('sendimgT');" class='std_btn black_btn'>Send</button><br> 
             <p id="Devnavtext">Send messages in bold/biger. (event)</p>
             <input type="text" id="EventMSGT" placeholder="Send message here"><button onclick="EsendMessage();" id="EventMSGB" class="std_btn blue_btn">Send</button>
-            <p id="Devnavtext">Send a message as a url.</p>
-            <input type="text" id="urlsendT" placeholder="paste url here" class='std_box'><input type="text" id="urlsendT2" placeholder="put message here" class='std_box'><br>
-            <button onclick="urlsend()" class="std_btn blue_btn">Send</button>
             <br>
-            <span id="DevchatB" onclick="opendevchat();">Dev Chat</span>
-             <div class="sidenavRC" id="dev_chat"><a href="javascript:void(0)" class="closebtnR" onclick="closedevchat()">×</a><a onclick="reloadiframe();">Refresh Dev Chat</a> <br> <iframe name="iframe1" id="dev_chat_iframe"
-        frameborder="0" border="0" cellspacing="0"
-        style="border-style: none; width: 100%; height: 725px;"></iframe></div>
         </div>
         <div id="EditorStuff" class="sidenavR" style="display: none;">
             <br>
@@ -182,15 +161,12 @@
                 <button onClick="sendMessage();" id="send">Send</button>
             </div>
         </div><br>
-        <div id="activenav">
+        <div class="activenav" id="activenav">
             <br><br>
-            <img id="pfplgo"></img><br>
+            <a class="activenav" target="_blank" href="/settings">Settings</a>
             <div id="online_users">
                 
             </div>
-        </div>
-        <div id="Privatemsg">
-            
         </div>
     </body>
 </html>

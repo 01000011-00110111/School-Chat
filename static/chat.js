@@ -27,13 +27,14 @@ if (Notification.permission === "default") {
 }
 
 function pingHandle(Obj=null) {
+    user = document.getElementById("user")["value"];
     if (Obj === null) {
         let start = Date.now();
         socket.emit('pingtest', start);
     } else {
         let end = Date.now();
         let diff = end - Obj['start']
-        socket.emit('admin_message', '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + diff + 'ms RTT</font>');
+        socket.emit('admin_message', '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + diff + 'ms RTT</font>', user);
     }
 }
 
@@ -186,7 +187,6 @@ function yesTOS() {
 }
 
 function runStartup() {
-    document.getElementById("dev_chat_iframe").src = "";
     loadChat();
     // userElement = window.localStorage.getItem("");
     document.cookie = "Notifications=true; path=/";
@@ -264,8 +264,11 @@ function wisperMessage() {
 function sendMessage() {
     let messageElement = document.getElementById("message");
     let message = messageElement["value"];
+    if (message === "") {
+        return;
+    }
+    
     messageL = toHyperlink(message);
-
     messageElement["value"] = "";
     socket.emit('message_chat', document.getElementById("user")["value"], messageL);
     window.scrollTo(0, document.body.scrollHeight);

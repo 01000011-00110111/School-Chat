@@ -31,16 +31,11 @@ socket.on("return_prefs", (Obj) => {
     }
     window.localStorage.setItem("username", Obj["displayName"]);
     window.localStorage.setItem("role", Obj["role"]);
-    window.localStorage.setItem("role_color", Obj["roleColor"]);
-    window.localStorage.setItem("user_color", Obj["userColor"]);
-    window.localStorage.setItem("message_color", Obj["messageColor"]);
     window.localStorage.setItem("theme", Obj["theme"]);
     window.localStorage.setItem("permission", Obj["permission"]);
-    document.getElementById("role_color")["value"] = Obj["roleColor"];
+    window.localStorage.setItem("profile_picture",Obj["profile"]);
     document.getElementById("username")["value"] = Obj["displayName"]; 
     document.getElementById("role")["value"] = Obj["role"];
-    document.getElementById("user_color")["value"] = Obj["userColor"];
-    document.getElementById("message_color")["value"] = Obj["messageColor"];
     document.getElementById("profile_picture")["value"] = Obj["profile"];
     window.sessionStorage.setItem("SPermission", Obj["SPermission"]);
     socket.emit("username_msg", Obj["displayName"]);
@@ -127,19 +122,11 @@ function SpecialMenu(Dev, Mod, Edit, JOTD) {
     let username = document.getElementById("user")["value"];
     if (SPermission === Dev) {
         document.title = "Class Chat Dev is down for now!!";
-        const script = document.createElement('script');
-        script.src = 'static/dev.js';
-        script.type = 'text/javascript';
-        document.body.appendChild(script);
         document.getElementById("DevStuff").style.display = "block";
         document.getElementById("toprightD").style.display = "block";
         document.getElementById("toprightD").style.display = "block";
     } else if (SPermission === Mod) {
         document.title = "Class Chat Mod";
-        const script = document.createElement('script');
-        script.src = 'static/mod-menu.js';
-        script.type = 'text/javascript';
-        document.body.appendChild(script);
         document.getElementById("ModStuff").style.display = "block";
         document.getElementById("toprightM").style.display = "block"; 
     } else if (SPermission === JOTD) {

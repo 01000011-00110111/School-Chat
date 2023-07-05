@@ -3,12 +3,9 @@ import os
 import logging
 import json
 import hashlib
-import cmd
 import time
-from datetime import datetime
 import re
 import keys
-import multiprocessing
 # from multiprocessing import Process
 import flask
 import pymongo
@@ -22,10 +19,6 @@ dbm = client.Chat
 import chat
 import cmds
 import filtering
-
-# mp = multiprocessing.get_context('spawn')
-# with mp.Pool(processes=4) as pool:
-#     pool.map(function1, function2)
 
 LOGFILE = "backend/chat.txt"
 
@@ -43,19 +36,6 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 # clear db, so that old users don't stay
 dbm.Online.delete_many({})
-
-
-class Console(cmd.Cmd):
-    """Console commands parent class."""
-
-    def do_greet(self, line):
-        """Testing line, to see if the console starts"""
-        print("hello" + line)
-
-    def do_EOF(self, _):  # pylint: disable=C0103
-        """Exit console when just enter is sent (or ctrl-d I belive)"""
-        return True
-
 
 ################################################################
 #       Functions needed to allow clients to access files      #
@@ -75,6 +55,7 @@ def index() -> ResponseReturnValue:
 def f_but_better() -> ResponseReturnValue:
     """Not an easter egg I promise."""
     return "HI"
+
 
 @app.route('/chat')
 def chat_page() -> ResponseReturnValue:
@@ -110,7 +91,7 @@ def get_logs_page() -> ResponseReturnValue:
     return html_file
 
 
-@app.route('/customize')
+@app.route('/settings')
 def customize_accounts() -> ResponseReturnValue:
     """customize the accounts"""
     html_file = flask.render_template('acc-edit-index.html')
@@ -315,34 +296,27 @@ def handle_online(username: str):
 
 
 @socketio.on("ban_cmd")
-def ban_user(username: str):
+def ban_user(username: str, user):
     """Ban a user from the chat forever."""
-    cmds.ban_user(username)
+    cmds.ban_user(username, user)
 
 
 @socketio.on("mute_cmd")
-def mute_user(username: str):
+def mute_user(username: str, user):
     """mute a user from the chat."""
-    cmds.mute_user(username)
+    cmds.mute_user(username, user)
 
 
 @socketio.on("unmute_cmd")
-def unmute_user(username: str):
+def unmute_user(username: str, user):
     """unmute a user from the chat."""
-    cmds.unmute_user(username)
+    cmds.unmute_user(username, user)
 
 
 @socketio.on("admin_cmd")
-def handle_admin_stuff(cmd: str):
+def handle_admin_stuff(cmd: str, user):
     """Admin commands will be sent here."""
-    cmds.handle_admin_cmds(cmd)
-
-
-@socketio.on("reload_page")
-def handle_cilent_refresh(user):
-    """Send command to refresh all clients."""
-    # really should use same system as pinging, so it doesen't send to everyone every time (less server stress)
-    cmds.handle_cilent_refresh(user)
+    cmds.handle_admin_cmds(cmd, user)
 
 
 # pylint: disable=C0103
@@ -393,10 +367,11 @@ def handle_wisper(message, recipient, sender):
 
 # temporary, will be in diffrent namespace soon that seems to never get done at this point I SAID NOTHING
 @socketio.on('admin_message')
-def handle_admin_message(message):
+def handle_admin_message(message, user):
     """Bypass message filtering, used when chat is locked."""
     chat.force_message(message)
     emit("message_chat", message, broadcast=True, namespace="/")
+
 
 ################################################################
 #      Start the webserver                                     #
@@ -404,6 +379,3 @@ def handle_admin_message(message):
 
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=8080)
-    # commenting the other stuff out because it DOESEN'T WORK TM
-    #p = Process(target=Console().cmdloop())
-    #p.start()
