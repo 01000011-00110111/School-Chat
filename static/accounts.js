@@ -34,7 +34,13 @@ socket.on("return_prefs", (Obj) => {
     window.localStorage.setItem("pfp", Obj["profile"]);
     socket.emit("username_msg", Obj["displayName"]);
     whichEvent(Obj["theme"]);
-    document.getElementById("pfpmenu").src = window.localStorage.getItem("pfp");
+    let pfp = document.getElementById("pfpmenu");
+    let picture = window.localStorage.getItem("pfp");
+    if (picture === '') {
+        pfp.src = 'static/favicon.ico';
+    } else {
+        pfp.src = picture;
+    }
     runStartup();
 });
 

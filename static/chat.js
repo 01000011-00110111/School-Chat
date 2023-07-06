@@ -124,30 +124,15 @@ function getCookie(name) {
 }
 
 function runCheckStartup() {
-        setDarkStyle();
-        let message_box = document.getElementById('message');
-        let send = document.getElementById('send');
-        let sidenav = document.getElementById('topleft');
-        sidenav.disabled = true;
-        send.disabled = true;
-        message_box.disabled = true;
+    setDarkStyle();
+    loadChat();
 }
 
 function runStartup() {
     loadChat();
-    checkMsgBox();
     document.cookie = "Notifications=true; path=/";
     username =  window.localStorage.getItem("username")
     socket.emit("username", username);
-}
-
-function checkMsgBox() {
-    let message_box = document.getElementById('message');
-    let send = document.getElementById('send');
-    let sidenav = document.getElementById('topleft');
-    sidenav.disabled = false;
-    send.disabled = false;
-    message_box.disabled = false;
 }
 
 function toHyperlink(str) {

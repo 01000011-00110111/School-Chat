@@ -1,3 +1,18 @@
-{% extends 'index.html' %} {% block content %}
-
+{% extends 'index.html' %} 
+{% block content %}
+<div class="LoginPopup" id="LoginPopup">
+    <div>
+      <h2>Login</h2>
+        <form method="post">
+            <input type="text" id="user" placeholder="Username" autocomplete="off" class="LoginInput" name="username">
+            <input type="password" id="pass" placeholder="Password" autocomplete="off" class="LoginInput" name="password">
+            <input type="checkbox" id="tosCH" style="margin-top: 20px;" name='TOSagree'> <a href="notdone" target="_blank">Rules & TOS</a>
+            <button type='submit' class="LoginBTN">Log In</button>
+            <a href="/signup" style="color:#2990f9;">Create an account here</a>
+        </form>
+        {% if error %}
+            <h2 style="color:red; pointer-events: none;" class="signuptext">{{error}}</h2>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

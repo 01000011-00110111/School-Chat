@@ -64,7 +64,7 @@ def f_but_better() -> ResponseReturnValue:
 @app.route('/chat')
 def chat_page() -> ResponseReturnValue:
     """Serve the main chat, stops bypass bans."""
-    html_file = flask.render_template('index.html')
+    html_file = flask.render_template('chat.html')
     return html_file
 
 
@@ -72,10 +72,32 @@ def chat_page() -> ResponseReturnValue:
 def login_page() -> ResponseReturnValue:
     """Show the login page"""
     if request.method == "POST":
-        pass
+        # redo client side checks here on server side, like signup
+        username = request.form.get("username")
+        password = request.form.get("password")
+        TOSagree = request.form.get("TOSagree")
+        try:
+            # not 100% sure this will catch a failed attempt, doesnt get them
+            user = dbm.Accounts.find_one({"username": username})
+        except TypeError:
+            return flask.render_template(
+                'login.html',
+                error="That account does not exist! Go to the signup page")
+        print(TOSagree)
+        if TOSagree != "on":
+            return flask.render_template('login.html',
+                                         error='You did not agree to the TOS!')
+        if username == user["username"] and hashlib.sha384(
+                bytes(password, 'utf-8')).hexdigest() == user["password"]:
+            return flask.render_template(
+                'chat.html', user=username
+            )  # this could be a security issue later on (if they figure out this)
+        else:
+            return flask.render_template(
+                'login.html', error="That username or password is incorrect!")
     else:
-        pass # do you want this done in 5 mintues or 5 hours
-# make a few backups then both of us take as long as u want lol
+        return flask.render_template('login.html')
+
 
 @app.route('/changelog')
 def changelog_page() -> ResponseReturnValue:
@@ -139,7 +161,7 @@ def signup() -> ResponseReturnValue:
             "SPermission":
             ""
         })
-        return flask.redirect(flask.url_for('chat_page'))
+        return flask.redirect(flask.url_for('login_page'))
     else:
         return flask.render_template('signup-index.html')
 
