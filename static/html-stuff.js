@@ -28,26 +28,6 @@ function closedevchat() {
     document.getElementById("dev_chat_iframe").src = "";
 }
 
-function EditopenNav() {
-    document.getElementById("EditorStuff").style.width = "550px";
-    document.getElementById("EditorStuff").style.paddingLeft = "5%";
-}
-
-function EditcloseNav() {
-    document.getElementById("EditorStuff").style.width = "0";
-    document.getElementById("EditorStuff").style.paddingLeft = "0";
-}
-
-function JOTDopenNav() {
-    document.getElementById("JOTDStuff").style.width = "550px";
-    document.getElementById("JOTDStuff").style.paddingLeft = "5%";
-}
-
-function JOTDcloseNav() {
-    document.getElementById("JOTDStuff").style.width = "0";
-    document.getElementById("JOTDStuff").style.paddingLeft = "0";
-}
-
 function ModopenNav() {
     document.getElementById("ModStuff").style.width = "550px";
     document.getElementById("ModStuff").style.paddingLeft = "5%";
@@ -96,4 +76,23 @@ window.onclick = function(event) {
 
 function DropdownTXTtheme() {
     document.getElementById("DropdownTXT").classList.toggle("showTXT");
+}
+
+// pfp button
+
+function Accountoptions() {
+    document.getElementById("accountdrop").classList.toggle("show");
+}
+
+window.onclick = function(event) {
+  if (!event.target.matches('.accountbtn')) {
+    var dropdowns = document.getElementsByClassName("accountdrop");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
 }

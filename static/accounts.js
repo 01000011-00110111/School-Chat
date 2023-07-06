@@ -30,8 +30,11 @@ socket.on("return_prefs", (Obj) => {
         failedlogin();
     }
     window.localStorage.setItem("username", Obj["displayName"]);
+    window.localStorage.setItem("pfp", Obj["profile"]);
     socket.emit("username_msg", Obj["displayName"]);
     whichEvent(Obj["theme"]);
+    document.getElementById("pfpmenu").src = window.localStorage.getItem("pfp");
+    runStartup();
 });
 
 
@@ -51,16 +54,15 @@ function failedlogin() {
         window.sessionStorage.setItem("login_att", "3");
         return;
     } else if (failedattempts === "3") {
-        document.getElementById("loginStuff").style.display = "block";
+
         window.sessionStorage.setItem("login_att", "");
     }
 }
 
 function enteraccount() {
-    document.getElementById("loginStuff").style.display = "none";
-    document.getElementById("logoutStuff").style.display = "block";
     socket.emit('get_prefs', document.getElementById("user")["value"]);
     socket.emit('get_perms');
+    document.getElementById("LoginPopup").style.display = 'none';
 }
 
 function updateacc() {
@@ -70,8 +72,6 @@ function updateacc() {
 
 
 function logout() {
-    document.getElementById("loginStuff").style.display = "block";
-    document.getElementById("logoutStuff").style.display = "none";
     let usernmElement = document.getElementById("user");
     let passwdElement = document.getElementById("pass");
     let roleElement = document.getElementById("role");
@@ -80,17 +80,11 @@ function logout() {
     usernmElement["value"] = "";
     passwdElement["value"] = "";
     socket.emit("username_msg", "");
-    document.getElementById("toprightE").style.display = "none";
     document.getElementById("toprightD").style.display = "none";
     document.getElementById("toprightM").style.display = "none";
-    document.getElementById("toprightJ").style.display = "none";
     document.getElementById("DevStuff").style.display = "none";
     document.getElementById("ModStuff").style.display = "none";
-    document.getElementById("EditorStuff").style.display = "none";
-    document.getElementById("JOTDStuff").style.display = "none";
     devcloseNav();
-    EditcloseNav();
-    JOTDcloseNav();
     ModcloseNav();
     document.title = "OCD wleb Potato man Skill Issue!!!1!";
 }
@@ -107,13 +101,5 @@ function SpecialMenu(Dev, Mod, Edit, JOTD) {
         document.title = "Class Chat Mod";
         document.getElementById("ModStuff").style.display = "block";
         document.getElementById("toprightM").style.display = "block"; 
-    } else if (SPermission === JOTD) {
-        document.title = "Class Chat JOTD";
-        document.getElementById("toprightJ").style.display = "block";
-        document.getElementById("JOTDStuff").style.display = "block";
-    } else if (SPermission === Edit) {
-        document.title = "Desmos | Graphing Calculator";
-        document.getElementById("toprightE").style.display = "block";
-        document.getElementById("EditorStuff").style.display = "block";
     }
 }

@@ -39,7 +39,7 @@ def run_filter(username, message, dbm, whisper):
 
     final_str = compile_message(message, profile_picture, user, role, whisper)
 
-    if wisper == 'false':
+    if whisper == 'false':
         if user['SPermission'] == "Debugpass":
             force_message(final_str)
             emit("message_chat", final_str, broadcast=True, namespace="/")

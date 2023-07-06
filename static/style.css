@@ -16,7 +16,6 @@
 #border {
     border: 5px solid grey;
     rotate: 90deg;
-
     margin: 0 auto;
 }
 
@@ -45,7 +44,21 @@
 
 #online_users {
     padding-left: 0.5%;
+    padding-top: 3.5%;
     color: white;
+}
+#online_border {
+     border: 5px solid grey;   
+     margin-top: 55px;
+     width: 11.5%;
+     position: fixed;
+}
+
+#settings_txt {
+    margin-left: 80px;
+    margin-top: 15px;
+    font-size: 20px;
+    position: absolute
 }
 
 #notif {
@@ -68,6 +81,14 @@
     border: 2px solid #404040;
 }
 
+#pfpmenu {
+    border-radius: 100px;
+    width: 50px;
+    height: 50px;
+    margin-left: 8.8%;
+    position: fixed;
+}
+
 #in-msg {
 	width: 100%;
 	height: 24px;
@@ -84,6 +105,7 @@
     padding-bottom: 9%;
     padding-top: 9%;
     word-wrap: break-word;
+    position: absolute;
 }
 
 #message {
@@ -239,12 +261,6 @@
 
 /* Menu options */
 
-#user {
-    color: #000000;
-    font-size: 30px;
-    width: 100%;
-}
-
 #dark {
     background-color: #000000;
     color: #ffffff;
@@ -293,18 +309,6 @@
     border-radius: 20px;
     position:  absolute;
 }
-
-#login {
-    background-color: #e59e24;
-    color: #2d8633;
-    font-size: 20px;
-    border-radius: 20px;
-}
-
-#user_colorTXT {
-    color: #d0c8c8;
-}
-
 
 
 
@@ -557,89 +561,6 @@
 
 .showTXT {display: block;}
 
-/* the POPUP FOR RULES */
-
-.popupbox {
-    width: 20%;
-    margin: 0 auto;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 35px;
-    border: 2px solid #fff;
-    border-radius: 20px/50px;
-    background-clip: padding-box;
-    text-align: center;
-}
-
-.popup {
-    margin: 70px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 5px;
-    line-height: 28px;
-    width: 30%;
-    position: relative;
-}
-
-.popup h2 {
-    margin-top: 0;
-    color: #333;
-    font-family: Tahoma, Arial, sans-serif;
-}
-
-.popup .close {
-    position: absolute;
-    top: 20px;
-    right: 100px;
-    transition: all 200ms;
-    font-size: 30px;
-    font-weight: bold;
-    text-decoration: none;
-    color: #333;
-}
-
-.popup .limited_close {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    transition: all 200ms;
-    font-size: 30px;
-    font-weight: bold;
-    text-decoration: none;
-    color: #333;
-}
-
-/*.popup .close:hover {
-    color: orange;
-}*/
-
-.popup .content {
-    max-height: 30%;
-    overflow: auto;
-}
-
-.popupoverlay {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.7);
-}
-
-/* These are the rules you are looking for. */
-.popupoverlay {
-    transition: opacity 500ms;
-    opacity: 1;
-    pointer-events: all;
-}
-
-.popupoverlay:target {
-    opacity: 0;
-    pointer-events: none;
-}
-
-
-
 #account{
     color: white;
     font-size: 36px;
@@ -685,36 +606,6 @@
     .sidenav a {font-size: 18px;}
 }
 
-
-
-/* account page */
-#login {
-    
-}
-
-#logintxt1 {
-    background-color: wheat;
-    color: wheat;
-}
-
-#logintxt2 {
-    background-color: wheat;
-    color: wheat;
-}
-
-#user {
-    color: #000000;
-    font-size: 30px;
-    width: 100%;
-    background-color: #40be37ff;
-}
-
-#pass {
-    color: #000000;
-    font-size: 30px;
-    width: 100%;
-    background-color: #c84646;
-}
 
 
 /* signup page */
@@ -838,4 +729,68 @@
     font-size: 20px;
     color: #ffffff;
     /* padding: 50px; */
+}
+
+
+
+
+/* Login popup */
+
+.LoginInput {
+  width: 92%;
+  height: 35px;
+  border-radius: 10px;
+  border: 1px;
+  outline: none;
+  margin-bottom: 10px;
+  background: aliceblue;
+}
+
+.LoginPopup {
+  background: white;
+  position: fixed;
+  color: black;
+  width: 350px;
+  height: 350px;
+  border-radius: 20px;
+  text-align: center;
+  margin-left: 28%;
+}
+
+.LoginBTN {
+  background: #2990f9;
+  color: white;
+  border: 0px;
+  width: 92%;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.LoginBTN:hover {
+  background: #1b5c9d;
+}
+
+/* account dropdown */
+
+.accountdr {
+  position: relative;
+  display: inline-block;
+}
+
+.accountdrop {
+  display: none;
+  position: absolute;
+  background-color: #3d3846;
+  min-width: 60px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  top: 2.5%; /* Use 'top' instead of 'margin-top' for positioning */
+  left: 7.1%; /* Use 'left' instead of 'margin-left' for positioning */
+}
+
+.accountdrop a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
 }

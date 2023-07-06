@@ -9,19 +9,6 @@ socket.on("message_chat", (message) => {
     renderChat(message);
 });
 
-socket.on("reload_pages", (muteUserName) => {
-    let userElement = document.getElementById("username");
-    let user_name = userElement["value"];
-
-    if (muteUserName === user_name) {
-        location.reload();
-        // youfoundanotheregg();
-    } else if (muteUserName === "everyone") {
-        location.reload();
-        // youfoundanotheregg();
-    }
-});
-
 if (Notification.permission === "default") {
     Notification.requestPermission();
 }
@@ -137,56 +124,21 @@ function getCookie(name) {
 }
 
 function runCheckStartup() {
-    window.localStorage.setItem("Profileactive", "true")
-    whichEvent("dark")
-    document.getElementById("mySidenav").style.backgroundColor = "#111";
-  // document.getElementById("accountStuff").style.visibility = "hidden";
-    let theme = whichEvent(window.localStorage.getItem("theme"));
-    if (theme === "") {
-        whichEvent();
-    }
-    access = window.localStorage.getItem("access");
-    if (access === 'true') {
-        runStartup();
-        checkMsgBox();
-
-    } else {
-        // must be here, otherwise popup could be bypased
+        setDarkStyle();
         let message_box = document.getElementById('message');
         let send = document.getElementById('send');
         let sidenav = document.getElementById('topleft');
         sidenav.disabled = true;
         send.disabled = true;
         message_box.disabled = true;
-    } // else DIE
-}
-
-
-function runLimitedStartup() {
-    runStartup();
-    let message_box = document.getElementById('message');
-    let send = document.getElementById('send');
-    let sidenav = document.getElementById('topleft');
-    sidenav.disabled = true;
-    send.disabled = true;
-    message_box.disabled = true;
-    window.localStorage.setItem("access", "false");
-}
-
-function yesTOS() {
-    access = 'true';
-    window.localStorage.setItem("access", "true");
-    // document.cookie = "permission=false; path=/";
-    runStartup();
-    checkMsgBox();
-    setDarkStyle();
 }
 
 function runStartup() {
     loadChat();
-    // userElement = window.localStorage.getItem("");
+    checkMsgBox();
     document.cookie = "Notifications=true; path=/";
-    socket.emit("username", "");
+    username =  window.localStorage.getItem("username")
+    socket.emit("username", username);
 }
 
 function checkMsgBox() {
@@ -224,6 +176,7 @@ function wisperMessage() {
 
 function sendMessage() {
     let messageElement = document.getElementById("message");
+    let user = document.getElementById("user")["value"]
     let message = messageElement["value"];
     if (message === "") {
         return;
@@ -231,7 +184,7 @@ function sendMessage() {
     
     messageL = toHyperlink(message);
     messageElement["value"] = "";
-    socket.emit('message_chat', document.getElementById("user")["value"]/* is this needed? */, messageL);
+    socket.emit('message_chat', user, messageL);
     window.scrollTo(0, document.body.scrollHeight);
 }
 
