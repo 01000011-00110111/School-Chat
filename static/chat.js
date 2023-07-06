@@ -117,10 +117,6 @@ function changeWisperUser(username) {
     document.getElementById('onelinelsbtn').value = username + " selected.";
 }
 
-function openprivchat() {
-// call this in online for private messaging (TM) on that
-}
-
 function loadChat() {
     ajaxGetRequest("/chat_logs", loadChatStartup);
 }
@@ -257,9 +253,6 @@ function wisperMessage() {
     renderChat(messages);
 }
 
-// function sendMessage() {
-//     sendMessage2();
-// }
 
 function sendMessage() {
     let messageElement = document.getElementById("message");
@@ -304,122 +297,7 @@ function checkKey() {
     }
 }
 
-
-function youfounddaegg() {
-    let i = 0
-    while (i > 600) {
-        setTimeout(setChristmasTheme, 1000);
-        setTimeout(setDarkStyle, 1000);
-        setTimeout(setLightStyle, 1000);
-        setTimeout(setThanksTheme, 1000);
-        setTimeout(setHollowTheme, 1000);
-        setTimeout(setNewyearsTheme, 1000);
-        setTimeout(setSpecalStyle, 1000);
-        i++
-    }
-}
-
 function youfoundanotheregg() {
     let body = document.getElementById("body");
     body.style.webkitAnimation = "rainbowb 5s infinite";
-}
-
-function openNav() {
-    document.getElementById("mySidenav").style.width = "250px";
-}
-
-function closeNav() {
-    document.getElementById("mySidenav").style.width = "0";
-}
-
-function devopenNav() {
-    document.getElementById("DevStuff").style.width = "550px";
-    document.getElementById("DevStuff").style.paddingLeft = "5%";
-}
-
-function devcloseNav() {
-    document.getElementById("DevStuff").style.width = "0";
-    document.getElementById("DevStuff").style.paddingLeft = "0";
-}
-
-function opendevchat() {
-    document.getElementById("dev_chat").style.width = "1250px";
-    document.getElementById("dev_chat").style.paddingLeft = "5%";
-    document.getElementById("dev_chat_iframe").src = "https://dev.school-chat.us/chat";
-}
-
-function closedevchat() {
-    document.getElementById("dev_chat").style.width = "0";
-    document.getElementById("dev_chat").style.paddingLeft = "0";
-    document.getElementById("dev_chat_iframe").src = "";
-}
-
-function EditopenNav() {
-    document.getElementById("EditorStuff").style.width = "550px";
-    document.getElementById("EditorStuff").style.paddingLeft = "5%";
-}
-
-function EditcloseNav() {
-    document.getElementById("EditorStuff").style.width = "0";
-    document.getElementById("EditorStuff").style.paddingLeft = "0";
-}
-
-function JOTDopenNav() {
-    document.getElementById("JOTDStuff").style.width = "550px";
-    document.getElementById("JOTDStuff").style.paddingLeft = "5%";
-}
-
-function JOTDcloseNav() {
-    document.getElementById("JOTDStuff").style.width = "0";
-    document.getElementById("JOTDStuff").style.paddingLeft = "0";
-}
-
-function ModopenNav() {
-    document.getElementById("ModStuff").style.width = "550px";
-    document.getElementById("ModStuff").style.paddingLeft = "5%";
-}
-
-function ModcloseNav() {
-    document.getElementById("ModStuff").style.width = "0";
-    document.getElementById("ModStuff").style.paddingLeft = "0";
-}
-
-function dropdownTheme() {
-    document.getElementById("myDropdown").classList.toggle("show");
-}
-
-window.onclick = function(event) {
-    if (!event.target.matches('.dropbtn')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        var i;
-        for (i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
-            if (openDropdown.classList.contains('show')) {
-                openDropdown.classList.remove('show');
-            }
-        }
-    } else if (!event.target.matches('.mySidenav')) {
-        // what is this
-    }
-}
-
-function Onlinewprls() {
-  document.getElementById("onlinels").classList.toggle("show");
-}
-
-window.onclick = function(event) {
-  if (!event.target.matches('.onelinelsbtn')) {
-    var dropdowns = document.getElementsByClassName("droptheme");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
-  }
-} 
-
-function DropdownTXTtheme() {
-    document.getElementById("DropdownTXT").classList.toggle("showTXT");
 }

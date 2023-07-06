@@ -1,0 +1,22 @@
+dev:
+- (ban (username) (reason)) the reason is optional<br>
+- (mute (username) (time) (reason)) reason and time are optional<br>
+- (unmute (username))<br>
+- <br>
+- <br>
+- <br>
+- <br>
+- <br>
+-
+mod:
+- <br>
+- <br>
+- <br>
+- <br>
+- 
+user:
+- (song (text))<br> send as Song (not added)
+- (JOTD (text))<br> send as JOTD (not added)
+- (ronline)<br> refresh the online list
+- 
+end:

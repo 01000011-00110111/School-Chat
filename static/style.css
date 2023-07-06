@@ -13,6 +13,27 @@
 
 }
 
+#border {
+    border: 5px solid grey;
+    rotate: 90deg;
+
+    margin: 0 auto;
+}
+
+#chatStuff {
+    max-width: 1000x;
+    position: absolute;
+}
+
+#accountStuff {
+    margin-top: 8%;
+    margin-left: 68%;
+    max-width: 250%;
+    max-height: 250%;
+    position: absolute;
+}
+
+
 #main {
 	display: flex;
 	width: 100%;
@@ -266,6 +287,13 @@
     display: flex;
 }
 
+#wisper_send {
+    color: steelblue;
+    background-color: orangered;
+    border-radius: 20px;
+    position:  absolute;
+}
+
 #login {
     background-color: #e59e24;
     color: #2d8633;
@@ -421,6 +449,7 @@
     color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
+    max-width: 150px;
 }
 
 .dashed_btn {

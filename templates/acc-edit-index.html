@@ -6,6 +6,8 @@
         <!-- SOCKETIO IMPORT MUST BE HERE, BEFORE acc-edit.JS IMPORT. IT BREAKS OTHERWISE -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
         <script src="static/acc-edit.js"></script>
+        <script src="static/styles.js"></script>
+        <script src="static/html-stuff.js"></script>
         <link rel="stylesheet" href="static/style.css"> 
         <meta name="description" content="A chat app, what else did you think this is?">
         <meta name="author" content="C7, cserver">
@@ -33,13 +35,25 @@
                     <input type="color" value="#ffffff" id="message_color" name="color choser"><br>
                     <p id="user_colorTXT">Profile pictures</p>
                     <input type="text" id="profile" name="profile picture" placeholder="Profile Picture" class='std_box' style="width: 100%;"><br>
+                    <div class="colorDropdown">
+                        <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
+                        <div id="myDropdown" class="dropdown-content">
+                            <a id="dark" onclick="setDarkStyle();">Dark</a>
+                            <a id="light" onclick="setLightStyle();">Light</a>
+                            <a id="specal1" onclick="setSpecalStyle();">Specal</a>
+                            <a id="event" onclick="whichEvent();">Event</a>
+                        </div>
+                    </div>
         </div>
+        <hr id="border">
         <div id="accountStuff" style="display: none;">
             <p id="user_colorTXT">Login username:</p><br>
             <input type="text" id="Ausername" placeholder="login username" maxlength="15" disabled><br>
             <p id="user_colorTXT">Password:</p><br>
             <input type="password" id="Apassword" placeholder="Password"><br>
             <br>
+            <input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
+            <input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br>
             <button onclick="update()" id="change">update</button><br>
             <br>
             <br>

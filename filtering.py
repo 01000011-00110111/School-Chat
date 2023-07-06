@@ -148,6 +148,8 @@ def failed_message(result):
             fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you have been banned.</font>"
         elif result[1] == 3:
             fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because the chat has been locked by an admin.</font>"
+        elif result[1] == 4:
+            fail_str = "[SYSTEM]: <font color='#ff7f00'>command not found use" + '"$sudo help"' + "to see all commands.</font>"
     elif result[0] == "dev":
         return
     # more will be added when error messages become more common (chat rooms TM)

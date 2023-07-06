@@ -10,6 +10,7 @@
         <script src="static/styles.js"></script>
         <script src="static/accounts.js"></script>
         <script src="static/cmds.js"></script>
+        <script src="static/html-stuff.js"></script>
         <link rel="stylesheet" href="static/style.css"> 
         <meta charset="utf-8">
         <meta name="description" content="A chat app, what else did you think this is?">
@@ -43,18 +44,8 @@
                 <br>
                 <br>
                 <br>
-                <input type="text" id="role" name="role" placeholder="role" hidden><input type="text" id="username" name="role" placeholder="role" hidden><br>
-                <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture" class='std_box' style="width: 100%;" hidden><br>
-                <div class="colorDropdown">
-                    <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
-                    <div id="myDropdown" class="dropdown-content">
-                        <a id="dark" onclick="setDarkStyle();">Dark</a>
-                        <a id="light" onclick="setLightStyle();">Light</a>
-                        <a id="specal1" onclick="setSpecalStyle();">Specal</a>
-                        <a id="event" onclick="whichEvent();">Event</a>
-                    </div>
-                </div><br>
-                <br><input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br><input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br><br><br><br>
+                <!-- <input type="text" id="role" name="role" placeholder="role" hidden><input type="text" id="username" name="role" placeholder="role" hidden><br>
+                <input type="text" id="profile_picture" name="profile picture" placeholder="Profile Picture" class='std_box' style="width: 100%;" hidden><br> -->
                 <button id="Arefresh" onclick="updateacc()">Refresh</button>
                 <br>
                 <button id='logout' onclick="logout();" on>logout</button>
@@ -96,26 +87,6 @@
             <p id="Devnavtext">Send messages in bold/biger. (event)</p>
             <input type="text" id="EventMSGT" placeholder="Send message here"><button onclick="EsendMessage();" id="EventMSGB" class="std_btn blue_btn">Send</button>
             <br>
-        </div>
-        <div id="EditorStuff" class="sidenavR" style="display: none;">
-            <br>
-            <a href="javascript:void(0)" class="closebtnR" onclick="EditcloseNav()">×</a>
-            <h3 id="Devnavtext">This is the menu used by style editor staff</h3>
-            <input type="text" id="SOsendTE" placeholder="SONG message:" class='std_box'>
-            <button onclick="SOsendMessage('SOsendTE');" class='std_btn song_btn'>Send</button><br>
-            <input type="text" id="sendimgTE" placeholder="Paste img url here" class='std_box'><button onclick="sendImage('sendimgTE');" class='std_btn black_btn'>Send</button><br> 
-            <button onclick='ajaxGetRequest("/chat_count", dummyajax);' class="std_btn green_btn">Print total line count</button>
-            <button onclick="refreshUsers();" class="std_btn dashed_btn warn_btn">Refresh users DB</button><br><br>
-        </div>
-        <div id="JOTDStuff" class="sidenavR" style="display: none;">
-            <br>
-            <a href="javascript:void(0)" class="closebtnR" onclick="JOTDcloseNav()">×</a>
-            <h3 id="Devnavtext">This is the menu used by JOTD staff</h3>
-            <input type="text" id="jsendTJ" placeholder="JOTD message:" class='std_box'>
-            <button onclick="JsendMessage('jsendTJ');" class='std_btn jotd_btn'>Send</button><br>
-            <input type="text" id="sendimgTJ" placeholder="Paste img url here" class='std_box'><button onclick="sendImage('sendimgTJ');" class='std_btn black_btn'>Send</button><br> 
-            <button onclick='ajaxGetRequest("/chat_count", dummyajax);' class="std_btn green_btn">Print total line count</button>
-            <button onclick="refreshUsers();" class="std_btn dashed_btn warn_btn">Refresh users DB</button><br><br>
         </div>
         <div id="ModStuff" class="sidenavR" style="display: none;">
             <br>

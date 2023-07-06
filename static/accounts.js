@@ -34,9 +34,9 @@ socket.on("return_prefs", (Obj) => {
     window.localStorage.setItem("theme", Obj["theme"]);
     window.localStorage.setItem("permission", Obj["permission"]);
     window.localStorage.setItem("profile_picture",Obj["profile"]);
-    document.getElementById("username")["value"] = Obj["displayName"]; 
-    document.getElementById("role")["value"] = Obj["role"];
-    document.getElementById("profile_picture")["value"] = Obj["profile"];
+    // document.getElementById("username")["value"] = Obj["displayName"];
+    // document.getElementById("role")["value"] = Obj["role"];
+    // document.getElementById("profile_picture")["value"] = Obj["profile"];
     window.sessionStorage.setItem("SPermission", Obj["SPermission"]);
     socket.emit("username_msg", Obj["displayName"]);
     whichEvent(Obj["theme"]);
@@ -88,9 +88,9 @@ function logout() {
     window.localStorage.setItem("username", "");
     window.localStorage.setItem("role", "");
     window.localStorage.setItem("theme", 'dark');
-    document.getElementById("role")["value"] = "";
-    document.getElementById("username")["value"] = "";
-    document.getElementById("profile_picture")["value"] = "";
+    // document.getElementById("role")["value"] = "";
+    // document.getElementById("username")["value"] = "";
+    // document.getElementById("profile_picture")["value"] = "";
     whichEvent("dark");
   
     usernmElement["value"] = "";
