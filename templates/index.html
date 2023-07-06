@@ -90,25 +90,19 @@
             <br>
         </div>
         <span class="topright" id="toprightD" onclick="devopenNav();" style="display: none;">🔧</span>
-        <span class="topright" id="toprightE" onclick="EditopenNav();" style="display: none;">&#127925;</span>
-        <span class="topright" id="toprightJ" onclick="JOTDopenNav();" style="display: none;">&#128556;</span>
         <span class="topright" id="toprightM" onclick="ModopenNav();" style="display: none;">🛡</span>
         <div id="chat">
             
         </div>
-        
           <div class="LoginPopup" id="LoginPopup">
             <div>
               <h2>Login</h2>
               
               <input type="text" id="user" placeholder="Username" autocomplete="off" class="LoginInput">
-              
               <input type="password" id="pass" placeholder="Password" autocomplete="off" class="LoginInput">
-
-              <input type="checkbox" value="Agree to Rules & TOS" id="tosCH"> <a href="notdone" target="_blank">Rules & TOS</a>
-              
+              <input type="checkbox" value="Agree to Rules & TOS" id=
+"tosCH" style="margin-top: 20px;"> <a href="notdone" target="_blank">Rules & TOS</a>
               <button class="LoginBTN" onclick="login();">Log In</button>
-                
               <a href="/signup" style="color:#2990f9;">Create an account here</a>
                 {% if error %}
                     <h2 style="color:red; pointer-events: none;" class="signuptext">{{error}}</h2>
@@ -124,13 +118,13 @@
             </div>
         </div><br>
         <div class="activenav" id="activenav">
-            <div class="accountdr">
-              <a class="activenav" id="settings_txt" target="_blank" href="/settings">Settings</a><input type="image" id="pfpmenu" class="accountbtn" src="static/favicon.ico" onclick="Accountoptions();">
-              <div id="accountdrop" class="accountdrop">
-                <a href="#">Logout</a>
-                <a href="#">$soon</a>
-                <a href="#">#soon</a>
-              </div>
+            <div class="AccountPopup">
+                <input type="image" id="pfpmenu" src="static/favicon.ico" class="PictureBTN" onclick="OpenAC();"/>
+                <div id="AccControls" class='AccControls'>
+                    <a onclick="logout();">Logout</a>
+                    <a href="/settings">Settings</a>
+                    <a href="#">Random</a>
+                </div>
             </div>
             <hr id="online_border">
             <div id="online_users">

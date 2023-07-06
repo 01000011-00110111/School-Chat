@@ -28,7 +28,9 @@ def find_command(commands, user):
         unmute_user(username, user)
     elif commands.get('v0') == 'ban':
         username = commands['v1']
-        reason = ' '.join(list(commands.values())[2:])# should i make a ban time 
+        reason = ' '.join(
+            list(commands.values())[2:]
+        )  # should i make a ban time  # no, hard to enfore the time for when the ban is lifted, and also bans are permanent
         ban_user(username, user, reason)
     else:
         handle_admin_cmds(commands.get('v0'), user)
@@ -102,7 +104,7 @@ def handle_admin_cmds(cmd: str, user):
              broadcast=True,
              namespace="/")
     else:
-        result = "reason", 1
+        result = ("reason", 1)
         failed_command(result)
 
 
@@ -112,19 +114,6 @@ def check_if_dev(user):
 
 def check_if_mod(user):
     return 1 if user['SPermission'] == 'modpass' else 0
-
-
-
-# def check_if_dev(user):
-#     if user['SPermission'] == 'Debugpass':
-#         return 1
-#     return 0
-
-
-# def check_if_mod(user):
-#     if user['SPermission'] == 'modpass':
-#         return 1
-#     return 0
 
 
 def ban_user(username: str, issuer, reason):
@@ -145,7 +134,7 @@ def ban_user(username: str, issuer, reason):
             message = '[SYSTEM]: <font color="#ff7f00">' + username + " has been banned.</font>"
         else:
             message = '[SYSTEM]: <font color="#ff7f00">' + username + " has been banned. Reason: " + reason + "." + "</font>"
-                      
+
         chat.force_message(message)
         emit("message_chat", message, broadcast=True)
 
@@ -166,19 +155,19 @@ def mute_user(username: str, issuer, time, reason):
             if time_match:
                 time_number = time_match.group(1)
                 time_letter = time_match.group(2)
-                
+
                 if time_letter == 'd':
                     time_final = time_number + " days"
                 elif time_letter == 'h':
                     time_final = time_number + " hours"
                 elif time_letter == 'f':
                     time_final == ''
-            
+
             if reason == '' and time_final == '':
                 message = '[SYSTEM]: <font color="#ff7f00">' + username + " is muted for an undefined period of time.</font>"
             elif time_final == '':
                 message = '[SYSTEM]: <font color="#ff7f00">' + username + " is muted for an undefined period of time. Reason: " + reason + ".</font>"
-            elif reason ==  '':
+            elif reason == '':
                 message = '[SYSTEM]: <font color="#ff7f00">' + username + " is mutted for " + time_final + ".</font>"
             else:
                 message = '[SYSTEM]: <font color="#ff7f00">' + username + " is mutted for " + time_final + " . Reason: " + reason + "." + "</font>"
@@ -260,6 +249,8 @@ def help_command(issuer):
     if start_index is None or end_index is None:
         print("Command section not found.")
     else:
-        command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(line.strip() for line in lines[start_index:end_index + 1]) + "</font>"
+        command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(
+            line.strip()
+            for line in lines[start_index:end_index + 1]) + "</font>"
         print(command_line)
         emit("message_chat", command_line, namespace="/")

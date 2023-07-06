@@ -16,7 +16,6 @@ profanity.add_censor_words(profanity_words.censored)
 def run_filter(username, message, dbm, whisper):
     """Its simple now, but when chat rooms come this will be more convoluted."""
     user = dbm.Accounts.find_one({"username": username})
-    print(username)
     locked = check_lock()
     user_muted = check_mute(username, user)
 

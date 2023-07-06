@@ -8,8 +8,9 @@ function login() {
     let passwordElement = document.getElementById("pass");
     let loginuser = loginuserElement["value"];
     let passwd = passwordElement["value"];
+    let tosch = document.getElementById("tosCH");
 
-    if (loginuser === "" || passwd === "") {
+    if (loginuser === "" || passwd === "" || tosch.checked == false) {
         return;
     } else {
         socket.emit('login', loginuser, passwd);
@@ -72,20 +73,23 @@ function updateacc() {
 
 
 function logout() {
+    let chatDiv = document.getElementById("chat");
     let usernmElement = document.getElementById("user");
     let passwdElement = document.getElementById("pass");
-    let roleElement = document.getElementById("role");
-    whichEvent("dark");
-  
-    usernmElement["value"] = "";
-    passwdElement["value"] = "";
-    socket.emit("username_msg", "");
+    let tosch = document.getElementById("tosCH");
+    chatDiv["innerHTML"] = '';
+    window.scrollTo(0, document.body.scrollHeight);
+    passwdElement["value"] = '';
+    usernmElement["value"] = '';
     document.getElementById("toprightD").style.display = "none";
     document.getElementById("toprightM").style.display = "none";
     document.getElementById("DevStuff").style.display = "none";
     document.getElementById("ModStuff").style.display = "none";
+    document.getElementById("LoginPopup").style.display = 'block';
+    document.getElementById("pfpmenu").src = "static/favicon.ico";
     devcloseNav();
     ModcloseNav();
+    runCheckStartup();
     document.title = "OCD wleb Potato man Skill Issue!!!1!";
 }
 
@@ -93,7 +97,7 @@ function SpecialMenu(Dev, Mod, Edit, JOTD) {
     let SPermission = window.sessionStorage.getItem("SPermission");
     let username = document.getElementById("user")["value"];
     if (SPermission === Dev) {
-        document.title = "Class Chat Dev is down for now!!";
+        document.title = "Class Chat Dev";
         document.getElementById("DevStuff").style.display = "block";
         document.getElementById("toprightD").style.display = "block";
         document.getElementById("toprightD").style.display = "block";

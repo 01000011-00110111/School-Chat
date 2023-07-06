@@ -4,7 +4,6 @@ import logging
 import json
 import hashlib
 import time
-import re
 import keys
 import flask
 import pymongo
@@ -61,12 +60,22 @@ def f_but_better() -> ResponseReturnValue:
     return flask.redirect(flask.url_for('signup'))
 
 
+# this will not make sense for a little bit
 @app.route('/chat')
 def chat_page() -> ResponseReturnValue:
     """Serve the main chat, stops bypass bans."""
     html_file = flask.render_template('index.html')
     return html_file
 
+
+@app.route('/login', methods=["POST", "GET"])
+def login_page() -> ResponseReturnValue:
+    """Show the login page"""
+    if request.method == "POST":
+        pass
+    else:
+        pass # do you want this done in 5 mintues or 5 hours
+# make a few backups then both of us take as long as u want lol
 
 @app.route('/changelog')
 def changelog_page() -> ResponseReturnValue:
@@ -362,7 +371,7 @@ def handle_wisper(message, recipient, sender):
             return
     else:
         filtering.failed_message(result)
-        
+
 
 # temporary, will be in diffrent namespace soon that seems to never get done at this point I SAID NOTHING
 @socketio.on('admin_message')

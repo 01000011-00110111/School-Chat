@@ -29,6 +29,7 @@ function closedevchat() {
 }
 
 function ModopenNav() {
+
     document.getElementById("ModStuff").style.width = "550px";
     document.getElementById("ModStuff").style.paddingLeft = "5%";
 }
@@ -80,19 +81,11 @@ function DropdownTXTtheme() {
 
 // pfp button
 
-function Accountoptions() {
-    document.getElementById("accountdrop").classList.toggle("show");
-}
-
-window.onclick = function(event) {
-  if (!event.target.matches('.accountbtn')) {
-    var dropdowns = document.getElementsByClassName("accountdrop");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
+function OpenAC() {
+  let AC = document.getElementById("AccControls");
+  if (AC.style.display === "grid") {
+    AC.style.display = "none";
+  } else {
+    AC.style.display = "grid";
   }
 }
