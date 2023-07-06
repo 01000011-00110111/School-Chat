@@ -211,47 +211,15 @@ function toHyperlink(str) {
 }
 
 function wisperMessage() {
-    let user = document.getElementById("username")["value"];
+    let sender = document.getElementById("user")["value"];
     let message = document.getElementById("private_msg");
-    let sender = window.sessionStorage.getItem('wisperUser');
-    let userColor = document.getElementById("user_color")["value"];
-    let messageColor = document.getElementById("message_color")["value"];
-    let ismutted = window.localStorage.getItem("permission");
+    let recipient = window.sessionStorage.getItem('wisperUser');
 
-    if (ismutted === "banned" || ismutted === "muted" || message === "") {
-        return;
-    }
-    
-    if (user === "cserverReal") {
-        user = "cserver";
-    } else if (user === "Dev EReal") {
-        user = "Dev E";
-    }
-
-    // if (sender === user) {
-        // return;
-    // }
-
-    let sender_f = ""
-    if (sender === "cserver") {
-        sender_f = "cserverReal";
-    } else if (sender === "Dev E" || sender === "C7") {
-        sender_f = "Dev EReal";
-    } else {
-        sender_f = sender;
-    }
-    
     let messageL = toHyperlink(message.value);
-    let user_color_name = "<font color='" + userColor + "'>" + user + "</font>";
-    let message_color_send = "<font color='" + messageColor + "'>" + messageL + "</font>";
-
-
-    // insert some joke here
     message.value = "";
-    socket.emit("wisper_chat", message_color_send, sender_f, user_color_name);
-    let messages = "<i>You wispered to " + "<font color='#c47302'>" + sender + "</font>" + " about: </i>" + message_color_send;
-    renderChat(messages);
+    socket.emit("wisper_chat", messageL, recipient, sender);
 }
+
 
 
 function sendMessage() {
@@ -263,7 +231,7 @@ function sendMessage() {
     
     messageL = toHyperlink(message);
     messageElement["value"] = "";
-    socket.emit('message_chat', document.getElementById("user")["value"], messageL);
+    socket.emit('message_chat', document.getElementById("user")["value"]/* is this needed? */, messageL);
     window.scrollTo(0, document.body.scrollHeight);
 }
 
@@ -287,7 +255,6 @@ function renderChat(messages) {
     }
 
     chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
-    ProfilesE();
 }
 
 
@@ -295,9 +262,4 @@ function checkKey() {
     if (event.key === "Enter") {
         sendMessage();
     }
-}
-
-function youfoundanotheregg() {
-    let body = document.getElementById("body");
-    body.style.webkitAnimation = "rainbowb 5s infinite";
 }

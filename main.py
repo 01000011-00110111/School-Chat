@@ -332,7 +332,7 @@ def handle_admin_stuff(cmd: str, user):
 @socketio.on('message_chat')
 def handle_message(user_name, message):
     """New New chat message handling pipeline."""
-    result = filtering.run_filter(user_name, message, dbm)
+    result = filtering.run_filter(user_name, message, dbm, 'false')
     if result[0] == 'msg':
         chat.add_message(result[1])
         emit("message_chat", result[1], broadcast=True)
@@ -354,25 +354,15 @@ def handle_ping_tests(start):
 def handle_wisper(message, recipient, sender):
     """Wisper a message to another user."""
     user = dbm.Online.find_one({"username": recipient})
-    message_comp = "<i><b>" + sender + "</b>  wispers to you: </i>" + message
-    pings = re.findall(r'(?<=\[).+?(?=\])', message)
-
-    for ping in pings:
-        emit(
-            "ping",
-            {
-                "who": ping,
-                "from": sender,
-                # "pfp": profile_img
-            },
-            namespace="/",
-            broadcast=True)
-
-    try:
-        emit("message_chat", message_comp, namespace="/", to=user["socketid"])
-    except TypeError:
-        return
-
+    result = filtering.run_filter(sender, message, dbm, 'true')
+    if result[0] == 'msg':
+        try:
+            emit("message_chat", result[1], namespace="/", to=user["socketid"])
+        except TypeError:
+            return
+    else:
+        filtering.failed_message(result)
+        
 
 # temporary, will be in diffrent namespace soon that seems to never get done at this point I SAID NOTHING
 @socketio.on('admin_message')

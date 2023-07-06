@@ -30,17 +30,8 @@ socket.on("return_prefs", (Obj) => {
         failedlogin();
     }
     window.localStorage.setItem("username", Obj["displayName"]);
-    window.localStorage.setItem("role", Obj["role"]);
-    window.localStorage.setItem("theme", Obj["theme"]);
-    window.localStorage.setItem("permission", Obj["permission"]);
-    window.localStorage.setItem("profile_picture",Obj["profile"]);
-    // document.getElementById("username")["value"] = Obj["displayName"];
-    // document.getElementById("role")["value"] = Obj["role"];
-    // document.getElementById("profile_picture")["value"] = Obj["profile"];
-    window.sessionStorage.setItem("SPermission", Obj["SPermission"]);
     socket.emit("username_msg", Obj["displayName"]);
     whichEvent(Obj["theme"]);
-    ProfilesE();
 });
 
 
@@ -84,18 +75,10 @@ function logout() {
     let usernmElement = document.getElementById("user");
     let passwdElement = document.getElementById("pass");
     let roleElement = document.getElementById("role");
-  
-    window.localStorage.setItem("username", "");
-    window.localStorage.setItem("role", "");
-    window.localStorage.setItem("theme", 'dark');
-    // document.getElementById("role")["value"] = "";
-    // document.getElementById("username")["value"] = "";
-    // document.getElementById("profile_picture")["value"] = "";
     whichEvent("dark");
   
     usernmElement["value"] = "";
     passwdElement["value"] = "";
-    roleElement["value"] = "";
     socket.emit("username_msg", "");
     document.getElementById("toprightE").style.display = "none";
     document.getElementById("toprightD").style.display = "none";

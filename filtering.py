@@ -13,9 +13,10 @@ profanity.load_censor_words(whitelist_words=profanity_words.whitelist_words)
 profanity.add_censor_words(profanity_words.censored)
 
 
-def run_filter(username, message, dbm):
+def run_filter(username, message, dbm, whisper):
     """Its simple now, but when chat rooms come this will be more convoluted."""
     user = dbm.Accounts.find_one({"username": username})
+    print(username)
     locked = check_lock()
     user_muted = check_mute(username, user)
 
@@ -36,12 +37,16 @@ def run_filter(username, message, dbm):
     find_pings(message, user['displayName'], profile_picture)
     find_cmds(message, user, locked)
 
-    final_str = compile_message(message, profile_picture, user, role)
+    final_str = compile_message(message, profile_picture, user, role, whisper)
 
-    if user['SPermission'] == "Debugpass":
-        force_message(final_str)
-        emit("message_chat", final_str, broadcast=True, namespace="/")
-        return ('dev', 0)
+    if wisper == 'false':
+        if user['SPermission'] == "Debugpass":
+            force_message(final_str)
+            emit("message_chat", final_str, broadcast=True, namespace="/")
+            return ('dev', 0)
+    else:
+        final_str = compile_message(message, profile_picture, user, role, whisper)
+        return ('msg', final_str)
 
     if locked is True:
         return ("permission", 3)
@@ -112,7 +117,7 @@ def find_cmds(message, user, locked):
             cmds.find_command(commands, user)
 
 
-def compile_message(message, profile_picture, user, role):
+def compile_message(message, profile_picture, user, role, whisper):
     """Taken from old methold of making messages"""
     profile = "<img class='pfp' src='" + profile_picture + "'></img>"
     user_string = "<font color='" + user['userColor'] + "'>" + user[
@@ -124,7 +129,11 @@ def compile_message(message, profile_picture, user, role):
         timedelta(hours=-4))).strftime("[%a %I:%M %p] ")
 
     # because accounts will now be required, we don't need the check if a role exists for the user
-    return date_str + profile + " " + user_string + " (" + role_string + ")" + " - " + message_string
+    if whisper == 'false':
+        message = date_str + profile + " " + user_string + " (" + role_string + ")" + " - " + message_string
+    else:
+        message = "<i><b>" + date_str + profile + user_string + "</b>  wispers to you: </i>" + message_string
+    return message
 
 
 def do_dev_easter_egg(role, user):
