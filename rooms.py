@@ -32,12 +32,10 @@ def get_chat_rooms(dbm):
 
 def create_chat_room(username, dbm, name, user):
     """Make a chat room, register in the db."""
-    possible_room = dbm.rooms.find_one({"generatedBy": username})
-    print(possible_room)
+    possible_room = dbm.rooms.find_one({"generatedBy": user})
     if possible_room is not None:
         return ('fail', 1)
     code = generate_unique_code(5, username, dbm)
-    print(code)
     generated_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     dbm.rooms.insert_one({
         "roomid":

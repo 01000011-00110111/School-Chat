@@ -349,22 +349,16 @@ def create_rooms(name, user, username):
     """Someone wants to make a chat room."""
     if len(name) > 10:
         result = ('fail', 2)
-    elif name == '':
-        result = ('fail', 2)
-    elif name == dbm.rooms.distinct('name'):
+    elif name == dbm.rooms.distinct('name') or name == '':
         result = ('fail', 2)
     else:
         result = rooms.create_chat_room(username, dbm, name, user)
     emit('chatCreateResult', result)
     # emit new list to users (really just steal the get_rooms code more or less, but broadcast it now)
     if result[1] == 0:
-        all_rooms = rooms.get_chat_rooms(
-            dbm
-        )  # ive got a separate issue with making sure they can only create one db, so thats for later k
-        print(all_rooms)
-        emit(
-            'roomsList', all_rooms, namespace='/', broadcast=True
-        )  # :skull_emoji: :skull_emoji::skull_emoji::skull_emoji::skull_emoji: taken in 4k
+        all_rooms = rooms.get_chat_rooms(dbm)
+        emit('roomsList', all_rooms, namespace='/', broadcast=True)
+        # :skull_emoji: :skull_emoji: :skull_emoji: :skull_emoji: :skull_emoji: taken in 4k
 
 
 @socketio.on("get_rooms")
