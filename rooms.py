@@ -24,14 +24,13 @@ def get_chat_rooms(dbm):
     rooms = []
     room = dbm.rooms.find()
     for r in room:
-        del r['_id']  # forgot mongodb auto generates this, yep its not needed
-        del r['messages']
-        del r['generatedAt']
-        rooms.append(r)
+        # really we are just returning the name of the room, so this can be simplified (more awake me realises)
+        # and the id
+        rooms.append({'name': r['roomName'], 'id': r['roomid']})
     return rooms
 
 
-def create_chat_room(username, dbm, name):
+def create_chat_room(username, dbm, name, user):
     """Make a chat room, register in the db."""
     possible_room = dbm.rooms.find_one({"generatedBy": username})
     print(possible_room)
@@ -41,13 +40,17 @@ def create_chat_room(username, dbm, name):
     print(code)
     generated_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     dbm.rooms.insert_one({
-        "roomid": code,
-        "generatedBy": username,
-        "generatedAt": generated_at,
-        "roomName": name,
-        "messages": []
+        "roomid":
+        code,
+        "generatedBy":
+        user,
+        "generatedAt":
+        generated_at,
+        "roomName":
+        name,
+        "messages": [
+            f"[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>{username}</b> at {generated_at}.</font>"
+        ]
     })
 
     return ('good', 0)
-
-    # put a message saying who created the db, and what time

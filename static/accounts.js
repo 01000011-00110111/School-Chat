@@ -36,7 +36,6 @@ socket.on("return_prefs", (Obj) => {
     } else {
         pfp.src = picture;
     }
-    runStartup();
 });
 
 

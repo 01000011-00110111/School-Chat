@@ -80,7 +80,6 @@ def login_page() -> ResponseReturnValue:
             return flask.render_template(
                 'login.html',
                 error="That account does not exist! Go to the signup page")
-        print(TOSagree)
         if TOSagree != "on":
             return flask.render_template('login.html',
                                          error='You did not agree to the TOS!')
@@ -344,24 +343,31 @@ def handle_admin_stuff(cmd: str, user):
     """Admin commands will be sent here."""
     cmds.handle_admin_cmds(cmd, user)
 
+
 @socketio.on("create_room")
-def create_rooms(name, username):
-    """Someone wants to make a chat room.""" 
-    print(len(name))
+def create_rooms(name, user, username):
+    """Someone wants to make a chat room."""
     if len(name) > 10:
         result = ('fail', 2)
     else:
-        print('e')
-        result = rooms.create_chat_room(username, dbm, name)
+        result = rooms.create_chat_room(username, dbm, name, user)
     print(result)
     emit('chatCreateResult', result)
+    # emit new list to users (really just steal the get_rooms code more or less, but broadcast it now)
+    if result[1] == 0:
+        all_rooms = rooms.get_chat_rooms(dbm)
+        print(all_rooms)
+        emit('roomList', all_rooms, namespace='/', broadcast=True)
 
-@socketio.on("get_room")
-def get_rooms():
-    """Grabs the chat rooms"""
+
+@socketio.on("get_rooms")
+def get_rooms(user):
+    """Grabs the chat rooms."""
+    # later user will be used for the private chatrooms (to see if they have access to them or not)
     result = rooms.get_chat_rooms(dbm)
     print(result)
-    # emit('receive_rooms', result)
+    emit('roomsList', result, namespace='/', to=request.sid)
+
 
 # pylint: disable=C0103
 @socketio.on('message_chat')
@@ -380,9 +386,11 @@ def handle_message(user_name, message):
 
 @socketio.on('pingtest')
 def handle_ping_tests(start):
+    """Respond with the start time, so ping times can be calculated"""
     emit('ping_test', {
         "start": start,
     }, namespace='/')
+
 
 # temporary, will be in diffrent namespace soon that seems to never get done at this point I SAID NOTHING
 @socketio.on('admin_message')
@@ -404,8 +412,18 @@ def connect(roomid):
     if roomid == "ilQvQwgOhm9kNAOrRqbr":
         messages = chat.get_chat("chat")
         msgs = json.dumps(messages)
-        response = {"messages": msgs, "name": room['roomName']}
-        emit("room_data")
+        response = {
+            "messages": msgs,
+            "name": room['roomName'],
+            "generatedBy": room['generatedBy'],
+            "generatedAt": room['generated_at']
+        }
+    else:
+        del room['_id']
+        response = room
+
+    emit("room_data", response, to='socketid', namespace='/')
+
 
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=8080)

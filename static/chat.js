@@ -79,7 +79,7 @@ socket.on("online", (db) => {
     let online = "";
     let onlinels = '';
     let onlineDiv = document.getElementById("online_users");
-    let onlinelsDiv = document.getElementById("onlinels");
+    // let onlinelsDiv = document.getElementById("onlinels");
     let online_count = db.length;
     for (onlineUser of db) {
         if (onlineUser === "cserverReal") {
@@ -126,30 +126,38 @@ function runCheckStartup() {
 function runStartup() {
     loadChat();
     setDarkStyle();
+    socket.emit('get_prefs', document.getElementById("user")["value"]);
+    socket.emit('get_perms');
     document.cookie = "Notifications=true; path=/";
-    username =  window.localStorage.getItem("username")
+    username = window.localStorage.getItem("username");
+    let user = document.getElementById("user")["value"];
     socket.emit("username", username);
-    socket.emit("get_room");
+    socket.emit("get_rooms", user);
 }
 
-socket.on("receve_rooms", (result) => {
-    console.log(result)
-    // let newline = "<br>"
-    // let online = "";
-    // let onlinels = '';
-    // let RoomDiv = document.getElementById("ChatRoomls");
-    //     online = online + onlineUser + newline;
-    //     onlinels = onlinels + "<a onclick=changeWisperUser('" + 
-    // let final_online = onlinels + "<a>" + onlineUser + '</a>';
-    // RoomDiv["innerHTML"] = final_online;
+socket.on("roomsList", (result) => {
+    // create the room list on client side
+    let newline = "<br>"
+    let rooms = "";
+    let RoomDiv = document.getElementById("ChatRoomls");
+    for (room of result) {
+        rooms = rooms + "<a onclick=changeRoom('" + room.id + "')>/" + room.name + '</a>';
+    }
+    RoomDiv["innerHTML"] = rooms;
+    console.log(rooms)
 });
 
 function create_room() {
     let name = document.getElementById("RoomCTXT")["value"];
-    let user = document.getElementById("user")["value"]
-    socket.emit('create_room', name, user);
+    let user = document.getElementById("user")["value"];
+    username = window.localStorage.getItem("username");
+    socket.emit('create_room', name, user, username);
 }
 
+function changeRoom(room) {
+    // this will take a while to do
+    return// all done with that. that why i said this 
+}
 
 function toHyperlink(str) {
     var pattern1 = /(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
