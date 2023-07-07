@@ -2,18 +2,19 @@
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
     <hr style="border: 5px solid grey;">
-    <div id="logoutStuff">
+    <div>
         <!--- this is temp --->
         <input type="text" id="user" class="LoginInput" name="username" value='{{user}}' hidden>
         <p>Wisper to another user</p>
-        <div class="dropdown">
-            <input type="button" onclick="Onlinewprls()" id="onelinelsbtn" class="onelinelsbtn" value="No user selected">
-                <div id="onlinels" class="droptheme dropdown-content">
+        <div class="ChatRoomS">
+            <div id="ChatRoomls">
 
-                </div>
+            </div>
         </div>
         <input type="text" id="private_msg" name="wisper_msg" class='std_box' placeholder="Message" style="width: 100%;"><br>
         <button id="wisper_send" onclick="wisperMessage();">Send</button>
+        <h3>Make a chat room</h3>
+        <input type="text" id="RoomCTXT"><button onclick="create_room();">Create</button>
         </div>
         <div id="extratext">
             <h6><a href="/changelog">Update log</a></h6>
@@ -76,7 +77,6 @@
 <div id="chat">
     
 </div>
-<!-- <br>  why was this needed?-->
 <div id="sides">
     <div id="chatbox">      
         <p id="msg-title">Message: </p>  
@@ -88,7 +88,7 @@
     <div class="AccountPopup">
         <input type="image" id="pfpmenu" src="static/favicon.ico" class="PictureBTN" onclick="OpenAC();"/>
         <div id="AccControls" class='AccControls'>
-            <a onclick="logout();">Logout</a>
+            <a href="/login">Logout</a>
             <a href="/settings">Settings</a>
             <a href="#">Random</a>
         </div>

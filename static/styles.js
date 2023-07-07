@@ -299,7 +299,7 @@ function setDevStyle() {
     sidenav.style.backgroundColor = "#0f0f0f";
     // for loop to cycle thru links in sidebar
     for (let i = 0; i < snav_iter; i++) {
-    snav_text[i].style.color = "#8a4e11";
+        snav_text[i].style.color = "#8a4e11";
     }
 }
 

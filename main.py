@@ -17,6 +17,7 @@ dbm = client.Chat
 import chat
 import cmds
 import filtering
+import rooms
 
 LOGFILE = "backend/chat.txt"
 
@@ -39,10 +40,6 @@ banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
                     'SYSTEM', '[SYSTEM]', "SONG", "[Song]", "[SONG]", "[song]",
                     " ", "  ", "   ", "cseven", "cserver", 'system',
                     '[system]', '[System]', 'System')
-
-################################################################
-#       Functions needed to allow clients to access files      #
-################################################################
 
 
 @app.route('/')
@@ -194,11 +191,6 @@ def aboutus_page() -> ResponseReturnValue:
     return html_file
 
 
-################################################################
-#             Functions handling AJAX interactions             #
-################################################################
-
-
 @app.get('/backup_logs')
 def get_backup_chat():
     """Return the backup-chat.txt contents."""
@@ -307,14 +299,8 @@ def return_user_prefs(username):
     try:
         emit("return_prefs", {
             "displayName": user["displayName"],
-            "role": user["role"],
             "profile": user["profile"],
-            "userColor": user["userColor"],
             "theme": user["theme"],
-            "messageColor": user["messageColor"],
-            "roleColor": user["roleColor"],
-            "permission": user["permission"],
-            "SPermission": user["SPermission"]
         },
              namespace="/")
     except TypeError:
@@ -358,6 +344,24 @@ def handle_admin_stuff(cmd: str, user):
     """Admin commands will be sent here."""
     cmds.handle_admin_cmds(cmd, user)
 
+@socketio.on("create_room")
+def create_rooms(name, username):
+    """Someone wants to make a chat room.""" 
+    print(len(name))
+    if len(name) > 10:
+        result = ('fail', 2)
+    else:
+        print('e')
+        result = rooms.create_chat_room(username, dbm, name)
+    print(result)
+    emit('chatCreateResult', result)
+
+@socketio.on("get_room")
+def get_rooms():
+    """Grabs the chat rooms"""
+    result = rooms.get_chat_rooms(dbm)
+    print(result)
+    # emit('receive_rooms', result)
 
 # pylint: disable=C0103
 @socketio.on('message_chat')
@@ -380,21 +384,6 @@ def handle_ping_tests(start):
         "start": start,
     }, namespace='/')
 
-
-@socketio.on('wisper_chat')
-def handle_wisper(message, recipient, sender):
-    """Wisper a message to another user."""
-    user = dbm.Online.find_one({"username": recipient})
-    result = filtering.run_filter(sender, message, dbm, 'true')
-    if result[0] == 'msg':
-        try:
-            emit("message_chat", result[1], namespace="/", to=user["socketid"])
-        except TypeError:
-            return
-    else:
-        filtering.failed_message(result)
-
-
 # temporary, will be in diffrent namespace soon that seems to never get done at this point I SAID NOTHING
 @socketio.on('admin_message')
 def handle_admin_message(message, user):
@@ -403,9 +392,20 @@ def handle_admin_message(message, user):
     emit("message_chat", message, broadcast=True, namespace="/")
 
 
-################################################################
-#      Start the webserver                                     #
-################################################################
+@socketio.on("room_connect")
+def connect(roomid):
+    """Switch rooms for the user"""
+    socketid = request.sid
+    try:
+        room = dbm.rooms.find_one({"roomid": roomid})
+    except TypeError:
+        emit('room_data', "failed", namespace='/', to=socketid)
+
+    if roomid == "ilQvQwgOhm9kNAOrRqbr":
+        messages = chat.get_chat("chat")
+        msgs = json.dumps(messages)
+        response = {"messages": msgs, "name": room['roomName']}
+        emit("room_data")
 
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=8080)

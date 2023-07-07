@@ -1,8 +1,3 @@
-function pass() {
-    ismutted = 'false'
-    document.cookie = "permission=" + ismutted + "; path=/";
-}
-
 function login() {
     let loginuserElement = document.getElementById("user");
     let passwordElement = document.getElementById("pass");
@@ -48,23 +43,6 @@ socket.on("return_prefs", (Obj) => {
 socket.on("return_perms", (Dev, Mod, Edit, JOTD) => {
     SpecialMenu(Dev, Mod, Edit, JOTD);
 });
-
-function failedlogin() {
-    let failedattempts = window.localStorage.getItem("login_att");
-    if (failedattempts === "") {
-        window.sessionStorage.setItem("login_att", "1");
-        return;
-    } else if (failedattempts === "1") {
-        window.sessionStorage.setItem("login_att", "2");
-        return;
-    } else if (failedattempts === "2") {
-        window.sessionStorage.setItem("login_att", "3");
-        return;
-    } else if (failedattempts === "3") {
-
-        window.sessionStorage.setItem("login_att", "");
-    }
-}
 
 function enteraccount() {
     socket.emit('get_prefs', document.getElementById("user")["value"]);

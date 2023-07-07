@@ -34,7 +34,8 @@ def run_filter(username, message, dbm, whisper):
         profile_picture = user['profile']
 
     find_pings(message, user['displayName'], profile_picture)
-    find_cmds(message, user, locked)
+    if whisper == 'false':
+        find_cmds(message, user, locked)
 
     final_str = compile_message(message, profile_picture, user, role, whisper)
 
@@ -157,7 +158,7 @@ def failed_message(result):
         elif result[1] == 3:
             fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because the chat has been locked by an admin.</font>"
         elif result[1] == 4:
-            fail_str = "[SYSTEM]: <font color='#ff7f00'>command not found use" + '"$sudo help"' + "to see all commands.</font>"
+            fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you have been banned from this chat room.</font>"
     elif result[0] == "dev":
         return
     # more will be added when error messages become more common (chat rooms TM)

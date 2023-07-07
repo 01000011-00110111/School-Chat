@@ -19,13 +19,11 @@ function devcloseNav() {
 function opendevchat() {
     document.getElementById("dev_chat").style.width = "1250px";
     document.getElementById("dev_chat").style.paddingLeft = "5%";
-    document.getElementById("dev_chat_iframe").src = "https://dev.school-chat.us/chat";
 }
 
 function closedevchat() {
     document.getElementById("dev_chat").style.width = "0";
     document.getElementById("dev_chat").style.paddingLeft = "0";
-    document.getElementById("dev_chat_iframe").src = "";
 }
 
 function ModopenNav() {
@@ -58,22 +56,22 @@ window.onclick = function(event) {
     }
 }
 
-function Onlinewprls() {
-  document.getElementById("onlinels").classList.toggle("show");
-}
+// function Onlinewprls() {
+//   document.getElementById("onlinels").classList.toggle("show");
+// }
 
-window.onclick = function(event) {
-  if (!event.target.matches('.onelinelsbtn')) {
-    var dropdowns = document.getElementsByClassName("droptheme");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
-  }
-} 
+// window.onclick = function(event) {
+//   if (!event.target.matches('.onelinelsbtn')) {
+//     var dropdowns = document.getElementsByClassName("droptheme");
+//     var i;
+//     for (i = 0; i < dropdowns.length; i++) {
+//       var openDropdown = dropdowns[i];
+//       if (openDropdown.classList.contains('show')) {
+//         openDropdown.classList.remove('show');
+//       }
+//     }
+//   }
+// } 
 
 function DropdownTXTtheme() {
     document.getElementById("DropdownTXT").classList.toggle("showTXT");
@@ -82,10 +80,10 @@ function DropdownTXTtheme() {
 // pfp button
 
 function OpenAC() {
-  let AC = document.getElementById("AccControls");
-  if (AC.style.display === "grid") {
-    AC.style.display = "none";
-  } else {
-    AC.style.display = "grid";
-  }
+    let AC = document.getElementById("AccControls");
+    if (AC.style.display === "grid") {
+        AC.style.display = "none";
+    } else {
+        AC.style.display = "grid";
+    }
 }

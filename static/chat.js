@@ -95,14 +95,9 @@ socket.on("online", (db) => {
         onlinels = onlinels + "<a onclick=changeWisperUser('" + onlineUser + "')>" + onlineUser + '</a>';
     }
     let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online;
-    onlinelsDiv["innerHTML"] = onlinels;
+    // onlinelsDiv["innerHTML"] = onlinels;
     onlineDiv["innerHTML"] = final_online;
 });
-
-function changeWisperUser(username) {
-    window.sessionStorage.setItem('wisperUser', username);
-    document.getElementById('onelinelsbtn').value = username + " selected.";
-}
 
 function loadChat() {
     ajaxGetRequest("/chat_logs", loadChatStartup);
@@ -130,10 +125,31 @@ function runCheckStartup() {
 
 function runStartup() {
     loadChat();
+    setDarkStyle();
     document.cookie = "Notifications=true; path=/";
     username =  window.localStorage.getItem("username")
     socket.emit("username", username);
+    socket.emit("get_room");
 }
+
+socket.on("receve_rooms", (result) => {
+    console.log(result)
+    // let newline = "<br>"
+    // let online = "";
+    // let onlinels = '';
+    // let RoomDiv = document.getElementById("ChatRoomls");
+    //     online = online + onlineUser + newline;
+    //     onlinels = onlinels + "<a onclick=changeWisperUser('" + 
+    // let final_online = onlinels + "<a>" + onlineUser + '</a>';
+    // RoomDiv["innerHTML"] = final_online;
+});
+
+function create_room() {
+    let name = document.getElementById("RoomCTXT")["value"];
+    let user = document.getElementById("user")["value"]
+    socket.emit('create_room', name, user);
+}
+
 
 function toHyperlink(str) {
     var pattern1 = /(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
@@ -146,18 +162,6 @@ function toHyperlink(str) {
 
     return str3;
 }
-
-function wisperMessage() {
-    let sender = document.getElementById("user")["value"];
-    let message = document.getElementById("private_msg");
-    let recipient = window.sessionStorage.getItem('wisperUser');
-
-    let messageL = toHyperlink(message.value);
-    message.value = "";
-    socket.emit("wisper_chat", messageL, recipient, sender);
-}
-
-
 
 function sendMessage() {
     let messageElement = document.getElementById("message");

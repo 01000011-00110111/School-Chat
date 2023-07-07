@@ -754,6 +754,8 @@
   height: 350px;
   border-radius: 20px;
   text-align: center;
+  align-items: center;
+  justify-content: center;
   margin-left: 28%;
   margin-top: 6%;
 }
