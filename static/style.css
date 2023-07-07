@@ -97,15 +97,15 @@
 
 #chat {
     z-index: 0;
-    height: calc(100% - 24px);
 	padding-left: 5%;
     padding-right: 12%;
     margin-left: 1.5%;
     line-height: 40px;
     padding-bottom: 9%;
+    margin-bottom: 2%;
+    margin-top: 1%;
     padding-top: 9%;
     word-wrap: break-word;
-    position: absolute;
 }
 
 #message {

@@ -178,11 +178,12 @@ function sendMessage() {
     if (message === "") {
         return;
     }
-    
+
+    let chatDiv = document.getElementById("chat");
     messageL = toHyperlink(message);
     messageElement["value"] = "";
     socket.emit('message_chat', user, messageL);
-    window.scrollTo(0, document.body.scrollHeight);
+    window.scrollTo(0, chatDiv.scrollHeight);
 }
 
 function loadChatStartup(jsonString) {
@@ -195,7 +196,7 @@ function loadChatStartup(jsonString) {
     }
 
     chatDiv["innerHTML"] = chat;
-    window.scrollTo(0, document.body.scrollHeight);
+    window.scrollTo(0, chatDiv.scrollHeight);
 }
 
 function renderChat(messages) {

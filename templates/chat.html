@@ -1,18 +1,17 @@
-{% extends 'index.html' %} {% block content %}
+{% extends 'index.html' %}
+{% block content %}
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
     <hr style="border: 5px solid grey;">
     <div>
         <!--- this is temp --->
         <input type="text" id="user" class="LoginInput" name="username" value='{{user}}' hidden>
-        <p>Wisper to another user</p>
+        <p>change the chat room you are in</p>
         <div class="ChatRoomS">
             <div id="ChatRoomls">
 
             </div>
         </div>
-        <input type="text" id="private_msg" name="wisper_msg" class='std_box' placeholder="Message" style="width: 100%;"><br>
-        <button id="wisper_send" onclick="wisperMessage();">Send</button>
         <h3>Make a chat room</h3>
         <input type="text" id="RoomCTXT"><button onclick="create_room();">Create</button>
         </div>
@@ -98,4 +97,5 @@
         
     </div>
 </div>
+<script type='text/javascript' defer>runStartup();</script>
 {% endblock %}

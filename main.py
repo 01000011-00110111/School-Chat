@@ -349,15 +349,22 @@ def create_rooms(name, user, username):
     """Someone wants to make a chat room."""
     if len(name) > 10:
         result = ('fail', 2)
+    elif name == '':
+        result = ('fail', 2)
+    elif name == dbm.rooms.distinct('name'):
+        result = ('fail', 2)
     else:
         result = rooms.create_chat_room(username, dbm, name, user)
-    print(result)
     emit('chatCreateResult', result)
     # emit new list to users (really just steal the get_rooms code more or less, but broadcast it now)
     if result[1] == 0:
-        all_rooms = rooms.get_chat_rooms(dbm)
+        all_rooms = rooms.get_chat_rooms(
+            dbm
+        )  # ive got a separate issue with making sure they can only create one db, so thats for later k
         print(all_rooms)
-        emit('roomList', all_rooms, namespace='/', broadcast=True)
+        emit(
+            'roomsList', all_rooms, namespace='/', broadcast=True
+        )  # :skull_emoji: :skull_emoji::skull_emoji::skull_emoji::skull_emoji: taken in 4k
 
 
 @socketio.on("get_rooms")
@@ -365,7 +372,6 @@ def get_rooms(user):
     """Grabs the chat rooms."""
     # later user will be used for the private chatrooms (to see if they have access to them or not)
     result = rooms.get_chat_rooms(dbm)
-    print(result)
     emit('roomsList', result, namespace='/', to=request.sid)
 
 
