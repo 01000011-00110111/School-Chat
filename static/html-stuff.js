@@ -56,23 +56,6 @@ window.onclick = function(event) {
     }
 }
 
-// function Onlinewprls() {
-//   document.getElementById("onlinels").classList.toggle("show");
-// }
-
-// window.onclick = function(event) {
-//   if (!event.target.matches('.onelinelsbtn')) {
-//     var dropdowns = document.getElementsByClassName("droptheme");
-//     var i;
-//     for (i = 0; i < dropdowns.length; i++) {
-//       var openDropdown = dropdowns[i];
-//       if (openDropdown.classList.contains('show')) {
-//         openDropdown.classList.remove('show');
-//       }
-//     }
-//   }
-// } 
-
 function DropdownTXTtheme() {
     document.getElementById("DropdownTXT").classList.toggle("showTXT");
 }

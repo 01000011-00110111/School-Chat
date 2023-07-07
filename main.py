@@ -284,10 +284,8 @@ def return_perms():
     "get perms for menus"
     Dev = os.environ["dev_key"]
     Mod = os.environ["mod_key"]
-    Edit = os.environ["edit_key"]
-    JOTD = os.environ["JOTD_key"]
     time.sleep(.000001)
-    emit("return_perms", (Dev, Mod, Edit, JOTD), namespace="/")
+    emit("return_perms", (Dev, Mod), namespace="/")
 
 
 @socketio.on('get_prefs')
@@ -349,7 +347,10 @@ def create_rooms(name, user, username):
     """Someone wants to make a chat room."""
     if len(name) > 10:
         result = ('fail', 2)
-    elif name == dbm.rooms.distinct('name') or name == '':
+    elif name == '':
+        result = ('fail', 2)
+    elif dbm.rooms.distinct(name) is not None:
+        print("FAILED BOZO")
         result = ('fail', 2)
     else:
         result = rooms.create_chat_room(username, dbm, name, user)
@@ -415,14 +416,15 @@ def connect(roomid):
         response = {
             "messages": msgs,
             "name": room['roomName'],
+            "roomid": "ilQvQwgOhm9kNAOrRqbr",
             "generatedBy": room['generatedBy'],
-            "generatedAt": room['generated_at']
+            "generatedAt": room['generatedAt']
         }
     else:
         del room['_id']
         response = room
 
-    emit("room_data", response, to='socketid', namespace='/')
+    emit("room_data", response, to=socketid, namespace='/')
 
 
 if __name__ == "__main__":

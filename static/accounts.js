@@ -39,8 +39,8 @@ socket.on("return_prefs", (Obj) => {
 });
 
 
-socket.on("return_perms", (Dev, Mod, Edit, JOTD) => {
-    SpecialMenu(Dev, Mod, Edit, JOTD);
+socket.on("return_perms", (Dev, Mod) => {
+    SpecialMenu(Dev, Mod);
 });
 
 function enteraccount() {
@@ -76,7 +76,7 @@ function logout() {
     document.title = "OCD wleb Potato man Skill Issue!!!1!";
 }
 
-function SpecialMenu(Dev, Mod, Edit, JOTD) {
+function SpecialMenu(Dev, Mod) {
     let SPermission = window.sessionStorage.getItem("SPermission");
     let username = document.getElementById("user")["value"];
     if (SPermission === Dev) {

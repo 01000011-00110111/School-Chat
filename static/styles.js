@@ -89,7 +89,6 @@ function setDarkStyle() {
     let send = document.getElementById("send");
     let sidebar = document.getElementById("activenav");
     let sidenav = document.getElementById("mySidenav");
-    console.log(sidenav);
     let snav_text = sidenav.getElementsByTagName("a");
     let snav_iter = snav_text.length;
     // then set the color to what it is in the css document

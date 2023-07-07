@@ -144,7 +144,24 @@ socket.on("roomsList", (result) => {
         rooms = rooms + "<a onclick=changeRoom('" + room.id + "')>/" + room.name + '</a>';
     }
     RoomDiv["innerHTML"] = rooms;
-    console.log(rooms)
+});
+
+socket.on("room_data", (data) => {
+    window.localStorage.setItem("roomid", data['roomid']);
+    if (data['roomid'] === 'ilQvQwgOhm9kNAOrRqbr') {
+        loadChatStartup(data['messages']);
+    } else {
+        let newline = "<br>";
+        let chatDiv = document.getElementById("chat");
+        let chat = ""; 
+        for (let messageObj of data['messages']) {
+            chat = chat + messageObj + newline;
+        }
+
+        chatDiv["innerHTML"] = chat;
+        window.scrollTo(0, chatDiv.scrollHeight);
+    }
+   
 });
 
 function create_room() {
@@ -155,8 +172,7 @@ function create_room() {
 }
 
 function changeRoom(room) {
-    // this will take a while to do
-    return// all done with that. that why i said this 
+    socket.emit('room_connect', room)
 }
 
 function toHyperlink(str) {
@@ -186,11 +202,11 @@ function sendMessage() {
     window.scrollTo(0, chatDiv.scrollHeight);
 }
 
-function loadChatStartup(jsonString) {
+function loadChatStartup(string) {
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     let chat = "";
-    let messages = JSON.parse(jsonString);
+    let messages = JSON.parse(string);
     for (let messageObj of messages) {
         chat = chat + messageObj["message"] + newline;
     }
@@ -202,8 +218,6 @@ function loadChatStartup(jsonString) {
 function renderChat(messages) {
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
-    if (Notification.permission === 'granted' && !document.hidden) {
-    }
 
     chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
 }
