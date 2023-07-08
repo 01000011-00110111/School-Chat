@@ -45,7 +45,7 @@ def handle_admin_cmds(cmd: str, user, roomid):
     """Admin commands will be sent here."""
     if cmd == "blanks":
         if check_if_dev(user) == 1:
-            chat.line_blanks()
+            chat.line_blanks(roomid, dbm)
     elif cmd == "status":
         result = chat.get_stats()
         emit("message_chat", result, broadcast=True)
@@ -80,7 +80,8 @@ def handle_admin_cmds(cmd: str, user, roomid):
     elif cmd == "clear" or cmd == 'rc':
         if check_if_dev(user) == 1 or check_if_mod(user) == 1:
             chat.reset_chat(False, True)
-            emit("reset_chat", broadcast=True, namespace="/")
+            # this is not needed it seems, already in the reset_chat function
+            # emit("reset_chat", broadcast=True, namespace="/")
     elif cmd == "shutdown":
         if check_if_dev(user) == 1:
             run_shutdown()
@@ -248,20 +249,12 @@ def lock(user, roomid):
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>"
         chat.add_message(message, roomid, dbm)
         emit("message_chat", message, broadcast=True)
-        dbm.rooms.update_one({"roomid": roomid}, {
-            '$set': {
-                "locked": 'true'
-            }
-        })
+        dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
     elif check_if_mod(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Moderator.</font>"
         chat.add_message(message, roomid, dbm)
         emit("message_chat", message, broadcast=True)
-        dbm.rooms.update_one({"roomid": roomid}, {
-            '$set': {
-                "locked": 'true'
-            }
-        })
+        dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
 
 
 def unlock(user, roomid):
@@ -269,17 +262,9 @@ def unlock(user, roomid):
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>"
         chat.add_message(message, roomid, dbm)
         emit("message_chat", message, broadcast=True)
-        dbm.rooms.update_one({"roomid": roomid}, {
-            '$set': {
-                "locked": 'false'
-            }
-        })
+        dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
     elif check_if_mod(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Moderator.</font>"
         chat.add_message(message, roomid, dbm)
         emit("message_chat", message, broadcast=True)
-        dbm.rooms.update_one({"roomid": roomid}, {
-            '$set': {
-                "locked": 'false'
-            }
-        })
+        dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})

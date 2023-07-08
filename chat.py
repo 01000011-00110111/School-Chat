@@ -4,6 +4,7 @@ from datetime import timedelta, datetime
 from typing import List
 import psutil
 from flask_socketio import emit
+from main import dbm
 
 LOGFILE = "backend/chat.txt"
 LOGFILE_B = "backend/Chat-backup.txt"
@@ -34,15 +35,14 @@ def get_line_count() -> List:
     return ret_val
 
 
-def line_blanks() -> None:
+def line_blanks(roomid, dbm) -> None:
     """Send 100 blank lines in chat for testing purposes."""
     add_message(
-        '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'
-    )
-    emit(
-        "message_chat",
-        '[SYSTEM]: <font color="#ff7f00">nothing to see here <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>nothing to see here<br></font>'
-    )
+        '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>',
+        roomid, dbm)
+    emit("message_chat", (
+        '[SYSTEM]: <font color="#ff7f00">nothing to see here <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>nothing to see here<br></font>',
+        roomid))
 
 
 def get_stats() -> str:
@@ -77,13 +77,12 @@ def get_stats() -> str:
 
 
 # Adds the message text to our file containing all the messages
-def add_message(message_text: str, roomid, dbm) -> None:
+def add_message(message_text: str, roomid, room) -> None:
     """Handler for messages so they get logged."""
     if roomid != "ilQvQwgOhm9kNAOrRqbr":
-        room = dbm.rooms.find_one({'roomid': roomid})
         lines = len(room["messages"])
         if lines >= 100:
-            reset_chat(message_text, False, roomid, dbm)
+            reset_chat(message_text, False, roomid)
         dbm.rooms.update_one({"roomid": roomid},
                              {'$push': {
                                  'messages': message_text
@@ -93,16 +92,17 @@ def add_message(message_text: str, roomid, dbm) -> None:
         lines = len(f_in.readlines())
 
     if lines >= 500:
-        reset_chat(message_text, False, roomid, dbm)
+        reset_chat(message_text, False, roomid)
     else:
         with open(LOGFILE, "a", encoding="utf8") as f_in:
             f_in.write(message_text + "\n")
     with open(LOGFILE_B, "a", encoding="utf8") as f_out:
         date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
         f_out.write(date + message_text + "\n")
+    return ('good', 0)
 
 
-def reset_chat(message: str, admin: bool, roomid, dbm) -> str:
+def reset_chat(message: str, admin: bool, roomid) -> str:
     """Admin function for reseting chat. Also used by the GC."""
     if roomid != "ilQvQwgOhm9kNAOrRqbr":
         dbm.rooms.update_one({"roomid": roomid}, {
@@ -113,6 +113,7 @@ def reset_chat(message: str, admin: bool, roomid, dbm) -> str:
             }
         })
         emit("reset_chat", "auto", broadcast=True, namespace="/")
+        return ('good', 0)
     else:
         if admin is True:
             with open(LOGFILE, "w", encoding="utf8") as f_out:
@@ -120,18 +121,18 @@ def reset_chat(message: str, admin: bool, roomid, dbm) -> str:
                     "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n"
                 )
                 emit("reset_chat", "admin", broadcast=True, namespace="/")
-            return "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n"
+            return ('good', 1)
         # if that is not true, run as the GC
         with open(LOGFILE, "w", encoding="utf8") as f_out:
             f_out.write(
                 "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n"
                 + message + "\n")
             emit("reset_chat", "auto", broadcast=True, namespace="/")
-        return "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n" + message + "\n"
+        return ('good', 0)
 
 
 # force the message text to our file containing all the messages
-def force_message(message_text: str, roomid, dbm) -> None:
+def force_message(message_text: str, roomid) -> None:
     """Force send a message to everyone even when chat is locked."""
     if roomid != "ilQvQwgOhm9kNAOrRqbr":
         dbm.rooms.update_one({"roomid": roomid},
@@ -139,9 +140,9 @@ def force_message(message_text: str, roomid, dbm) -> None:
                                  'messages': message_text
                              }})
         return ('room', 1)
-    else:
-        with open(LOGFILE, "a", encoding="utf8") as f_in:
-            f_in.write(message_text + "\n")
-        with open(LOGFILE_B, "a", encoding="utf8") as f_out:
-            date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
-            f_out.write(date + message_text + "\n")
+    with open(LOGFILE, "a", encoding="utf8") as f_in:
+        f_in.write(message_text + "\n")
+    with open(LOGFILE_B, "a", encoding="utf8") as f_out:
+        date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
+        f_out.write(date + message_text + "\n")
+    return ('good', 0)

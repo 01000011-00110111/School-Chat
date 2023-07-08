@@ -13,16 +13,19 @@ profanity.load_censor_words(whitelist_words=profanity_words.whitelist_words)
 profanity.add_censor_words(profanity_words.censored)
 
 
-def run_filter(username, message, dbm, roomid):
+def run_filter(user, room, message, roomid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
-    user = dbm.Accounts.find_one({"username": username})
-    locked = check_lock(roomid, dbm)
-    user_muted = check_mute(username, user)
+    locked = check_lock(room)
+    perms = check_perms(
+        user
+    )
+    can_send = check_allowed_sending(user, room)
+    user_muted = check_mute(user)
 
-    if user_muted != 0 and user['SPermission'] != 'Debugpass':
+    if user_muted != 0 and perms != 'dev':
         return ('permission', user_muted)
 
-    if user['SPermission'] != "Debugpass":
+    if perms != "dev":
         message = filter_message(message)
         role = profanity.censor(user['role'])
     else:
@@ -38,24 +41,34 @@ def run_filter(username, message, dbm, roomid):
 
     final_str = compile_message(message, profile_picture, user, role)
 
-    if user['SPermission'] == "Debugpass":
-        force_message(final_str, roomid, dbm)
+    if perms == "dev":
+        force_message(final_str, roomid)
         emit("message_chat", (final_str, roomid),
              broadcast=True,
              namespace="/")
         return ('dev', 0)
-    else:
-        final_str = compile_message(message, profile_picture, user, role)
-        if locked == 'true':
-            return ("permission", 3)
-        return ('msg', final_str)
+    # else:
+    #     final_str = compile_message(message, profile_picture, user, role)
+    #     return ('msg', final_str)
 
+    if can_send == "everyone":
+        return ('msg', final_str)
+    elif can_send == 'mod':
+        if perms == 'mod':
+            return ('msg', final_str)
+        else:
+            return ('permission', 5)
+    else:
+        return ('permission', 5)
+
+    if locked == 'true':
+        return ("permission", 3)
     # insert the bypass for [SONG] and [JOTD]
 
     return ('msg', final_str)
 
 
-def check_mute(username, user):
+def check_mute(user):
     if user["permission"] == "muted":
         return 1
     elif user["permission"] == "banned":
@@ -63,10 +76,24 @@ def check_mute(username, user):
     return 0
 
 
-def check_lock(roomid, dbm):
+def check_lock(room):
     """For now, its just as simple as this, but when rooms come it will be more complicated."""
-    locked = dbm.rooms.find_one({"roomid": roomid})
-    return locked["locked"]
+    return )room["locked"])
+
+
+def check_allowed_sending(user, room):
+    """this is a check to se if the database allowes you to send"""  # we can make this more advanced if we want
+    return (room["canSend"])
+
+
+def check_perms(user):
+    if user['SPermission'] == 'Debugpass':
+        perms = 'dev'
+    elif user['SPermission'] == 'modpass':
+        perms = 'mod'
+    else:
+        perms = 'user'
+    return perms
 
 
 def filter_message(message):
@@ -156,6 +183,8 @@ def failed_message(result, roomid):
             fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because this chat room has been locked.</font>"
         elif result[1] == 4:
             fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you have been banned from this chat room.</font>"
+        elif result[1] == 5:
+            fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you do not have enough permission to use this chat room.</font>"
     elif result[0] == "dev":
         return
     # more will be added when error messages become more common (chat rooms TM)

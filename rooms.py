@@ -1,9 +1,10 @@
 import random
 from string import ascii_uppercase
 from datetime import datetime
+from main import dbm
 
 
-def generate_unique_code(length, username, dbm):
+def generate_unique_code(length, username):
     """Make a room code that doesen't exist yet."""
     rooms = dbm.rooms.distinct('roomid')
     # ^^ I have no idea if this will work well or not (it does!)
@@ -19,18 +20,15 @@ def generate_unique_code(length, username, dbm):
     return code
 
 
-def get_chat_rooms(dbm):
+def get_chat_rooms(room):
     """Return all available rooms."""
     rooms = []
-    room = dbm.rooms.find()
     for r in room:
-        # really we are just returning the name of the room, so this can be simplified (more awake me realises)
-        # and the id
-        rooms.append({'name': r['roomName'], 'id': r['roomid']})
+        rooms.append({'name': r['roomName'], 'id': r['roomid'], 'canSee': r['canSee']})
     return rooms
 
 
-def create_chat_room(username, dbm, name, user):
+def create_chat_room(username, name, user):
     """Make a chat room, register in the db."""
     possible_room = dbm.rooms.find_one({"generatedBy": user})
     if possible_room is not None:
@@ -40,7 +38,7 @@ def create_chat_room(username, dbm, name, user):
     elif dbm.rooms.find_one({"roomName": name}) is not None:
         print("FAILED BOZO")
         return ('fail', 2)
-    code = generate_unique_code(5, username, dbm)
+    code = generate_unique_code(5, username)
     generated_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     dbm.rooms.insert_one({
         "roomid":
@@ -51,6 +49,10 @@ def create_chat_room(username, dbm, name, user):
         generated_at,
         "roomName":
         name,
+        "canSend":
+        'everyone',
+        "canSee":
+        "everyone",
         "locked":
         'false',
         "messages": [
@@ -60,6 +62,6 @@ def create_chat_room(username, dbm, name, user):
 
     return ('good', 0)
 
-def delete_chat_room(roomid, dbm):#DONT MESS WITHOUT SETING UP DEV DB
-    dbm.room.drop(roomid)
-    return ('good', 1)
+def delete_chat_room(roomid):
+    deleted = dbm.rooms.find_one_and_delete({"roomid": roomid})
+    # return ('good', 1)

@@ -7,6 +7,7 @@ import time
 import keys
 import flask
 import pymongo
+import re
 from flask import request
 from flask.logging import default_handler
 from flask.typing import ResponseReturnValue
@@ -55,6 +56,7 @@ def index() -> ResponseReturnValue:
 def f_but_better() -> ResponseReturnValue:
     """Not an easter egg I promise."""
     return flask.redirect(flask.url_for('signup'))
+
 
 # this will not make sense for a little bit
 @app.route('/defnotchat')
@@ -117,17 +119,24 @@ def signup() -> ResponseReturnValue:
         SPassword = request.form.get("SPassword")
         SPassword2 = request.form.get("SPassword2")
         SRole = request.form.get("SRole")
-        SDesplayname = request.form.get("SDesplayname")
+        SDisplayname = request.form.get("SDisplayname")
+        check = r'^[A-Za-z]{3,12}$'
+        # user_allowed = re.match(check, SUsername) and not re.search(r'dev|mod', SUsername, re.IGNORECASE) The and needs to be moved to a seperate one to check for letter limit
+        # desplayname_allowed = re.match(check, SDisplayname) and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
+        # if user_allowed == 'false' or desplayuser_allowed == 'false':
+        #     return flask.render_template("signup-index.html",
+        #                                  error='That Username/Display name is not allowed!',
+        #                                  SRole=SRole,)
         if SPassword != SPassword2:
             return flask.render_template("signup-index.html",
                                          error='Password boxes do not match!',
                                          SUsername=SUsername,
                                          SRole=SRole,
-                                         SDesplayname=SDesplayname)
+                                         SDisplayname=SDisplayname)
         possible_user = dbm.Accounts.find_one({"username": SUsername})
         possible_dispuser = dbm.Accounts.find_one(
-            {"displayName": SDesplayname})
-        if possible_user is not None or possible_dispuser is not None or SUsername in banned_usernames or SDesplayname in banned_usernames:
+            {"displayName": SDisplayname})
+        if possible_user is not None or possible_dispuser is not None or SUsername in banned_usernames or SDisplayname in banned_usernames:
             return flask.render_template(
                 "signup-index.html",
                 error='That Username/Display name is already taken!',
@@ -144,7 +153,7 @@ def signup() -> ResponseReturnValue:
             "theme":
             "dark",
             "displayName":
-            SDesplayname,
+            SDisplayname,
             "messageColor":
             "#ffffff",
             "roleColor":
@@ -167,12 +176,40 @@ def get_logs_page() -> ResponseReturnValue:
     html_file = flask.render_template('Backup-chat.html')
     return html_file
 
+# @app.route('/customizepagereal')
+# def settings_page() -> ResponseReturnValue:
+#     """this is the settings page"""
+#     return flask.render_template('acc-edit-index.html')
 
-@app.route('/settings')
-def customize_accounts() -> ResponseReturnValue:
-    """customize the accounts"""
-    html_file = flask.render_template('acc-edit-index.html')
-    return html_file
+
+# @app.route('/settings')
+# def customize_accounts() -> ResponseReturnValue:
+#     """customize the accounts"""
+#     if request.method == "POST":
+#         # redo client side checks here on server side, like signup
+#         username = request.form.get("username")
+#         password = request.form.get("password")
+#         TOSagree = request.form.get("TOSagree")
+#         try:
+#             # not 100% sure this will catch a failed attempt, doesnt get them
+#             user = dbm.Accounts.find_one({"username": username})
+#         except TypeError:
+#             return flask.render_template(
+#                 'login.html',
+#                 error="That account does not exist!")
+#         if TOSagree != "on":
+#             return flask.render_template('login.html',
+#                                          error='You did not agree to the TOS!')
+#         if username == user["username"] and hashlib.sha384(
+#                 bytes(password, 'utf-8')).hexdigest() == user["password"]:
+#             return flask.render_template(
+#                 'acc-edit-index.html', Ausername=username, Apassword=hashlib.sha384(bytes(password, 'utf-8')).hexdigest()
+#             )  # this could be a security issue later on (if they figure out this)
+#         else:
+#             return flask.render_template(
+#                 'login.html', error="That username or password is incorrect!")
+#     else:
+#         return flask.render_template('login.html')
 
 
 @app.route("/view")
@@ -344,33 +381,48 @@ def handle_admin_stuff(cmd: str, user):
 @socketio.on("create_room")
 def create_rooms(name, user, username):
     """Someone wants to make a chat room."""
+    room = dbm.rooms.find()
     if len(name) > 10:
         result = ('fail', 2)
     else:
-        result = rooms.create_chat_room(username, dbm, name, user)
+        result = rooms.create_chat_room(username, name, user)
     emit('chatCreateResult', result)
     # emit new list to users (really just steal the get_rooms code more or less, but broadcast it now)
     if result[1] == 0:
-        all_rooms = rooms.get_chat_rooms(dbm)
+        all_rooms = rooms.get_chat_rooms(room)
         emit('roomsList', all_rooms, namespace='/', broadcast=True)
         # :skull_emoji: :skull_emoji: :skull_emoji: :skull_emoji: :skull_emoji: taken in 4k
 
 
 @socketio.on("get_rooms")
-def get_rooms(user):
+def get_rooms(username):
     """Grabs the chat rooms."""
-    # later user will be used for the private chatrooms (to see if they have access to them or not)
-    result = rooms.get_chat_rooms(dbm)
-    emit('roomsList', result, namespace='/', to=request.sid)
+    user_name = dbm.Accounts.find_one({"username": username})
+    user = user_name["displayName"]
+    room = dbm.rooms.find()
+    room_access = rooms.get_chat_rooms(room)
+    
+    accessible_rooms = [
+        {'id': r['id'], 'name': r['name']}
+        for r in room_access
+        if (
+            not r['canSee'] or
+            (r['canSee'] == 'everyone' and user != 'everyone') or
+            (r['canSee'] != 'everyone' and user in [u.strip() for u in r['canSee'].split(",")])
+        )
+    ]
+    emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
 
 
 # pylint: disable=C0103
 @socketio.on('message_chat')
 def handle_message(user_name, message, roomid):
     """New New chat message handling pipeline."""
-    result = filtering.run_filter(user_name, message, dbm, roomid)
+    room = dbm.rooms.find_one("roomid": roomid)
+    user = dbm.Accounts.find_one({"username": user_name})
+    result = filtering.run_filter(user, room, message, user, roomid)
     if result[0] == 'msg':
-        chat.add_message(result[1], roomid, dbm)
+        chat.add_message(result[1], roomid, room)
         emit("message_chat", (result[1], roomid), broadcast=True)
     else:
         filtering.failed_message(result, roomid)
@@ -419,7 +471,6 @@ def connect(roomid):
         response = room
 
     emit("room_data", response, to=socketid, namespace='/')
-
 
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=8080)
