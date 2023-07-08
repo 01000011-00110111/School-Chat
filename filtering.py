@@ -13,10 +13,10 @@ profanity.load_censor_words(whitelist_words=profanity_words.whitelist_words)
 profanity.add_censor_words(profanity_words.censored)
 
 
-def run_filter(username, message, dbm, whisper):
+def run_filter(username, message, dbm, roomid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
     user = dbm.Accounts.find_one({"username": username})
-    locked = check_lock()
+    locked = check_lock(roomid, dbm)
     user_muted = check_mute(username, user)
 
     if user_muted != 0 and user['SPermission'] != 'Debugpass':
@@ -34,22 +34,21 @@ def run_filter(username, message, dbm, whisper):
         profile_picture = user['profile']
 
     find_pings(message, user['displayName'], profile_picture)
-    if whisper == 'false':
-        find_cmds(message, user, locked)
+    find_cmds(message, user, locked, roomid)
 
-    final_str = compile_message(message, profile_picture, user, role, whisper)
+    final_str = compile_message(message, profile_picture, user, role)
 
-    if whisper == 'false':
-        if user['SPermission'] == "Debugpass":
-            force_message(final_str)
-            emit("message_chat", final_str, broadcast=True, namespace="/")
-            return ('dev', 0)
+    if user['SPermission'] == "Debugpass":
+        force_message(final_str, roomid, dbm)
+        emit("message_chat", (final_str, roomid),
+             broadcast=True,
+             namespace="/")
+        return ('dev', 0)
     else:
-        final_str = compile_message(message, profile_picture, user, role, whisper)
+        final_str = compile_message(message, profile_picture, user, role)
+        if locked == 'true':
+            return ("permission", 3)
         return ('msg', final_str)
-
-    if locked is True:
-        return ("permission", 3)
 
     # insert the bypass for [SONG] and [JOTD]
 
@@ -64,9 +63,10 @@ def check_mute(username, user):
     return 0
 
 
-def check_lock():
+def check_lock(roomid, dbm):
     """For now, its just as simple as this, but when rooms come it will be more complicated."""
-    return os.path.exists("backend/chat.lock")
+    locked = dbm.rooms.find_one({"roomid": roomid})
+    return locked["locked"]
 
 
 def filter_message(message):
@@ -88,7 +88,7 @@ def find_pings(message, dispname, profile_picture):
              broadcast=True)
 
 
-def find_cmds(message, user, locked):
+def find_cmds(message, user, locked, roomid):
     """$sudo commands, will push every cmd found to cmds.py along with the user, so we can check if they can do said command."""
     # currently we only find commands, have not implmented the other half
     #cmds = re.findall(r'(?<=\$sudo ).+?(?=\</font>)', message)
@@ -114,10 +114,10 @@ def find_cmds(message, user, locked):
             var_name = "v%d" % index
             commands[var_name] = command
         if 'v0' in commands:
-            cmds.find_command(commands, user)
+            cmds.find_command(commands, user, roomid)
 
 
-def compile_message(message, profile_picture, user, role, whisper):
+def compile_message(message, profile_picture, user, role):
     """Taken from old methold of making messages"""
     profile = "<img class='pfp' src='" + profile_picture + "'></img>"
     user_string = "<font color='" + user['userColor'] + "'>" + user[
@@ -129,10 +129,7 @@ def compile_message(message, profile_picture, user, role, whisper):
         timedelta(hours=-4))).strftime("[%a %I:%M %p] ")
 
     # because accounts will now be required, we don't need the check if a role exists for the user
-    if whisper == 'false':
-        message = date_str + profile + " " + user_string + " (" + role_string + ")" + " - " + message_string
-    else:
-        message = "<i><b>" + date_str + profile + user_string + "</b>  wispers to you: </i>" + message_string
+    message = date_str + profile + " " + user_string + " (" + role_string + ")" + " - " + message_string
     return message
 
 
@@ -148,7 +145,7 @@ def do_dev_easter_egg(role, user):
     return role_string
 
 
-def failed_message(result):
+def failed_message(result, roomid):
     """Tell the client that your message could not be sent for whatever the reason was."""
     if result[0] == 'permission':
         if result[1] == 1:
@@ -156,14 +153,14 @@ def failed_message(result):
         elif result[1] == 2:
             fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you have been banned.</font>"
         elif result[1] == 3:
-            fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because the chat has been locked by an admin.</font>"
+            fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because this chat room has been locked.</font>"
         elif result[1] == 4:
             fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you have been banned from this chat room.</font>"
     elif result[0] == "dev":
         return
     # more will be added when error messages become more common (chat rooms TM)
     # something simmilar to this will be in cmds.py for commands failing.
-    emit("message_chat", fail_str, namespace="/")
+    emit("message_chat", (fail_str, roomid), namespace="/")
 
 
 """

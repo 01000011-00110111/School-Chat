@@ -9,7 +9,6 @@ LOGFILE = "backend/chat.txt"
 LOGFILE_B = "backend/Chat-backup.txt"
 
 
-
 # Returns a list of dictionaries. Each dictionary in the list
 # is a message that has been sent in our chat server
 def get_chat(file: str) -> List:
@@ -78,12 +77,23 @@ def get_stats() -> str:
 
 
 # Adds the message text to our file containing all the messages
-def add_message(message_text: str) -> None:
+def add_message(message_text: str, roomid, dbm) -> None:
     """Handler for messages so they get logged."""
+    if roomid != "ilQvQwgOhm9kNAOrRqbr":
+        room = dbm.rooms.find_one({'roomid': roomid})
+        lines = len(room["messages"])
+        if lines >= 100:
+            reset_chat(message_text, False, roomid, dbm)
+        dbm.rooms.update_one({"roomid": roomid},
+                             {'$push': {
+                                 'messages': message_text
+                             }})
+        return ('room', 1)
     with open(LOGFILE, "r", encoding="utf8") as f_in:
         lines = len(f_in.readlines())
+
     if lines >= 500:
-        reset_chat(message_text, False)
+        reset_chat(message_text, False, roomid, dbm)
     else:
         with open(LOGFILE, "a", encoding="utf8") as f_in:
             f_in.write(message_text + "\n")
@@ -92,29 +102,46 @@ def add_message(message_text: str) -> None:
         f_out.write(date + message_text + "\n")
 
 
-def reset_chat(message: str, admin: bool) -> str:
+def reset_chat(message: str, admin: bool, roomid, dbm) -> str:
     """Admin function for reseting chat. Also used by the GC."""
-    if admin is True:
+    if roomid != "ilQvQwgOhm9kNAOrRqbr":
+        dbm.rooms.update_one({"roomid": roomid}, {
+            '$set': {
+                "messages": [
+                    "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n"
+                ]
+            }
+        })
+        emit("reset_chat", "auto", broadcast=True, namespace="/")
+    else:
+        if admin is True:
+            with open(LOGFILE, "w", encoding="utf8") as f_out:
+                f_out.write(
+                    "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n"
+                )
+                emit("reset_chat", "admin", broadcast=True, namespace="/")
+            return "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n"
+        # if that is not true, run as the GC
         with open(LOGFILE, "w", encoding="utf8") as f_out:
             f_out.write(
-                "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n"
-            )
-            emit("reset_chat", "admin", broadcast=True, namespace="/")
-        return "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n"
-    # if that is not true, run as the GC
-    with open(LOGFILE, "w", encoding="utf8") as f_out:
-        f_out.write(
-            "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n"
-            + message + "\n")
-        emit("reset_chat", "auto", broadcast=True, namespace="/")
-    return "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n" + message + "\n"
+                "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n"
+                + message + "\n")
+            emit("reset_chat", "auto", broadcast=True, namespace="/")
+        return "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n" + message + "\n"
 
 
 # force the message text to our file containing all the messages
-def force_message(message_text: str) -> None:
+def force_message(message_text: str, roomid, dbm) -> None:
     """Force send a message to everyone even when chat is locked."""
-    with open(LOGFILE, "a", encoding="utf8") as f_in:
-        f_in.write(message_text + "\n")
-    with open(LOGFILE_B, "a", encoding="utf8") as f_out:
-        date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
-        f_out.write(date + message_text + "\n")
+    if roomid != "ilQvQwgOhm9kNAOrRqbr":
+        dbm.rooms.update_one({"roomid": roomid},
+                             {'$push': {
+                                 'messages': message_text
+                             }})
+        return ('room', 1)
+    else:
+        with open(LOGFILE, "a", encoding="utf8") as f_in:
+            f_in.write(message_text + "\n")
+        with open(LOGFILE_B, "a", encoding="utf8") as f_out:
+            date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
+            f_out.write(date + message_text + "\n")

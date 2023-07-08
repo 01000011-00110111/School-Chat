@@ -5,8 +5,8 @@ socket.on("ping_test", (Obj) => {
     pingHandle(Obj);
 });
 
-socket.on("message_chat", (message) => {
-    renderChat(message);
+socket.on("message_chat", (message, roomid) => {
+    renderChat(message, roomid);
 });
 
 if (Notification.permission === "default") {
@@ -126,6 +126,7 @@ function runCheckStartup() {
 function runStartup() {
     loadChat();
     setDarkStyle();
+    window.sessionStorage.setItem("roomid", 'ilQvQwgOhm9kNAOrRqbr');
     socket.emit('get_prefs', document.getElementById("user")["value"]);
     socket.emit('get_perms');
     document.cookie = "Notifications=true; path=/";
@@ -147,7 +148,7 @@ socket.on("roomsList", (result) => {
 });
 
 socket.on("room_data", (data) => {
-    window.localStorage.setItem("roomid", data['roomid']);
+    window.sessionStorage.setItem("roomid", data['roomid']);
     if (data['roomid'] === 'ilQvQwgOhm9kNAOrRqbr') {
         loadChatStartup(data['messages']);
     } else {
@@ -198,7 +199,7 @@ function sendMessage() {
     let chatDiv = document.getElementById("chat");
     messageL = toHyperlink(message);
     messageElement["value"] = "";
-    socket.emit('message_chat', user, messageL);
+    socket.emit('message_chat', user, messageL, window.sessionStorage.getItem("roomid"));
     window.scrollTo(0, chatDiv.scrollHeight);
 }
 
@@ -215,11 +216,13 @@ function loadChatStartup(string) {
     window.scrollTo(0, chatDiv.scrollHeight);
 }
 
-function renderChat(messages) {
+function renderChat(messages, roomid) {
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
-
-    chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
+    console.log(roomid)
+    if (roomid === window.sessionStorage.getItem('roomid')) {
+        chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
+    }
 }
 
 

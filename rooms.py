@@ -35,6 +35,11 @@ def create_chat_room(username, dbm, name, user):
     possible_room = dbm.rooms.find_one({"generatedBy": user})
     if possible_room is not None:
         return ('fail', 1)
+    elif name == '':
+        return ('fail', 2)
+    elif dbm.rooms.find_one({"roomName": name}) is not None:
+        print("FAILED BOZO")
+        return ('fail', 2)
     code = generate_unique_code(5, username, dbm)
     generated_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     dbm.rooms.insert_one({
@@ -46,9 +51,15 @@ def create_chat_room(username, dbm, name, user):
         generated_at,
         "roomName":
         name,
+        "locked":
+        'false',
         "messages": [
             f"[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>{username}</b> at {generated_at}.</font>"
         ]
     })
 
     return ('good', 0)
+
+def delete_chat_room(roomid, dbm):#DONT MESS WITHOUT SETING UP DEV DB
+    dbm.room.drop(roomid)
+    return ('good', 1)

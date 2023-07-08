@@ -5,6 +5,7 @@ from flask_socketio import emit
 from time import sleep
 import os
 import re
+import rooms
 
 
 def log_commands(message):
@@ -12,31 +13,35 @@ def log_commands(message):
         file.write(message + '\n')
 
 
-def find_command(commands, user):
+def find_command(commands, user, roomid):
     """Send whatever sudo command is issued to its respective function."""
     if commands.get('v0') == 'E':
         print('test')
     elif commands.get('v0') == 'help':
         help_command(user)
+    elif commands.get('v0') == "edit":
+        command = commands['v1']
+        if command == 'delete':
+            rooms.delete_chat_room(roomid, dbm)
     elif commands.get('v0') == 'mute':
         username = commands['v1']
         time = commands['v2']
         reason = ' '.join(list(commands.values())[3:])
-        mute_user(username, user, time, reason)
+        mute_user(username, user, time, reason, roomid)
     elif commands.get('v0') == 'unmute':
         username = commands['v1']
-        unmute_user(username, user)
+        unmute_user(username, user, roomid)
     elif commands.get('v0') == 'ban':
         username = commands['v1']
         reason = ' '.join(
             list(commands.values())[2:]
         )  # should i make a ban time  # no, hard to enfore the time for when the ban is lifted, and also bans are permanent
-        ban_user(username, user, reason)
+        ban_user(username, user, reason, roomid)
     else:
-        handle_admin_cmds(commands.get('v0'), user)
+        handle_admin_cmds(commands.get('v0'), user, roomid)
 
 
-def handle_admin_cmds(cmd: str, user):
+def handle_admin_cmds(cmd: str, user, roomid):
     """Admin commands will be sent here."""
     if cmd == "blanks":
         if check_if_dev(user) == 1:
@@ -45,25 +50,7 @@ def handle_admin_cmds(cmd: str, user):
         result = chat.get_stats()
         emit("message_chat", result, broadcast=True)
     elif cmd == "lock":
-        if check_if_dev(user) == 1:
-            chat.add_message(
-                "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>")
-            emit(
-                "message_chat",
-                "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>",
-                broadcast=True)
-            with open("backend/chat.lock", "w", encoding="utf8"):
-                pass
-        elif check_if_mod(user) == 1:
-            chat.add_message(
-                "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Moderator.</font>"
-            )
-            emit(
-                "message_chat",
-                "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Moderator.</font>",
-                broadcast=True)
-            with open("backend/chat.lock", "w", encoding="utf8"):
-                pass
+        lock(user, roomid)
     elif cmd == "unlock":
         if check_if_dev(user) == 1:
             if os.path.exists("backend/chat.lock"):
@@ -139,7 +126,7 @@ def ban_user(username: str, issuer, reason):
         emit("message_chat", message, broadcast=True)
 
 
-def mute_user(username: str, issuer, time, reason):
+def mute_user(username: str, issuer, time, reason, roomid):
     """Mute a user from the chat."""
     # these need to be run a different way than ban, i wish I could do it like ban but thats not how it works.
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
@@ -172,7 +159,7 @@ def mute_user(username: str, issuer, time, reason):
             else:
                 message = '[SYSTEM]: <font color="#ff7f00">' + username + " is mutted for " + time_final + " . Reason: " + reason + "." + "</font>"
 
-            chat.force_message(message)
+            chat.force_message(message, roomid, dbm)
             emit("message_chat", message, broadcast=True)
 
 
@@ -254,3 +241,45 @@ def help_command(issuer):
             for line in lines[start_index:end_index + 1]) + "</font>"
         print(command_line)
         emit("message_chat", command_line, namespace="/")
+
+
+def lock(user, roomid):
+    if check_if_dev(user) == 1:
+        message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>"
+        chat.add_message(message, roomid, dbm)
+        emit("message_chat", message, broadcast=True)
+        dbm.rooms.update_one({"roomid": roomid}, {
+            '$set': {
+                "locked": 'true'
+            }
+        })
+    elif check_if_mod(user) == 1:
+        message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Moderator.</font>"
+        chat.add_message(message, roomid, dbm)
+        emit("message_chat", message, broadcast=True)
+        dbm.rooms.update_one({"roomid": roomid}, {
+            '$set': {
+                "locked": 'true'
+            }
+        })
+
+
+def unlock(user, roomid):
+    if check_if_dev(user) == 1:
+        message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>"
+        chat.add_message(message, roomid, dbm)
+        emit("message_chat", message, broadcast=True)
+        dbm.rooms.update_one({"roomid": roomid}, {
+            '$set': {
+                "locked": 'false'
+            }
+        })
+    elif check_if_mod(user) == 1:
+        message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Moderator.</font>"
+        chat.add_message(message, roomid, dbm)
+        emit("message_chat", message, broadcast=True)
+        dbm.rooms.update_one({"roomid": roomid}, {
+            '$set': {
+                "locked": 'false'
+            }
+        })

@@ -16,14 +16,12 @@ function login() {
 socket.on("login_att", (state) => {
     if (state === 'true') {
         enteraccount();
-    } else {
-        failedlogin();
     }
 });
 
 socket.on("return_prefs", (Obj) => {
     if ('failed' in Obj) {
-        failedlogin();
+        console.log('We need a failed login function')
     }
     window.localStorage.setItem("username", Obj["displayName"]);
     window.localStorage.setItem("pfp", Obj["profile"]);

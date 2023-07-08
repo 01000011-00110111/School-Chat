@@ -56,16 +56,15 @@ def f_but_better() -> ResponseReturnValue:
     """Not an easter egg I promise."""
     return flask.redirect(flask.url_for('signup'))
 
-
 # this will not make sense for a little bit
-@app.route('/chat')
+@app.route('/defnotchat')
 def chat_page() -> ResponseReturnValue:
     """Serve the main chat, stops bypass bans."""
     html_file = flask.render_template('chat.html')
     return html_file
 
 
-@app.route('/login', methods=["POST", "GET"])
+@app.route('/chat', methods=["POST", "GET"])
 def login_page() -> ResponseReturnValue:
     """Show the login page"""
     if request.method == "POST":
@@ -347,11 +346,6 @@ def create_rooms(name, user, username):
     """Someone wants to make a chat room."""
     if len(name) > 10:
         result = ('fail', 2)
-    elif name == '':
-        result = ('fail', 2)
-    elif dbm.rooms.distinct(name) is not None:
-        print("FAILED BOZO")
-        result = ('fail', 2)
     else:
         result = rooms.create_chat_room(username, dbm, name, user)
     emit('chatCreateResult', result)
@@ -372,14 +366,14 @@ def get_rooms(user):
 
 # pylint: disable=C0103
 @socketio.on('message_chat')
-def handle_message(user_name, message):
+def handle_message(user_name, message, roomid):
     """New New chat message handling pipeline."""
-    result = filtering.run_filter(user_name, message, dbm, 'false')
+    result = filtering.run_filter(user_name, message, dbm, roomid)
     if result[0] == 'msg':
-        chat.add_message(result[1])
-        emit("message_chat", result[1], broadcast=True)
+        chat.add_message(result[1], roomid, dbm)
+        emit("message_chat", (result[1], roomid), broadcast=True)
     else:
-        filtering.failed_message(result)
+        filtering.failed_message(result, roomid)
 
 
 # pylint: enable=C0103
