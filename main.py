@@ -7,7 +7,6 @@ import time
 import keys
 import flask
 import pymongo
-import re
 from flask import request
 from flask.logging import default_handler
 from flask.typing import ResponseReturnValue
@@ -176,11 +175,11 @@ def get_logs_page() -> ResponseReturnValue:
     html_file = flask.render_template('Backup-chat.html')
     return html_file
 
+
 # @app.route('/customizepagereal')
 # def settings_page() -> ResponseReturnValue:
 #     """this is the settings page"""
 #     return flask.render_template('acc-edit-index.html')
-
 
 # @app.route('/settings')
 # def customize_accounts() -> ResponseReturnValue:
@@ -378,20 +377,18 @@ def handle_admin_stuff(cmd: str, user):
     cmds.handle_admin_cmds(cmd, user)
 
 
-@socketio.on("create_room")
-def create_rooms(name, user, username):
-    """Someone wants to make a chat room."""
-    room = dbm.rooms.find()
-    if len(name) > 10:
-        result = ('fail', 2)
-    else:
-        result = rooms.create_chat_room(username, name, user)
-    emit('chatCreateResult', result)
-    # emit new list to users (really just steal the get_rooms code more or less, but broadcast it now)
-    if result[1] == 0:
-        all_rooms = rooms.get_chat_rooms(room)
-        emit('roomsList', all_rooms, namespace='/', broadcast=True)
-        # :skull_emoji: :skull_emoji: :skull_emoji: :skull_emoji: :skull_emoji: taken in 4k
+# @socketio.on("create_room")  moved to rooms.py
+# def create_rooms(name, user, username):
+#     """Someone wants to make a chat room."""
+#     room = dbm.rooms.find()
+#     if len(name) > 10:
+#         result = ('fail', 2)
+#     else:
+#         result = rooms.create_chat_room(username, name, user)
+#     emit('chatCreateResult', result)
+#     if result[1] == 0:
+#         all_rooms = rooms.get_chat_rooms(room)
+#         emit('roomsList', all_rooms, namespace='/', broadcast=True)
 
 
 @socketio.on("get_rooms")
@@ -401,15 +398,16 @@ def get_rooms(username):
     user = user_name["displayName"]
     room = dbm.rooms.find()
     room_access = rooms.get_chat_rooms(room)
-    
+
     accessible_rooms = [
-        {'id': r['id'], 'name': r['name']}
-        for r in room_access
-        if (
-            not r['canSee'] or
-            (r['canSee'] == 'everyone' and user != 'everyone') or
-            (r['canSee'] != 'everyone' and user in [u.strip() for u in r['canSee'].split(",")])
-        )
+        {
+            'id': r['id'],
+            'name': r['name']
+        } for r in room_access if (
+            # not room['canSee'] or
+            (r['canSee'] == 'everyone') or (r['canSee'] == 'devonly') or
+            (r['canSee'] != 'everyone' and 'users' in r['canSee'] and user in
+             [u.strip() for u in r['canSee'].split("users:")[1].split(",")]))
     ]
     emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
 
@@ -418,9 +416,9 @@ def get_rooms(username):
 @socketio.on('message_chat')
 def handle_message(user_name, message, roomid):
     """New New chat message handling pipeline."""
-    room = dbm.rooms.find_one("roomid": roomid)
+    room = dbm.rooms.find_one({"roomid": roomid})
     user = dbm.Accounts.find_one({"username": user_name})
-    result = filtering.run_filter(user, room, message, user, roomid)
+    result = filtering.run_filter(user, room, message, roomid)
     if result[0] == 'msg':
         chat.add_message(result[1], roomid, room)
         emit("message_chat", (result[1], roomid), broadcast=True)
@@ -471,6 +469,7 @@ def connect(roomid):
         response = room
 
     emit("room_data", response, to=socketid, namespace='/')
+
 
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=8080)

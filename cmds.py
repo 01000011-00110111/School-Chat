@@ -18,11 +18,9 @@ def find_command(commands, user, roomid):
     if commands.get('v0') == 'E':
         print('test')
     elif commands.get('v0') == 'help':
-        help_command(user)
+        help_command(user, roomid)
     elif commands.get('v0') == "edit":
-        command = commands['v1']
-        if command == 'delete':
-            rooms.delete_chat_room(roomid, dbm)
+        chat_room_edit(commands, roomid, user)
     elif commands.get('v0') == 'mute':
         username = commands['v1']
         time = commands['v2']
@@ -93,7 +91,7 @@ def handle_admin_cmds(cmd: str, user, roomid):
              namespace="/")
     else:
         result = ("reason", 1)
-        failed_command(result)
+        respond_command(result, roomid, '')
 
 
 def check_if_dev(user):
@@ -200,15 +198,43 @@ def run_shutdown():
     os.system('pkill gunicorn')
 
 
-def failed_command(result):
+def respond_command(result, roomid, name):
     """Tell the client that your message could not be sent for whatever the reason was."""
-    if result[0] == 'reason':
-        if result[1] == 1:
-            fail_str = "[SYSTEM]: <font color='#ff7f00'>command not found use " + '"$sudo help"' + " to see all commands.</font>"
-        emit("message_chat", fail_str, namespace="/")
+    response_strings = {
+        (1, None):
+        "[SYSTEM]: <font color='#ff7f00'>command not found use \"$sudo help\" to see all commands.</font>",
+        (0, 'delete'):
+        "[SYSTEM]: <font color='#ff7f00'>Chat room deleted.</font>",
+        (1, 'delete'):
+        f"[SYSTEM]: <font color='#ff7f00'>You are not allowed to delete the chat room named {name}.</font>",
+        (0, 'create'):
+        f"[SYSTEM]: <font color='#ff7f00'>Created chat room named {name}.</font>",
+        (1, 'create'):
+        f"[SYSTEM]: <font color='#ff7f00'>Your chat name ({name}) is too long, it must be 10 letters or less.</font>",
+        (2, 'create'):
+        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to make more chat rooms.</font>",
+        (3, 'create'):
+        "[SYSTEM]: <font color='#ff7f00'>Your chat room must have a name at least 1 letter long.</font>",
+        (4, 'create'): 
+        f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
+        (0, 'edit'):
+        f"[SYSTEM]: <font color='#ff7f00'>.</font>",
+        (1, 'edit'):
+        f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
+        (2, 'edit'):
+        f"[SYSTEM]: <font color='#ff7f00'>You are not allowed to edit the chat room named {name}.</font>",
+        (3, 'edit'):
+        f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
+        (4, 'edit'):
+        f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
+    }
+
+    # this is amazing
+    response_str = response_strings.get((result[1], result[2]), "")
+    emit("message_chat", (response_str, roomid), namespace="/")
 
 
-def help_command(issuer):
+def help_command(issuer, roomid):
     with open('backend/command_list.txt', 'r') as file:
         lines = file.readlines()
 
@@ -241,7 +267,7 @@ def help_command(issuer):
             line.strip()
             for line in lines[start_index:end_index + 1]) + "</font>"
         print(command_line)
-        emit("message_chat", command_line, namespace="/")
+        emit("message_chat", (command_line, roomid), namespace="/")
 
 
 def lock(user, roomid):
@@ -268,3 +294,22 @@ def unlock(user, roomid):
         chat.add_message(message, roomid, dbm)
         emit("message_chat", message, broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
+
+
+def chat_room_edit(commands, roomid, user):
+    if 'v2' not in commands:
+        room_name = ''
+        command = commands['v1']
+    else:
+        room_name = commands['v1']
+        command = commands.get('v2', '')
+
+    if command == 'delete':
+        response = rooms.delete_chat_room(room_name, user)
+        respond_command(response, roomid, room_name)
+    elif command == "create":
+        response = rooms.create_rooms(room_name, user, user["displayName"])
+        respond_command(response, roomid, room_name)
+    elif command == "access":
+        users = ','.join(list(commands.values())[3:])
+        rooms.chat_room_edit(command, room_name, user, users)

@@ -22,6 +22,7 @@ openai = "^0.27.6"
 xterm = "0.7.3"
 console = "^0.9907"
 Flask-SSLify = "^0.1.5"
+timedelta = "^2020.12.3"
 
 [tool.poetry.dev-dependencies]
 debugpy = "^1.6.2"

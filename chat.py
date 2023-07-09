@@ -4,7 +4,11 @@ from datetime import timedelta, datetime
 from typing import List
 import psutil
 from flask_socketio import emit
-from main import dbm
+import pymongo
+import os
+# because python is weird
+client = pymongo.MongoClient(os.environ["acmongo_key"])
+dbm = client.Chat
 
 LOGFILE = "backend/chat.txt"
 LOGFILE_B = "backend/Chat-backup.txt"

@@ -1,0 +1,43 @@
+cseven tried to delete test2 at 2023-07-09T03:02:52
+cseven deleted test2 at 2023-07-09T03:24:49
+cseven tried to delete test at 2023-07-09T03:32:25
+cseven failed to make a room named test2 at 2023-07-09T04:37:50 because the name was taken.
+cseven failed to make a room named test2 at 2023-07-09T04:39:10 because the name was taken.
+cseven failed to make a room named test2 at 2023-07-09T04:40:00 because the name was taken.
+cseven failed to make a room named test3 at 2023-07-09T04:41:30 because cseven has made a room before.
+cseven made a room named create at 2023-07-09T05:01:46
+cseven failed to make a room named create at 2023-07-09T05:03:28 because cseven has made a room before.
+cseven failed to make a room named  at 2023-07-09T05:07:21 because cseven has made a room before.
+cseven tried to delete create at 2023-07-09T05:07:57
+cseven tried to delete create at 2023-07-09T05:08:41
+cseven tried to delete create at 2023-07-09T05:09:52
+cseven tried to delete create at 2023-07-09T05:13:02
+cseven tried to delete create at 2023-07-09T05:13:14
+cseven failed to make a room named  at 2023-07-09T05:19:01 because the name was empty.
+cseven failed to make a room at 2023-07-09T05:34:06 because the name was empty.
+cseven failed to make a room at 2023-07-09T05:35:35 because the name was empty.
+cseven failed to make a room at 2023-07-09T05:35:42 because the name was empty.
+cseven failed to make a room at 2023-07-09T05:35:49 because the name was empty.
+cseven failed to make a room at 2023-07-09T05:36:55 because the name was empty.
+cseven failed to make a room at 2023-07-09T05:39:19 because the name was empty.
+cseven failed to make a room at 2023-07-09T05:40:45 because the name was empty.
+cseven failed to make a room at 2023-07-09T05:41:13 because the name was empty.
+cseven failed to make a room at 2023-07-09T05:41:30 because the name was empty.
+cseven failed to make a room at 2023-07-09T05:41:48 because the name was empty.
+cseven failed to make a room at 2023-07-09T05:42:14 because the name was empty.
+cseven failed to make a room at 2023-07-09T05:42:14 because the name was empty.
+cseven failed to make a room at 2023-07-09T05:43:04 because the name was empty.
+cseven failed to make a room named test at 2023-07-09T05:43:18 because the name was taken.
+cseven made a room named test2 at 2023-07-09T05:43:28
+cseven failed to make a room named test3 at 2023-07-09T05:43:37 because cseven has made a room before.
+cseven tried to delete test at 2023-07-09T05:43:48
+cseven tried to delete test at 2023-07-09T05:45:26
+cseven tried to delete test at 2023-07-09T05:47:07
+cseven tried to delete test at 2023-07-09T05:48:16
+cseven made a room named test3 at 2023-07-09T14:49:43
+cseven failed to make a room named test3 at 2023-07-09T16:21:14 because cseven has made a room before.
+not&#32;cserver failed to make a room named test3 at 2023-07-09T16:26:55 because the name was taken.
+not&#32;cserver made a room named test7 at 2023-07-09T16:27:13
+cseven deleted test3 at 2023-07-09T16:34:26
+not&#32;cserver tried to delete test at 2023-07-09T16:36:42
+not&#32;cserver deleted test7 at 2023-07-09T16:36:49

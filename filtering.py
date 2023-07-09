@@ -50,6 +50,8 @@ def run_filter(user, room, message, roomid):
     # else:
     #     final_str = compile_message(message, profile_picture, user, role)
     #     return ('msg', final_str)
+    if locked == 'true':
+        return ("permission", 3)
 
     if can_send == "everyone":
         return ('msg', final_str)
@@ -60,11 +62,7 @@ def run_filter(user, room, message, roomid):
             return ('permission', 5)
     else:
         return ('permission', 5)
-
-    if locked == 'true':
-        return ("permission", 3)
     # insert the bypass for [SONG] and [JOTD]
-
     return ('msg', final_str)
 
 
@@ -78,7 +76,7 @@ def check_mute(user):
 
 def check_lock(room):
     """For now, its just as simple as this, but when rooms come it will be more complicated."""
-    return )room["locked"])
+    return (room["locked"])
 
 
 def check_allowed_sending(user, room):
