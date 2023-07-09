@@ -232,19 +232,19 @@ def get_backup_chat():
     return ret_val
 
 
-@app.get('/chat_logs')
-def respond_with_chat():
-    """Legacy function only used now for inital chat load."""
-    messages = chat.get_chat("chat")
-    ret_val = json.dumps(messages)
-    return ret_val
+# @app.get('/chat_logs')
+# def respond_with_chat():
+#     """Legacy function only used now for inital chat load."""
+#     messages = chat.get_chat("chat")
+#     ret_val = json.dumps(messages)
+#     return ret_val
 
 
 @app.post('/force_send')
 def force_chat() -> str:
     """Legacy function that will be removed later."""
     json_receive = request.get_json(force=True)
-    chat.force_message(json_receive['message'])
+    chat.add_message(json_receive['message'], roomid, 'true')
     emit("message_chat",
          json_receive['message'],
          broadcast=True,
@@ -372,9 +372,9 @@ def unmute_user(username: str, user):
 
 
 @socketio.on("admin_cmd")
-def handle_admin_stuff(cmd: str, user):
+def handle_admin_stuff(cmd: str, user, roomid):
     """Admin commands will be sent here."""
-    cmds.handle_admin_cmds(cmd, user)
+    cmds.find_commands({"v0": cmd}, user, roomid)
 
 
 # @socketio.on("create_room")  moved to rooms.py
@@ -398,17 +398,29 @@ def get_rooms(username):
     user = user_name["displayName"]
     room = dbm.rooms.find()
     room_access = rooms.get_chat_rooms(room)
-
-    accessible_rooms = [
-        {
-            'id': r['id'],
-            'name': r['name']
-        } for r in room_access if (
-            # not room['canSee'] or
-            (r['canSee'] == 'everyone') or (r['canSee'] == 'devonly') or
-            (r['canSee'] != 'everyone' and 'users' in r['canSee'] and user in
-             [u.strip() for u in r['canSee'].split("users:")[1].split(",")]))
-    ]
+    if user_name["SPermission"] == "debugpass":
+        emit('roomsList', room_access, namespace='/', to=request.sid)
+    else:
+        accessible_rooms = [
+            {
+                'id': r['id'],
+                'name': r['name']
+            } for r in room_access if (
+                # not room['whitelisted'] or idk if we need it
+                (r['whitelisted'] == 'everyone') or (
+                    r['whitelisted'] == 'devonly'
+                    and user_name["SPermission"] == "debugpass") or
+                (r['whitelisted'] != 'everyone' and 'users' in r['whitelisted']
+                 and user in [
+                     u.strip()
+                     for u in r['whitelisted'].split("users:")[1].split(",")
+                 ]) or
+                (r['whitelisted'] != 'everyone' and 'users' in r['blacklisted']
+                 and user not in [
+                     u.strip()
+                     for u in r['blacklisted'].split("users:")[1].split(",")
+                 ]))
+        ]
     emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
 
 
@@ -418,10 +430,16 @@ def handle_message(user_name, message, roomid):
     """New New chat message handling pipeline."""
     room = dbm.rooms.find_one({"roomid": roomid})
     user = dbm.Accounts.find_one({"username": user_name})
-    result = filtering.run_filter(user, room, message, roomid)
+    if dbm.rooms.find_one({"roomid": roomid}) is None:
+        result = ("Permission", 6)
+    else:
+        result = filtering.run_filter(user, room, message, roomid)
     if result[0] == 'msg':
-        chat.add_message(result[1], roomid, room)
-        emit("message_chat", (result[1], roomid), broadcast=True)
+        if dbm.rooms.find_one({"roomid": roomid}) is not None:
+            chat.add_message(result[1], roomid, room)
+            emit("message_chat", (result[1], roomid), broadcast=True)
+        else:
+            filtering.failed_message("return", roomid)
     else:
         filtering.failed_message(result, roomid)
 
@@ -441,7 +459,7 @@ def handle_ping_tests(start):
 @socketio.on('admin_message')
 def handle_admin_message(message, user):
     """Bypass message filtering, used when chat is locked."""
-    chat.force_message(message)
+    chat.add_message(message, roomid, 'true')
     emit("message_chat", message, broadcast=True, namespace="/")
 
 

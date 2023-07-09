@@ -4,7 +4,7 @@ import re
 from datetime import datetime, timezone, timedelta
 from better_profanity import profanity
 from flask_socketio import emit
-from chat import force_message
+import chat
 import profanity_words
 import cmds
 
@@ -38,11 +38,11 @@ def run_filter(user, room, message, roomid):
 
     find_pings(message, user['displayName'], profile_picture)
     find_cmds(message, user, locked, roomid)
-
+    
     final_str = compile_message(message, profile_picture, user, role)
 
     if perms == "dev":
-        force_message(final_str, roomid)
+        chat.add_message(final_str, roomid, 'true')
         emit("message_chat", (final_str, roomid),
              broadcast=True,
              namespace="/")
@@ -169,24 +169,29 @@ def do_dev_easter_egg(role, user):
         role_string = "<font color='" + role_color + "'>" + role + "</font>"
     return role_string
 
-
 def failed_message(result, roomid):
-    """Tell the client that your message could not be sent for whatever the reason was."""
-    if result[0] == 'permission':
-        if result[1] == 1:
-            fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you are muted.</font>"
-        elif result[1] == 2:
-            fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you have been banned.</font>"
-        elif result[1] == 3:
-            fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because this chat room has been locked.</font>"
-        elif result[1] == 4:
-            fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you have been banned from this chat room.</font>"
-        elif result[1] == 5:
-            fail_str = "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you do not have enough permission to use this chat room.</font>"
-    elif result[0] == "dev":
-        return
-    # more will be added when error messages become more common (chat rooms TM)
-    # something simmilar to this will be in cmds.py for commands failing.
+    """Tell the client that your message could not be sent for whatever the reason was.""" 
+    if result[0] == "dev":
+        if result[1] == 6: fail_str = fail_strings.get((result[1]), "") 
+        else: return
+    if result[0] == "return": emit("message_chat", ('', roomid), namespace="/")
+
+    fail_strings = {
+        (1):
+        "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you are muted.</font>",
+        (2):
+        "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you have been banned.</font>",
+        (3):
+        "[SYSTEM]: <font color='#ff7f00'>You can't send messages because this chat room has been locked.</font>",
+        (4):
+        "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you have been banned from this chat room.</font>",
+        (5):
+        "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you do not have enough permission to use this chat room.</font>",
+        (6):
+        "[SYSTEM]: <font color='#ff7f00'>You can't send messages in this chat room because this chat room no longer exist select a chat room that does exist.</font>"
+    }
+
+    fail_str = fail_strings.get((result[1]), "")# result[2]), "")
     emit("message_chat", (fail_str, roomid), namespace="/")
 
 

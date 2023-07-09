@@ -9,7 +9,8 @@ import rooms
 
 
 def log_commands(message):
-    with open('backend/command_log.txt', 'a') as file:
+    """Log when a command is issued."""
+    with open('backend/command_log.txt', 'a', encoding="utf8") as file:
         file.write(message + '\n')
 
 
@@ -19,7 +20,7 @@ def find_command(commands, user, roomid):
         print('test')
     elif commands.get('v0') == 'help':
         help_command(user, roomid)
-    elif commands.get('v0') == "edit":
+    elif commands.get('v0') == "edit":# what should we rename this too because it can't be called this anymore
         chat_room_edit(commands, roomid, user)
     elif commands.get('v0') == 'mute':
         username = commands['v1']
@@ -31,78 +32,44 @@ def find_command(commands, user, roomid):
         unmute_user(username, user, roomid)
     elif commands.get('v0') == 'ban':
         username = commands['v1']
-        reason = ' '.join(
-            list(commands.values())[2:]
-        )  # should i make a ban time  # no, hard to enfore the time for when the ban is lifted, and also bans are permanent
+        reason = ' '.join(list(commands.values())[2:])
         ban_user(username, user, reason, roomid)
-    else:
-        handle_admin_cmds(commands.get('v0'), user, roomid)
-
-
-def handle_admin_cmds(cmd: str, user, roomid):
-    """Admin commands will be sent here."""
-    if cmd == "blanks":
+    elif commands.get('v0') == "blanks":
         if check_if_dev(user) == 1:
-            chat.line_blanks(roomid, dbm)
-    elif cmd == "status":
+            chat.line_blanks(roomid)
+    elif commands.get('v0') == "status":
         result = chat.get_stats()
-        emit("message_chat", result, broadcast=True)
-    elif cmd == "lock":
+        emit("message_chat", (result, roomid), broadcast=True)
+    elif commands.get('v0') == "lock":
         lock(user, roomid)
-    elif cmd == "unlock":
-        if check_if_dev(user) == 1:
-            if os.path.exists("backend/chat.lock"):
-                os.remove("backend/chat.lock")
-                chat.add_message(
-                    "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>"
-                )
-                emit(
-                    "message_chat",
-                    "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>",
-                    broadcast=True)
-        elif check_if_mod(user) == 1:
-            if os.path.exists("backend/chat.lock"):
-                os.remove("backend/chat.lock")
-                chat.add_message(
-                    "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Moderator.</font>"
-                )
-                emit(
-                    "message_chat",
-                    "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Moderator.</font>",
-                    broadcast=True)
-    #elif cmd == "username_clear":  just needs to changed to a new thing
-    #    dbm.Online.delete_many({})  DANGER DANGER DANGER
-    elif cmd == "ronline" or cmd == "ro":
-        dbm.Online.delete_many({})
-        emit("force_username", "", broadcast=True)
-    elif cmd == "clear" or cmd == 'rc':
+    elif commands.get('v0') == "unlock":
+        unlock(user, roomid)
+    elif commands.get('v0') in ("ronline", "ro"):
+        reload_users()
+    elif commands.get('v0') in ("clear", 'rc'):
         if check_if_dev(user) == 1 or check_if_mod(user) == 1:
-            chat.reset_chat(False, True)
-            # this is not needed it seems, already in the reset_chat function
-            # emit("reset_chat", broadcast=True, namespace="/")
-    elif cmd == "shutdown":
+            chat.reset_chat(False, True, roomid)
+    elif commands.get('v0') == "shutdown":
         if check_if_dev(user) == 1:
             run_shutdown()
-    elif cmd == "lines" or cmd == "pstats":
-        lines = chat.get_line_count()
-        emit("message_chat",
-             f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>",
-             broadcast=True,
-             namespace="/")
+    elif commands.get('v0') in ("lines", "pstats"):
+        send_lines(roomid, dbm)
     else:
         result = ("reason", 1)
         respond_command(result, roomid, '')
 
 
 def check_if_dev(user):
+    """Return if a user is a dev or not."""
     return 1 if user['SPermission'] == 'Debugpass' else 0
 
 
 def check_if_mod(user):
+    """Return if a user is a mod or not."""
     return 1 if user['SPermission'] == 'modpass' else 0
 
 
-def ban_user(username: str, issuer, reason):
+def ban_user(username: str, issuer, reason, roomid):
     """Ban a user from the chat forever."""
     is_dev = check_if_dev(issuer)
     if is_dev != 1:
@@ -111,23 +78,22 @@ def ban_user(username: str, issuer, reason):
     user = dbm.Accounts.find_one({"displayName": username})
     if user['permission'] == 'banned':
         return
-    else:
-        dbm.Accounts.update_one({"displayName": username},
-                                {"$set": {
-                                    "permission": "banned"
-                                }})
-        if reason == '':
-            message = '[SYSTEM]: <font color="#ff7f00">' + username + " has been banned.</font>"
-        else:
-            message = '[SYSTEM]: <font color="#ff7f00">' + username + " has been banned. Reason: " + reason + "." + "</font>"
 
-        chat.force_message(message)
-        emit("message_chat", message, broadcast=True)
+    dbm.Accounts.update_one({"displayName": username},
+                            {"$set": {
+                                "permission": "banned"
+                            }})
+    if reason == '':
+        message = '[SYSTEM]: <font color="#ff7f00">' + username + " has been banned.</font>"
+    else:
+        message = '[SYSTEM]: <font color="#ff7f00">' + username + " has been banned. Reason: " + reason + "." + "</font>"
+
+    chat.add_message(message, roomid, 'true')
+    emit("message_chat", (message, roomid), broadcast=True)
 
 
 def mute_user(username: str, issuer, time, reason, roomid):
     """Mute a user from the chat."""
-    # these need to be run a different way than ban, i wish I could do it like ban but thats not how it works.
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
         user = dbm.Accounts.find_one({"displayName": username})
         if user['permission'] in ('banned', 'muted'):
@@ -158,11 +124,11 @@ def mute_user(username: str, issuer, time, reason, roomid):
             else:
                 message = '[SYSTEM]: <font color="#ff7f00">' + username + " is mutted for " + time_final + " . Reason: " + reason + "." + "</font>"
 
-            chat.force_message(message, roomid, dbm)
+            chat.add_message(message, roomid, 'true')
             emit("message_chat", message, broadcast=True)
 
 
-def unmute_user(username: str, issuer):
+def unmute_user(username: str, issuer, roomid):
     """Unmute a user from the chat"""
     # see mute_user for explanation
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
@@ -176,14 +142,14 @@ def unmute_user(username: str, issuer):
                                     }})
             message = '[SYSTEM]: <font color="#ff7f00">' + username + " has been unmuted.</font>"
 
-            chat.force_message(message)
+            chat.add_message(message, roomid, 'true')
             emit("message_chat", message, broadcast=True)
 
 
 # why is this here
-def handle_admin_message(message):
+def handle_admin_message(message, roomid):
     """Bypass message filtering, used when chat is locked."""
-    chat.force_message(message)
+    chat.add_message(message, roomid, 'true')
     emit("message_chat", message, broadcast=True, namespace="/")
 
 
@@ -198,8 +164,30 @@ def run_shutdown():
     os.system('pkill gunicorn')
 
 
+def reload_users():
+    """Reload the online list manually."""
+    dbm.Online.delete_many({})
+    emit("force_username", "", broadcast=True)
+
+
+def send_lines(roomid, dbm):
+    """Respond with the current line count for the room (TBD)"""
+    # to rework this so it uses add_message
+    lines = chat.get_line_count()
+    msg = f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n"
+    chat.add_message(msg, roomid, dbm)
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+
+
 def respond_command(result, roomid, name):
     """Tell the client that your message could not be sent for whatever the reason was."""
+    room = dbm.rooms.find_one({"roomName": name})  #like the new way?
+    generatedBy = room["generatedBy"] if room is not None else ""
+    generatedAt = room["generatedAt"] if room is not None else ""
+    locked = room["locked"] if room is not None else ""
+    usersW = room["whitelisted"] if room is not None else ""
+    usersB = room["blacklisted"] if room is not None else ""
+
     response_strings = {
         (1, None):
         "[SYSTEM]: <font color='#ff7f00'>command not found use \"$sudo help\" to see all commands.</font>",
@@ -215,18 +203,22 @@ def respond_command(result, roomid, name):
         "[SYSTEM]: <font color='#ff7f00'>You are not allowed to make more chat rooms.</font>",
         (3, 'create'):
         "[SYSTEM]: <font color='#ff7f00'>Your chat room must have a name at least 1 letter long.</font>",
-        (4, 'create'): 
+        (4, 'create'):
         f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
         (0, 'edit'):
-        f"[SYSTEM]: <font color='#ff7f00'>.</font>",
+        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to whitelist the users {usersW}.</font>",
         (1, 'edit'):
-        f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
-        (2, 'edit'):
         f"[SYSTEM]: <font color='#ff7f00'>You are not allowed to edit the chat room named {name}.</font>",
+        (2, 'edit'):
+        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to blacklist the users {usersB}.</font>",
         (3, 'edit'):
-        f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
+        f"[SYSTEM]: <font color='#ff7f00'>.</font>",
         (4, 'edit'):
-        f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
+        f"[SYSTEM]: <font color='#ff7f00'>.</font>",
+        (0, 'info'):
+        f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} was made by {generatedBy} at {generatedAt} and the chat room status is currently set to locked = {locked}.</font>",
+        (1, 'info'):
+        f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} exists. Please enter a chat room that does exist.</font>",
     }
 
     # this is amazing
@@ -237,7 +229,6 @@ def respond_command(result, roomid, name):
 def help_command(issuer, roomid):
     with open('backend/command_list.txt', 'r') as file:
         lines = file.readlines()
-
     start_index = None
     end_index = None
 
@@ -313,3 +304,10 @@ def chat_room_edit(commands, roomid, user):
     elif command == "access":
         users = ','.join(list(commands.values())[3:])
         rooms.chat_room_edit(command, room_name, user, users)
+    elif command == "info":
+        if dbm.rooms.find_one({"roomName": room_name}) is not None:
+            response = ('reason', 0, 'info')
+            respond_command(response, roomid, room_name)
+        else:
+            response = ('reason', 1, 'info')
+            respond_command(response, roomid, room_name)

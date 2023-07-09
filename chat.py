@@ -28,22 +28,24 @@ def get_chat(file: str) -> List:
 
 
 def get_line_count() -> List:
-    """Return the line count in the logfiles."""
-    ret_val = []
+    """Return the line count in the logfile."""
     with open(LOGFILE, "r", encoding="utf8") as f_in:
         lines = len(f_in.readlines()) + 1
-    with open(LOGFILE, "a", encoding="utf8") as f_in:
-        f_in.write(
-            f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n")
-        ret_val = lines
-    return ret_val
+    return lines
+
+
+def get_line_countB() -> List:
+    """Return the line count in the backup logfile."""
+    with open(LOGFILE_B, "r", encoding="utf8") as f_in:
+        lines_b = len(f_in.readlines())
+    return lines
+
 
 
 def line_blanks(roomid, dbm) -> None:
     """Send 100 blank lines in chat for testing purposes."""
-    add_message(
-        '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>',
-        roomid, dbm)
+    message_text = system_response("message", 3)
+    add_message(message_text, roomid)
     emit("message_chat", (
         '[SYSTEM]: <font color="#ff7f00">nothing to see here <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>nothing to see here<br></font>',
         roomid))
@@ -51,13 +53,8 @@ def line_blanks(roomid, dbm) -> None:
 
 def get_stats() -> str:
     """Return full stats list to chat."""
-
-    # get line count
-    with open(LOGFILE, "r", encoding="utf8") as f_in:
-        lines = len(f_in.readlines())
-    with open(LOGFILE_B, "r", encoding="utf8") as f_in:
-        lines_b = len(f_in.readlines())
-
+    lines = get_line_count()
+    lines_b = get_line_coundB()
     # other stats on the repl
     p_in = psutil.Process()
     with p_in.oneshot():
@@ -75,63 +72,37 @@ def get_stats() -> str:
     system_s = f"Threads: {thread_count}"
     # <br>Memory in use (webserver): {mem_virt}
     longstats = f"{begin_f}<br>{lines_f}<br>{uptime_f}<br>{system_s}<br>"
-    with open(LOGFILE, "a", encoding="utf8") as f_in:
-        f_in.write(longstats)
+    chat_log(message_text, roomid)
     return longstats
 
 
-# Adds the message text to our file containing all the messages
-def add_message(message_text: str, roomid, room) -> None:
+
+def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
     if roomid != "ilQvQwgOhm9kNAOrRqbr":
-        lines = len(room["messages"])
-        if lines >= 100:
-            reset_chat(message_text, False, roomid)
-        dbm.rooms.update_one({"roomid": roomid},
-                             {'$push': {
-                                 'messages': message_text
-                             }})
+        lines = len(dbm["messages"])
+        if lines >= 100 and permission != 'true': reset_chat(message_text, False, roomid)
+        else: (send_message_DB(message_text, roomid), backup_log(message_text, roomid))
         return ('room', 1)
-    with open(LOGFILE, "r", encoding="utf8") as f_in:
-        lines = len(f_in.readlines())
-
-    if lines >= 500:
-        reset_chat(message_text, False, roomid)
-    else:
-        with open(LOGFILE, "a", encoding="utf8") as f_in:
-            f_in.write(message_text + "\n")
-    with open(LOGFILE_B, "a", encoding="utf8") as f_out:
-        date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
-        f_out.write(date + message_text + "\n")
+    lines = get_line_count()
+    if lines >= 500 and permission != 'true': reset_chat(message_text, False, roomid)
+    else: (chat_log(message_text, roomid), backup_log(message_text, roomid))
     return ('good', 0)
-
+    
 
 def reset_chat(message: str, admin: bool, roomid) -> str:
     """Admin function for reseting chat. Also used by the GC."""
     if roomid != "ilQvQwgOhm9kNAOrRqbr":
-        dbm.rooms.update_one({"roomid": roomid}, {
-            '$set': {
-                "messages": [
-                    "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n"
-                ]
-            }
-        })
-        emit("reset_chat", "auto", broadcast=True, namespace="/")
+        (set_message_DB(roomid), emit("reset_chat", "auto", broadcast=True, namespace="/"))
         return ('good', 0)
     else:
         if admin is True:
-            with open(LOGFILE, "w", encoding="utf8") as f_out:
-                f_out.write(
-                    "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n"
-                )
-                emit("reset_chat", "admin", broadcast=True, namespace="/")
+            message_text = system_response("message", 1)
+            (chat_log(message_text, roomid), emit("reset_chat", "admin", broadcast=True, namespace="/"))
             return ('good', 1)
-        # if that is not true, run as the GC
-        with open(LOGFILE, "w", encoding="utf8") as f_out:
-            f_out.write(
-                "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n"
-                + message + "\n")
-            emit("reset_chat", "auto", broadcast=True, namespace="/")
+        message_text = system_response("message", 2)
+        chat_log(message_text, roomid)
+        emit("reset_chat", "auto", broadcast=True, namespace="/")
         return ('good', 0)
 
 
@@ -139,14 +110,56 @@ def reset_chat(message: str, admin: bool, roomid) -> str:
 def force_message(message_text: str, roomid) -> None:
     """Force send a message to everyone even when chat is locked."""
     if roomid != "ilQvQwgOhm9kNAOrRqbr":
-        dbm.rooms.update_one({"roomid": roomid},
-                             {'$push': {
-                                 'messages': message_text
-                             }})
+        send_message_DB(message_text, roomid)
+        backup_log(message_text, roomid)
         return ('room', 1)
-    with open(LOGFILE, "a", encoding="utf8") as f_in:
-        f_in.write(message_text + "\n")
+    chat_log(message_text, roomid)
+    backup_log(message_text, roomid)
+    return ('good', 0)
+
+
+def system_response(message, roomid):
+    """stores all messages for system""" 
+    system_response = {
+        (1):
+        "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n",
+        (2):
+        "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n",
+        (3):
+        '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'
+    }
+
+    system_anser = system_response.get((message[1]), "")
+    return system_anser
+
+
+def backup_log(message_text: str, roomid) -> None:
     with open(LOGFILE_B, "a", encoding="utf8") as f_out:
         date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
-        f_out.write(date + message_text + "\n")
-    return ('good', 0)
+        room = dbm.rooms.find_one({"roomid": roomid})
+        name = room["roomName"]
+        f_out.write(
+            f"This message was sent in the room named {name} at {date} The message said: {message_text}\n"
+        )
+
+
+def chat_log(message_text: str, roomid) -> None:
+    with open(LOGFILE, "a", encoding="utf8") as f_in:
+        f_in.write(message_text + "\n")
+
+def send_message_DB(message_text: str, roomid) -> None:
+    dbm.rooms.update_one({"roomid": roomid},
+                         {'$push': {
+                             'messages': message_text
+                         }})
+
+
+def set_message_DB(roomid):
+    message_text = system_response("message", 2)
+    dbm.rooms.update_one({"roomid": roomid}, {
+        '$set': {
+            "messages": [
+                message_text
+            ]
+        }
+    })

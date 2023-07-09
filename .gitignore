@@ -1,9 +1,6 @@
 # file for excluding files from git repo (dev files)
 backend/Backups/*
 
-# linter stuff
-templates/jslint_report.html
-
 # chatlog
 backend/chat.txt
 backend/chat.lock
@@ -12,6 +9,7 @@ backend/Chat-backup.txt
 backend/muted.txt
 backend/command_log.txt
 airhorn_default.wav
+backend/chat-rooms_log.txt
 
 # running files
 __pycache__/*

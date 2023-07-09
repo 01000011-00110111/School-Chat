@@ -137,7 +137,7 @@ function runStartup() {
 }
 
 socket.on("roomsList", (result) => {
-    // create the room list on client side
+    for (room of result) {CheckIfExist(result);}
     let newline = "<br>"
     let rooms = "";
     let RoomDiv = document.getElementById("ChatRoomls");
@@ -146,6 +146,12 @@ socket.on("roomsList", (result) => {
     }
     RoomDiv["innerHTML"] = rooms;
 });
+
+function CheckIfExist(params) {
+    if (window.sessionStorage.getItem("roomid") != room.id) {
+        changeRoom('ilQvQwgOhm9kNAOrRqbr')
+    }
+}
 
 socket.on("room_data", (data) => {
     window.sessionStorage.setItem("roomid", data['roomid']);
@@ -164,13 +170,6 @@ socket.on("room_data", (data) => {
     }
    
 });
-
-function create_room() {
-    let name = document.getElementById("RoomCTXT")["value"];
-    let user = document.getElementById("user")["value"];
-    username = window.localStorage.getItem("username");
-    socket.emit('create_room', name, user, username);
-}
 
 function changeRoom(room) {
     socket.emit('room_connect', room)

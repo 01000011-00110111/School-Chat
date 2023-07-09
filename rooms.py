@@ -28,12 +28,13 @@ def generate_unique_code(length):
 
 def get_chat_rooms(room):
     """Return all available rooms."""
+    print(room)
     rooms = []
     for r in room:
         rooms.append({
             'name': r['roomName'],
             'id': r['roomid'],
-            'canSee': r['canSee']
+            'whitelisted': r['whitelisted']
         })
     return rooms
 
@@ -46,9 +47,8 @@ def create_rooms(name, user, username):
         return result
     else:
         result = create_chat_room(username, name, user)
-        # emit('chatCreateResult', result)# what is this
-        return result
     if result[1] == 0:
+        room = dbm.rooms.find()
         all_rooms = get_chat_rooms(room)
         emit('roomsList', all_rooms, namespace='/', broadcast=True)
         return result
@@ -83,7 +83,7 @@ def create_chat_room(username, name, userinfo):
             name,
             "canSend":
             'everyone',
-            "canSee":
+            "whitelisted":
             "everyone",
             "blacklisted":
             "",
@@ -120,18 +120,26 @@ def delete_chat_room(room_name, user):
     return (response)
 
 
-def chat_room_edit(request, room_name, user, users): # my git commits for some reason dont go to 
-    room = dbm.rooms.find_one({"roomName": room_name}) # can you push to git real quick so pylint can rerun sure why not
+def chat_room_edit(request, room_name, user, users):
+    room = dbm.rooms.find_one({"roomName": room_name})
     if request == "access":
         if room["generatedBy"] == user["username"]:
             dbm.rooms.update_one({"roomName": room_name},
                                  {"$set": {
-                                     "canSee": users
+                                     "whitelisted": users
                                  }})
+            response = ('response', 0, 'edit')
+        else:
+            response = ('response', 1, 'edit')
+        return response
     elif request == "block":
-        dbm.rooms.update_one({"roomName": room_name},
-                     {"$set": {
-                         "blacklisted": users
-                     }})
-    elif request == "info":
-        print("i can't do it lol")
+        if room["generatedBy"] == user["username"]:
+            dbm.rooms.update_one({"roomName": room_name},
+                         {"$set": {
+                             "blacklisted": users
+                         }})
+            response = ('response', 2, 'edit')
+        else:
+            response = ('response', 1, 'edit')
+    elif request == "add more stuff later":
+        print('what to add')
