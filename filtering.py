@@ -2,6 +2,7 @@
 import os
 import re
 from datetime import datetime, timezone, timedelta
+import multiprocessing as mp
 from better_profanity import profanity
 from flask_socketio import emit
 import chat
@@ -35,7 +36,8 @@ def run_filter(user, room, message, roomid):
         profile_picture = 'static/favicon.ico'
     else:
         profile_picture = user['profile']
-
+    
+                    
     find_pings(message, user['displayName'], profile_picture)
     find_cmds(message, user, locked, roomid)
     
@@ -95,7 +97,7 @@ def check_perms(user):
 
 
 def filter_message(message):
-    """No one likes profanity, especially flagging systems."""
+    """No one likes profanity, especially flagging systems."""#lol
     return profanity.censor(message)
 
 

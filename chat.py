@@ -38,11 +38,11 @@ def get_line_countB() -> List:
     """Return the line count in the backup logfile."""
     with open(LOGFILE_B, "r", encoding="utf8") as f_in:
         lines_b = len(f_in.readlines())
-    return lines
+    return lines_b
 
 
 
-def line_blanks(roomid, dbm) -> None:
+def line_blanks(roomid) -> None:
     """Send 100 blank lines in chat for testing purposes."""
     message_text = system_response("message", 3)
     add_message(message_text, roomid)
@@ -54,7 +54,7 @@ def line_blanks(roomid, dbm) -> None:
 def get_stats() -> str:
     """Return full stats list to chat."""
     lines = get_line_count()
-    lines_b = get_line_coundB()
+    lines_b = get_line_countB()
     # other stats on the repl
     p_in = psutil.Process()
     with p_in.oneshot():
@@ -72,15 +72,16 @@ def get_stats() -> str:
     system_s = f"Threads: {thread_count}"
     # <br>Memory in use (webserver): {mem_virt}
     longstats = f"{begin_f}<br>{lines_f}<br>{uptime_f}<br>{system_s}<br>"
-    chat_log(message_text, roomid)
+    chat_log(longstats)
     return longstats
 
 
 
 def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
+    room = dbm.rooms.find_one({"roomid": roomid})
     if roomid != "ilQvQwgOhm9kNAOrRqbr":
-        lines = len(dbm["messages"])
+        lines = len(room["messages"])
         if lines >= 100 and permission != 'true': reset_chat(message_text, False, roomid)
         else: (send_message_DB(message_text, roomid), backup_log(message_text, roomid))
         return ('room', 1)
@@ -107,15 +108,15 @@ def reset_chat(message: str, admin: bool, roomid) -> str:
 
 
 # force the message text to our file containing all the messages
-def force_message(message_text: str, roomid) -> None:
-    """Force send a message to everyone even when chat is locked."""
-    if roomid != "ilQvQwgOhm9kNAOrRqbr":
-        send_message_DB(message_text, roomid)
-        backup_log(message_text, roomid)
-        return ('room', 1)
-    chat_log(message_text, roomid)
-    backup_log(message_text, roomid)
-    return ('good', 0)
+# def force_message(message_text: str, roomid) -> None:
+#     """Force send a message to everyone even when chat is locked."""
+#     if roomid != "ilQvQwgOhm9kNAOrRqbr":
+#         send_message_DB(message_text, roomid)
+#         backup_log(message_text, roomid)
+#         return ('room', 1)
+#     chat_log(message_text, roomid)
+#     backup_log(message_text, roomid)
+#     return ('good', 0)
 
 
 def system_response(message, roomid):

@@ -387,7 +387,7 @@ def handle_admin_stuff(cmd: str, user, roomid):
 #         result = rooms.create_chat_room(username, name, user)
 #     emit('chatCreateResult', result)
 #     if result[1] == 0:
-#         all_rooms = rooms.get_chat_rooms(room)
+#         all_rooms = rooms.get_chat_rooms()
 #         emit('roomsList', all_rooms, namespace='/', broadcast=True)
 
 
@@ -396,32 +396,93 @@ def get_rooms(username):
     """Grabs the chat rooms."""
     user_name = dbm.Accounts.find_one({"username": username})
     user = user_name["displayName"]
-    room = dbm.rooms.find()
-    room_access = rooms.get_chat_rooms(room)
-    if user_name["SPermission"] == "debugpass":
+    room_access = rooms.get_chat_rooms()
+    if user_name["SPermission"] == "Debugpass":
         emit('roomsList', room_access, namespace='/', to=request.sid)
     else:
         accessible_rooms = [
             {
                 'id': r['id'],
                 'name': r['name']
-            } for r in room_access if (
-                # not room['whitelisted'] or idk if we need it
-                (r['whitelisted'] == 'everyone') or (
-                    r['whitelisted'] == 'devonly'
-                    and user_name["SPermission"] == "debugpass") or
-                (r['whitelisted'] != 'everyone' and 'users' in r['whitelisted']
-                 and user in [
-                     u.strip()
-                     for u in r['whitelisted'].split("users:")[1].split(",")
-                 ]) or
-                (r['whitelisted'] != 'everyone' and 'users' in r['blacklisted']
-                 and user not in [
-                     u.strip()
-                     for u in r['blacklisted'].split("users:")[1].split(",")
-                 ]))
+            }
+            for r in room_access
+            if (
+                (r['blacklisted'] == 'empty' or 'users:' in r['blacklisted'] and user not in [u.strip() for u in r['blacklisted'].split("users:")[1].split(",")]) and
+                (r['whitelisted'] == 'everyone' or r['whitelisted'] == 'devonly' and user_name["SPermission"] == "Debugpass" or 'users:' in r['whitelisted'] and user in [u.strip() for u in r['whitelisted'].split("users:")[1].split(",")])
+            )
         ]
-    emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
+        emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
+
+
+# @socketio.on("get_rooms")
+# def get_rooms(username):
+#     """Grabs the chat rooms."""
+#     user_name = dbm.Accounts.find_one({"username": username})
+#     user = user_name["displayName"]
+#     room_access = rooms.get_chat_rooms()
+#     if user_name["SPermission"] == "Debugpass":
+#         emit('roomsList', room_access, namespace='/', to=request.sid)
+#     else:
+#         accessible_rooms = [
+#             {
+#                 'id': r['id'],
+#                 'name': r['name']
+#             }
+#             for r in room_access
+#             if (
+#                 (r['blacklisted'] == 'empty') or
+#                 (r['whitelisted'] == 'everyone') or
+#                 (
+#                     r['whitelisted'] == 'devonly' and
+#                     user_name["SPermission"] == "Debugpass"
+#                 ) or
+#                 (
+#                     r['whitelisted'] != 'everyone' and
+#                     'users:' in r['whitelisted'] and
+#                     user in [u.strip() for u in r['whitelisted'].split("users:")[1].split(",")]
+#                 ) or
+#                 (
+#                     r['blacklisted'] != 'empty' and
+#                     'users:' in r['blacklisted'] and
+#                     user not in [u.strip() for u in r['blacklisted'].split("users:")[1].split(",")]
+#                 )
+#             )
+#         ]
+#         emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
+
+
+
+# @socketio.on("get_rooms")
+# def get_rooms(username):
+#     """Grabs the chat rooms."""
+#     user_name = dbm.Accounts.find_one({"username": username})
+#     user = user_name["displayName"]
+#     room_access = rooms.get_chat_rooms()
+#     if user_name["SPermission"] == "Debugpass":
+#         emit('roomsList', room_access, namespace='/', to=request.sid)
+#     else:
+#         accessible_rooms = [
+#             {
+#                 'id': r['id'],
+#                 'name': r['name']
+#             } for r in room_access if (
+#                 # not room['whitelisted'] or idk if we need it
+#                 (r['blacklisted'] == 'empty') or
+#                 (r['whitelisted'] == 'everyone') or (
+#                     r['whitelisted'] == 'devonly'
+#                     and user_name["SPermission"] == "Debugpass") or
+#                 (r['whitelisted'] != 'everyone' and 'users' in r['whitelisted']
+#                  and user in [
+#                      u.strip()
+#                      for u in r['whitelisted'].split("users:")[1].split(",")
+#                  ]) or
+#                 (r['blacklisted'] != 'empty' and 'users:' in r['blacklisted']
+#                  and user not in [
+#                      u.strip()
+#                      for u in r['blacklisted'].split("users:")[1].split(",")
+#                  ]))
+#         ]
+#     emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
 
 
 # pylint: disable=C0103
