@@ -1,16 +1,12 @@
 Dev commands:<br><blockquote>
     - (system (message)) send a message as system <br>
-    - (Admin) Send as admin (not added)<br>
     - (reset/rc) resets chat rooms<br>
     - (status) Gets full status of the chat<br>
-    - (shutdown) Shuts down the server<br>
-    - (blanks) Sends 100 blank lines in the chat room you are curently in<br>
-    - (lines/pstats) gets line count of the chat room you are on<br>
+    - (shutdown) Shuts down
     - (ban (username) (reason)) the reason is optional<br></blockquote>
 Mod commands:<br><blockquote>
     - (mute (username) (time) (reason)) reason and time are optional<br>
     - (unmute (username))<br>
-    - (mod) Send as mod (not added)<br>
     - (lock) locks the chat<br>
     - (unlock) unlocks the chat<br></blockquote>
 user commands:<br><blockquote>

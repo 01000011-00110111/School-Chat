@@ -64,8 +64,8 @@ def find_command(commands, user, roomid):
         message = ' '.join(list(commands.values())[1:])
         send_joke(roomid, user, message)
     else:
-        result = ("reason", 1)
-        respond_command(result, roomid, '')
+        result = ("reason", 1, None)
+        respond_command(result, roomid, None)
 
 
 def check_if_dev(user):
@@ -165,21 +165,21 @@ def handle_admin_message(message, roomid):
 def send_joke(roomid, user, message):#add a check for a user later
     room = dbm.rooms.find_one({"roomid": roomid})
     final_msg = f"[Joke of the day]: <font color='#D51956'>{message}</font>"
-    chat.add_message(message, roomid, room)
-    emit("message_chat", (message, roomid), broadcast=True)
+    chat.add_message(final_msg, roomid, room)
+    emit("message_chat", (final_msg, roomid), broadcast=True)
 
 def send_song(roomid, user, message):#add a check for a user later
     room = dbm.rooms.find_one({"roomid": roomid})
-    final_msg = f"<font color='#08bd71'>[SONG]: {messageC}</font>"
-    chat.add_message(message, roomid, room)
-    emit("message_chat", (message, roomid), broadcast=True)
+    final_msg = f"<font color='#08bd71'>[SONG]: {message}</font>"
+    chat.add_message(final_msg, roomid, room)
+    emit("message_chat", (final_msg, roomid), broadcast=True)
 
 
 def send_system(roomid, user, message):#add a check for a user later
     room = dbm.rooms.find_one({"roomid": roomid})
     final_msg = f"[SYSTEM]: <font color='#ff7f00'>{message}</font>"
-    chat.add_message(message, roomid, room)
-    emit("message_chat", (message, roomid), broadcast=True)
+    chat.add_message(final_msg, roomid, room)
+    emit("message_chat", (final_msg, roomid), broadcast=True)
 
 
 def run_shutdown():
@@ -225,9 +225,9 @@ def respond_command(result, roomid, name):
         (1, 'delete'):
         f"[SYSTEM]: <font color='#ff7f00'>You are not allowed to delete the chat room named {name}.</font>",
         (2, 'delete'):
-        f"[SYSTEM]: <font color='#ff7f00'>Just becasue you are a dev doesn't mean you can delete main chat.</font>",
+        "[SYSTEM]: <font color='#ff7f00'>Just becasue you are a dev doesn't mean you can delete main chat.</font>",
         (3, 'delete'):
-        f"[SYSTEM]: <font color='#ff7f00'>Nice try but we where perepared.</font>",
+        "[SYSTEM]: <font color='#ff7f00'>Nice try but we where perepared.</font>",
         (0, 'create'):
         f"[SYSTEM]: <font color='#ff7f00'>Created chat room named {name}.</font>",
         (1, 'create'):
@@ -235,7 +235,7 @@ def respond_command(result, roomid, name):
         (2, 'create'):
         "[SYSTEM]: <font color='#ff7f00'>You are not allowed to make more chat rooms.</font>",
         (3, 'create'):
-        f"[SYSTEM]: <font color='#ff7f00'>Your chat room must have a name at least 1 letter long.</font>",#i added a f at the start and it got fixed lol
+        "[SYSTEM]: <font color='#ff7f00'>Your chat room must have a name at least 1 letter long.</font>",#i added a f at the start and it got fixed lol and now that broke it
         (4, 'create'):
         f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
         (0, 'edit'):
@@ -245,9 +245,9 @@ def respond_command(result, roomid, name):
         (2, 'edit'):
         f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to blacklist the users {usersB}.</font>",
         (3, 'edit'):
-        f"[SYSTEM]: <font color='#ff7f00'>.</font>",
+        "[SYSTEM]: <font color='#ff7f00'>.</font>",
         (4, 'edit'):
-        f"[SYSTEM]: <font color='#ff7f00'>.</font>",
+        "[SYSTEM]: <font color='#ff7f00'>.</font>",
         (0, 'info'):
         f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} was made by {generatedBy} at {generatedAt} and the chat room status is currently set to locked = {locked}.</font>",
         (0, 'rooms'):
@@ -255,7 +255,7 @@ def respond_command(result, roomid, name):
     }
 
     # this is amazing
-    response_str = response_strings.get((result[1], result[2]), "")
+    response_str = response_strings.get((result[1], result[2]))
     if result[1] in [0,2,3] and result[2] in ['create','delete','edit']: (chat.add_message(response_str, roomid, 'true'), emit("message_chat", (response_str, roomid), namespace="/"))
     else: emit("message_chat", (response_str, roomid), namespace="/")
 
@@ -320,7 +320,10 @@ def unlock(user, roomid):
 def chat_room_edit(commands, roomid, user):
     room_name = commands.get('v1', '')
     command = commands.get('v2', '')
-    if dbm.rooms.find_one({"roomName": room_name}) is None and command is not ['create']:
+    room = dbm.rooms.find_one({"roomName": room_name})
+    print(room)
+
+    if command not in ['create', 'test'] and room is None:
         command = ''
         respond_command(('reason', 0, 'rooms'), roomid, room_name)
 
@@ -330,17 +333,11 @@ def chat_room_edit(commands, roomid, user):
     elif command == "create":
         response = rooms.create_rooms(room_name, user, user["displayName"])
         respond_command(response, roomid, room_name)
-    elif command == "whitelist":
-        users = ','.join(list(commands.values())[3:])
-        response = rooms.chat_room_edit(command, room_name, user, users)
-        respond_command(response, roomid, room_name)
-    elif command == "blacklist":
+    elif command in ["whitelist", "blacklist"]:
         users = ','.join(list(commands.values())[3:])
         response = rooms.chat_room_edit(command, room_name, user, users)
         respond_command(response, roomid, room_name)
     elif command == "info":
-        if dbm.rooms.find_one({"roomName": room_name}) is not None:
-            response = ('reason', 0, 'info')
-            respond_command(response, roomid, room_name)
-        else:
-            respond_command(('reason', 0, 'rooms'), roomid, room_name)
+        response = ('reason', 0, 'info')
+        respond_command(response, roomid, room_name)
+

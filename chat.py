@@ -4,11 +4,9 @@ from datetime import timedelta, datetime
 from typing import List
 import psutil
 from flask_socketio import emit
-import pymongo
-import os
-# because python is weird
-client = pymongo.MongoClient(os.environ["acmongo_key"])
-dbm = client.Chat
+from main import dbm
+
+# why are you doing it this way, we already have a connection to the db in main.py because when i do i get a look error look or not  wtf python one day it does next day it doesnt thanks python still say your the best lol lol
 
 LOGFILE = "backend/chat.txt"
 LOGFILE_B = "backend/Chat-backup.txt"
@@ -33,7 +31,7 @@ def get_line_count() -> List:
         lines = len(f_in.readlines()) + 1
     return lines
 
-
+# merge these together, use an if statement to see which one needs to be returned ughhh ok
 def get_line_countB() -> List:
     """Return the line count in the backup logfile."""
     with open(LOGFILE_B, "r", encoding="utf8") as f_in:
@@ -45,7 +43,7 @@ def get_line_countB() -> List:
 def line_blanks(roomid) -> None:
     """Send 100 blank lines in chat for testing purposes."""
     message_text = system_response("message", 3)
-    add_message(message_text, roomid)
+    add_message(message_text, roomid, 'true')
     emit("message_chat", (
         '[SYSTEM]: <font color="#ff7f00">nothing to see here <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>nothing to see here<br></font>',
         roomid))
@@ -118,6 +116,7 @@ def reset_chat(message: str, admin: bool, roomid) -> str:
 #     backup_log(message_text, roomid)
 #     return ('good', 0)
 
+# I like this again
 
 def system_response(message, roomid):
     """stores all messages for system""" 

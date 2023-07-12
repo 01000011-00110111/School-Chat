@@ -1,8 +1,6 @@
 """Filter usernames and make the chat more xss safe"""
-import os
 import re
 from datetime import datetime, timezone, timedelta
-import multiprocessing as mp
 from better_profanity import profanity
 from flask_socketio import emit
 import chat
@@ -40,6 +38,7 @@ def run_filter(user, room, message, roomid):
                     
     find_pings(message, user['displayName'], profile_picture)
     find_cmds(message, user, locked, roomid)
+
     
     final_str = compile_message(message, profile_picture, user, role)
 
@@ -64,7 +63,7 @@ def run_filter(user, room, message, roomid):
             return ('permission', 5)
     else:
         return ('permission', 5)
-    # insert the bypass for [SONG] and [JOTD]
+
     return ('msg', final_str)
 
 

@@ -384,6 +384,14 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "multiprocessing"
+version = "2.6.2.1"
+description = "Backport of the multiprocessing package to Python 2.4 and 2.5"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "numpy"
 version = "1.23.4"
 description = "NumPy is the fundamental package for array computing with Python."
@@ -801,7 +809,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8.0,<3.9"
-content-hash = "ae51f1a5cd5b93aa8bba872f95ece665246ac716f89fb247c44ee03d37c3bbd3"
+content-hash = "b2ca6c40c69e11c9614586e2a3367b838cd0cf46a39c30b24f9aec997c1820b2"
 
 [metadata.files]
 aiohttp = []
@@ -837,6 +845,7 @@ jinja2 = []
 jinxed = []
 markupsafe = []
 multidict = []
+multiprocessing = []
 numpy = []
 openai = []
 packaging = []

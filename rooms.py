@@ -3,7 +3,6 @@ from string import ascii_uppercase
 from datetime import datetime
 from main import dbm
 import main
-from flask_socketio import emit
 
 
 def chat_room_log(message):
@@ -126,7 +125,7 @@ def delete_chat_room(room_name, user):
 
 
 def delete_room(username, room_name, date_str):
-        deleted = dbm.rooms.find_one_and_delete({"roomName": room_name})
+        dbm.rooms.find_one_and_delete({"roomName": room_name})
         return ("reason", 0, "delete")
     
 
