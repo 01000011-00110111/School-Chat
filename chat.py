@@ -6,8 +6,6 @@ import psutil
 from flask_socketio import emit
 from main import dbm
 
-# why are you doing it this way, we already have a connection to the db in main.py because when i do i get a look error look or not  wtf python one day it does next day it doesnt thanks python still say your the best lol lol
-
 LOGFILE = "backend/chat.txt"
 LOGFILE_B = "backend/Chat-backup.txt"
 
@@ -25,19 +23,16 @@ def get_chat(file: str) -> List:
     return ret_val
 
 
-def get_line_count() -> List:
+def get_line_count(file) -> List:
     """Return the line count in the logfile."""
-    with open(LOGFILE, "r", encoding="utf8") as f_in:
-        lines = len(f_in.readlines()) + 1
-    return lines
-
-# merge these together, use an if statement to see which one needs to be returned ughhh ok
-def get_line_countB() -> List:
-    """Return the line count in the backup logfile."""
-    with open(LOGFILE_B, "r", encoding="utf8") as f_in:
-        lines_b = len(f_in.readlines())
-    return lines_b
-
+    if file is ["main"]:
+        with open(LOGFILE, "r", encoding="utf8") as f_in:
+            lines = len(f_in.readlines()) + 1
+        return lines
+    elif file is ["backup"]:
+        with open(LOGFILE_B, "r", encoding="utf8") as f_in:
+            lines_b = len(f_in.readlines())
+            return lines_b
 
 
 def line_blanks(roomid) -> None:
@@ -51,8 +46,8 @@ def line_blanks(roomid) -> None:
 
 def get_stats() -> str:
     """Return full stats list to chat."""
-    lines = get_line_count()
-    lines_b = get_line_countB()
+    lines = get_line_count('main')
+    lines_b = get_line_count('backup')
     # other stats on the repl
     p_in = psutil.Process()
     with p_in.oneshot():
@@ -83,7 +78,7 @@ def add_message(message_text: str, roomid, permission) -> None:
         if lines >= 100 and permission != 'true': reset_chat(message_text, False, roomid)
         else: (send_message_DB(message_text, roomid), backup_log(message_text, roomid))
         return ('room', 1)
-    lines = get_line_count()
+    lines = get_line_count('main')
     if lines >= 500 and permission != 'true': reset_chat(message_text, False, roomid)
     else: (chat_log(message_text, roomid), backup_log(message_text, roomid))
     return ('good', 0)
@@ -104,17 +99,6 @@ def reset_chat(message: str, admin: bool, roomid) -> str:
         emit("reset_chat", "auto", broadcast=True, namespace="/")
         return ('good', 0)
 
-
-# force the message text to our file containing all the messages
-# def force_message(message_text: str, roomid) -> None:
-#     """Force send a message to everyone even when chat is locked."""
-#     if roomid != "ilQvQwgOhm9kNAOrRqbr":
-#         send_message_DB(message_text, roomid)
-#         backup_log(message_text, roomid)
-#         return ('room', 1)
-#     chat_log(message_text, roomid)
-#     backup_log(message_text, roomid)
-#     return ('good', 0)
 
 # I like this again
 

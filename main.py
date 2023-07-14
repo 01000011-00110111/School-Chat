@@ -11,7 +11,6 @@ from flask import request
 from flask.logging import default_handler
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
-# because python is weird
 client = pymongo.MongoClient(os.environ["acmongo_key"])
 dbm = client.Chat
 import chat
@@ -23,8 +22,7 @@ LOGFILE = "backend/chat.txt"
 
 app = flask.Flask(__name__)
 app.config['SECRET'] = os.urandom(9001)
-#lets hope our hacker does not have a quantum computer
-# lol
+
 logging.basicConfig(filename="backend/webserver.log",
                     filemode='a',
                     level=logging.INFO)

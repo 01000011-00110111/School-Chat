@@ -48,9 +48,7 @@ def run_filter(user, room, message, roomid):
              broadcast=True,
              namespace="/")
         return ('dev', 0)
-    # else:
-    #     final_str = compile_message(message, profile_picture, user, role)
-    #     return ('msg', final_str)
+
     if locked == 'true':
         return ("permission", 3)
 
@@ -68,6 +66,7 @@ def run_filter(user, room, message, roomid):
 
 
 def check_mute(user):
+    """checks if the user is muted or banned."""
     if user["permission"] == "muted":
         return 1
     elif user["permission"] == "banned":
@@ -86,6 +85,7 @@ def check_allowed_sending(user, room):
 
 
 def check_perms(user):
+    """checks if the user has specal perms else return as a user"""
     if user['SPermission'] == 'Debugpass':
         perms = 'dev'
     elif user['SPermission'] == 'modpass':
@@ -96,13 +96,13 @@ def check_perms(user):
 
 
 def filter_message(message):
-    """No one likes profanity, especially flagging systems."""#lol
+    """No one likes profanity, especially flagging systems."""
     return profanity.censor(message)
 
 
 def find_pings(message, dispname, profile_picture):
-    """Gotta catch 'em all!"""
-    pings = re.findall(r'(?<=\[).+?(?=\])', message)
+    """Gotta catch 'em all! (checks for pings in the users message"""
+    pings = re.findall(r'(?<=\[).+?(?=\])', message)#i know how we can stop using [] for pings
     for ping in pings:
         emit("ping", {
             "who": ping,
@@ -116,8 +116,6 @@ def find_pings(message, dispname, profile_picture):
 
 def find_cmds(message, user, locked, roomid):
     """$sudo commands, will push every cmd found to cmds.py along with the user, so we can check if they can do said command."""
-    # currently we only find commands, have not implmented the other half
-    #cmds = re.findall(r'(?<=\$sudo ).+?(?=\</font>)', message)
     command_split = message.split("$sudo")
     command_split.pop(0)
 
@@ -172,11 +170,6 @@ def do_dev_easter_egg(role, user):
 
 def failed_message(result, roomid):
     """Tell the client that your message could not be sent for whatever the reason was.""" 
-    if result[0] == "dev":
-        if result[1] == 6: fail_str = fail_strings.get((result[1]), "") 
-        else: return
-    if result[0] == "return": emit("message_chat", ('', roomid), namespace="/")
-
     fail_strings = {
         (1):
         "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you are muted.</font>",
@@ -191,23 +184,10 @@ def failed_message(result, roomid):
         (6):
         "[SYSTEM]: <font color='#ff7f00'>You can't send messages in this chat room because this chat room no longer exist select a chat room that does exist.</font>"
     }
-
+    if result[0] == "dev":
+        if result[1] == 6: fail_str = fail_strings.get((result[1]), "") 
+        else: return
+    # if result[0] == "return": emit("message_chat", ('', roomid), namespace="/") what is this
+        
     fail_str = fail_strings.get((result[1]), "")# result[2]), "")
     emit("message_chat", (fail_str, roomid), namespace="/")
-
-
-"""
-if user_name in ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[URL]',
-                     'mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD', 'SYSTEM',
-                     '[SYSTEM]', "SONG", "[Song]", "[SONG]", "[song]", " ",
-                     "  ", "   ", "cseven", "cserver"):
-    return None
-# move the above code to account editing
-# adapt below code so [SONG] and [JOTD] work again
-if user_color == "[Joke of the day]: ":
-    msg = user_color + "<font color='" + message_color + "'>" + messageC + "</font>"
-    return msg
-if user_color == "[SONG]: ":
-    msg = "<font color='" + message_color + "'>" + user_color + messageC + "</font>"
-    return msg
-"""

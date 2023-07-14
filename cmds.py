@@ -163,12 +163,14 @@ def handle_admin_message(message, roomid):
 
 
 def send_joke(roomid, user, message):#add a check for a user later
+    """Sends as joke of the day."""
     room = dbm.rooms.find_one({"roomid": roomid})
     final_msg = f"[Joke of the day]: <font color='#D51956'>{message}</font>"
     chat.add_message(final_msg, roomid, room)
     emit("message_chat", (final_msg, roomid), broadcast=True)
 
 def send_song(roomid, user, message):#add a check for a user later
+    """Sends as song."""
     room = dbm.rooms.find_one({"roomid": roomid})
     final_msg = f"<font color='#08bd71'>[SONG]: {message}</font>"
     chat.add_message(final_msg, roomid, room)
@@ -176,6 +178,7 @@ def send_song(roomid, user, message):#add a check for a user later
 
 
 def send_system(roomid, user, message):#add a check for a user later
+    """Sends as the server for specal dev messages"""
     room = dbm.rooms.find_one({"roomid": roomid})
     final_msg = f"[SYSTEM]: <font color='#ff7f00'>{message}</font>"
     chat.add_message(final_msg, roomid, room)
@@ -235,7 +238,7 @@ def respond_command(result, roomid, name):
         (2, 'create'):
         "[SYSTEM]: <font color='#ff7f00'>You are not allowed to make more chat rooms.</font>",
         (3, 'create'):
-        "[SYSTEM]: <font color='#ff7f00'>Your chat room must have a name at least 1 letter long.</font>",#i added a f at the start and it got fixed lol and now that broke it
+        "[SYSTEM]: <font color='#ff7f00'>Your chat room must have a name at least 1 letter long.</font>", #I added a f at the start and it got fixed lol and now that broke it
         (4, 'create'):
         f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
         (0, 'edit'):
@@ -261,6 +264,7 @@ def respond_command(result, roomid, name):
 
 
 def help_command(issuer, roomid):
+    """sends a message with a file full of commands that the user can use."""
     with open('backend/command_list.txt', 'r') as file:
         lines = file.readlines()
     start_index = None
@@ -292,6 +296,7 @@ def help_command(issuer, roomid):
 
 
 def lock(user, roomid):
+    """locks the chat so that only devs can send"""
     if check_if_dev(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>"
         chat.add_message(message, roomid, dbm)
@@ -305,6 +310,7 @@ def lock(user, roomid):
 
 
 def unlock(user, roomid):
+    """unlocks the chat so that everyone can send"""
     if check_if_dev(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>"
         chat.add_message(message, roomid, dbm)
@@ -318,6 +324,7 @@ def unlock(user, roomid):
 
 
 def chat_room_edit(commands, roomid, user):
+    """checks what chat command the user wants to run then sends it to the room file."""
     room_name = commands.get('v1', '')
     command = commands.get('v2', '')
     room = dbm.rooms.find_one({"roomName": room_name})

@@ -6,6 +6,7 @@ import main
 
 
 def chat_room_log(message):
+    """logs all deletes, creations, and edits done to chat rooms"""
     with open('backend/chat-rooms_log.txt', 'a') as file:
         file.write(message + '\n')
 
@@ -101,6 +102,7 @@ def insert_room(code, user, generated_at, name, username):
 
 
 def delete_chat_room(room_name, user):
+    """Deletes the chat room the chat room owner or dev selected"""
     rooms = dbm.rooms.find_one({"roomName": room_name})
     madeBy = rooms["generatedBy"]
     username = user["displayName"]
@@ -125,11 +127,13 @@ def delete_chat_room(room_name, user):
 
 
 def delete_room(username, room_name, date_str):
-        dbm.rooms.find_one_and_delete({"roomName": room_name})
-        return ("reason", 0, "delete")
-    
+    """Deletes the chat room off the database"""
+    dbm.rooms.find_one_and_delete({"roomName": room_name})
+    return ("reason", 0, "delete")
+
 
 def chat_room_edit(request, room_name, user, users):
+    """checks if the user can edit the chat room and calls the different chat room edits the user can run"""
     room = dbm.rooms.find_one({"roomName": room_name})
     username = user["displayName"]
     if request == "whitelist":
@@ -151,6 +155,7 @@ def chat_room_edit(request, room_name, user, users):
 
 
 def whitelist(room_name, user, users, room, username, dev):
+    """Whitelist user a dev or the owner picks"""
     if users not in ['clear','','everyone']:
         message = 'users: ' + users
         update_whitelist(room_name, message)
@@ -166,7 +171,9 @@ def whitelist(room_name, user, users, room, username, dev):
         else: chat_room_log(f"The user {username} set the whitelist to everyone in chat room {room_name}")
         return ('response', 0, 'edit')
 
+
 def blacklist(room_name, user, users, room, username, dev):
+    """Blacklist user a dev or the owner picks"""
     if users not in ['clear','']:
         message = 'users: ' + users
         update_blacklist(room_name, message)
@@ -182,13 +189,16 @@ def blacklist(room_name, user, users, room, username, dev):
         else: chat_room_log(f"The user {username} set the blacklist to everyone in chat room {room_name}")
         return ('response', 2, 'edit')
 
+
 def update_whitelist(room_name, message):
+    """Adds the whitelisted users to the database"""
     dbm.rooms.update_one({"roomName": room_name},
                      {"$set": {
                          "whitelisted": message
                      }})
 
 def update_blacklist(room_name, message):
+    """Adds the blacklisted users to the database"""
     dbm.rooms.update_one({"roomName": room_name},
                  {"$set": {
                      "blacklisted": message
