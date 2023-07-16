@@ -384,6 +384,11 @@ def get_rooms(username):
     if user_name["SPermission"] == "Debugpass":
         emit('roomsList', room_access, namespace='/', to=request.sid)
     else:
+        # the dev bit that was here is not needed because of above
+        # that and, the way you had the if statments, it was either the blacklist is empty or the whitelist is empty, and they would be allowed
+        # i got rid of that, changed it to both must be everyone/no one, or if they are not in the blacklist with no whitelist
+        # or if they are in the whitelist if there is one.
+        # and moved the is devonly to the end, so it would overrule anything
         accessible_rooms = [
             {
                 'id': r['id'],
@@ -391,12 +396,7 @@ def get_rooms(username):
             }
             for r in room_access
             if (
-                (r['blacklisted'] == 'empty') or
-                (r['whitelisted'] == 'everyone') or
-                (
-                    r['whitelisted'] == 'devonly' and
-                    user_name["SPermission"] == "Debugpass"
-                ) or
+                (r['blacklisted'] == 'empty' and r['whitelisted'] == 'everyone') or
                 (
                     r['whitelisted'] != 'everyone' and
                     'users:' in r['whitelisted'] and
@@ -405,8 +405,11 @@ def get_rooms(username):
                 (
                     r['blacklisted'] != 'empty' and
                     'users:' in r['blacklisted'] and
-                    user not in [u.strip() for u in r['blacklisted'].split("users:")[1].split(",")]
-                )
+                    user not in [u.strip() for u in r['blacklisted'].split("users:")[1].split(",")] and 
+                    r['whitelisted'] == 'everyone'
+                ) 
+            ) and (
+                r['whitelisted'] != 'devonly'
             )
         ]
         emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
