@@ -134,6 +134,7 @@ function runStartup() {
     let user = document.getElementById("user")["value"];
     socket.emit("username", username);
     socket.emit("get_rooms", user);
+    changeRoom('ilQvQwgOhm9kNAOrRqbr')
 }
 
 socket.on("roomsList", (result) => {

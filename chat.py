@@ -69,30 +69,37 @@ def get_stats() -> str:
     return longstats
 
 
-
 def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
     room = dbm.rooms.find_one({"roomid": roomid})
     if roomid != "ilQvQwgOhm9kNAOrRqbr":
         lines = len(room["messages"])
-        if lines >= 100 and permission != 'true': reset_chat(message_text, False, roomid)
-        else: (send_message_DB(message_text, roomid), backup_log(message_text, roomid))
+        if lines >= 100 and permission != 'true':
+            reset_chat(message_text, False, roomid)
+        else:
+            (send_message_DB(message_text,
+                             roomid), backup_log(message_text, roomid))
         return ('room', 1)
     lines = get_line_count('main')
-    if lines >= 500 and permission != 'true': reset_chat(message_text, False, roomid)
-    else: (chat_log(message_text, roomid, True), backup_log(message_text, roomid))
+    if lines >= 500 and permission != 'true':
+        reset_chat(message_text, False, roomid)
+    else:
+        (chat_log(message_text, roomid,
+                  True), backup_log(message_text, roomid))
     return ('good', 0)
-    
+
 
 def reset_chat(message: str, admin: bool, roomid) -> str:
     """Admin function for reseting chat. Also used by the GC."""
     if roomid != "ilQvQwgOhm9kNAOrRqbr":
-        (set_message_DB(roomid), emit("reset_chat", "auto", broadcast=True, namespace="/"))
+        (set_message_DB(roomid),
+         emit("reset_chat", "auto", broadcast=True, namespace="/"))
         return ('good', 0)
     else:
         if admin is True:
             message_text = system_response("message", 1)
-            (chat_log(message_text, roomid, False), emit("reset_chat", "admin", broadcast=True, namespace="/"))
+            (chat_log(message_text, roomid, False),
+             emit("reset_chat", "admin", broadcast=True, namespace="/"))
             return ('good', 1)
         message_text = system_response("message", 2)
         chat_log(message_text, roomid, False)
@@ -102,12 +109,16 @@ def reset_chat(message: str, admin: bool, roomid) -> str:
 
 # I like this again
 
+
 def system_response(message, roomid):
     """stores all messages for system"""
     system_response = {
-        1: "[SYSTEM]: <font color='#ff7f00'>Chat reset by an admin.</font>\n",
-        2: "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n",
-        3: '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'
+        1:
+        "[SYSTEM]: <font color='#ff7f00'>Chat reset by an admin.</font>\n",
+        2:
+        "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n",
+        3:
+        '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'
     }
 
     system_answer = system_response.get(message[1])
@@ -146,10 +157,7 @@ def send_message_DB(message_text: str, roomid) -> None:
 def set_message_DB(roomid):
     """clears the database"""
     message_text = system_response("message", 2)
-    dbm.rooms.update_one({"roomid": roomid}, {
-        '$set': {
-            "messages": [
-                message_text
-            ]
-        }
-    })
+    dbm.rooms.update_one({"roomid": roomid},
+                         {'$set': {
+                             "messages": [message_text]
+                         }})

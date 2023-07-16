@@ -168,6 +168,7 @@ def unmute_user(username: str, issuer, roomid):
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
+
 def send_perms(roomid, issuer):
     """Return the list of people banned, and currently muted."""
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
@@ -180,7 +181,7 @@ def send_perms(roomid, issuer):
         msg_str = msg_str + '<br>Muted:<br>'
         for user in muted:
             msg_str = msg_str + f"{user['displayName']} ({user['username']})<br>"
-    
+
         # trying something new here, wonder if it will work
         # if it does, we need to redo a lot of these statements like this (make it clean)
         final_msg = f"[SYSTEM]: <font color='#ff7f00'>{msg_str}</font>"
@@ -188,6 +189,7 @@ def send_perms(roomid, issuer):
         emit("message_chat", (final_msg, roomid), broadcast=True)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
+
 
 # why is this here
 def handle_admin_message(message, roomid):
@@ -348,6 +350,7 @@ def lock(user, roomid):
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
+
 
 def unlock(user, roomid):
     """unlocks the chat so that everyone can send"""
