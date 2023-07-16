@@ -192,10 +192,10 @@ def send_perms(roomid, issuer):
 
 
 # why is this here
-def handle_admin_message(message, roomid):
-    """Bypass message filtering, used when chat is locked."""
-    chat.add_message(message, roomid, 'true')
-    emit("message_chat", message, broadcast=True, namespace="/")
+# def handle_admin_message(message, roomid):
+#     """Bypass message filtering, used when chat is locked."""
+#     chat.add_message(message, roomid, 'true')
+#     emit("message_chat", message, broadcast=True, namespace="/")
 
 
 def send_joke(roomid, user, message):  #add a check for a user later
