@@ -1,7 +1,7 @@
 [![Pylint](https://github.com/01000011-00110111/School-Chat/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/01000011-00110111/School-Chat/actions/workflows/pylint.yml)
 
 # Class-Chat
-This is a private chat made for chatting with friends. This chat has been made over our free time at highschool and is in no way made with the best ways you can do stuff. We use MongoDB for the db, with the backend written in python, (while using nginx as a reverse proxy) and a javascript front end.
+This is a private chat made for chatting with friends. This chat has been made over our free time at highschool and is in no way made with the best ways you can do stuff. We use MongoDB for the database, with the backend written in python, (while using nginx as a reverse proxy) and a javascript front end.
 
 Also not done whatsoever, many things have to be done beforehand
 

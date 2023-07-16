@@ -6,37 +6,6 @@ function closeNav() {
     document.getElementById("mySidenav").style.width = "0";
 }
 
-function devopenNav() {
-    document.getElementById("DevStuff").style.width = "550px";
-    document.getElementById("DevStuff").style.paddingLeft = "5%";
-}
-
-function devcloseNav() {
-    document.getElementById("DevStuff").style.width = "0";
-    document.getElementById("DevStuff").style.paddingLeft = "0";
-}
-
-function opendevchat() {
-    document.getElementById("dev_chat").style.width = "1250px";
-    document.getElementById("dev_chat").style.paddingLeft = "5%";
-}
-
-function closedevchat() {
-    document.getElementById("dev_chat").style.width = "0";
-    document.getElementById("dev_chat").style.paddingLeft = "0";
-}
-
-function ModopenNav() {
-
-    document.getElementById("ModStuff").style.width = "550px";
-    document.getElementById("ModStuff").style.paddingLeft = "5%";
-}
-
-function ModcloseNav() {
-    document.getElementById("ModStuff").style.width = "0";
-    document.getElementById("ModStuff").style.paddingLeft = "0";
-}
-
 function dropdownTheme() {
     document.getElementById("myDropdown").classList.toggle("show");
 }
@@ -54,10 +23,6 @@ window.onclick = function(event) {
     } else if (!event.target.matches('.mySidenav')) {
         // what is this
     }
-}
-
-function DropdownTXTtheme() {
-    document.getElementById("DropdownTXT").classList.toggle("showTXT");
 }
 
 // pfp button

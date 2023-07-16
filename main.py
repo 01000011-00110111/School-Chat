@@ -119,9 +119,9 @@ def signup() -> ResponseReturnValue:
         SRole = request.form.get("SRole")
         SDisplayname = request.form.get("SDisplayname")
         # check = r'^[A-Za-z]{3,12}$'
-        # user_allowed = re.match(check, SUsername) and not re.search(r'dev|mod', SUsername, re.IGNORECASE) The and needs to be moved to a seperate one to check for letter limit
+        # user_allowed = re.match(check, SUsername) and not re.search(r'dev|mod', SUsername, re.IGNORECASE) #The and needs to be moved to a seperate one to check for letter limit
         # desplayname_allowed = re.match(check, SDisplayname) and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
-        # if user_allowed == 'false' or desplayuser_allowed == 'false':
+        # if user_allowed == 'false' or desplayname_allowed == 'false':
         #     return flask.render_template("signup-index.html",
         #                                  error='That Username/Display name is not allowed!',
         #                                  SRole=SRole,)
@@ -231,24 +231,16 @@ def get_backup_chat():
     return ret_val
 
 
-# @app.get('/chat_logs')
-# def respond_with_chat():
-#     """Legacy function only used now for inital chat load."""
-#     messages = chat.get_chat("chat")
-#     ret_val = json.dumps(messages)
-#     return ret_val
-
-
-@app.post('/force_send')
-def force_chat(roomid) -> str:
-    """Legacy function that will be removed later."""
-    json_receive = request.get_json(force=True)
-    chat.add_message(json_receive['message'], roomid, 'true')
-    emit("message_chat",
-         json_receive['message'],
-         broadcast=True,
-         namespace="/")
-    return "done"
+# @app.post('/force_send')
+# def force_chat(roomid) -> str:
+#     """Legacy function that will be removed later."""
+#     json_receive = request.get_json(force=True)
+#     chat.add_message(json_receive['message'], roomid, 'true')
+#     emit("message_chat",
+#          json_receive['message'],
+#          broadcast=True,
+#          namespace="/")
+#     return "done"
 
 
 # socketio stuff

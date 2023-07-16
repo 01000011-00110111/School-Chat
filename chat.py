@@ -132,7 +132,7 @@ def backup_log(message_text: str, roomid) -> None:
         room = dbm.rooms.find_one({"roomid": roomid})
         name = room["roomName"]
         f_out.write(
-            f"This message was sent in the room named {name} at {date} The message said: {message_text}\n"
+            f"[{date}], [{name}({roomid})] The message said: {message_text}\n"
         )
 
 
