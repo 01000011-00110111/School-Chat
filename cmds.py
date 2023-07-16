@@ -40,7 +40,7 @@ def find_command(commands, user, roomid):
         if check_if_dev(user) == 1:
             chat.line_blanks(roomid)
         else:
-            respond_command((1, "not_dev", None), roomid, None)
+            respond_command(("reason", 2, "not_dev"), roomid, None)
     elif commands.get('v0') == "status":
         result = chat.get_stats()
         emit("message_chat", (result, roomid), broadcast=True)
@@ -54,12 +54,12 @@ def find_command(commands, user, roomid):
         if check_if_dev(user) == 1 or check_if_mod(user) == 1:
             chat.reset_chat(False, True, roomid)
         else:
-            respond_command((1, "not_mod", None), roomid, None)
+            respond_command(("reason", 2, "not_mod"), roomid, None)
     elif commands.get('v0') == "shutdown":
         if check_if_dev(user) == 1:
             run_shutdown()
         else:
-            respond_command((1, "not_dev", None), roomid, None)
+            respond_command(("reason", 2, "not_dev"), roomid, None)
     elif commands.get('v0') in ("lines", "pstats"):
         send_lines(roomid, dbm)
     elif commands.get('v0') == "system":
@@ -72,7 +72,7 @@ def find_command(commands, user, roomid):
         message = ' '.join(list(commands.values())[1:])
         send_joke(roomid, user, message)
     elif commands.get('v0') in ("permlist", "banned", "muted"):
-        send_perms()
+        send_perms(roomid, user)
     else:
         result = ("reason", 1, None)
         respond_command(result, roomid, None)
@@ -92,7 +92,7 @@ def ban_user(username: str, issuer, reason, roomid):
     """Ban a user from the chat forever."""
     is_dev = check_if_dev(issuer)
     if is_dev != 1:
-        respond_command((1, "not_dev", None), roomid, None)
+        respond_command(("reason", 2, "not_dev"), roomid, None)
         return
 
     user = dbm.Accounts.find_one({"displayName": username})
@@ -147,7 +147,7 @@ def mute_user(username: str, issuer, time, reason, roomid):
             chat.add_message(message, roomid, 'true')
             emit("message_chat", message, broadcast=True)
     else:
-        respond_command((1, "not_mod", None), roomid, None)
+        respond_command(("reason", 2, "not_mod"), roomid, None)
 
 
 def unmute_user(username: str, issuer, roomid):
@@ -166,11 +166,28 @@ def unmute_user(username: str, issuer, roomid):
             chat.add_message(message, roomid, 'true')
             emit("message_chat", message, broadcast=True)
     else:
-        respond_command((1, "not_mod", None), roomid, None)
+        respond_command(("reason", 2, "not_mod"), roomid, None)
 
-def send_perms():
+def send_perms(roomid, issuer):
     """Return the list of people banned, and currently muted."""
-    pass
+    if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
+        room = dbm.rooms.find_one({"roomid": roomid})
+        banned = dbm.Accounts.find({"permission": "banned"})
+        muted = dbm.Accounts.find({"permission": "muted"})
+        msg_str = "Currently Banned/Muted Users:<br>Format: Display Username (login username)<br><br>Banned:<br>"
+        for user in banned:
+            msg_str = msg_str + f"{user['displayName']} ({user['username']})<br>"
+        msg_str = msg_str + '<br>Muted:<br>'
+        for user in muted:
+            msg_str = msg_str + f"{user['displayName']} ({user['username']})<br>"
+    
+        # trying something new here, wonder if it will work
+        # if it does, we need to redo a lot of these statements like this (make it clean)
+        final_msg = f"[SYSTEM]: <font color='#ff7f00'>{msg_str}</font>"
+        chat.add_message(final_msg, roomid, room)
+        emit("message_chat", (final_msg, roomid), broadcast=True)
+    else:
+        respond_command(("reason", 2, "not_mod"), roomid, None)
 
 # why is this here
 def handle_admin_message(message, roomid):
@@ -273,12 +290,11 @@ def respond_command(result, roomid, name):
         f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} was made by {generatedBy} at {generatedAt} and the chat room status is currently set to locked = {locked}.</font>",
         (0, 'rooms'):
         f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} does not exist. Please enter a chat room that does exist.</font>",
-        (1, 'not_dev'):
+        (2, 'not_dev'):
         "[SYSTEM]: <font color='#ff7f00'>Who do you think you are, a Developer?</font>",
-        (1, 'not_mod'):
+        (2, 'not_mod'):
         "[SYSTEM]: <font color='#ff7f00'>Who do you think you are, a Moderator?</font>",
     }
-
     response_str = response_strings.get((result[1], result[2]))
     if result[1] in [0, 2, 3] and result[2] in ['create', 'delete', 'edit']:
         chat.add_message(response_str, roomid, 'true')
@@ -331,7 +347,7 @@ def lock(user, roomid):
         emit("message_chat", message, broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
     else:
-        respond_command((1, "not_mod", None), roomid, None)
+        respond_command(("reason", 2, "not_mod"), roomid, None)
 
 def unlock(user, roomid):
     """unlocks the chat so that everyone can send"""
@@ -346,7 +362,7 @@ def unlock(user, roomid):
         emit("message_chat", message, broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
     else:
-        respond_command((1, "not_mod", None), roomid, None)
+        respond_command(("reason", 2, "not_mod"), roomid, None)
 
 
 def chat_room_edit(commands, roomid, user):

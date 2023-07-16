@@ -239,7 +239,7 @@ def get_backup_chat():
 
 
 @app.post('/force_send')
-def force_chat() -> str:
+def force_chat(roomid) -> str:
     """Legacy function that will be removed later."""
     json_receive = request.get_json(force=True)
     chat.add_message(json_receive['message'], roomid, 'true')
