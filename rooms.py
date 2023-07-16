@@ -1,3 +1,4 @@
+"""Handles creations, deletions, and edits of chat rooms"""
 import random
 from string import ascii_uppercase
 from datetime import datetime

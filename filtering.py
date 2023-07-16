@@ -182,7 +182,7 @@ def failed_message(result, roomid):
         (5):
         "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you do not have enough permission to use this chat room.</font>",
         (6):
-        "[SYSTEM]: <font color='#ff7f00'>You can't send messages in this chat room because this chat room no longer exist select a chat room that does exist.</font>"
+        "[SYSTEM]: <font color='#ff7f00'>You can't send messages in this chat room because this chat room no longer exists,  select a chat room that does exist.</font>"
     }
     if result[0] == "dev":
         if result[1] == 6: fail_str = fail_strings.get((result[1]), "") 

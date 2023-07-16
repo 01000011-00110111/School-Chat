@@ -13,9 +13,9 @@ Mod commands:<br><blockquote>
     - (mod) Send as mod (not added)<br>
     - (lock) locks the chat<br>
     - (unlock) unlocks the chat<br></blockquote>
-user commands:<br><blockquote>
-    - (song (text)) send as Song (not added)<br>
-    - (JOTD (text)) send as JOTD (not added)<br>
+no permission requirement commands:<br><blockquote>
+    - (song (text)) send as Song (added public for now)<br>
+    - (JOTD (text)) send as JOTD (added public for now)<br>
     - (ronline/ro) refresh the online list<br>
     - (chat (room name) create) Creats a chat room with the name you set it at<br>
     - (chat (room name) delete) Deletes the chat room with the name you typed<br>

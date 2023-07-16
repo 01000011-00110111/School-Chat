@@ -25,11 +25,11 @@ def get_chat(file: str) -> List:
 
 def get_line_count(file) -> List:
     """Return the line count in the logfile."""
-    if file is ["main"]:
+    if file == "main":
         with open(LOGFILE, "r", encoding="utf8") as f_in:
             lines = len(f_in.readlines()) + 1
         return lines
-    elif file is ["backup"]:
+    elif file == "backup":
         with open(LOGFILE_B, "r", encoding="utf8") as f_in:
             lines_b = len(f_in.readlines())
             return lines_b
@@ -37,7 +37,7 @@ def get_line_count(file) -> List:
 
 def line_blanks(roomid) -> None:
     """Send 100 blank lines in chat for testing purposes."""
-    message_text = system_response("message", 3)
+    message_text = system_response(("message", 3), roomid)
     add_message(message_text, roomid, 'true')
     emit("message_chat", (
         '[SYSTEM]: <font color="#ff7f00">nothing to see here <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>nothing to see here<br></font>',
@@ -80,7 +80,7 @@ def add_message(message_text: str, roomid, permission) -> None:
         return ('room', 1)
     lines = get_line_count('main')
     if lines >= 500 and permission != 'true': reset_chat(message_text, False, roomid)
-    else: (chat_log(message_text, roomid), backup_log(message_text, roomid))
+    else: (chat_log(message_text, roomid, True), backup_log(message_text, roomid))
     return ('good', 0)
     
 
@@ -92,10 +92,10 @@ def reset_chat(message: str, admin: bool, roomid) -> str:
     else:
         if admin is True:
             message_text = system_response("message", 1)
-            (chat_log(message_text, roomid), emit("reset_chat", "admin", broadcast=True, namespace="/"))
+            (chat_log(message_text, roomid, False), emit("reset_chat", "admin", broadcast=True, namespace="/"))
             return ('good', 1)
         message_text = system_response("message", 2)
-        chat_log(message_text, roomid)
+        chat_log(message_text, roomid, False)
         emit("reset_chat", "auto", broadcast=True, namespace="/")
         return ('good', 0)
 
@@ -103,21 +103,19 @@ def reset_chat(message: str, admin: bool, roomid) -> str:
 # I like this again
 
 def system_response(message, roomid):
-    """stores all messages for system""" 
+    """stores all messages for system"""
     system_response = {
-        (1):
-        "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font>\n",
-        (2):
-        "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n",
-        (3):
-        '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'
+        1: "[SYSTEM]: <font color='#ff7f00'>Chat reset by an admin.</font>\n",
+        2: "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n",
+        3: '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'
     }
 
-    system_anser = system_response.get((message[1]), "")
-    return system_anser
+    system_answer = system_response.get(message[1])
+    return system_answer
 
 
 def backup_log(message_text: str, roomid) -> None:
+    """adds the newest message from any chat rooom in the backup file"""
     with open(LOGFILE_B, "a", encoding="utf8") as f_out:
         date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
         room = dbm.rooms.find_one({"roomid": roomid})
@@ -127,11 +125,18 @@ def backup_log(message_text: str, roomid) -> None:
         )
 
 
-def chat_log(message_text: str, roomid) -> None:
-    with open(LOGFILE, "a", encoding="utf8") as f_in:
-        f_in.write(message_text + "\n")
+def chat_log(message_text: str, roomid, send) -> None:
+    """addes the message to file if send is true else it clears the file"""
+    if send is False:
+        with open(LOGFILE, "w", encoding="utf8") as f_in:
+            f_in.write(message_text + "\n")
+    if send is True:
+        with open(LOGFILE, "a", encoding="utf8") as f_in:
+            f_in.write(message_text + "\n")
+
 
 def send_message_DB(message_text: str, roomid) -> None:
+    """addes messages to the chat room in the dartbase"""
     dbm.rooms.update_one({"roomid": roomid},
                          {'$push': {
                              'messages': message_text
@@ -139,6 +144,7 @@ def send_message_DB(message_text: str, roomid) -> None:
 
 
 def set_message_DB(roomid):
+    """clears the database"""
     message_text = system_response("message", 2)
     dbm.rooms.update_one({"roomid": roomid}, {
         '$set': {
