@@ -42,8 +42,8 @@
     <button onclick="SOsendMessage('SOsendT');" class='std_btn song_btn'>Send</button><br><br>
     <button onclick='getLines();' class='std_btn green_btn'>Print total line count</button>
     <button onclick='pingHandle();' class='std_btn green_btn'>Get ping time</button>
-    <button onclick="testChatGC();" class="std_btn red_btn dashed_btn">Send 100 Empty lines</button>
-    <button onclick="getStats();" class="std_btn green_btn">Send server stats in chat</button><button onclick="reset_chat()" class='std_btn dashed_btn warn_btn'>Reset chat</button><br>
+    <button onclick="socket.emit('admin_cmd', 'blanks', document.getElementById('user')['value'], 'jN7Ht3giH9EDBvpvnqRB');" class="std_btn red_btn dashed_btn">Send 100 Empty lines</button>
+    <button onclick="socket.emit('admin_cmd', 'status', document.getElementById('user')['value'], 'ilQvQwgOhm9kNAOrRqbr');" class="std_btn green_btn">Send server stats in chat</button><button onclick="reset_chat()" class='std_btn dashed_btn warn_btn'>Reset chat</button><br>
     <button onclick="clearDB();" class='std_btn red_btn'>Reset DB</button><button onclick="refreshUsers();" class="std_btn dashed_btn green_btn">Refresh users DB</button><br><br>
     <button onclick="shutdown_server();" class="std_btn dashed_btn warn_btn">Shutdown server</button>
     <p id="Devnavtext">Send messages in bold/biger. (event)</p>

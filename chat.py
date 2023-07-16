@@ -44,7 +44,7 @@ def line_blanks(roomid) -> None:
         roomid))
 
 
-def get_stats() -> str:
+def get_stats(roomid) -> str:
     """Return full stats list to chat."""
     lines = get_line_count('main')
     lines_b = get_line_count('backup')
@@ -65,7 +65,7 @@ def get_stats() -> str:
     system_s = f"Threads: {thread_count}"
     # <br>Memory in use (webserver): {mem_virt}
     longstats = f"{begin_f}<br>{lines_f}<br>{uptime_f}<br>{system_s}<br>"
-    chat_log(longstats)
+    add_message(longstats, roomid, 'true')
     return longstats
 
 
@@ -74,14 +74,14 @@ def add_message(message_text: str, roomid, permission) -> None:
     room = dbm.rooms.find_one({"roomid": roomid})
     if roomid != "ilQvQwgOhm9kNAOrRqbr":
         lines = len(room["messages"])
-        if lines >= 100 and permission != 'true':
+        if lines >= 500 and permission != 'true':
             reset_chat(message_text, False, roomid)
         else:
             (send_message_DB(message_text,
                              roomid), backup_log(message_text, roomid))
         return ('room', 1)
     lines = get_line_count('main')
-    if lines >= 500 and permission != 'true':
+    if lines >= 1000 and permission != 'true':
         reset_chat(message_text, False, roomid)
     else:
         (chat_log(message_text, roomid,

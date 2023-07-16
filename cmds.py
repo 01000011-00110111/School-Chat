@@ -42,7 +42,7 @@ def find_command(commands, user, roomid):
         else:
             respond_command(("reason", 2, "not_dev"), roomid, None)
     elif commands.get('v0') == "status":
-        result = chat.get_stats()
+        result = chat.get_stats(roomid)
         emit("message_chat", (result, roomid), broadcast=True)
     elif commands.get('v0') == "lock":
         lock(user, roomid)

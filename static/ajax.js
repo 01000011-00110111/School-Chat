@@ -19,3 +19,7 @@ function ajaxPostRequest(path, data, callback){
     request.open("POST", path);
     request.send(data);
 }
+
+function dummyajax(jsonData) {
+    return;
+}
