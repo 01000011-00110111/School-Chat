@@ -175,12 +175,12 @@ def send_perms(roomid, issuer):
         room = dbm.rooms.find_one({"roomid": roomid})
         banned = dbm.Accounts.find({"permission": "banned"})
         muted = dbm.Accounts.find({"permission": "muted"})
-        msg_str = "Currently Banned/Muted Users:<br>Format: Display Username (login username)<br><br>Banned:<br>"
+        msg_str = "Currently Banned/Muted Users:<br>Banned:<br>"
         for user in banned:
-            msg_str = msg_str + f"{user['displayName']} ({user['username']})<br>"
+            msg_str = msg_str + f"{user['displayName']}<br>"
         msg_str = msg_str + '<br>Muted:<br>'
         for user in muted:
-            msg_str = msg_str + f"{user['displayName']} ({user['username']})<br>"
+            msg_str = msg_str + f"{user['displayName']}<br>"
 
         # trying something new here, wonder if it will work
         # if it does, we need to redo a lot of these statements like this (make it clean)

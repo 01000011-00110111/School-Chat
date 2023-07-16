@@ -44,8 +44,7 @@ function testChatGC() {
 }
 
 function getStats() {
-    user = document.getElementById("user")["value"];
-    socket.emit('admin_cmd', "status", user);
+    socket.emit('admin_cmd', "status", document.getElementById("user")["value"], 'ilQvQwgOhm9kNAOrRqbr');
 }
 
 function shutdown_server() {

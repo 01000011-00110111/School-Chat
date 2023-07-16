@@ -11,7 +11,8 @@ from flask import request
 from flask.logging import default_handler
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
-client = pymongo.MongoClient(os.environ["acmongo_key"])
+
+client = pymongo.MongoClient(os.environ["devmongo"])
 dbm = client.Chat
 import chat
 import cmds
@@ -372,7 +373,7 @@ def unmute_user(username: str, user):
 @socketio.on("admin_cmd")
 def handle_admin_stuff(cmd: str, user, roomid):
     """Admin commands will be sent here."""
-    cmds.find_commands({"v0": cmd}, user, roomid)
+    cmds.find_command({"v0": cmd}, user, roomid)
 
 
 @socketio.on("get_rooms")
@@ -389,29 +390,21 @@ def get_rooms(username):
         # i got rid of that, changed it to both must be everyone/no one, or if they are not in the blacklist with no whitelist
         # or if they are in the whitelist if there is one.
         # and moved the is devonly to the end, so it would overrule anything
-        accessible_rooms = [
-            {
-                'id': r['id'],
-                'name': r['name']
-            }
-            for r in room_access
-            if (
-                (r['blacklisted'] == 'empty' and r['whitelisted'] == 'everyone') or
-                (
-                    r['whitelisted'] != 'everyone' and
-                    'users:' in r['whitelisted'] and
-                    user in [u.strip() for u in r['whitelisted'].split("users:")[1].split(",")]
-                ) or
-                (
-                    r['blacklisted'] != 'empty' and
-                    'users:' in r['blacklisted'] and
-                    user not in [u.strip() for u in r['blacklisted'].split("users:")[1].split(",")] and 
-                    r['whitelisted'] == 'everyone'
-                ) 
-            ) and (
-                r['whitelisted'] != 'devonly'
-            )
-        ]
+        accessible_rooms = [{
+            'id': r['id'],
+            'name': r['name']
+        } for r in room_access if (
+            (r['blacklisted'] == 'empty' and r['whitelisted'] == 'everyone') or
+            (r['whitelisted'] != 'everyone' and 'users:' in r['whitelisted']
+             and user in [
+                 u.strip()
+                 for u in r['whitelisted'].split("users:")[1].split(",")
+             ]) or (r['blacklisted'] != 'empty'
+                    and 'users:' in r['blacklisted'] and user not in [
+                        u.strip()
+                        for u in r['blacklisted'].split("users:")[1].split(",")
+                    ] and r['whitelisted'] == 'everyone')) and (
+                        r['whitelisted'] != 'devonly')]
         emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
 
 
