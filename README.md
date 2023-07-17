@@ -28,9 +28,15 @@ server {
     server_name yourdomain www.yourdomain;
 
     listen 443 ssl http2;
-#    listen 443 quic reuseport;
-#    listen [::]:443 quic reuseport;
     listen [::]:443 ssl http2;
+    # The security headers, to try and prevent XSS
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header Referrer-Policy "same-origin" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Permissions-Policy "microphone=(), camera=(), usb=(), picture-in-picture=(), payment=(), web-share=()" always;
+    add_header Content-Security-Policy "default-src 'self' 'unsafe-inline'; img-src *; script-src 'self' cdnjs.cloudflare.com 'unsafe-inline'" always;
+    # SSL certs go here
     ssl_certificate         /etc/ssl/yourdomain.pem;
     ssl_certificate_key     /etc/ssl/yourdomain.key;
 #    need to enable this in cloudflare dashboard, so we can confirm they are going through cloudflare, and not directly to the server
