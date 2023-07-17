@@ -53,4 +53,3 @@ function logout() {
     document.getElementById("pfpmenu").src = "static/favicon.ico";
     runCheckStartup();
 }
-

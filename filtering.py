@@ -94,6 +94,11 @@ def check_perms(user):
         perms = 'user'
     return perms
 
+def to_hyperlink(text):
+    """Taken from the js file, we don't need to have the client process it really."""
+    mails = re.findall(r"mailto:([^\?]*)", text)
+    links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text)
+    #print(f"{mails}\n\n\n{links2}")
 
 def filter_message(message):
     """No one likes profanity, especially flagging systems."""
@@ -138,11 +143,12 @@ def find_cmds(message, user, locked, roomid):
             var_name = "v%d" % index
             commands[var_name] = command
         if 'v0' in commands:
-            cmds.find_command(commands, user, roomid)
+            cmds.find_command(commands=commands, user=user, roomid=roomid)
 
 
 def compile_message(message, profile_picture, user, role):
     """Taken from old methold of making messages"""
+    to_hyperlink(message)
     profile = "<img class='pfp' src='" + profile_picture + "'></img>"
     user_string = "<font color='" + user['userColor'] + "'>" + user[
         'displayName'] + "</font>"

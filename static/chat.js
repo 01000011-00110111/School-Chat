@@ -9,6 +9,12 @@ socket.on("message_chat", (message, roomid) => {
     renderChat(message, roomid);
 });
 
+socket.on("troll", (message, roomid) => {
+    renderChat(message, roomid);
+    var audio = new Audio('static/airhorn_default.wav');
+    audio.play();
+});
+
 if (Notification.permission === "default") {
     Notification.requestPermission();
 }
@@ -82,15 +88,6 @@ socket.on("online", (db) => {
     // let onlinelsDiv = document.getElementById("onlinels");
     let online_count = db.length;
     for (onlineUser of db) {
-        if (onlineUser === "cserverReal") {
-            onlineUser = "cserver";
-        } else if (onlineUser === null) {
-            onlineUser = "Anonymous";
-        } else if (onlineUser === "") {
-            onlineUser = "Anonymous";
-        } else if (onlineUser === "csevenReal") {
-            onlineUser = "cseven";
-        }
         online = online + onlineUser + newline;
         onlinels = onlinels + "<a onclick=changeWisperUser('" + onlineUser + "')>" + onlineUser + '</a>';
     }

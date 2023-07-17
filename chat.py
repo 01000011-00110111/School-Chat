@@ -35,13 +35,18 @@ def get_line_count(file) -> List:
             return lines_b
 
 
-def line_blanks(roomid) -> None:
+def line_blanks(**kwargs) -> None:
     """Send 100 blank lines in chat for testing purposes."""
-    message_text = system_response(("message", 3), roomid)
-    add_message(message_text, roomid, 'true')
-    emit("message_chat", (
-        '[SYSTEM]: <font color="#ff7f00">nothing to see here <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>nothing to see here<br></font>',
-        roomid))
+    user = kwargs['user']
+    roomid = kwargs['roomid']
+    if check_if_dev(user) == 1:
+        message_text = system_response(("message", 3), roomid)
+        add_message(message_text, roomid, 'true')
+        emit("message_chat", (
+            '[SYSTEM]: <font color="#ff7f00">nothing to see here <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>nothing to see here<br></font>',
+            roomid))
+    else:
+        respond_command(("reason", 2, "not_dev"), roomid, None)
 
 
 def get_stats(roomid) -> str:

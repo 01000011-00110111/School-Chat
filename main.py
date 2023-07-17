@@ -41,14 +41,6 @@ banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
                     '[system]', '[System]', 'System')
 
 
-@app.route('/')
-def index() -> ResponseReturnValue:
-    """Serve the main html page, modified if permission is granted."""
-    return flask.render_template('update-log.html')
-    # html_file = flask.render_template("update-log.html")
-    # return html_file
-
-
 # easter egg time lol
 @app.route("/f")
 def f_but_better() -> ResponseReturnValue:
@@ -64,7 +56,7 @@ def chat_page() -> ResponseReturnValue:
     return html_file
 
 
-@app.route('/chat', methods=["POST", "GET"])
+@app.route('/', methods=["POST", "GET"])
 def login_page() -> ResponseReturnValue:
     """Show the login page"""
     if request.method == "POST":
@@ -99,12 +91,6 @@ def changelog_page() -> ResponseReturnValue:
     """Serve the changelog, so old links don't break (after making the main page be the changelog)."""
     html_file = flask.render_template('update-log.html')
     return html_file
-
-
-@app.route("/debugmenu")
-def debuging_page() -> ResponseReturnValue:
-    """Host the menu for devs"""
-    return flask.render_template('DPM.html')
 
 
 @app.route('/signup', methods=["POST", "GET"])
@@ -210,37 +196,11 @@ def get_logs_page() -> ResponseReturnValue:
 #         return flask.render_template('login.html')
 
 
-@app.route("/view")
-def viewer_page() -> ResponseReturnValue:
-    """Serve the viewer page."""
-    html_file = flask.render_template('viewer.html')
-    return html_file
-
-
-@app.route("/aboutus")
-def aboutus_page() -> ResponseReturnValue:
-    """The about page"""
-    html_file = flask.render_template('about-us.html')
-    return html_file
-
-
 @app.get('/backup_logs')
 def get_backup_chat():
     """Return the backup-chat.txt contents."""
     ret_val = chat.get_chat("Chat-backup")
     return ret_val
-
-
-# @app.post('/force_send')
-# def force_chat(roomid) -> str:
-#     """Legacy function that will be removed later."""
-#     json_receive = request.get_json(force=True)
-#     chat.add_message(json_receive['message'], roomid, 'true')
-#     emit("message_chat",
-#          json_receive['message'],
-#          broadcast=True,
-#          namespace="/")
-#     return "done"
 
 
 # socketio stuff
@@ -365,7 +325,7 @@ def unmute_user(username: str, user):
 @socketio.on("admin_cmd")
 def handle_admin_stuff(cmd: str, user, roomid):
     """Admin commands will be sent here."""
-    cmds.find_command({"v0": cmd}, user, roomid)
+    cmds.find_command(commands={"v0": cmd}, user=user, roomid=roomid)
 
 
 @socketio.on("get_rooms")
@@ -429,15 +389,6 @@ def handle_ping_tests(start):
     emit('ping_test', {
         "start": start,
     }, namespace='/')
-
-
-# temporary, will be in diffrent namespace soon that seems to never get done at this point I SAID NOTHING
-@socketio.on('admin_message')
-def handle_admin_message(message, user):
-    """Bypass message filtering, used when chat is locked."""
-    chat.add_message(message, roomid, 'true')
-    emit("message_chat", message, broadcast=True, namespace="/")
-
 
 @socketio.on("room_connect")
 def connect(roomid):

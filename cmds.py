@@ -13,70 +13,45 @@ def log_commands(message):
     with open('backend/command_log.txt', 'a', encoding="utf8") as file:
         file.write(message + '\n')
 
-
-def find_command(commands, user, roomid):
+def find_command(**kwargs):
     """Send whatever sudo command is issued to its respective function."""
-    # maybe redo this simmilar to how respond_command works (not sure how to do the function bit -cserver)
-    # to be done after research
-    if commands.get('v0') == 'E':
-        print('test')
-    elif commands.get('v0') == 'help':
-        help_command(user, roomid)
-    elif commands.get('v0') == "chat":
-        chat_room_edit(commands, roomid, user)
-    elif commands.get('v0') == 'mute':
-        username = commands['v1']
-        time = commands['v2']
-        reason = ' '.join(list(commands.values())[3:])
-        mute_user(username, user, time, reason, roomid)
-    elif commands.get('v0') == 'unmute':
-        username = commands['v1']
-        unmute_user(username, user, roomid)
-    elif commands.get('v0') == 'ban':
-        username = commands['v1']
-        reason = ' '.join(list(commands.values())[2:])
-        ban_user(username, user, reason, roomid)
-    elif commands.get('v0') == "blanks":
-        if check_if_dev(user) == 1:
-            chat.line_blanks(roomid)
-        else:
-            respond_command(("reason", 2, "not_dev"), roomid, None)
-    elif commands.get('v0') == "status":
-        result = chat.get_stats(roomid)
-        emit("message_chat", (result, roomid), broadcast=True)
-    elif commands.get('v0') == "lock":
-        lock(user, roomid)
-    elif commands.get('v0') == "unlock":
-        unlock(user, roomid)
-    elif commands.get('v0') in ("ronline", "ro"):
-        reload_users()
-    elif commands.get('v0') in ("clear", 'rc'):
-        if check_if_dev(user) == 1 or check_if_mod(user) == 1:
-            chat.reset_chat(False, True, roomid)
-        else:
-            respond_command(("reason", 2, "not_mod"), roomid, None)
-    elif commands.get('v0') == "shutdown":
-        if check_if_dev(user) == 1:
-            run_shutdown()
-        else:
-            respond_command(("reason", 2, "not_dev"), roomid, None)
-    elif commands.get('v0') in ("lines", "pstats"):
-        send_lines(roomid, dbm)
-    elif commands.get('v0') == "system":
-        message = ' '.join(list(commands.values())[1:])
-        send_system(roomid, user, message)
-    elif commands.get('v0') == "song":
-        message = ' '.join(list(commands.values())[1:])
-        send_song(roomid, user, message)
-    elif commands.get('v0') == "jotd":
-        message = ' '.join(list(commands.values())[1:])
-        send_joke(roomid, user, message)
-    elif commands.get('v0') in ("permlist", "banned", "muted"):
-        send_perms(roomid, user)
-    else:
-        result = ("reason", 1, None)
-        respond_command(result, roomid, None)
+    response_strings = {
+        'E': E,
+        'help': help_command,
+        'chat': chat_room_edit,
+        'mute': mute_user,
+        'unmute': unmute_user,
+        'ban': ban_user,
+        'blanks': chat.line_blanks,
+        'status': send_stats,
+        'lock': lock,
+        'unlock': unlock,
+        'ronline': reload_users,
+        'ro': reload_users,
+        'clear': reset_chat_user,
+        'rc': reset_chat_user,
+        'shutdown': run_shutdown,
+        'lines': send_lines,
+        'pstats': send_lines,
+        'system': send_system,
+        'song': send_song,
+        'jotd': send_joke,
+        'permlist': send_perms,
+        'banned': send_perms,
+        'muted': send_perms,
+    }
 
+    response_strings[kwargs['commands']['v0']](**kwargs)
+
+
+def E(**kwargs):
+    """Test function"""
+    roomid = kwargs['roomid']
+    emit("troll", ("[SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font>", roomid), broadcast=True)
+
+def send_stats(**kwargs):
+    roomid = kwargs['roomid']
+    emit("message_chat", (chat.get_stats(roomid), roomid), broadcast=True)
 
 def check_if_dev(user):
     """Return if a user is a dev or not."""
@@ -87,16 +62,26 @@ def check_if_mod(user):
     """Return if a user is a mod or not."""
     return 1 if user['SPermission'] == 'modpass' else 0
 
+def reset_chat_user(**kwargs):
+    user = kwargs['user']
+    roomid = kwargs['roomid']
+    if check_if_dev(user) == 1 or check_if_mod(user) == 1:
+        chat.reset_chat(False, True, roomid)
+    else:
+        respond_command(("reason", 2, "not_mod"), roomid, None)
 
-def ban_user(username: str, issuer, reason, roomid):
+def ban_user(**kwargs):
     """Ban a user from the chat forever."""
-    is_dev = check_if_dev(issuer)
-    if is_dev != 1:
+    username = kwargs['commands']['v1']
+    reason = ' '.join(list(kwargs['commands'].values())[2:])
+    roomid = kwargs['roomid']
+    user = kwargs['user']
+    if check_if_dev(user) != 1:
         respond_command(("reason", 2, "not_dev"), roomid, None)
         return
 
-    user = dbm.Accounts.find_one({"displayName": username})
-    if user['permission'] == 'banned':
+    user_dbm = dbm.Accounts.find_one({"displayName": username})
+    if user_dbm['permission'] == 'banned':
         return
 
     dbm.Accounts.update_one({"displayName": username},
@@ -112,11 +97,20 @@ def ban_user(username: str, issuer, reason, roomid):
     emit("message_chat", (message, roomid), broadcast=True)
 
 
-def mute_user(username: str, issuer, time, reason, roomid):
+def mute_user(**kwargs):
     """Mute a user from the chat."""
+    roomid = kwargs['roomid']
+    username = kwargs['commands']['v1']
+    try:
+        time = kwargs['commands']['v2']
+    except KeyError:
+        respond_command(("reason", 1, "no_time"), roomid, None)
+        return
+    reason = ' '.join(list(kwargs['commands'].values())[3:])
+    issuer = kwargs['user']
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
-        user = dbm.Accounts.find_one({"displayName": username})
-        if user['permission'] in ('banned', 'muted'):
+        user_dbm = dbm.Accounts.find_one({"displayName": username})
+        if user_dbm['permission'] in ('banned', 'muted'):
             return
         else:
             dbm.Accounts.update_one({"displayName": username},
@@ -145,13 +139,16 @@ def mute_user(username: str, issuer, time, reason, roomid):
                 message = '[SYSTEM]: <font color="#ff7f00">' + username + " is mutted for " + time_final + " . Reason: " + reason + "." + "</font>"
 
             chat.add_message(message, roomid, 'true')
-            emit("message_chat", message, broadcast=True)
+            emit("message_chat", (message, roomid), broadcast=True)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
 
-def unmute_user(username: str, issuer, roomid):
+def unmute_user(**kwargs):
     """Unmute a user from the chat"""
+    username = kwargs['commands']['v1']
+    issuer = kwargs['user']
+    roomid = kwargs['roomid']
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
         user = dbm.Accounts.find_one({"displayName": username})
         if user['permission'] in ('banned', 'true'):
@@ -164,13 +161,15 @@ def unmute_user(username: str, issuer, roomid):
             message = '[SYSTEM]: <font color="#ff7f00">' + username + " has been unmuted.</font>"
 
             chat.add_message(message, roomid, 'true')
-            emit("message_chat", message, broadcast=True)
+            emit("message_chat", (message, roomid), broadcast=True)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
 
-def send_perms(roomid, issuer):
+def send_perms(**kwargs):
     """Return the list of people banned, and currently muted."""
+    issuer = kwargs['user']
+    roomid = kwargs['roomid']
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
         room = dbm.rooms.find_one({"roomid": roomid})
         banned = dbm.Accounts.find({"permission": "banned"})
@@ -191,57 +190,68 @@ def send_perms(roomid, issuer):
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
 
-# why is this here
-# def handle_admin_message(message, roomid):
-#     """Bypass message filtering, used when chat is locked."""
-#     chat.add_message(message, roomid, 'true')
-#     emit("message_chat", message, broadcast=True, namespace="/")
-
-
-def send_joke(roomid, user, message):  #add a check for a user later
+def send_joke(**kwargs):  #add a check for a user later
     """Sends as joke of the day."""
+    user = kwargs['user']
+    roomid = kwargs['roomid']
+    commands = kwargs['commands']
+    message = ' '.join(list(commands.values())[1:])
     room = dbm.rooms.find_one({"roomid": roomid})
     final_msg = f"[Joke of the day]: <font color='#D51956'>{message}</font>"
     chat.add_message(final_msg, roomid, room)
     emit("message_chat", (final_msg, roomid), broadcast=True)
 
 
-def send_song(roomid, user, message):  #add a check for a user later
+def send_song(**kwargs):  #add a check for a user later
     """Sends as song."""
+    user = kwargs['user']
+    roomid = kwargs['roomid']
+    commands = kwargs['commands']
+    message = ' '.join(list(commands.values())[1:])
     room = dbm.rooms.find_one({"roomid": roomid})
     final_msg = f"<font color='#08bd71'>[SONG]: {message}</font>"
     chat.add_message(final_msg, roomid, room)
     emit("message_chat", (final_msg, roomid), broadcast=True)
 
 
-def send_system(roomid, user, message):  #add a check for a user later
+def send_system(**kwargs):  #add a check for a user later
     """Sends as the server for specal dev messages"""
+    user = kwargs['user']
+    roomid = kwargs['roomid']
+    commands = kwargs['commands']
+    message = ' '.join(list(commands.values())[1:])
     room = dbm.rooms.find_one({"roomid": roomid})
     final_msg = f"[SYSTEM]: <font color='#ff7f00'>{message}</font>"
     chat.add_message(final_msg, roomid, room)
     emit("message_chat", (final_msg, roomid), broadcast=True)
 
 
-def run_shutdown():
+def run_shutdown(**kwargs):
+    user = kwargs['user']
+    roomid = kwargs['roomid']
     """Stop the server, but also tell everyone that the server is going down."""
-    emit(
-        "message_chat",
-        "[SYSTEM]: <font color='#ff7f00'>Server going down in 2 Seconds (unknown ETA on restart)</font>",
-        broadcast=True,
-        namespace='/')
-    sleep(2)
-    os.system('pkill gunicorn')
+    if check_if_dev(user) == 1:
+        emit(
+            "message_chat",
+            ("[SYSTEM]: <font color='#ff7f00'>Server going down in 2 Seconds (unknown ETA on restart)</font>", roomid),
+            broadcast=True,
+            namespace='/')
+        sleep(2)
+        os.system('pkill gunicorn')
+    else:
+        respond_command(("reason", 2, "not_dev"), roomid, None)
 
 
-def reload_users():
+def reload_users(**kwargs):
     """Reload the online list manually."""
     dbm.Online.delete_many({})
     emit("force_username", "", broadcast=True)
 
 
-def send_lines(roomid, dbm):
+def send_lines(**kwargs):
     """Respond with the current line count for the room (TBD)"""
     # to rework this so it uses add_message
+    roomid = kwargs['roomid']
     lines = chat.get_line_count("main")
     msg = f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n"
     chat.add_message(msg, roomid, dbm)
@@ -296,6 +306,8 @@ def respond_command(result, roomid, name):
         "[SYSTEM]: <font color='#ff7f00'>Who do you think you are, a Developer?</font>",
         (2, 'not_mod'):
         "[SYSTEM]: <font color='#ff7f00'>Who do you think you are, a Moderator?</font>",
+        (1, 'no_time'):
+        "[SYSTEM]: <font color='#ff7f00'>You forgot the time!</font>"
     }
     response_str = response_strings.get((result[1], result[2]))
     if result[1] in [0, 2, 3] and result[2] in ['create', 'delete', 'edit']:
@@ -305,8 +317,10 @@ def respond_command(result, roomid, name):
         emit("message_chat", (response_str, roomid), namespace="/")
 
 
-def help_command(issuer, roomid):
+def help_command(**kwargs):
     """sends a message with a file full of commands that the user can use."""
+    roomid = kwargs['roomid']
+    issuer = kwargs['user']
     with open('backend/command_list.txt', 'r') as file:
         lines = file.readlines()
     start_index = None
@@ -336,8 +350,10 @@ def help_command(issuer, roomid):
     emit("message_chat", (command_line, roomid), namespace="/")
 
 
-def lock(user, roomid):
+def lock(**kwargs):
     """locks the chat so that only devs can send"""
+    user = kwargs['user']
+    roomid = kwargs['roomid']
     if check_if_dev(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>"
         chat.add_message(message, roomid, dbm)
@@ -352,8 +368,10 @@ def lock(user, roomid):
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
 
-def unlock(user, roomid):
+def unlock(**kwargs):
     """unlocks the chat so that everyone can send"""
+    user = kwargs['user']
+    roomid = kwargs['roomid']
     if check_if_dev(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>"
         chat.add_message(message, roomid, dbm)
@@ -368,8 +386,11 @@ def unlock(user, roomid):
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
 
-def chat_room_edit(commands, roomid, user):
+def chat_room_edit(**kwargs):
     """checks what chat command the user wants to run then sends it to the room file."""
+    user = kwargs['user']
+    roomid = kwargs['roomid']
+    commands = kwargs['commands']
     room_name = commands.get('v1', '')
     command = commands.get('v2', '')
     room = dbm.rooms.find_one({"roomName": room_name})
