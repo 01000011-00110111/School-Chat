@@ -69,17 +69,11 @@ socket.on("online", (db) => {
     onlineDiv["innerHTML"] = final_online;
 });
 
-function loadChat() {
-    ajaxGetRequest("/chat_logs", loadChatStartup);
-}
-
 function runCheckStartup() {
     setDarkStyle();
-    loadChat();
 }
 
 function runStartup() {
-    loadChat();
     setDarkStyle();
     window.sessionStorage.setItem("roomid", 'ilQvQwgOhm9kNAOrRqbr');
     socket.emit('get_prefs', document.getElementById("user")["value"]);
@@ -110,20 +104,15 @@ function CheckIfExist(params) {
 
 socket.on("room_data", (data) => {
     window.sessionStorage.setItem("roomid", data['roomid']);
-    if (data['roomid'] === 'ilQvQwgOhm9kNAOrRqbr') {
-        loadChatStartup(data['messages']);
-    } else {
-        let newline = "<br>";
-        let chatDiv = document.getElementById("chat");
-        let chat = ""; 
-        for (let messageObj of data['messages']) {
-            chat = chat + messageObj + newline;
-        }
-
-        chatDiv["innerHTML"] = chat;
-        window.scrollTo(0, chatDiv.scrollHeight);
+    let newline = "<br>";
+    let chatDiv = document.getElementById("chat");
+    let chat = ""; 
+    for (let messageObj of data['messages']) {
+        chat = chat + messageObj + newline;
     }
-   
+
+    chatDiv["innerHTML"] = chat;
+    window.scrollTo(0, chatDiv.scrollHeight);
 });
 
 function changeRoom(room) {
@@ -154,19 +143,6 @@ function sendMessage() {
     messageL = toHyperlink(message);
     messageElement["value"] = "";
     socket.emit('message_chat', user, messageL, window.sessionStorage.getItem("roomid"));
-    window.scrollTo(0, chatDiv.scrollHeight);
-}
-
-function loadChatStartup(string) {
-    let newline = "<br>";
-    let chatDiv = document.getElementById("chat");
-    let chat = "";
-    let messages = JSON.parse(string);
-    for (let messageObj of messages) {
-        chat = chat + messageObj["message"] + newline;
-    }
-
-    chatDiv["innerHTML"] = chat;
     window.scrollTo(0, chatDiv.scrollHeight);
 }
 

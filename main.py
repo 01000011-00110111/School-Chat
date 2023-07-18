@@ -1,7 +1,6 @@
 """Main webserver file"""
 import os
 import logging
-import json
 import hashlib
 import time
 import keys
@@ -401,22 +400,10 @@ def connect(roomid):
         room = dbm.rooms.find_one({"roomid": roomid})
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
+    # don't need to let the client know the mongodb id
+    del room['_id']
 
-    if roomid == "ilQvQwgOhm9kNAOrRqbr":
-        messages = chat.get_chat("chat")
-        msgs = json.dumps(messages)
-        response = {
-            "messages": msgs,
-            "name": room['roomName'],
-            "roomid": "ilQvQwgOhm9kNAOrRqbr",
-            "generatedBy": room['generatedBy'],
-            "generatedAt": room['generatedAt']
-        }
-    else:
-        del room['_id']
-        response = room
-
-    emit("room_data", response, to=socketid, namespace='/')
+    emit("room_data", room, to=socketid, namespace='/')
 
 
 if __name__ == "__main__":

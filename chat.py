@@ -5,6 +5,7 @@ from typing import List
 import psutil
 from flask_socketio import emit
 from main import dbm
+import cmds
 
 LOGFILE = "backend/chat.txt"
 LOGFILE_B = "backend/Chat-backup.txt"
@@ -35,18 +36,19 @@ def get_line_count(file) -> List:
             return lines_b
 
 
+# this seriously needs to be moved to cmds.py
 def line_blanks(**kwargs) -> None:
     """Send 100 blank lines in chat for testing purposes."""
     user = kwargs['user']
     roomid = kwargs['roomid']
-    if check_if_dev(user) == 1:
+    if cmds.check_if_dev(user) == 1:
         message_text = system_response(("message", 3), roomid)
         add_message(message_text, roomid, 'true')
         emit("message_chat", (
             '[SYSTEM]: <font color="#ff7f00">nothing to see here <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>nothing to see here<br></font>',
             roomid))
     else:
-        respond_command(("reason", 2, "not_dev"), roomid, None)
+        cmds.respond_command(("reason", 2, "not_dev"), roomid, None)
 
 
 def get_stats(roomid) -> str:
@@ -77,53 +79,42 @@ def get_stats(roomid) -> str:
 def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
     room = dbm.rooms.find_one({"roomid": roomid})
-    if roomid != "ilQvQwgOhm9kNAOrRqbr":
-        lines = len(room["messages"])
-        if lines >= 500 and permission != 'true':
-            reset_chat(message_text, False, roomid)
-        else:
-            (send_message_DB(message_text,
-                             roomid), backup_log(message_text, roomid))
-        return ('room', 1)
-    lines = get_line_count('main')
-    if lines >= 1000 and permission != 'true':
+    lines = len(room["messages"])
+    if lines >= 500 and permission != 'true' and roomid != "ilQvQwgOhm9kNAOrRqbr":
+        reset_chat(message_text, False, roomid)
+    elif roomid == "ilQvQwgOhm9kNAOrRqbr" and lines >= 1000 and permission != 'true':
         reset_chat(message_text, False, roomid)
     else:
-        (chat_log(message_text, roomid,
-                  True), backup_log(message_text, roomid))
-    return ('good', 0)
+        (send_message_DB(message_text,
+                         roomid), backup_log(message_text, roomid))
+    return ('room', 1)
 
 
 def reset_chat(message: str, admin: bool, roomid) -> str:
     """Admin function for reseting chat. Also used by the GC."""
-    if roomid != "ilQvQwgOhm9kNAOrRqbr":
-        (set_message_DB(roomid),
-         emit("reset_chat", "auto", broadcast=True, namespace="/"))
-        return ('good', 0)
+    set_message_DB(roomid, admin)
+    if admin == True:
+        emit("reset_chat", ("admin", roomid), broadcast=True, namespace="/")
     else:
-        if admin is True:
-            message_text = system_response(("message", 1), roomid)
-            (chat_log(message_text, roomid, False),
-             emit("reset_chat", "admin", broadcast=True, namespace="/"))
-            return ('good', 1)
-        message_text = system_response(("message", 2), roomid)
-        chat_log(message_text, roomid, False)
-        emit("reset_chat", "auto", broadcast=True, namespace="/")
-        return ('good', 0)
+        emit("reset_chat", ("auto", roomid), broadcast=True, namespace="/")
+    return ('good', 0)
 
 
 # I like this again
 
 
-def system_response(message, roomid):
+def system_response(message, id):
     """stores all messages for system"""
     system_response = {
-        1: "[SYSTEM]: <font color='#ff7f00'>Chat reset by an admin.</font>",
-        2: "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>",
-        3: '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'
+        1:
+        "[SYSTEM]: <font color='#ff7f00'>Chat reset by an admin.</font>",
+        2:
+        "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>",
+        3:
+        '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'
     }
 
-    system_answer = system_response.get(message[1])
+    system_answer = system_response.get(id)
     return system_answer
 
 
@@ -138,16 +129,6 @@ def backup_log(message_text: str, roomid) -> None:
         )
 
 
-def chat_log(message_text: str, roomid, send) -> None:
-    """addes the message to file if send is true else it clears the file"""
-    if send is False:
-        with open(LOGFILE, "w", encoding="utf8") as f_in:
-            f_in.write(message_text + "\n")
-    if send is True:
-        with open(LOGFILE, "a", encoding="utf8") as f_in:
-            f_in.write(message_text + "\n")
-
-
 def send_message_DB(message_text: str, roomid) -> None:
     """addes messages to the chat room in the dartbase"""
     dbm.rooms.update_one({"roomid": roomid},
@@ -156,9 +137,12 @@ def send_message_DB(message_text: str, roomid) -> None:
                          }})
 
 
-def set_message_DB(roomid):
+def set_message_DB(roomid, is_admin: bool):
     """clears the database"""
-    message_text = system_response("message", 2)
+    if is_admin == True:
+        message_text = system_response("message", 1)
+    else:
+        message_text = system_response("message", 2)
     dbm.rooms.update_one({"roomid": roomid},
                          {'$set': {
                              "messages": [message_text]
