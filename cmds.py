@@ -350,19 +350,19 @@ def help_command(**kwargs):
 
     if check_if_dev(issuer) == 1:
         for i, line in enumerate(lines):
-            if 'dev' in line.lower():
+            if 'dev commands' in line.lower():
                 start_index = i
             elif 'end' in line.lower():
                 end_index = i - 1
     elif check_if_mod(issuer) == 1:
         for i, line in enumerate(lines):
-            if 'mod' in line.lower():
+            if 'mod commands' in line.lower():
                 start_index = i
             elif 'end' in line.lower():
                 end_index = i - 1
     else:
         for i, line in enumerate(lines):
-            if 'no permission requirement' in line.lower():
+            if 'user commands' in line.lower():
                 start_index = i
             elif 'end' in line.lower():
                 end_index = i - 1

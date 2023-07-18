@@ -22,7 +22,7 @@
     <li><code>(unlock)</code>: Unlocks the chat.</li>
 </ul>
 
-<h2>No permission requirement commands:</h2>
+<h2>User commands:</h2>
 <ul>
     <li><code>(song (text))</code>: Send as Song (added public for now).</li>
     <li><code>(JOTD (text))</code>: Send as JOTD (added public for now).</li>
