@@ -15,10 +15,6 @@ socket.on("troll", (message, roomid) => {
     audio.play();
 });
 
-if (Notification.permission === "default") {
-    Notification.requestPermission();
-}
-
 function pingHandle(Obj=null) {
     user = document.getElementById("user")["value"];
     if (Obj === null) {
@@ -31,35 +27,12 @@ function pingHandle(Obj=null) {
     }
 }
 
-function NotificationsB() {
-    Notifications = getCookie("Notifications");
-    let notifB = document.getElementById("notif");
-
-  if (Notifications === "true") {
-      document.cookie = "Notifications=false; path=/";
-      notifB.value = "Enable notifications";
-      notifB.style.backgroundColor = "green";
-  } else {
-      document.cookie = "Notifications=true; path=/";
-      notifB.value = "Disable notifications";
-      notifB.style.backgroundColor = "red";
-
-  }
-}
-
 socket.on("ping", ({ who, from, pfp, message }) => {
     let userElement = document.getElementById("username");
     let user_name = userElement.value;
-    nonotif = getCookie("Notifications");
 
     if ((nonotif === "true") && (Notification.permission === "granted")) {
         if (user_name === who) {
-            new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
-        } else if (who === user_name) {
-            return;
-        } else if (who === "cseven" && user_name === "csevenReal") {
-            new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
-        } else if (who === "cserver" && user_name === "cserverReal") {
             new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
         } else if (who === "everyone") {
             new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
@@ -102,21 +75,6 @@ function loadChat() {
     ajaxGetRequest("/chat_logs", loadChatStartup);
 }
 
-function getCookie(name) {
-    name = name + "=";
-    var cookies = document.cookie.split(';');
-    for(var i = 0; i <cookies.length; i++) {
-        var cookie = cookies[i];
-        while (cookie.charAt(0)==' ') {
-            cookie = cookie.substring(1);
-        }
-        if (cookie.indexOf(name) == 0) {
-            return cookie.substring(name.length,cookie.length);
-        }
-    }
-    return "";
-}
-
 function runCheckStartup() {
     setDarkStyle();
     loadChat();
@@ -128,7 +86,6 @@ function runStartup() {
     window.sessionStorage.setItem("roomid", 'ilQvQwgOhm9kNAOrRqbr');
     socket.emit('get_prefs', document.getElementById("user")["value"]);
     socket.emit('get_perms');
-    document.cookie = "Notifications=true; path=/";
     username = window.localStorage.getItem("username");
     let user = document.getElementById("user")["value"];
     socket.emit("username", username);
