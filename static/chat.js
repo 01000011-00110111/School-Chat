@@ -31,13 +31,11 @@ socket.on("ping", ({ who, from, pfp, message }) => {
     let userElement = document.getElementById("username");
     let user_name = userElement.value;
 
-    if ((nonotif === "true") && (Notification.permission === "granted")) {
         if (user_name === who) {
             new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
         } else if (who === "everyone") {
             new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
         }
-    }
 });
 
 socket.on("reset_chat", (who, roomid) => {

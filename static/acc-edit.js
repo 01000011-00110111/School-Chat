@@ -1,62 +1,7 @@
 // define socketio connection
 const socket = io();
 
-function login() {
-    let loginuserElement = document.getElementById("user");
-    let passwordElement = document.getElementById("pass");
-    let loginuser = loginuserElement["value"];
-    let passwd = passwordElement["value"];
-
-    if (loginuser === "" || passwd === "") {
-        return;
-    } else {
-        socket.emit('login', loginuser, passwd);
-    }
-}
-
-
-socket.on("login_att", (state) => {
-    if (state === 'true') {
-        enteraccount();
-    } else {
-        failedlogin();
-    }
-});
-
-socket.on("return_prefs", (Obj) => {
-    if ('failed' in Obj) {
-        // do something here to tell the user it failed, maybe retry?
-        return;
-    }
-    document.getElementById("Ausername")["value"] = document.getElementById("user")["value"];
-    document.getElementById("Apassword")["value"] = document.getElementById("pass")["value"];
-    document.getElementById("role_color")["value"] = Obj["roleColor"];
-    document.getElementById("username")["value"] = Obj["displayName"]; 
-    document.getElementById("role")["value"] = Obj["role"];
-    document.getElementById("user_color")["value"] = Obj["userColor"];
-    document.getElementById("message_color")["value"] = Obj["messageColor"];
-    document.getElementById("profile")["value"] = Obj["profile"];
-});
-
-function failedlogin() {
-    let failedattempts = window.localStorage.getItem("login_att");
-    if (failedattempts === "") {
-        window.sessionStorage.setItem("login_att", "1");
-        return;
-    } else if (failedattempts === "1") {
-        window.sessionStorage.setItem("login_att", "2");
-        return;
-    } else if (failedattempts === "2") {
-        window.sessionStorage.setItem("login_att", "3");
-        return;
-    } else if (failedattempts === "3") {
-        document.getElementById("loginStuff").style.display = "block";
-        window.sessionStorage.setItem("login_att", "");
-    }
-}
-
 function enteraccount() {
-    document.getElementById("loginStuff").style.display = "none";
     document.getElementById("chatStuff").style.display = "block";
     document.getElementById("accountStuff").style.display = "block";
     socket.emit('get_prefs', document.getElementById("user")["value"]);
