@@ -6,7 +6,7 @@ socket.on("ping_test", (Obj) => {
 });
 
 socket.on("message_chat", (message, roomid) => {
-    renderChat(message, roomid);
+    renderChat((message), roomid);
 });
 
 socket.on("troll", (message, roomid) => {
@@ -67,12 +67,14 @@ socket.on("ping", ({ who, from, pfp, message }) => {
     }
 });
 
-socket.on("reset_chat", (who) => {
-    let chatDiv = document.getElementById("chat");
-    if (who === "admin") {
-        chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font><br>";
-    } else if (who === "auto") {
-        chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font><br>";
+socket.on("reset_chat", (who, roomid) => {
+    if (roomid === window.sessionStorage.getItem('roomid')) {
+        let chatDiv = document.getElementById("chat");
+        if (who === "admin") {
+            chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font><br>";
+        } else if (who === "auto") {
+            chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font><br>";
+        }
     }
 });
 

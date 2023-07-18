@@ -1,25 +1,37 @@
-Dev commands:<br><blockquote>
-    - (system (message)) send a message as system <br>
-    - (Admin) Send as admin (not added)<br>
-    - (reset/rc) resets chat rooms<br>
-    - (status) Gets full status of the chat<br>
-    - (shutdown) Shuts down the server<br>
-    - (blanks) Sends 100 blank lines in the chat room you are curently in<br>
-    - (lines/pstats) gets line count of the chat room you are on<br>
-    - (ban (username) (reason)) the reason is optional<br></blockquote>
-Mod commands:<br><blockquote>
-    - (mute (username) (time) (reason)) reason and time are optional<br>
-    - (unmute (username))<br>
-    - (mod) Send as mod (not added)<br>
-    - (lock) locks the chat<br>
-    - (unlock) unlocks the chat<br></blockquote>
-no permission requirement commands:<br><blockquote>
-    - (song (text)) send as Song (added public for now)<br>
-    - (JOTD (text)) send as JOTD (added public for now)<br>
-    - (ronline/ro) refresh the online list<br>
-    - (chat (room name) create) Creats a chat room with the name you set it at<br>
-    - (chat (room name) delete) Deletes the chat room with the name you typed<br>
-    - (chat (room name) info) Tells you the info of the chat room you typed<br>
-    - (chat (room name) whitelist (users)) whitelist users in the chat room you typed<br>
-    - (chat (room name) backlist (users)) blacklist users in the chat room you typed</blockquote>
-end:
+<h2>Dev commands:</h2>
+<ul>
+    <li><code>$sudo (command) room id</code>: You can run any command for any room by typing it in this format.</li>
+    <li><code>(roomlist)</code>: Shows you all room names and IDs.</li>
+    <li><code>(system (message))</code>: Send a message as the system.</li>
+    <li><code>(Admin)</code>: Send as admin (not added).</li>
+    <li><code>(reset/rc)</code>: Resets chat rooms.</li>
+    <li><code>(status)</code>: Gets the full status of the chat.</li>
+    <li><code>(shutdown)</code>: Shuts down the server.</li>
+    <li><code>(blanks)</code>: Sends 100 blank lines in the chat room you are currently in.</li>
+    <li><code>(lines/pstats)</code>: Gets the line count of the chat room you are on.</li>
+    <li><code>(ban (username) (reason))</code>: The reason is optional.</li>
+</ul>
+
+<h2>Mod commands:</h2>
+<ul>
+    <li><code>(mute (username) (time) (reason))</code>: Reason and time are optional.</li>
+    <li><code>(unmute (username))</code>.</li>
+    <li><code>(permlist)</code>: Allows you to see who is banned or muted.</li>
+    <li><code>(mod)</code>: Send as mod (not added).</li>
+    <li><code>(lock)</code>: Locks the chat.</li>
+    <li><code>(unlock)</code>: Unlocks the chat.</li>
+</ul>
+
+<h2>No permission requirement commands:</h2>
+<ul>
+    <li><code>(song (text))</code>: Send as Song (added public for now).</li>
+    <li><code>(JOTD (text))</code>: Send as JOTD (added public for now).</li>
+    <li><code>(ronline/ro)</code>: Refresh the online list.</li>
+    <li><code>(chat (room name) create)</code>: Creates a chat room with the name you set.</li>
+    <li><code>(chat (room name) delete)</code>: Deletes the chat room with the name you typed.</li>
+    <li><code>(chat (room name) info)</code>: Tells you the info of the chat room you typed.</li>
+    <li><code>(chat (room name) whitelist (users))</code>: Whitelist users in the chat room you typed.</li>
+    <li><code>(chat (room name) blacklist (users))</code>: Blacklist users in the chat room you typed.</li>
+</ul>
+
+<p>End.</p>

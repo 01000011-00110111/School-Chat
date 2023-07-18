@@ -109,11 +109,11 @@ def delete_chat_room(room_name, user):
     username = user["displayName"]
     date_str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     if madeBy == user["username"]:
-        if rooms["roomid"] == "ilQvQwgOhm9kNAOrRqbr": return ("reason", 3, "delete")
+        if rooms["roomid"] is ['jN7Ht3giH9EDBvpvnqRB',"ilQvQwgOhm9kNAOrRqbr"]: return ("reason", 3, "delete")
         response = delete_room(username, room_name, date_str)
         logmessage = f"{username} deleted {room_name} at {date_str}"
     elif user["SPermission"] == "Debugpass":
-        if rooms["roomid"] == "ilQvQwgOhm9kNAOrRqbr": return ("reason", 2, "delete")
+        if rooms["roomid"] is ['jN7Ht3giH9EDBvpvnqRB',"ilQvQwgOhm9kNAOrRqbr"]: return ("reason", 2, "delete")
         response = delete_room(username, room_name, date_str)
         logmessage = f"{username} deleted {room_name} owned by {madeBy} at {date_str}"
     else: 
@@ -204,3 +204,12 @@ def update_blacklist(room_name, message):
                  {"$set": {
                      "blacklisted": message
                  }})
+
+
+def check_roomids(roomid):
+    """checks if the room id you have is a real room id"""
+    roomid_check = dbm.rooms.find_one({"roomid": roomid})
+    if roomid_check is not None:
+        return (True)
+    else:
+        return (False)

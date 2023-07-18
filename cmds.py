@@ -37,6 +37,7 @@ def find_command(**kwargs):
         'song': send_song,
         'jotd': send_joke,
         'permlist': send_perms,
+        'roomlist': list_rooms,
         'banned': send_perms,
         'muted': send_perms,
     }
@@ -47,7 +48,7 @@ def find_command(**kwargs):
 def E(**kwargs):
     """Test function"""
     roomid = kwargs['roomid']
-    emit("troll", ("[SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font>", roomid), broadcast=True)
+    emit("troll", ("[SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font> <img src='static/troll-face.jpeg'>", roomid), broadcast=True)
 
 def send_stats(**kwargs):
     roomid = kwargs['roomid']
@@ -190,6 +191,25 @@ def send_perms(**kwargs):
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
 
+def list_rooms(**kwargs):
+    """list all the chat rooms names and roomids to devs only"""
+    issuer = kwargs['user']
+    roomid = kwargs["roomid"]
+    origin_room = kwargs['origin_room']
+
+    if check_if_dev(issuer) == 1 and origin_room == 'jN7Ht3giH9EDBvpvnqRB':
+        ids = [room["roomid"] for room in dbm.rooms.find({}, {"roomid": 1})]
+        names = [room["roomName"] for room in dbm.rooms.find({}, {"roomName": 1})]
+        msg_str = '<br>'.join([f"Room's name: ({name}) Room's id: ({id})" for id, name in zip(ids, names)])
+        chat.add_message(f"[SYSTEM]: <font color='#ff7f00'><br>{msg_str}</font>", 'jN7Ht3giH9EDBvpvnqRB', 'true')
+        emit("message_chat", (f"[SYSTEM]: <font color='#ff7f00'><br>{msg_str}</font>", 'jN7Ht3giH9EDBvpvnqRB'), namespace="/")
+    else:
+        if check_if_dev(issuer) != 1:
+            respond_command(("reason", 2, "not_dev"), 'jN7Ht3giH9EDBvpvnqRB', None)
+        else:
+            respond_command(("reason", 1, "wrong_room"), roomid, None)
+            
+
 def send_joke(**kwargs):  #add a check for a user later
     """Sends as joke of the day."""
     user = kwargs['user']
@@ -307,7 +327,9 @@ def respond_command(result, roomid, name):
         (2, 'not_mod'):
         "[SYSTEM]: <font color='#ff7f00'>Who do you think you are, a Moderator?</font>",
         (1, 'no_time'):
-        "[SYSTEM]: <font color='#ff7f00'>You forgot the time!</font>"
+        "[SYSTEM]: <font color='#ff7f00'>You forgot the time!</font>",
+        (1, 'wrong_room'):
+        "[SYSTEM]: <font color='#ff7f00'>You can only run this command in the dev chat room</font>"
     }
     response_str = response_strings.get((result[1], result[2]))
     if result[1] in [0, 2, 3] and result[2] in ['create', 'delete', 'edit']:

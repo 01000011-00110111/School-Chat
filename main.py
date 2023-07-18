@@ -29,7 +29,7 @@ logging.basicConfig(filename="backend/webserver.log",
                     level=logging.INFO)
 root = logging.getLogger()
 root.addHandler(default_handler)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app)
 
 # clear db, so that old users don't stay
 dbm.Online.delete_many({})
@@ -67,10 +67,12 @@ def login_page() -> ResponseReturnValue:
         try:
             # not 100% sure this will catch a failed attempt, doesnt get them
             user = dbm.Accounts.find_one({"username": username})
+            if user is None:
+                return flask.render_template(
+                    'login.html', error="That account does not exist!")
         except TypeError:
-            return flask.render_template(
-                'login.html',
-                error="That account does not exist! Go to the signup page")
+            return flask.render_template('login.html',
+                                         error="That account does not exist!")
         if TOSagree != "on":
             return flask.render_template('login.html',
                                          error='You did not agree to the TOS!')
@@ -78,7 +80,7 @@ def login_page() -> ResponseReturnValue:
                 bytes(password, 'utf-8')).hexdigest() == user["password"]:
             return flask.render_template(
                 'chat.html', user=username
-            )  # this could be a security issue later on (if they figure out this)
+            )  # this could be a security issue later on (if they figure out this) this is how most things do it so we are file
         else:
             return flask.render_template(
                 'login.html', error="That username or password is incorrect!")
@@ -161,39 +163,44 @@ def get_logs_page() -> ResponseReturnValue:
     return html_file
 
 
-# @app.route('/customizepagereal')
-# def settings_page() -> ResponseReturnValue:
-#     """this is the settings page"""
-#     return flask.render_template('acc-edit-index.html')
+@app.route('/customizepagereal')
+def settings_page() -> ResponseReturnValue:
+    """this is the settings page"""
+    return flask.render_template('acc-edit-index.html')
 
-# @app.route('/settings')
-# def customize_accounts() -> ResponseReturnValue:
-#     """customize the accounts"""
-#     if request.method == "POST":
-#         # redo client side checks here on server side, like signup
-#         username = request.form.get("username")
-#         password = request.form.get("password")
-#         TOSagree = request.form.get("TOSagree")
-#         try:
-#             # not 100% sure this will catch a failed attempt, doesnt get them
-#             user = dbm.Accounts.find_one({"username": username})
-#         except TypeError:
-#             return flask.render_template(
-#                 'login.html',
-#                 error="That account does not exist!")
-#         if TOSagree != "on":
-#             return flask.render_template('login.html',
-#                                          error='You did not agree to the TOS!')
-#         if username == user["username"] and hashlib.sha384(
-#                 bytes(password, 'utf-8')).hexdigest() == user["password"]:
-#             return flask.render_template(
-#                 'acc-edit-index.html', Ausername=username, Apassword=hashlib.sha384(bytes(password, 'utf-8')).hexdigest()
-#             )  # this could be a security issue later on (if they figure out this)
-#         else:
-#             return flask.render_template(
-#                 'login.html', error="That username or password is incorrect!")
-#     else:
-#         return flask.render_template('login.html')
+
+@app.route('/settings', methods=['GET', 'POST'])
+def customize_accounts() -> ResponseReturnValue:
+    """customize the accounts"""
+    if request.method == "POST":
+        # redo client side checks here on server side, like signup
+        username = request.form.get("username")
+        password = request.form.get("password")
+        TOSagree = request.form.get("TOSagree")
+        try:
+            # not 100% sure this will catch a failed attempt, doesnt get them
+            user = dbm.Accounts.find_one({"username": username})
+            if user is None:
+                return flask.render_template(
+                    'login.html', error="That account does not exist!")
+        except TypeError:
+            return flask.render_template('login.html',
+                                         error="That account does not exist!")
+        if TOSagree != "on":
+            return flask.render_template('login.html',
+                                         error='You did not agree to the TOS!')
+        if username == user["username"] and hashlib.sha384(
+                bytes(password, 'utf-8')).hexdigest() == user["password"]:
+            return flask.render_template(
+                'acc-edit-index.html',
+                Ausername=username,
+                Apassword=hashlib.sha384(bytes(password, 'utf-8')).hexdigest()
+            )  # this could be a security issue later on (if they figure out this) we can move editing passwords to the same system as reseting passwords
+        else:
+            return flask.render_template(
+                'login.html', error="That username or password is incorrect!")
+    else:
+        return flask.render_template('login.html')
 
 
 @app.get('/backup_logs')
@@ -337,11 +344,6 @@ def get_rooms(username):
     if user_name["SPermission"] == "Debugpass":
         emit('roomsList', room_access, namespace='/', to=request.sid)
     else:
-        # the dev bit that was here is not needed because of above
-        # that and, the way you had the if statments, it was either the blacklist is empty or the whitelist is empty, and they would be allowed
-        # i got rid of that, changed it to both must be everyone/no one, or if they are not in the blacklist with no whitelist
-        # or if they are in the whitelist if there is one.
-        # and moved the is devonly to the end, so it would overrule anything
         accessible_rooms = [{
             'id': r['id'],
             'name': r['name']
@@ -389,6 +391,7 @@ def handle_ping_tests(start):
     emit('ping_test', {
         "start": start,
     }, namespace='/')
+
 
 @socketio.on("room_connect")
 def connect(roomid):

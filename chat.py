@@ -102,11 +102,11 @@ def reset_chat(message: str, admin: bool, roomid) -> str:
         return ('good', 0)
     else:
         if admin is True:
-            message_text = system_response("message", 1)
+            message_text = system_response(("message", 1), roomid)
             (chat_log(message_text, roomid, False),
              emit("reset_chat", "admin", broadcast=True, namespace="/"))
             return ('good', 1)
-        message_text = system_response("message", 2)
+        message_text = system_response(("message", 2), roomid)
         chat_log(message_text, roomid, False)
         emit("reset_chat", "auto", broadcast=True, namespace="/")
         return ('good', 0)
@@ -118,12 +118,9 @@ def reset_chat(message: str, admin: bool, roomid) -> str:
 def system_response(message, roomid):
     """stores all messages for system"""
     system_response = {
-        1:
-        "[SYSTEM]: <font color='#ff7f00'>Chat reset by an admin.</font>\n",
-        2:
-        "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>\n",
-        3:
-        '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'
+        1: "[SYSTEM]: <font color='#ff7f00'>Chat reset by an admin.</font>",
+        2: "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>",
+        3: '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'
     }
 
     system_answer = system_response.get(message[1])
@@ -137,7 +134,7 @@ def backup_log(message_text: str, roomid) -> None:
         room = dbm.rooms.find_one({"roomid": roomid})
         name = room["roomName"]
         f_out.write(
-            f"[{date}], [{name}({roomid})] The message said: {message_text}\n"
+            f"[{date}], [{name}, Roomid: ({roomid})] The message said: {message_text}\n"
         )
 
 
