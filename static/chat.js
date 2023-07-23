@@ -53,24 +53,13 @@ socket.on("force_username", (statement) => {
     socket.emit("username", window.localStorage.getItem("username"));
 });
 
-socket.on("online", (db) => {
-    let newline = "<br>"
-    let online = "";
-    let onlinels = '';
-    let onlineDiv = document.getElementById("online_users");
-    // let onlinelsDiv = document.getElementById("onlinels");
-    let online_count = db.length;
-    for (onlineUser of db) {
-        online = online + onlineUser + newline;
-        onlinels = onlinels + "<a onclick=changeWisperUser('" + onlineUser + "')>" + onlineUser + '</a>';
-    }
-    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online;
-    // onlinelsDiv["innerHTML"] = onlinels;
-    onlineDiv["innerHTML"] = final_online;
-});
-
 function runCheckStartup() {
     setDarkStyle();
+}
+
+function getSocketid() {
+    // not the best way, but it works.
+    return socket.socket.sessionid;
 }
 
 function runStartup() {

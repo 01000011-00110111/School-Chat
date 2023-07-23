@@ -77,6 +77,15 @@ def login_page() -> ResponseReturnValue:
                                          error='You did not agree to the TOS!')
         if username == user["username"] and hashlib.sha384(
                 bytes(password, 'utf-8')).hexdigest() == user["password"]:
+            # I have no idea if this will work, and it shoulden't, but lets see
+            # exactly what I thought, hmmmmm
+            # its because there is no socketid here, how to get said id hm
+            """emit("return_prefs", {
+                "displayName": user["displayName"],
+                "profile": user["profile"],
+                "theme": user["theme"],
+            },
+                 namespace="/")"""
             return flask.render_template(
                 'chat.html', user=username
             )  # this could be a security issue later on (if they figure out this) this is how most things do it so we are file
@@ -190,15 +199,16 @@ def customize_accounts() -> ResponseReturnValue:
                                          error='You did not agree to the TOS!')
         if username == user["username"] and hashlib.sha384(
                 bytes(password, 'utf-8')).hexdigest() == user["password"]:
-            return flask.render_template(
+            return flask.render_template( # hm actually, crap how do we do this now
                 'acc-edit-index.html',
                 user=username,
-                passwd=hashlib.sha384(bytes(password, 'utf-8')).hexdigest(), sure for the customize page, but not the normal one
+                passwd=hashlib.sha384(bytes(password, 'utf-8')).hexdigest(),
                 displayName=user["displayname"],
-                user_color=user["what was it again"],
-                role_color=user["what was it again"],
-                message_color=user["what was it again"],
-                profile=user["what was it again"],
+                role=user["role"],
+                user_color=user["userColor"],
+                role_color=user["roleColor"],
+                message_color=user["messageColor"],
+                profile=user["profile"],
             )  # this could be a security issue later on (if they figure out this) we can move editing passwords to the same system as reseting passwords
         else:
             return flask.render_template(
@@ -238,7 +248,7 @@ def handle_disconnect():
         emit("online", username_list, broadcast=True)
     except TypeError:
         pass
-
+        
 
 @socketio.on('login')
 def login_handle(username, password):
@@ -256,20 +266,28 @@ def login_handle(username, password):
 
 
 # pylint: disable=C0103, R0913
-@socketio.on('update')
-def update_handle(Euser, Erole, Cmessage, Crole, Cuser, Auser, Apass,
-                  loginuser, Cprofile):
-    """make the signup work."""
-    dbm.Accounts.update_one({"username": loginuser}, {
+@socketio.on('update_acc')
+def update_handle(displayname, role, messageC, roleC, userC, passwd,
+                  user, profile):
+    """make the settings page work."""
+    possible_dispuser = dbm.Accounts.find_one(
+            {"displayName": displayname})
+    if possible_dispuser is not None or displayname in banned_usernames:
+        # :facepalm: you already did it lol
+        # that means, once you edit it up there, this function should go away as it will be not used anymore i see so move this up there and remove this the question is how to call it and where to put it i dont get how you did it in signup
+        return flask.render_template(
+            "signup-index.html",
+            error='That Username/Display name is already taken!')
+    dbm.Accounts.update_one({"username": user}, {
         "$set": {
-            "messageColor": Cmessage,
-            "roleColor": Crole,
-            "userColor": Cuser,
-            "displayName": Euser,
-            "role": Erole,
-            "profile": Cprofile,
-            "username": Auser,
-            "password": hashlib.sha384(bytes(Apass, 'utf-8')).hexdigest(),
+            "messageColor": messageC,
+            "roleColor": roleC,
+            "userColor": userC,
+            "displayName": displayname,
+            "role": role,
+            "profile": profile,
+            # "username": Auser,
+            "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest()
         }
     })
     emit("update_acc", namespace="/")

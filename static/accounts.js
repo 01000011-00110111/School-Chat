@@ -21,7 +21,7 @@ socket.on("login_att", (state) => {
 
 socket.on("return_prefs", (Obj) => {
     if ('failed' in Obj) {
-        console.log('We need a failed login function')
+        console.log('We need a failed to grab function')
     }
     window.localStorage.setItem("username", Obj["displayName"]);
     window.localStorage.setItem("pfp", Obj["profile"]);
