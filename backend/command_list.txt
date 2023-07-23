@@ -14,6 +14,7 @@
 
 <h2>Mod commands:</h2>
 <ul>
+    <li><code>$sudo command prompt</code>:This is how you type a command in chat (prompt is only for commands that need text.</li>
     <li><code>(mute (username) (time) (reason))</code>: Reason and time are optional.</li>
     <li><code>(unmute (username))</code>.</li>
     <li><code>(permlist)</code>: Allows you to see who is banned or muted.</li>
@@ -24,6 +25,7 @@
 
 <h2>User commands:</h2>
 <ul>
+    <li><code>$sudo command prompt</code>:This is how you type a command in chat (prompt is only for commands that need text.</li>
     <li><code>(song (text))</code>: Send as Song (added public for now).</li>
     <li><code>(JOTD (text))</code>: Send as JOTD (added public for now).</li>
     <li><code>(ronline/ro)</code>: Refresh the online list.</li>
