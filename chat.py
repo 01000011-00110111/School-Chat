@@ -28,7 +28,7 @@ def get_line_count(file) -> List:
     """Return the line count in the logfile."""
     if file == "main":
         with open(LOGFILE, "r", encoding="utf8") as f_in:
-            lines = len(f_in.readlines()) + 1
+            lines = 'this is no longer a active file'
         return lines
     elif file == "backup":
         with open(LOGFILE_B, "r", encoding="utf8") as f_in:

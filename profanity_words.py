@@ -8,16 +8,13 @@ whitelist_words = [
     'dumb',
     'piss',
     'wtf',
-    'stroke',
     'suck',
     'hebe',
     'gay',
-    'screw',
 ]
 
 censored = [
     'sh!t',
-    'dumba',
     'dam',
     'boobie',
 ]

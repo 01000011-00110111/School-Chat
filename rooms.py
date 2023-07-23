@@ -191,7 +191,7 @@ def blacklist(room_name, user, users, room, username, dev):
         return ('response', 2, 'edit')
 
 
-def update_whitelist(room_name, message):
+def update_whitelist(room_name, message):#combine whitelist and blacklist
     """Adds the whitelisted users to the database"""
     dbm.rooms.update_one({"roomName": room_name},
                      {"$set": {

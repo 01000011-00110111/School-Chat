@@ -146,7 +146,7 @@ def find_cmds(message, user, locked, roomid):
         else:
             pass
     else:
-        pass
+        return
 
     if origin_room is None: origin_room = roomid
     # this check is needed, because the finding of commands is after chat lock check in run_filter

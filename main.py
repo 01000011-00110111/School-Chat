@@ -192,8 +192,13 @@ def customize_accounts() -> ResponseReturnValue:
                 bytes(password, 'utf-8')).hexdigest() == user["password"]:
             return flask.render_template(
                 'acc-edit-index.html',
-                Ausername=username,
-                Apassword=hashlib.sha384(bytes(password, 'utf-8')).hexdigest()
+                user=username,
+                passwd=hashlib.sha384(bytes(password, 'utf-8')).hexdigest(), sure for the customize page, but not the normal one
+                displayName=user["displayname"],
+                user_color=user["what was it again"],
+                role_color=user["what was it again"],
+                message_color=user["what was it again"],
+                profile=user["what was it again"],
             )  # this could be a security issue later on (if they figure out this) we can move editing passwords to the same system as reseting passwords
         else:
             return flask.render_template(
