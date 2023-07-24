@@ -2,6 +2,7 @@
 import chat
 from main import dbm
 from flask_socketio import emit
+import time
 from time import sleep
 import os
 import re
@@ -12,6 +13,7 @@ def log_commands(message):
     """Log when a command is issued."""
     with open('backend/command_log.txt', 'a', encoding="utf8") as file:
         file.write(message + '\n')
+
 
 def find_command(**kwargs):
     """Send whatever sudo command is issued to its respective function."""
@@ -40,19 +42,27 @@ def find_command(**kwargs):
         'roomlist': list_rooms,
         'banned': send_perms,
         'muted': send_perms,
+        'ping': ping,
     }
-
-    response_strings[kwargs['commands']['v0']](**kwargs)
+    try:
+        response_strings[kwargs['commands']['v0']](**kwargs)
+    except KeyError:
+        respond_command(("result", 1, None), kwargs['roomid'], None)
 
 
 def E(**kwargs):
     """Test function"""
     roomid = kwargs['roomid']
-    emit("troll", ("[SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font> <img src='static/troll-face.jpeg'>", roomid), broadcast=True)
+    emit("troll", (
+        "[SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font> <img src='static/troll-face.jpeg'>",
+        roomid),
+         broadcast=True)
+
 
 def send_stats(**kwargs):
     roomid = kwargs['roomid']
     emit("message_chat", (chat.get_stats(roomid), roomid), broadcast=True)
+
 
 def check_if_dev(user):
     """Return if a user is a dev or not."""
@@ -63,6 +73,7 @@ def check_if_mod(user):
     """Return if a user is a mod or not."""
     return 1 if user['SPermission'] == 'modpass' else 0
 
+
 def reset_chat_user(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
@@ -70,6 +81,7 @@ def reset_chat_user(**kwargs):
         chat.reset_chat(False, True, roomid)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
+
 
 def ban_user(**kwargs):
     """Ban a user from the chat forever."""
@@ -199,16 +211,27 @@ def list_rooms(**kwargs):
 
     if check_if_dev(issuer) == 1 and origin_room == 'jN7Ht3giH9EDBvpvnqRB':
         ids = [room["roomid"] for room in dbm.rooms.find({}, {"roomid": 1})]
-        names = [room["roomName"] for room in dbm.rooms.find({}, {"roomName": 1})]
-        msg_str = '<br>'.join([f"Room's name: ({name}) Room's id: ({id})" for id, name in zip(ids, names)])
-        chat.add_message(f"[SYSTEM]: <font color='#ff7f00'><br>{msg_str}</font>", 'jN7Ht3giH9EDBvpvnqRB', 'true')
-        emit("message_chat", (f"[SYSTEM]: <font color='#ff7f00'><br>{msg_str}</font>", 'jN7Ht3giH9EDBvpvnqRB'), namespace="/")
+        names = [
+            room["roomName"] for room in dbm.rooms.find({}, {"roomName": 1})
+        ]
+        msg_str = '<br>'.join([
+            f"Room's name: ({name}) Room's id: ({id})"
+            for id, name in zip(ids, names)
+        ])
+        chat.add_message(
+            f"[SYSTEM]: <font color='#ff7f00'><br>{msg_str}</font>",
+            'jN7Ht3giH9EDBvpvnqRB', 'true')
+        emit("message_chat",
+             (f"[SYSTEM]: <font color='#ff7f00'><br>{msg_str}</font>",
+              'jN7Ht3giH9EDBvpvnqRB'),
+             namespace="/")
     else:
         if check_if_dev(issuer) != 1:
-            respond_command(("reason", 2, "not_dev"), 'jN7Ht3giH9EDBvpvnqRB', None)
+            respond_command(("reason", 2, "not_dev"), 'jN7Ht3giH9EDBvpvnqRB',
+                            None)
         else:
             respond_command(("reason", 1, "wrong_room"), roomid, None)
-            
+
 
 def send_joke(**kwargs):  #add a check for a user later
     """Sends as joke of the day."""
@@ -251,11 +274,11 @@ def run_shutdown(**kwargs):
     roomid = kwargs['roomid']
     """Stop the server, but also tell everyone that the server is going down."""
     if check_if_dev(user) == 1:
-        emit(
-            "message_chat",
-            ("[SYSTEM]: <font color='#ff7f00'>Server going down in 2 Seconds (unknown ETA on restart)</font>", roomid),
-            broadcast=True,
-            namespace='/')
+        emit("message_chat", (
+            "[SYSTEM]: <font color='#ff7f00'>Server going down in 2 Seconds (unknown ETA on restart)</font>",
+            roomid),
+             broadcast=True,
+             namespace='/')
         sleep(2)
         os.system('pkill gunicorn')
     else:
@@ -266,6 +289,23 @@ def reload_users(**kwargs):
     """Reload the online list manually."""
     dbm.Online.delete_many({})
     emit("force_username", "", broadcast=True)
+
+
+def ping(**kwargs):
+    """EEEEEEEEEEEEEEEE"""
+    roomid = kwargs['roomid']
+    start = time.time() * 1000.0
+    emit("pingTime", (start, roomid), namespace="/")
+
+
+def end_ping(start, roomid):
+    """The end of the ping comamnd."""
+    end = time.time() * 1000.0
+    difference = end - start
+    msg = '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + str(
+        int(difference)) + 'ms RTT</font>'
+    chat.add_message(msg, roomid, dbm)
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
 def send_lines(**kwargs):

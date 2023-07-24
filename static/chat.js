@@ -1,6 +1,3 @@
-// define socketio connection
-const socket = io();
-
 socket.on("ping_test", (Obj) => {
     pingHandle(Obj);
 });
@@ -15,6 +12,11 @@ socket.on("troll", (message, roomid) => {
     audio.play();
 });
 
+socket.on("pingTime", (time, roomid) => {
+    socket.emit('pingtest', time, roomid);
+});
+
+
 function pingHandle(Obj=null) {
     user = document.getElementById("user")["value"];
     if (Obj === null) {
@@ -28,14 +30,13 @@ function pingHandle(Obj=null) {
 }
 
 socket.on("ping", ({ who, from, pfp, message }) => {
-    let userElement = document.getElementById("username");
-    let user_name = userElement.value;
-
-        if (user_name === who) {
-            new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
-        } else if (who === "everyone") {
-            new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
-        }
+    let user_name = window.localStorage.getItem("username");
+    console.log(who, from, message);
+    if (user_name === who) {
+        new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
+    } else if (who === "everyone") {
+        new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
+    }
 });
 
 socket.on("reset_chat", (who, roomid) => {
