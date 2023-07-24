@@ -16,9 +16,7 @@ profanity.add_censor_words(profanity_words.censored)
 def run_filter(user, room, message, roomid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
     locked = check_lock(room)
-    perms = check_perms(
-        user
-    )
+    perms = check_perms(user)
     can_send = check_allowed_sending(user, room)
     user_muted = check_mute(user)
 
@@ -35,12 +33,10 @@ def run_filter(user, room, message, roomid):
         profile_picture = 'static/favicon.ico'
     else:
         profile_picture = user['profile']
-    
-                    
+
     find_pings(message, user['displayName'], profile_picture)
     find_cmds(message, user, locked, roomid)
 
-    
     final_str = compile_message(message, profile_picture, user, role)
 
     if perms == "dev":
@@ -95,11 +91,13 @@ def check_perms(user):
         perms = 'user'
     return perms
 
+
 def to_hyperlink(text):
     """Taken from the js file, we don't need to have the client process it really."""
     mails = re.findall(r"mailto:([^\?]*)", text)
     links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text)
     #print(f"{mails}\n\n\n{links2}")
+
 
 def filter_message(message):
     """No one likes profanity, especially flagging systems."""
@@ -108,7 +106,8 @@ def filter_message(message):
 
 def find_pings(message, dispname, profile_picture):
     """Gotta catch 'em all! (checks for pings in the users message"""
-    pings = re.findall(r'(?<=\[).+?(?=\])', message)#i know how we can stop using [] for pings
+    pings = re.findall(r'(?<=\[).+?(?=\])',
+                       message)  #i know how we can stop using [] for pings
     for ping in pings:
         emit("ping", {
             "who": ping,
@@ -124,12 +123,12 @@ def find_cmds(message, user, locked, roomid):
     """$sudo commands, will push every cmd found to cmds.py along with the user, so we can check if they can do said command."""
     if "$sudo" not in message:
         return
-    
+
     command_split = message.split("$sudo")
     command_split.pop(0)
     command_string = command_split[0]
     perms = check_perms(user)
-    origin_room =  None
+    origin_room = None
     match = re.findall(r"\(|\)", command_string)
 
     if perms == 'dev' and roomid == 'jN7Ht3giH9EDBvpvnqRB' and match != []:
@@ -140,19 +139,15 @@ def find_cmds(message, user, locked, roomid):
             failed_message(('permission', 7), roomid)
             return
         if len(match) == 2:
-            origin_room =  roomid
+            origin_room = roomid
             roomid = find_roomid
             command_split = [match_msg[0]]
-        else:
-            pass
-    else:
-        return
 
     if origin_room is None: origin_room = roomid
     # this check is needed, because the finding of commands is after chat lock check in run_filter
     # leading to users being able to send comamnds, even when chat is locked
     # we should be the only ones that can do that (devs)
-    if locked is True and user['SPermission'] != 'Debugpass':
+    if locked == "true" and user['SPermission'] != 'Debugpass':
         return ("permission", 3)
 
     for cmd in command_split:
@@ -168,7 +163,10 @@ def find_cmds(message, user, locked, roomid):
             var_name = "v%d" % index
             commands[var_name] = command
         if 'v0' in commands:
-            cmds.find_command(commands=commands, user=user, roomid=roomid, origin_room=origin_room)
+            cmds.find_command(commands=commands,
+                              user=user,
+                              roomid=roomid,
+                              origin_room=origin_room)
 
 
 def compile_message(message, profile_picture, user, role):
@@ -199,8 +197,9 @@ def do_dev_easter_egg(role, user):
         role_string = "<font color='" + role_color + "'>" + role + "</font>"
     return role_string
 
+
 def failed_message(result, roomid):
-    """Tell the client that your message could not be sent for whatever the reason was.""" 
+    """Tell the client that your message could not be sent for whatever the reason was."""
     fail_strings = {
         (1):
         "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you are muted.</font>",
@@ -214,13 +213,12 @@ def failed_message(result, roomid):
         "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you do not have enough permission to use this chat room.</font>",
         (6):
         "[SYSTEM]: <font color='#ff7f00'>You can't send messages in this chat room because this chat room no longer exists,  select a chat room that does exist.</font>",
-        (7):
-        "this chat room id does not exists"
+        (7): "this chat room id does not exists"
     }
     if result[0] == "dev":
-        if result[1] == 6: fail_str = fail_strings.get((result[1]), "") 
+        if result[1] == 6: fail_str = fail_strings.get((result[1]), "")
         else: return
     # if result[0] == "return": emit("message_chat", ('', roomid), namespace="/") what is this
-        
-    fail_str = fail_strings.get((result[1]), "")# result[2]), "")
+
+    fail_str = fail_strings.get((result[1]), "")  # result[2]), "")
     emit("message_chat", (fail_str, roomid), namespace="/")
