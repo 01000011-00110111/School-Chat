@@ -1,18 +1,18 @@
 {% extends 'index.html' %}
 {% block content %}
-<div>
+<form method="post">
     <script src="static/settings.js"></script>
     <h3 id="user_colorTXT">message settings</h3>
             <p id="user_colorTXT">Username: </p>
-            <input type="text" id="username" name="Username" value='{{displayName}}' placeholder="Username" maxlength="12"><br>
-            <input type="color" value='{{user_color}}' id="user_color" name="color choser"><br>
+            <input type="text" id="username" value='{{displayName}}' placeholder="Username" name="display" maxlength="12"><br>
+            <input type="color" value='{{user_color}}' id="user_color" name="user_color"><br>
             <p id="user_colorTXT">Role: </p>
             <input type="text" id="role" name="role" placeholder="role" value='{{role}}' maxlength="18"><br>
-            <input type="color" value='{{role_color}}' id="role_color" name="color choser"><br>
+            <input type="color" value='{{role_color}}' id="role_color" name="role_color"><br>
             <p id="user_colorTXT">Message: </p>
-            <input type="color" value='{{message_color}}' id="message_color" name="color choser"><br>
+            <input type="color" value='{{message_color}}' id="message_color" name="message_color"><br>
             <p id="user_colorTXT">Profile pictures</p>
-            <input type="text" id="profile" name="profile picture" placeholder="Profile Picture" value='{{profile}}' class='std_box' style="width: 100%;"><br>
+            <input type="text" id="profile" name="profile" placeholder="Profile Picture" value='{{profile}}' class='std_box' style="width: 100%;"><br>
             <div class="colorDropdown">
                 <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
                 <div id="myDropdown" class="dropdown-content">
@@ -22,22 +22,19 @@
                     <a id="event" onclick="whichEvent();">Event</a>
                 </div>
             </div>
-</div>
 <hr id="border">
-<div>
-    <p id="user_colorTXT">username:</p><br>
-    <input type="text" id="Ausername" placeholder="login username" maxlength="15" value='{{user}}' disabled><br>
+    <input type="text" id="Ausername" placeholder="login username" maxlength="15" name="user" value='{{user}}' hidden><br>
     <p id="user_colorTXT">Password:</p><br>
-    <input type="password" id="Apassword" placeholder="Password" value='{{passwd}}'><br>
+    <input type="password" id="Apassword" placeholder="Password" name="password" value='{{passwd}}' hidden><br>
+    <h2 style="color:green; pointer-events: none;">{{passwd}}</h2>
     <br>
     <!-- <input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
     <input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br> -->
-    <button onclick="update()" id="change">update</button><br>
-    <br>
-    <br>
-    <br>
-    <button id='logout' onclick="logout();">logout</button>
-</div>
+    <button type="submit" id="change" name="update">update</button>
+</form>
+{% if error %}
+    <h2 style="color:red; pointer-events: none;">{{error}}</h2>
+{% endif %}
 <div class="activenav" id="activenav">
     <div class="AccountPopup">
         <input type="image" id="pfpmenu" src="static/favicon.ico" class="PictureBTN" onclick="OpenAC();"/>

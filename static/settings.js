@@ -1,12 +1,26 @@
-function update() {
-    let user = document.getElementById("user")["value"];
-    let displayname = document.getElementById("username")["value"];
-    let role = document.getElementById("role")["value"];
-    let Cmessage = document.getElementById("message_color")["value"];
-    let Crole = document.getElementById("role_color")["value"];
-    let Cuser = document.getElementById("user_color")["value"];
-    let passwd = document.getElementById("Apassword")["value"];
-    let profile = document.getElementById("profile")["value"];
-    
-    socket.emit('update_acc', displayname, role, messageC, roleC, userC, passwd, user, profile);
+let prevValues = {};
+
+function updateValues() {
+  const inputIds = [
+    "user",
+    "username",
+    "role",
+    "message_color",
+    "role_color",
+    "user_color",
+    "Apassword",
+    "profile"
+  ];
+
+  inputIds.forEach(id => {
+    const element = document.getElementById(id);
+    const currentValue = element.value;
+    if (prevValues[id] !== currentValue) {
+      console.log(id, "changed:", prevValues[id], "->", currentValue);
+      prevValues[id] = currentValue;
+    }
+  });
 }
+
+// Check for changes every 500 milliseconds (0.5 seconds)
+setInterval(updateValues, 500);

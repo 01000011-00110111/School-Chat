@@ -6,6 +6,7 @@ import time
 import keys
 import flask
 import pymongo
+import re
 from flask import request
 from flask.logging import default_handler
 from flask.typing import ResponseReturnValue
@@ -114,13 +115,13 @@ def signup() -> ResponseReturnValue:
         SPassword2 = request.form.get("SPassword2")
         SRole = request.form.get("SRole")
         SDisplayname = request.form.get("SDisplayname")
-        # check = r'^[A-Za-z]{3,12}$'
-        # user_allowed = re.match(check, SUsername) and not re.search(r'dev|mod', SUsername, re.IGNORECASE) #The and needs to be moved to a seperate one to check for letter limit
-        # desplayname_allowed = re.match(check, SDisplayname) and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
-        # if user_allowed == 'false' or desplayname_allowed == 'false':
-        #     return flask.render_template("signup-index.html",
-        #                                  error='That Username/Display name is not allowed!',
-        #                                  SRole=SRole,)
+        check = r'^[A-Za-z]{3,12}$'
+        user_allowed = re.match(check, SUsername)# and not re.search(r'dev|mod', SUsername, re.IGNORECASE) #The and needs to be moved to a seperate one to check for letter limit
+        desplayname_allowed = re.match(check, SDisplayname)# and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
+        if user_allowed == 'false' or desplayname_allowed == 'false':
+            return flask.render_template("signup-index.html",
+                                         error='That Username/Display name is not allowed!',
+                                         SRole=SRole,)
         if SPassword != SPassword2:
             return flask.render_template("signup-index.html",
                                          error='Password boxes do not match!',
@@ -174,45 +175,100 @@ def get_logs_page() -> ResponseReturnValue:
 @app.route('/customizepagereal')
 def settings_page() -> ResponseReturnValue:
     """this is the settings page"""
-    return flask.render_template('acc-edit-index.html')
+    return flask.render_template('settings.html')
 
 
 @app.route('/settings', methods=['GET', 'POST'])
 def customize_accounts() -> ResponseReturnValue:
     """customize the accounts"""
     if request.method == "POST":
-        # redo client side checks here on server side, like signup
-        username = request.form.get("username")
-        password = request.form.get("password")
-        TOSagree = request.form.get("TOSagree")
-        try:
-            # not 100% sure this will catch a failed attempt, doesnt get them
-            user = dbm.Accounts.find_one({"username": username})
-            if user is None:
+        if 'login' in request.form:
+            # redo client side checks here on server side, like signup
+            username = request.form.get("username")
+            password = request.form.get("password")
+            TOSagree = request.form.get("TOSagree")
+            try:
+                # not 100% sure this will catch a failed attempt, doesnt get them
+                user = dbm.Accounts.find_one({"username": username})
+                if user is None:
+                    return flask.render_template(
+                        'login.html', error="That account does not exist!")
+            except TypeError:
+                return flask.render_template('login.html',
+                                             error="That account does not exist!")
+            if TOSagree != "on":
+                return flask.render_template('login.html',
+                                             error='You did not agree to the TOS!')
+            if username == user["username"] and hashlib.sha384(
+                    bytes(password, 'utf-8')).hexdigest() == user["password"]:
                 return flask.render_template(
-                    'login.html', error="That account does not exist!")
-        except TypeError:
-            return flask.render_template('login.html',
-                                         error="That account does not exist!")
-        if TOSagree != "on":
-            return flask.render_template('login.html',
-                                         error='You did not agree to the TOS!')
-        if username == user["username"] and hashlib.sha384(
-                bytes(password, 'utf-8')).hexdigest() == user["password"]:
-            return flask.render_template( # hm actually, crap how do we do this now
-                'acc-edit-index.html',
-                user=username,
-                passwd=hashlib.sha384(bytes(password, 'utf-8')).hexdigest(),
-                displayName=user["displayname"],
-                role=user["role"],
-                user_color=user["userColor"],
-                role_color=user["roleColor"],
-                message_color=user["messageColor"],
-                profile=user["profile"],
-            )  # this could be a security issue later on (if they figure out this) we can move editing passwords to the same system as reseting passwords
-        else:
-            return flask.render_template(
-                'login.html', error="That username or password is incorrect!")
+                    'settings.html',
+                    user=username,
+                    passwd='we are not adding password editing just yet',#hashlib.sha384(bytes(password, 'utf-8')).hexdigest(),
+                    displayName=user["displayName"],
+                    role=user["role"],
+                    user_color=user["userColor"],
+                    role_color=user["roleColor"],
+                    message_color=user["messageColor"],
+                    profile=user["profile"]
+                )  # this could be a security issue later on (if they figure out this) we can move editing passwords to the same system as reseting passwords
+            else:
+                return flask.render_template(
+                    'login.html', error="That username or password is incorrect!")
+        elif 'update' in request.form:
+            userid = request.form.get("user")
+            displayname = request.form.get("display")
+            role = request.form.get("role")
+            messageC = request.form.get("message_color")
+            roleC = request.form.get("role_color")
+            userC = request.form.get("user_color")
+            passwd = request.form.get("password")
+            profile = request.form.get("profile")
+            user = dbm.Accounts.find_one({"username": userid})
+            return_list = {
+                "user": userid,
+                "passwd": 'we are not adding password editing just yet',
+                "displayName": displayname,
+                "role": role,
+                "user_color": userC,
+                "role_color": roleC,
+                "message_color": messageC,
+                "profile": profile
+            }
+            
+            if dbm.Accounts.find_one({"displayName": displayname}) is not None and user["displayName"] is not displayname or displayname in banned_usernames:
+                return flask.render_template("settings.html",
+                    error='That Display name is already taken!',
+                    **return_list)
+                
+            # if passwd != user["password"]: #need to make a check if they are not changing or we can just remove password changing from this methid to somthing else
+            #     return flask.render_template("settings.html",
+            #          error='Your password must not match your current one.',
+                        # **return_list)
+            
+            check = r'^[A-Za-z]{3,12}$'
+            # user_allowed = re.match(check, user)# and not re.search(r'dev|mod', SUsername, re.IGNORECASE)
+            desplayname_allowed = re.match(check, displayname)# and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
+            if desplayname_allowed == 'false':
+                return flask.render_template("settings.html",
+                    error='That Display name is not allowed!',
+                    **return_list)
+                
+            dbm.Accounts.update_one({"username": userid}, {
+                "$set": {
+                    "messageColor": messageC,
+                    "roleColor": roleC,
+                    "userColor": userC,
+                    "displayName": displayname,
+                    "role": role,
+                    "profile": profile,
+                    # "username": userid,
+                    # "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest()
+                }
+            })
+            return flask.render_template('settings.html',
+                                    error="updated account",
+                                    **return_list)
     else:
         return flask.render_template('login.html')
 
@@ -263,44 +319,6 @@ def login_handle(username, password):
         emit("login_att", "true", namespace="/")
     else:
         emit("login_att", "failed", namespace="/")
-
-
-# pylint: disable=C0103, R0913
-@socketio.on('update_acc')
-def update_handle(displayname, role, messageC, roleC, userC, passwd,
-                  user, profile):
-    """make the settings page work."""
-    possible_dispuser = dbm.Accounts.find_one(
-            {"displayName": displayname})
-    if possible_dispuser is not None or displayname in banned_usernames:
-        # :facepalm: you already did it lol
-        # that means, once you edit it up there, this function should go away as it will be not used anymore i see so move this up there and remove this the question is how to call it and where to put it i dont get how you did it in signup
-        return flask.render_template(
-            "signup-index.html",
-            error='That Username/Display name is already taken!')
-    dbm.Accounts.update_one({"username": user}, {
-        "$set": {
-            "messageColor": messageC,
-            "roleColor": roleC,
-            "userColor": userC,
-            "displayName": displayname,
-            "role": role,
-            "profile": profile,
-            # "username": Auser,
-            "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest()
-        }
-    })
-    emit("update_acc", namespace="/")
-
-
-# pylint: enable=C0103, R0913
-@socketio.on('get_perms')
-def return_perms():
-    "get perms for menus"
-    Dev = os.environ["dev_key"]
-    Mod = os.environ["mod_key"]
-    time.sleep(.000001)
-    emit("return_perms", (Dev, Mod), namespace="/")
 
 
 @socketio.on('get_prefs')
