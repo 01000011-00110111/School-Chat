@@ -53,12 +53,8 @@ socket.on("force_username", (statement) => {
     socket.emit("username", window.localStorage.getItem("username"));
 });
 
-function runCheckStartup() {
-    setDarkStyle();
-}
-
 function getSocketid() {
-    // not the best way, but it works.
+    // not the best way, but it works. hey thats ok thats what our chat is made of plus hopes and dreams 
     return socket.socket.sessionid;
 }
 

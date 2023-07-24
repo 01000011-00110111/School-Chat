@@ -15,7 +15,8 @@ function login() {
 
 socket.on("login_att", (state) => {
     if (state === 'true') {
-        enteraccount();
+        socket.emit('get_prefs', document.getElementById("user")["value"]);
+        // enteraccount();
     }
 });
 
@@ -36,20 +37,6 @@ socket.on("return_prefs", (Obj) => {
     }
 });
 
-function enteraccount() {
-    socket.emit('get_prefs', document.getElementById("user")["value"]);
-    document.getElementById("LoginPopup").style.display = 'none';
-}
-
-function logout() {
-    let chatDiv = document.getElementById("chat");
-    let usernmElement = document.getElementById("user");
-    let passwdElement = document.getElementById("pass");
-    let tosch = document.getElementById("tosCH");
-    chatDiv["innerHTML"] = '';
-    window.scrollTo(0, document.body.scrollHeight);
-    passwdElement["value"] = '';
-    usernmElement["value"] = '';
-    document.getElementById("pfpmenu").src = "static/favicon.ico";
-    runCheckStartup();
-}
+// function enteraccount() { do we want to keep this?
+//     socket.emit('get_prefs', document.getElementById("user")["value"]);
+// }
