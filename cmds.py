@@ -379,12 +379,12 @@ def lock(**kwargs):
     if check_if_dev(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>"
         chat.add_message(message, roomid, dbm)
-        emit("message_chat", message, broadcast=True)
+        emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
     elif check_if_mod(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Moderator.</font>"
         chat.add_message(message, roomid, dbm)
-        emit("message_chat", message, broadcast=True)
+        emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
@@ -397,12 +397,12 @@ def unlock(**kwargs):
     if check_if_dev(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>"
         chat.add_message(message, roomid, dbm)
-        emit("message_chat", message, broadcast=True)
+        emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
     elif check_if_mod(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Moderator.</font>"
         chat.add_message(message, roomid, dbm)
-        emit("message_chat", message, broadcast=True)
+        emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)

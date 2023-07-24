@@ -2,7 +2,6 @@
 import os
 import logging
 import hashlib
-import time
 import keys
 import flask
 import pymongo
@@ -116,12 +115,18 @@ def signup() -> ResponseReturnValue:
         SRole = request.form.get("SRole")
         SDisplayname = request.form.get("SDisplayname")
         check = r'^[A-Za-z]{3,12}$'
-        user_allowed = re.match(check, SUsername)# and not re.search(r'dev|mod', SUsername, re.IGNORECASE) #The and needs to be moved to a seperate one to check for letter limit
-        desplayname_allowed = re.match(check, SDisplayname)# and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
+        user_allowed = re.match(
+            check, SUsername
+        )  # and not re.search(r'dev|mod', SUsername, re.IGNORECASE) #The and needs to be moved to a seperate one to check for letter limit
+        desplayname_allowed = re.match(
+            check, SDisplayname
+        )  # and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
         if user_allowed == 'false' or desplayname_allowed == 'false':
-            return flask.render_template("signup-index.html",
-                                         error='That Username/Display name is not allowed!',
-                                         SRole=SRole,)
+            return flask.render_template(
+                "signup-index.html",
+                error='That Username/Display name is not allowed!',
+                SRole=SRole,
+            )
         if SPassword != SPassword2:
             return flask.render_template("signup-index.html",
                                          error='Password boxes do not match!',
@@ -194,17 +199,18 @@ def customize_accounts() -> ResponseReturnValue:
                     return flask.render_template(
                         'login.html', error="That account does not exist!")
             except TypeError:
-                return flask.render_template('login.html',
-                                             error="That account does not exist!")
+                return flask.render_template(
+                    'login.html', error="That account does not exist!")
             if TOSagree != "on":
-                return flask.render_template('login.html',
-                                             error='You did not agree to the TOS!')
+                return flask.render_template(
+                    'login.html', error='You did not agree to the TOS!')
             if username == user["username"] and hashlib.sha384(
                     bytes(password, 'utf-8')).hexdigest() == user["password"]:
                 return flask.render_template(
                     'settings.html',
                     user=username,
-                    passwd='we are not adding password editing just yet',#hashlib.sha384(bytes(password, 'utf-8')).hexdigest(),
+                    passwd=
+                    'we are not adding password editing just yet',  #hashlib.sha384(bytes(password, 'utf-8')).hexdigest(),
                     displayName=user["displayName"],
                     role=user["role"],
                     user_color=user["userColor"],
@@ -214,7 +220,8 @@ def customize_accounts() -> ResponseReturnValue:
                 )  # this could be a security issue later on (if they figure out this) we can move editing passwords to the same system as reseting passwords
             else:
                 return flask.render_template(
-                    'login.html', error="That username or password is incorrect!")
+                    'login.html',
+                    error="That username or password is incorrect!")
         elif 'update' in request.form:
             userid = request.form.get("user")
             displayname = request.form.get("display")
@@ -222,7 +229,7 @@ def customize_accounts() -> ResponseReturnValue:
             messageC = request.form.get("message_color")
             roleC = request.form.get("role_color")
             userC = request.form.get("user_color")
-            passwd = request.form.get("password")
+            # passwd = request.form.get("password")
             profile = request.form.get("profile")
             user = dbm.Accounts.find_one({"username": userid})
             return_list = {
@@ -235,40 +242,48 @@ def customize_accounts() -> ResponseReturnValue:
                 "message_color": messageC,
                 "profile": profile
             }
-            
-            if dbm.Accounts.find_one({"displayName": displayname}) is not None and user["displayName"] is not displayname or displayname in banned_usernames:
-                return flask.render_template("settings.html",
+
+            if dbm.Accounts.find_one(
+                {"displayName": displayname}) is not None and user[
+                    "displayName"] is not displayname or displayname in banned_usernames:
+                return flask.render_template(
+                    "settings.html",
                     error='That Display name is already taken!',
                     **return_list)
-                
+
             # if passwd != user["password"]: #need to make a check if they are not changing or we can just remove password changing from this methid to somthing else
             #     return flask.render_template("settings.html",
             #          error='Your password must not match your current one.',
-                        # **return_list)
-            
+            # **return_list)
+
             check = r'^[A-Za-z]{3,12}$'
             # user_allowed = re.match(check, user)# and not re.search(r'dev|mod', SUsername, re.IGNORECASE)
-            desplayname_allowed = re.match(check, displayname)# and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
+            desplayname_allowed = re.match(
+                check, displayname
+            )  # and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
             if desplayname_allowed == 'false':
-                return flask.render_template("settings.html",
+                return flask.render_template(
+                    "settings.html",
                     error='That Display name is not allowed!',
                     **return_list)
-                
-            dbm.Accounts.update_one({"username": userid}, {
-                "$set": {
-                    "messageColor": messageC,
-                    "roleColor": roleC,
-                    "userColor": userC,
-                    "displayName": displayname,
-                    "role": role,
-                    "profile": profile,
-                    # "username": userid,
-                    # "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest()
-                }
-            })
+
+            dbm.Accounts.update_one(
+                {"username": userid},
+                {
+                    "$set": {
+                        "messageColor": messageC,
+                        "roleColor": roleC,
+                        "userColor": userC,
+                        "displayName": displayname,
+                        "role": role,
+                        "profile": profile,
+                        # "username": userid,
+                        # "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest()
+                    }
+                })
             return flask.render_template('settings.html',
-                                    error="updated account",
-                                    **return_list)
+                                         error="updated account",
+                                         **return_list)
     else:
         return flask.render_template('login.html')
 
@@ -304,7 +319,7 @@ def handle_disconnect():
         emit("online", username_list, broadcast=True)
     except TypeError:
         pass
-        
+
 
 @socketio.on('login')
 def login_handle(username, password):

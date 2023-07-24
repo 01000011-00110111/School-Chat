@@ -1,12 +1,16 @@
 let prevValues = {};
 
 const responses = [
-  { message: "This is a test response", rarity: 20 },
-  { message: "Try changing your user and role colors for a more fun experience", rarity: 15 },
-  { message: "Response 3", rarity: 25 },
-  { message: "Response 4", rarity: 10 },
-  { message: "rsponse 5", rarity: 30 },
-  { message: "Try $sudo E in chat", rarity: 1 },
+    { message: "This is a test response.", rarity: 95 },
+    { message: "The Devs that made this chat are cserver, and cseven.", rarity: 80 },
+    { message: "The chat is always changing and improving so get ready for the next new change.", rarity: 80 },
+    { message: "This is a chat app, what else did you think this is?", rarity: 80 },
+    { message: "Try changing your user and role colors for a more fun experience.", rarity: 70 },
+    { message: "Try $sudo help in chat to find out all the command you can use.", rarity: 60 },
+    { message: "Never gonna give you up, never gonna let you down.", rarity: 45 },
+    { message: "This is how the chat was made https://stackoverflow.com.", rarity: 5 },
+    { message: "Challenge if you can the rarest message on all the messages and show proof to a dev then you rainbow role colors!", rarity: 2 },
+    { message: "Try $sudo E in chat.", rarity: 1 },
 ];
 
 function pickRandom(rarities) {
