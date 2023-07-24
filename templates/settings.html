@@ -1,5 +1,6 @@
 {% extends 'index.html' %}
 {% block content %}
+<div id="example"></div>
 <form method="post">
     <script src="static/settings.js"></script>
     <h3 id="user_colorTXT">message settings</h3>
@@ -22,7 +23,6 @@
                     <a id="event" onclick="whichEvent();">Event</a>
                 </div>
             </div>
-<hr id="border">
     <input type="text" id="Ausername" placeholder="login username" maxlength="15" name="user" value='{{user}}' hidden><br>
     <p id="user_colorTXT">Password:</p><br>
     <input type="password" id="Apassword" placeholder="Password" name="password" value='{{passwd}}' hidden><br>
@@ -32,6 +32,8 @@
     <input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br> -->
     <button type="submit" id="change" name="update">update</button>
 </form>
+<hr id="border">
+<div id="example"></div>
 {% if error %}
     <h2 style="color:red; pointer-events: none;">{{error}}</h2>
 {% endif %}

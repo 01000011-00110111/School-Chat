@@ -379,72 +379,6 @@
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
 .show {display:block;}
 
-/* nav menu right */
-
-.sidenavR {
-    height: 68%;
-    right: 12%;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    background-color: #241f31;
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-    scrollbar-width: none;
-}
-
-.sidenavRC {
-    height: 80%;
-    right: 12%;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    background-color: #241f31;
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-    scrollbar-width: none;
-}
-
-.sidenavR a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #d0c8c8;
-    display: block;
-    transition: 0.3s;
-}
-
-.sidenavR a:hover {
-    color: #f1f1f1;
-}
-
-.sidenavR .closebtnR {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-    padding-left: 0%;
-}
-
-@media screen and (max-height: 550px) {
-    .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
-}
-
-/* Dev menu text */
-
-#Devnavtext {
-    color: #bbb4b4;
-}
-
-
-
-
 
 /* Right menu options*/
 
@@ -504,17 +438,6 @@
 #mute {
     background-color:  #77767b;
     color:  #000000;
-}
-
-#EventMSGT {
-    background-color:  #000000;
-    color:  #ffffff;
-    font-size: 20px;
-    border-radius: 10px;
-}
-
-#dev_chat {
-    background-color: black;
 }
 
 /* The message text color dropdown button */
@@ -839,4 +762,20 @@
   padding: 12px 16px;
   text-decoration: none;
   display: block;
+}
+
+
+.leftS{
+  display: grid;
+  position: absolute;
+  height: 100vh;
+  justify-items: center;
+  align-items: center;
+}
+
+
+#example{
+    position: absolute;
+    margin-left: 52%;
+    line-height: 40px;
 }
