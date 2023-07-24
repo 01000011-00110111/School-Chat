@@ -441,11 +441,9 @@ def handle_message(user_name, message, roomid):
 
 
 @socketio.on('pingtest')
-def handle_ping_tests(start):
+def handle_ping_tests(start, roomid):
     """Respond with the start time, so ping times can be calculated"""
-    emit('ping_test', {
-        "start": start,
-    }, namespace='/')
+    cmds.end_ping(start, roomid)
 
 
 @socketio.on("room_connect")

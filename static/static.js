@@ -1,3 +1,6 @@
+// define socketio connection
+const socket = io();
+
 socket.on("online", (db) => {
     let newline = "<br>"
     let online = "";

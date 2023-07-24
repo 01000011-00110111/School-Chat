@@ -1,8 +1,10 @@
 {% extends 'index.html' %}
+{% block header %}
+<script src="static/settings.js"></script>
+{% endblock %}
 {% block content %}
 <div id="example"></div>
 <form method="post">
-    <script src="static/settings.js"></script>
     <h3 id="user_colorTXT">message settings</h3>
             <p id="user_colorTXT">Username: </p>
             <input type="text" id="username" value='{{displayName}}' placeholder="Username" name="display" maxlength="12"><br>

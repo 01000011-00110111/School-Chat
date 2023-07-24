@@ -34,8 +34,10 @@ def run_filter(user, room, message, roomid):
     else:
         profile_picture = user['profile']
 
-    find_pings(message, user['displayName'], profile_picture)
-    find_cmds(message, user, locked, roomid)
+    if "[" in message:
+        find_pings(message, user['displayName'], profile_picture)
+    if "$sudo" in message:
+        find_cmds(message, user, locked, roomid)
 
     final_str = compile_message(message, profile_picture, user, role)
 
@@ -104,14 +106,13 @@ def filter_message(message):
     return profanity.censor(message)
 
 
-def find_pings(message, dispname, profile_picture):
-    """Gotta catch 'em all! (checks for pings in the users message"""
-    pings = re.findall(r'(?<=\[).+?(?=\])',
-                       message)  #i know how we can stop using [] for pings
+def find_pings(message, dispName, profile_picture):
+    """Gotta catch 'em all! (checks for pings in the users message)"""
+    pings = re.findall(r'(?<=\[).+?(?=\])', message)
     for ping in pings:
         emit("ping", {
             "who": ping,
-            "from": dispname,
+            "from": dispName,
             "pfp": profile_picture,
             "message": message
         },
@@ -121,9 +122,6 @@ def find_pings(message, dispname, profile_picture):
 
 def find_cmds(message, user, locked, roomid):
     """$sudo commands, will push every cmd found to cmds.py along with the user, so we can check if they can do said command."""
-    if "$sudo" not in message:
-        return
-
     command_split = message.split("$sudo")
     command_split.pop(0)
     command_string = command_split[0]

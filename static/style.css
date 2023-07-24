@@ -9,8 +9,8 @@
   color: #dd7016;
 }
 
-.debugpage {
-
+#example {
+    word-wrap: break-word;
 }
 
 #border {

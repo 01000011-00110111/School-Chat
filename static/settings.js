@@ -30,7 +30,7 @@ function pickRandom(rarities) {
 }
 
 function createExamples() {
-  const numExamples = 4; // Number of examples to create
+  const numExamples = 6; // Number of examples to create
   const exampleContainer = document.getElementById("example");
   if (!exampleContainer) {
     return;
