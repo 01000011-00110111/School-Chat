@@ -7,6 +7,7 @@ Also not done whatsoever, many things have to be done beforehand
 
 Steps to make the chat run
 
+## No systemd service (easy route)
 - Put your mongodb authentication string into `keys.py`
 - create a venv (and install packages via poetry inside that venv)
 - Make `chat.txt`, `Chat-backup.txt`, `chat-rooms_log.txt`, and `command_log.txt` inside the folder named backend
@@ -66,5 +67,17 @@ server {
 - enable and run nginx with this command `sudo systemctl enable --now nginx.service`
 - Run this command while in the venv to start the chat server, after nginx starts: `gunicorn --bind 127.0.0.1:5000 --worker-class eventlet --threads 10 -w 1 main:app`
 
+
+## Systemd route (auto restart and other nice features)
+- do the above, but also copy the `example.chatserverd.service` file and edit anywhere it mentions:
+ - `<dir_path>` to where the files are stored
+ - `<user>` for what user this is running under
+ - rename the file to chatserverd.service
+- Next, place that file inside the `~/.config/systemd/user` directory (create this if it does not exist)
+- Run this command to allow your user to run systemd services when not logged in (to start on startup) `sudo loginctl enable-linger <user>` (this must be run under a user that has root privlages)
+- run (under the user you intend to run this) `systemctl --user daemon-reload`
+- then, run `systemctl --user enable --now chatserverd.service` after nginx is running
+- it should just start working
+
 This was created by
-  cserver, and C7
+  cserver and C7
