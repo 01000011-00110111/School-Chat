@@ -1,21 +1,22 @@
 {% extends 'index.html' %}
 {% block header %}
-<script src="static/settings.js"></script>
+<script src="static/settings.js" defer></script>
 {% endblock %}
 {% block content %}
-<div id="example"></div>
+<div id="example">
+</div>
 <form method="post">
     <h3 id="user_colorTXT">message settings</h3>
             <p id="user_colorTXT">Username: </p>
-            <input type="text" id="username" value='{{displayName}}' placeholder="Username" name="display" maxlength="12"><br>
+            <input type="text" id="username" value='{{displayName}}' placeholder="Username" name="display" maxlength="12" class='std_box'><br>
             <input type="color" value='{{user_color}}' id="user_color" name="user_color"><br>
             <p id="user_colorTXT">Role: </p>
-            <input type="text" id="role" name="role" placeholder="role" value='{{role}}' maxlength="18"><br>
+            <input type="text" id="role" name="role" placeholder="role" value='{{role}}' maxlength="18" class='std_box'><br>
             <input type="color" value='{{role_color}}' id="role_color" name="role_color"><br>
             <p id="user_colorTXT">Message: </p>
             <input type="color" value='{{message_color}}' id="message_color" name="message_color"><br>
             <p id="user_colorTXT">Profile pictures</p>
-            <input type="text" id="profile" name="profile" placeholder="Profile Picture" value='{{profile}}' class='std_box' style="width: 100%;"><br>
+            <input type="text" id="profile" name="profile" placeholder="Profile Picture" value='{{profile}}' class='std_box'><br>
             <div class="colorDropdown">
                 <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
                 <div id="myDropdown" class="dropdown-content">
@@ -35,7 +36,6 @@
     <button type="submit" id="change" name="update">update</button>
 </form>
 <hr id="border">
-<div id="example"></div>
 {% if error %}
     <h2 style="color:red; pointer-events: none;">{{error}}</h2>
 {% endif %}

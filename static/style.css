@@ -13,7 +13,7 @@
     position: absolute;
     margin-left: 52%;
     line-height: 40px;
-    word-wrap: break-word;
+    max-width: 690px;
 }
 
 #border {

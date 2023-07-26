@@ -1,4 +1,5 @@
 let prevValues = {};
+const numExamples = 6; // Number of examples to create
 
 const responses = [
     { message: "This is a test response.", rarity: 95 },
@@ -14,73 +15,80 @@ const responses = [
 ];
 
 function pickRandom(rarities) {
-  // Calculate the sum of all rarities
-  var totalRarity = rarities.reduce((sum, response) => sum + response.rarity, 0);
-
-  if (totalRarity <= 0) {
-    return;
-  }
-
-  // Create an array of totalRarity elements, based on the rarity field
-  var probability = rarities.flatMap(response => Array(response.rarity).fill(response.message));
-
-  // Pick one
-  var pIndex = Math.floor(Math.random() * totalRarity);
-  return probability[pIndex];
+    // Calculate the sum of all rarities
+    var totalRarity = rarities.reduce((sum, response) => sum + response.rarity, 0);
+    
+    if (totalRarity <= 0) {
+        return;
+    }
+    
+    // Create an array of totalRarity elements, based on the rarity field
+    var probability = rarities.flatMap(response => Array(response.rarity).fill(response.message));
+    
+    // Pick one
+    var pIndex = Math.floor(Math.random() * totalRarity);
+    return probability[pIndex];
 }
 
 function createExamples() {
-  const numExamples = 6; // Number of examples to create
-  const exampleContainer = document.getElementById("example");
-  if (!exampleContainer) {
-    return;
-  }
+    const exampleContainer = document.getElementById("example");
 
-  // Clear existing examples (if any)
-  exampleContainer.innerHTML = "";
+    if (!exampleContainer) {
+        return;
+    }
 
-  for (let i = 1; i <= numExamples; i++) {
-    const exampleId = `example${i}`;
-    const exampleElement = document.createElement("div");
-    exampleElement.setAttribute("id", exampleId);
-    exampleContainer.appendChild(exampleElement);
-  }
+    // Clear existing examples (if any)
+    exampleContainer.innerHTML = ""; 
+    for (let i = 1; i <= numExamples; i++) {
+        const exampleId = `example${i}`;
+        const exampleElement = document.createElement("div");
+        exampleElement.setAttribute("id", exampleId);
+        exampleContainer.appendChild(exampleElement);
+    }
 }
 
 function updateExamples() {
-  const inputIds = [
-    "user",
-    "username",
-    "role",
-    "message_color",
-    "role_color",
-    "user_color",
-    "Apassword",
-    "profile"
-  ];
-
-  const exampleContainer = document.getElementById("example");
-  if (!exampleContainer) {
-    return;
-  }
-
-  inputIds.forEach(id => {
-    const element = document.getElementById(id);
-    if (element) {
-      const currentValue = element.value;
-      if (prevValues[id] !== currentValue) {
-        prevValues[id] = currentValue;
-        for (let i = 1; i <= 4; i++) {
-          const exampleId = `example${i}`;
-          const exampleElement = document.getElementById(exampleId);
-          if (exampleElement) {
-            const randomResponse = pickRandom(responses);
-            exampleElement.innerHTML = `[Mon 8:00 PM] <input type="image" class='pfp' src='${document.getElementById("profile").value}'> <font color="${document.getElementById("user_color").value}">${document.getElementById("username").value}</font> (<font color="${document.getElementById("role_color").value}">${document.getElementById("role").value}</font>) - <font color="${document.getElementById("message_color").value}">${randomResponse}</font>`;
-          }
-        }
-      }
+    const inputIds = [
+        "user",
+        "username",
+        "role",
+        "message_color",
+        "role_color",
+        "user_color",
+        "Apassword",
+        "profile"
+    ];
+    
+    const exampleContainer = document.getElementById("example");
+    if (!exampleContainer) {
+        return;
     }
-  });
+
+    let profile = document.getElementById("profile").value;
+    if (profile === '') {profile = 'static/favicon.ico'}
+    const userColor = document.getElementById("user_color").value;
+    const username = document.getElementById("username").value;
+    const roleColor = document.getElementById("role_color").value;
+    const role = document.getElementById("role").value;
+    const messageColor = document.getElementById("message_color").value;
+
+    inputIds.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            const currentValue = element.value;
+            if (prevValues[id] !== currentValue) {
+                prevValues[id] = currentValue;
+                for (let i = 1; i <= numExamples; i++) {
+                    const exampleId = `example${i}`;
+                    const exampleElement = document.getElementById(exampleId);
+                    if (exampleElement) {
+                        const randomResponse = pickRandom(responses);
+                        exampleElement.innerHTML = `[Mon 8:00 PM] <input type="image" class='pfp' src='${profile}'> <font color="${userColor}">${username}</font> (<font color="${roleColor}">${role}</font>) - <font color="${messageColor}">${randomResponse}</font>`;
+                    }
+                }
+            }
+        }
+    });
 }
 
 // Create examples when the page loads
