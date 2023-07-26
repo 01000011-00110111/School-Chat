@@ -243,9 +243,7 @@ def customize_accounts() -> ResponseReturnValue:
                 "profile": profile
             }
 
-            if dbm.Accounts.find_one(
-                {"displayName": displayname}) is not None and user[
-                    "displayName"] is not displayname or displayname in banned_usernames:
+            if (dbm.Accounts.find_one({"displayName": displayname}) is not None and user["displayName"] != displayname) or displayname in banned_usernames:
                 return flask.render_template(
                     "settings.html",
                     error='That Display name is already taken!',
