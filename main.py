@@ -304,13 +304,12 @@ def handle_connect(username: str, location):
     socketid = request.sid
     username_list = []
 
-    # Assuming you are using a MongoDB database called 'db' and a collection called 'Online'
     dbm.Online.insert_one({"username": username, "socketid": socketid, "location": location})
 
     for key in dbm.Online.find():
         user_info = key["username"]
         if key.get("location") == "settings":
-            user_info = f"⚙️{user_info}"  # Add the settings icon in front of the user
+            user_info = f"⚙️{user_info}"
         username_list.append(user_info)
 
     emit("online", username_list, broadcast=True)
