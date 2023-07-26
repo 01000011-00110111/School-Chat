@@ -17,15 +17,18 @@
             <input type="color" value='{{message_color}}' id="message_color" name="message_color"><br>
             <p id="user_colorTXT">Profile pictures</p>
             <input type="text" id="profile" name="profile" placeholder="Profile Picture" value='{{profile}}' class='std_box'><br>
-            <div class="colorDropdown">
-                <button onclick="dropdownTheme()" class="dropbtn">Themes</button>
-                <div id="myDropdown" class="dropdown-content">
-                    <a id="dark" onclick="setDarkStyle();">Dark</a>
-                    <a id="light" onclick="setLightStyle();">Light</a>
-                    <a id="specal1" onclick="setSpecalStyle();">Specal</a>
-                    <a id="event" onclick="whichEvent();">Event</a>
-                </div>
-            </div>
+    <div class="themeDropdown">
+        <button type="button" class="themeBtn" onclick="toggleDropdown()">Themes</button>
+        <div class="themeContent">
+            <a class="themeOption" onclick="setTheme('dark');">Dark</a>
+            <a class="themeOption" onclick="setTheme('light');">Light</a>
+            <!-- <a class="themeOption" onclick="setTheme('special');">Special</a> -->
+            <!-- <a class="themeOption" onclick="setTheme('event');">Event</a> -->
+        </div>
+    </div>
+    <!-- Add an input element to store the selected theme value -->
+    <input type="hidden" name="theme" value="">
+    <!-- Add an input element to store the selected theme value -->
     <input type="text" id="Ausername" placeholder="login username" maxlength="15" name="user" value='{{user}}' hidden><br>
     <p id="user_colorTXT">Password:</p><br>
     <input type="password" id="Apassword" placeholder="Password" name="password" value='{{passwd}}' hidden><br>

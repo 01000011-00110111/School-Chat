@@ -17,6 +17,11 @@ socket.on("pingTime", (time, roomid) => {
 });
 
 
+socket.on("force_username", (statement) => {
+    socket.emit("username", window.localStorage.getItem("username"), 'chat');
+});
+
+
 function pingHandle(Obj=null) {
     user = document.getElementById("user")["value"];
     if (Obj === null) {
@@ -50,14 +55,11 @@ socket.on("reset_chat", (who, roomid) => {
     }
 });
 
-socket.on("force_username", (statement) => {
-    socket.emit("username", window.localStorage.getItem("username"));
-});
-
 function getSocketid() {
     // not the best way, but it works. hey thats ok thats what our chat is made of plus hopes and dreams 
     return socket.socket.sessionid;
 }
+
 
 function runStartup() {
     setDarkStyle();
@@ -66,7 +68,7 @@ function runStartup() {
     socket.emit('get_perms');
     username = window.localStorage.getItem("username");
     let user = document.getElementById("user")["value"];
-    socket.emit("username", username);
+    socket.emit("username", username, 'chat');
     socket.emit("get_rooms", user);
     changeRoom('ilQvQwgOhm9kNAOrRqbr')
 }

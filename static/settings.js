@@ -96,3 +96,22 @@ createExamples();
 
 // Update examples every 500 milliseconds (0.5 seconds)
 setInterval(updateExamples, 500);
+socket.emit("username", window.localStorage.getItem("username"), 'settings');
+
+
+socket.on("force_username", (statement) => {
+    socket.emit("username", window.localStorage.getItem("username"), 'settings');
+});
+
+
+function setTheme(theme) {
+    var themeBtn = document.querySelector(".themeBtn");
+    themeBtn.innerText = "You picked: " + capitalizeFirstLetter(theme);
+    document.getElementsByName("theme")[0].value = theme;
+    var themeDropdown = document.querySelector(".themeContent");
+    themeDropdown.style.display = "none";
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

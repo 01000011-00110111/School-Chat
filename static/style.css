@@ -314,73 +314,47 @@
 }
 
 
-
-/* Dropdown Button */
-#colorDropdown {
-    border-radius: 20px;
-}
-    
-.dropbtn {
-    background-color: #3498DB;
-    color: white;
-    padding: 16px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-}
-
-.onelinelsbtn {
-    background-color: #241f31;
-    color: #9a9996;
-    padding: 16px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-}
-
-.droptheme {
-    display: none;
-    position: absolute;
-    background-color: #323538;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-/* Dropdown button on hover & focus */
-.dropbtn:hover, .dropbtn:focus {
-    background-color: #26a269;
-}
-
-/* The container <div> - needed to position the dropdown content */
-.dropdown {
+/* Styling for the theme dropdown container */
+.themeDropdown {
     position: relative;
     display: inline-block;
 }
 
-/* Dropdown Content (Hidden by Default) */
-.dropdown-content {
+/* Styling for the "Themes" button */
+.themeBtn {
+    background-color: #333533;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Styling for the dropdown content (hidden by default) */
+.themeContent {
     display: none;
     position: absolute;
-    background-color: #323538;
+    background-color: #1a1919;
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
 
-/* Links inside the dropdown */
-.dropdown-content a {
+/* Styling for the dropdown links */
+.themeOption {
     color: black;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
 }
 
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd;}
+/* Styling for the dropdown links on hover */
+.themeOption:hover {
+    background-color: #e66100;
+}
 
-/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-.show {display:block;}
+
+
 
 
 /* Right menu options*/
@@ -699,31 +673,6 @@
   background: #1b5c9d;
 }
 
-/* account dropdown */
-
-/* .accountdr {
-  position: relative;
-  display: inline-block;
-}
-
-.accountdrop {
-  position: absolute;
-  background-color: #3d3846;
-  min-width: 60px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  top: 55px;
-  left: 190px;
-  border-radius: 10px;
-}
-
-.accountdrop a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-} */
-
 .PictureBTN {
     border-radius: 100px;
     width: 50px;
@@ -731,12 +680,6 @@
     right: 30px;
     position: fixed;
 }
-
-/* #AccControls {
-  display: none;
-  background: #3d3846;
-  border-radius: 10px;
-} */
 
 .AccControls {
   display: none;

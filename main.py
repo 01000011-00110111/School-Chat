@@ -216,7 +216,8 @@ def customize_accounts() -> ResponseReturnValue:
                     user_color=user["userColor"],
                     role_color=user["roleColor"],
                     message_color=user["messageColor"],
-                    profile=user["profile"]
+                    profile=user["profile"],
+                    theme=user["theme"]
                 )  # this could be a security issue later on (if they figure out this) we can move editing passwords to the same system as reseting passwords
             else:
                 return flask.render_template(
@@ -231,6 +232,7 @@ def customize_accounts() -> ResponseReturnValue:
             userC = request.form.get("user_color")
             # passwd = request.form.get("password")
             profile = request.form.get("profile")
+            theme = request.form.get("theme")
             user = dbm.Accounts.find_one({"username": userid})
             return_list = {
                 "user": userid,
@@ -240,9 +242,10 @@ def customize_accounts() -> ResponseReturnValue:
                 "user_color": userC,
                 "role_color": roleC,
                 "message_color": messageC,
-                "profile": profile
+                "profile": profile,
+                "theme": theme
             }
-
+            if theme is None: return flask.render_template("settings.html", error='That Display name is already taken!', **return_list)
             if (dbm.Accounts.find_one({"displayName": displayname}) is not None and user["displayName"] != displayname) or displayname in banned_usernames:
                 return flask.render_template(
                     "settings.html",
@@ -275,6 +278,7 @@ def customize_accounts() -> ResponseReturnValue:
                         "displayName": displayname,
                         "role": role,
                         "profile": profile,
+                        "theme": theme
                         # "username": userid,
                         # "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest()
                     }
@@ -295,13 +299,20 @@ def get_backup_chat():
 
 # socketio stuff
 @socketio.on('username')
-def handle_connect(username: str):
+def handle_connect(username: str, location):
     """Will be used later for online users."""
     socketid = request.sid
     username_list = []
-    dbm.Online.insert_one({"username": username, "socketid": socketid})
+
+    # Assuming you are using a MongoDB database called 'db' and a collection called 'Online'
+    dbm.Online.insert_one({"username": username, "socketid": socketid, "location": location})
+
     for key in dbm.Online.find():
-        username_list.append(key["username"])
+        user_info = key["username"]
+        if key.get("location") == "settings":
+            user_info = f"⚙️{user_info}"  # Add the settings icon in front of the user
+        username_list.append(user_info)
+
     emit("online", username_list, broadcast=True)
 
 
