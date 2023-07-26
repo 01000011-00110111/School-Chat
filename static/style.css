@@ -10,6 +10,9 @@
 }
 
 #example {
+    position: absolute;
+    margin-left: 52%;
+    line-height: 40px;
     word-wrap: break-word;
 }
 
@@ -387,7 +390,6 @@
     color:  #ffffff;
     font-size: 20px;
     border-radius: 10px;
-    max-width: 150px;
 }
 
 .dashed_btn {
@@ -771,11 +773,4 @@
   height: 100vh;
   justify-items: center;
   align-items: center;
-}
-
-
-#example{
-    position: absolute;
-    margin-left: 52%;
-    line-height: 40px;
 }
