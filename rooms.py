@@ -1,4 +1,7 @@
-"""Handles creations, deletions, and edits of chat rooms"""
+"""Handles creations, deletions, and edits of chat rooms.
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 import random
 from string import ascii_uppercase
 from datetime import datetime
@@ -78,6 +81,7 @@ def create_chat_room(username, name, userinfo):
     chat_room_log(logmessage)
     return response
 
+
 def insert_room(code, user, generated_at, name, username):
     dbm.rooms.insert_one({
         "roomid":
@@ -109,14 +113,16 @@ def delete_chat_room(room_name, user):
     username = user["displayName"]
     date_str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     if madeBy == user["username"]:
-        if rooms["roomid"] is ['jN7Ht3giH9EDBvpvnqRB',"ilQvQwgOhm9kNAOrRqbr"]: return ("reason", 3, "delete")
+        if rooms["roomid"] is ['jN7Ht3giH9EDBvpvnqRB', "ilQvQwgOhm9kNAOrRqbr"]:
+            return ("reason", 3, "delete")
         response = delete_room(username, room_name, date_str)
         logmessage = f"{username} deleted {room_name} at {date_str}"
     elif user["SPermission"] == "Debugpass":
-        if rooms["roomid"] is ['jN7Ht3giH9EDBvpvnqRB',"ilQvQwgOhm9kNAOrRqbr"]: return ("reason", 2, "delete")
+        if rooms["roomid"] is ['jN7Ht3giH9EDBvpvnqRB', "ilQvQwgOhm9kNAOrRqbr"]:
+            return ("reason", 2, "delete")
         response = delete_room(username, room_name, date_str)
         logmessage = f"{username} deleted {room_name} owned by {madeBy} at {date_str}"
-    else: 
+    else:
         logmessage = f"{username} tried to delete {room_name} at {date_str}"
         response = ("reason", 1, "delete")
 
@@ -138,18 +144,34 @@ def chat_room_edit(request, room_name, user, users):
     room = dbm.rooms.find_one({"roomName": room_name})
     username = user["displayName"]
     if request == "whitelist":
-        if room["generatedBy"] == user["username"]: return whitelist(room_name, user, users, room, username, False)
-        elif user["SPermission"] == "Debugpass": return whitelist(room_name, user, users, room, username, True)
-        else: 
-            if users not in ['clear','','everyone']: chat_room_log(f"{username} tried to whitelist {users} in chat room {room_name}")
-            else: chat_room_log(f"{username} tried to clear the whitelist in chat room {room_name}")
+        if room["generatedBy"] == user["username"]:
+            return whitelist(room_name, user, users, room, username, False)
+        elif user["SPermission"] == "Debugpass":
+            return whitelist(room_name, user, users, room, username, True)
+        else:
+            if users not in ['clear', '', 'everyone']:
+                chat_room_log(
+                    f"{username} tried to whitelist {users} in chat room {room_name}"
+                )
+            else:
+                chat_room_log(
+                    f"{username} tried to clear the whitelist in chat room {room_name}"
+                )
             return ('response', 1, 'edit')
     elif request == "blacklist":
-        if room["generatedBy"] == user["username"]: return blacklist(room_name, user, users, room, username, False)
-        elif user["SPermission"] == "Debugpass": return blacklist(room_name, user, users, room, username, True)
-        else: 
-            if users not in ['clear','']: chat_room_log(f"{username} tried to blacklist {users} in chat room {room_name}")
-            else: chat_room_log(f"{username} tried to clear the blacklist in chat room {room_name}")
+        if room["generatedBy"] == user["username"]:
+            return blacklist(room_name, user, users, room, username, False)
+        elif user["SPermission"] == "Debugpass":
+            return blacklist(room_name, user, users, room, username, True)
+        else:
+            if users not in ['clear', '']:
+                chat_room_log(
+                    f"{username} tried to blacklist {users} in chat room {room_name}"
+                )
+            else:
+                chat_room_log(
+                    f"{username} tried to clear the blacklist in chat room {room_name}"
+                )
             return ('response', 1, 'edit')
     elif request == "add more stuff later":
         print('what to add')
@@ -157,53 +179,78 @@ def chat_room_edit(request, room_name, user, users):
 
 def whitelist(room_name, user, users, room, username, dev):
     """Whitelist user a dev or the owner picks"""
-    if users not in ['clear','','everyone']:
+    if users not in ['clear', '', 'everyone']:
         message = 'users: ' + users
         update_whitelist(room_name, message)
         main.get_rooms(user["username"])
-        if dev is True: chat_room_log(f"The dev {username} whitelisted {users} in chat room {room_name}")
-        else: chat_room_log(f"The user{username} whitelisted {users} in chat room {room_name}")
+        if dev is True:
+            chat_room_log(
+                f"The dev {username} whitelisted {users} in chat room {room_name}"
+            )
+        else:
+            chat_room_log(
+                f"The user{username} whitelisted {users} in chat room {room_name}"
+            )
         return ('response', 0, 'edit')
-    elif users in ['clear','','everyone']: 
+    elif users in ['clear', '', 'everyone']:
         message = 'everyone'
         update_whitelist(room_name, message)
         main.get_rooms(user["username"])
-        if dev is True: chat_room_log(f"The dev {username} set the whitelist to everyone in chat room {room_name}")
-        else: chat_room_log(f"The user {username} set the whitelist to everyone in chat room {room_name}")
+        if dev is True:
+            chat_room_log(
+                f"The dev {username} set the whitelist to everyone in chat room {room_name}"
+            )
+        else:
+            chat_room_log(
+                f"The user {username} set the whitelist to everyone in chat room {room_name}"
+            )
         return ('response', 0, 'edit')
 
 
 def blacklist(room_name, user, users, room, username, dev):
     """Blacklist user a dev or the owner picks"""
-    if users not in ['clear','']:
+    if users not in ['clear', '']:
         message = 'users: ' + users
         update_blacklist(room_name, message)
         main.get_rooms(user["username"])
-        if dev is True: chat_room_log(f"The dev {username} blacklisted {users} in chat room {room_name}")
-        else: chat_room_log(f"The user{username} blacklisted {users} in chat room {room_name}")
+        if dev is True:
+            chat_room_log(
+                f"The dev {username} blacklisted {users} in chat room {room_name}"
+            )
+        else:
+            chat_room_log(
+                f"The user{username} blacklisted {users} in chat room {room_name}"
+            )
         return ('response', 2, 'edit')
-    elif users in ['clear','']: 
+    elif users in ['clear', '']:
         message = 'empty'
         update_blacklist(room_name, message)
         main.get_rooms(user["username"])
-        if dev is True: chat_room_log(f"The dev {username} set the blacklist to everyone in chat room {room_name}")
-        else: chat_room_log(f"The user {username} set the blacklist to everyone in chat room {room_name}")
+        if dev is True:
+            chat_room_log(
+                f"The dev {username} set the blacklist to everyone in chat room {room_name}"
+            )
+        else:
+            chat_room_log(
+                f"The user {username} set the blacklist to everyone in chat room {room_name}"
+            )
         return ('response', 2, 'edit')
 
 
-def update_whitelist(room_name, message):#combine whitelist and blacklist
+def update_whitelist(room_name, message):  #combine whitelist and blacklist
     """Adds the whitelisted users to the database"""
     dbm.rooms.update_one({"roomName": room_name},
-                     {"$set": {
-                         "whitelisted": message
-                     }})
+                         {"$set": {
+                             "whitelisted": message
+                         }})
+
 
 def update_blacklist(room_name, message):
     """Adds the blacklisted users to the database"""
     dbm.rooms.update_one({"roomName": room_name},
-                 {"$set": {
-                     "blacklisted": message
-                 }})
+                         {"$set": {
+                             "blacklisted": message
+                         }})
 
 
 def check_roomids(roomid):

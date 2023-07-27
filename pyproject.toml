@@ -2,7 +2,7 @@
 name = "Class Chat"
 version = "0.8.3.5"
 description = "This is a private chat made for chatting with friends."
-authors = ["C7, cserver"]
+authors = ["cseven, cserver"]
 
 [tool.poetry.dependencies]
 python = ">=3.8.0,<3.9"

@@ -1,3 +1,7 @@
+// Copyright (C) 2023  cserver45, cseven
+// License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
+// https://github.com/01000011-00110111/School-Chat
+
 function login() {
     let loginuserElement = document.getElementById("user");
     let passwordElement = document.getElementById("pass");
@@ -16,7 +20,6 @@ function login() {
 socket.on("login_att", (state) => {
     if (state === 'true') {
         socket.emit('get_prefs', document.getElementById("user")["value"]);
-        // enteraccount();
     }
 });
 
@@ -36,7 +39,3 @@ socket.on("return_prefs", (Obj) => {
         pfp.src = picture;
     }
 });
-
-// function enteraccount() { do we want to keep this?
-//     socket.emit('get_prefs', document.getElementById("user")["value"]);
-// }

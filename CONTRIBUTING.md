@@ -44,8 +44,8 @@
 # How to report a bug
 ### Security Issues
 
-### If you find a security vulnerability, please do NOT open an issue. PLEASE email `cservergaming@gmail.com` instead with the subject line including `SECURITY ISSUE:`.
-- Later I might setup the github security disclosure system, but for now just email the adress above.
+### If you find a security vulnerability, please do NOT open an issue. PLEASE email `cservergaming@gmail.com` or `alfredburford@icloud.com` instead with the subject line including `SECURITY ISSUE:`.
+- Later I might setup the github security disclosure system, but for now just email the address above.
 
 #### Make sure its a security issue beforehand though:
 
@@ -53,7 +53,7 @@
 2. Is this exposing private infomation (that could be used malicously)
 3. Can something be disabled without authorization (this should never apply hopefully)
 
-If you answered yes to any of the above, please do what is mentioned above and email `cservergaming@gmail.com`
+If you answered yes to any of the above, please do what is mentioned above and email `cservergaming@gmail.com` or `alfredburford@icloud.com`
 
 ### Filing a bug report (not a security issue)
 
@@ -77,5 +77,5 @@ This information will give contributors context before they make suggestions tha
 # Code review process
 ### Who reviews pull requests?
 
-- Currently, me (@cserver45) or c7 (@01000011-00110111) needs to review the pull request before it gets pushed into the repo.
+- Currently, me (@cserver45) or cseven (@01000011-00110111) needs to review the pull request before it gets pushed into the repo.
 

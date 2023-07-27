@@ -1,4 +1,7 @@
-"""All commands ran by devs, mods, users, etc."""
+"""All commands ran by devs, mods, users, etc.
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 import chat
 from main import dbm
 from flask_socketio import emit

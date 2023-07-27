@@ -1,4 +1,7 @@
-"""Handle chat messages."""
+"""Handle chat messages.
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 from time import time
 from datetime import timedelta, datetime
 from typing import List

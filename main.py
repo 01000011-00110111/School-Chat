@@ -1,4 +1,20 @@
-"""Main webserver file"""
+"""Main webserver file for school-chat, a chat server
+    Copyright (C) 2023  cserver45, cseven
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+"""
 import os
 import logging
 import hashlib
@@ -39,6 +55,9 @@ banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
                     " ", "  ", "   ", "cseven", "cserver", 'system',
                     '[system]', '[System]', 'System')
 
+# license stuff
+print("Copyright (C) 2023  cserver45, cseven")
+print("License info can be viewed in main.py or the LICENSE file.")
 
 # easter egg time lol
 @app.route("/f")
