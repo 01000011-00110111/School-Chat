@@ -46,34 +46,12 @@ function whichEvent(event = "test") {
         setDarkStyle();
     } else if (event === "light") {
         setLightStyle();
-    } else if (event === "thanks") {
-        setThanksTheme();
-    } else if (event === "hollow") {
-        setHollowTheme();
-    } else if (event === "newyears") {
-        setNewyearsTheme();
     } else if (event === "") {
         whichEvent();
-    } else if (event === "special1") {
-        setSpecalStyle();
-    } else if (event === "valstyle") {
-         valstyle();
     } else if (event === "dev") {
         setDevStyle();
-    } else if (event === "A1st") {
-        A1st();
-    } else if (event === "WKfix") {
-        webkitAnimationfix();
-    } else if (event === "testing2") {
-        setTestingStyle2();
-    } else if (event === "testing3") {
-        setTestingStyle3();
-    } else if (event === "testing4") {
-        setTestingStyle4();
     } else if (event === "4th") {
         set4thStyle();
-    } else if (event === "test") {
-        setTestStyle();
     } else if (event === "ogdev") {
         setOgDevStyle();
     }

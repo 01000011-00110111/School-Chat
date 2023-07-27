@@ -322,13 +322,17 @@ def handle_connect(username: str, location):
     """Will be used later for online users."""
     socketid = request.sid
     username_list = []
+    icons = {
+        'settings': '⚙️',
+        'chat': ''
+    }
 
     dbm.Online.insert_one({"username": username, "socketid": socketid, "location": location})
 
-    for key in dbm.Online.find():
+    for key in username:
         user_info = key["username"]
-        if key.get("location") == "settings":
-            user_info = f"⚙️{user_info}"
+        icon = icons.get(key.get("location"))
+        user_info = f"{icon}{user_info}"
         username_list.append(user_info)
 
     emit("online", username_list, broadcast=True)
