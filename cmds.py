@@ -3,18 +3,25 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import chat
-from main import dbm
+from main import dbm, scheduler
 from flask_socketio import emit
 import time
 from time import sleep
 import os
 import re
+from datetime import datetime, timedelta
 import rooms
 
 
 def log_commands(message):
     """Log when a command is issued."""
     with open('backend/command_log.txt', 'a', encoding="utf8") as file:
+        file.write(message + '\n')
+
+
+def log_mutes(message):
+    """Log when a unmuted user is issued."""
+    with open('backend/permission.txt', 'a', encoding="utf8") as file:
         file.write(message + '\n')
 
 
@@ -105,9 +112,11 @@ def ban_user(**kwargs):
                                 "permission": "banned"
                             }})
     if reason == '':
-        message = '[SYSTEM]: <font color="#ff7f00">' + username + " has been banned.</font>"
+        message = f'[SYSTEM]: <font color="#ff7f00">{username} has been banned.</font>'
+        log_mutes(f"{username} is banned by a mod or admin.")
     else:
-        message = '[SYSTEM]: <font color="#ff7f00">' + username + " has been banned. Reason: " + reason + "." + "</font>"
+        message = f'[SYSTEM]: <font color="#ff7f00"> {username} has been banned. Reason: {reason}.</font>'
+        log_mutes(f"{username} is banned because {reason} by a mod or admin.")
 
     chat.add_message(message, roomid, 'true')
     emit("message_chat", (message, roomid), broadcast=True)
@@ -129,31 +138,45 @@ def mute_user(**kwargs):
         if user_dbm['permission'] in ('banned', 'muted'):
             return
         else:
-            dbm.Accounts.update_one({"displayName": username},
-                                    {"$set": {
-                                        "permission": "muted"
-                                    }})
             time_match = re.match(r'^(\d+)([dh])$', time)
             if time_match:
                 time_number = time_match.group(1)
                 time_letter = time_match.group(2)
-
+                current_time = datetime.now()
                 if time_letter == 'd':
                     time_final = time_number + " days"
+                    expiration_time = current_time + timedelta(
+                        days=int(time_number))
                 elif time_letter == 'h':
                     time_final = time_number + " hours"
+                    expiration_time = current_time + timedelta(
+                        hours=int(time_number))
                 elif time_letter == 'f':
                     time_final == ''
+                    permission_str = "muted"
+                expiration_time_str = expiration_time.strftime(
+                    "%Y-%m-%d %H:%M:%S")
+                if time_letter != 'f':
+                    permission_str = f"muted {expiration_time_str}"
+
+            dbm.Accounts.update_one({"displayName": username},
+                                    {"$set": {
+                                        "permission": permission_str
+                                    }})
 
             if reason == '' and time_final == '':
-                message = '[SYSTEM]: <font color="#ff7f00">' + username + " is muted for an undefined period of time.</font>"
+                message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time.</font>'
+                log_mutes(f"{username} is muted by a mod or admin.")
             elif time_final == '':
-                message = '[SYSTEM]: <font color="#ff7f00">' + username + " is muted for an undefined period of time. Reason: " + reason + ".</font>"
+                message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time. Reason: {reason}.</font>'
+                log_mutes(f"{username} is muted because {reason} by a mod or admin.")
             elif reason == '':
-                message = '[SYSTEM]: <font color="#ff7f00">' + username + " is mutted for " + time_final + ".</font>"
+                message = f'[SYSTEM]: <font color="#ff7f00">{username} is mutted for {time_final}.</font>'
+                log_mutes(f"{username} is muted for {time_final} by a mod or admin.")
             else:
-                message = '[SYSTEM]: <font color="#ff7f00">' + username + " is mutted for " + time_final + " . Reason: " + reason + "." + "</font>"
-
+                message = f'[SYSTEM]: <font color="#ff7f00">{username} is mutted for {time_final}. Reason: {reason} .</font>'
+                log_mutes(f"{username} is muted because {reason} for {time_final} by a mod or admin.")
+            
             chat.add_message(message, roomid, 'true')
             emit("message_chat", (message, roomid), broadcast=True)
     else:
@@ -174,8 +197,9 @@ def unmute_user(**kwargs):
                                     {"$set": {
                                         "permission": "true"
                                     }})
-            message = '[SYSTEM]: <font color="#ff7f00">' + username + " has been unmuted.</font>"
+            message = f'[SYSTEM]: <font color="#ff7f00">{username} has been unmuted.</font>'
 
+            log_mutes(f"{username} is unmuted by a mod or admin.")
             chat.add_message(message, roomid, 'true')
             emit("message_chat", (message, roomid), broadcast=True)
     else:
@@ -283,6 +307,8 @@ def run_shutdown(**kwargs):
              broadcast=True,
              namespace='/')
         sleep(2)
+        scheduler.shutdown()
+        # replace with systemd methoud
         os.system('pkill gunicorn')
     else:
         respond_command(("reason", 2, "not_dev"), roomid, None)
@@ -372,7 +398,7 @@ def respond_command(result, roomid, name):
         (1, 'no_time'):
         "[SYSTEM]: <font color='#ff7f00'>You forgot the time!</font>",
         (1, 'wrong_room'):
-        "[SYSTEM]: <font color='#ff7f00'>You can only run this command in the dev chat room</font>"
+        "[SYSTEM]: <font color='#ff7f00'>You can only run this command in the dev chat room</font>",
     }
     response_str = response_strings.get((result[1], result[2]))
     if result[1] in [0, 2, 3] and result[2] in ['create', 'delete', 'edit']:

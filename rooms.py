@@ -12,7 +12,7 @@ import main
 def chat_room_log(message):
     """logs all deletes, creations, and edits done to chat rooms"""
     with open('backend/chat-rooms_log.txt', 'a') as file:
-        file.write(message + '\n')
+        file.write(f'{message}\n')
 
 
 def generate_unique_code(length):

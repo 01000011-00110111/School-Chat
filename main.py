@@ -19,16 +19,19 @@ import os
 import logging
 import hashlib
 import keys
+import re
 import flask
 import pymongo
-import re
 from flask import request
 from flask.logging import default_handler
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
+from flask_apscheduler import APScheduler
 
 client = pymongo.MongoClient(os.environ["devmongo"])
 dbm = client.Chat
+scheduler = APScheduler()
+
 import chat
 import cmds
 import filtering
@@ -46,6 +49,9 @@ root = logging.getLogger()
 root.addHandler(default_handler)
 socketio = SocketIO(app)
 
+scheduler.init_app(app)
+scheduler.api_enabled = True
+
 # clear db, so that old users don't stay
 dbm.Online.delete_many({})
 
@@ -58,6 +64,7 @@ banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
 # license stuff
 print("Copyright (C) 2023  cserver45, cseven")
 print("License info can be viewed in main.py or the LICENSE file.")
+
 
 # easter egg time lol
 @app.route("/f")
@@ -264,8 +271,14 @@ def customize_accounts() -> ResponseReturnValue:
                 "profile": profile,
                 "theme": theme
             }
-            if theme is None: return flask.render_template("settings.html", error='That Display name is already taken!', **return_list)
-            if (dbm.Accounts.find_one({"displayName": displayname}) is not None and user["displayName"] != displayname) or displayname in banned_usernames:
+            if theme is None:
+                return flask.render_template(
+                    "settings.html",
+                    error='That Display name is already taken!',
+                    **return_list)
+            if (dbm.Accounts.find_one({"displayName": displayname}) is not None
+                    and user["displayName"] != displayname
+                ) or displayname in banned_usernames:
                 return flask.render_template(
                     "settings.html",
                     error='That Display name is already taken!',
@@ -322,12 +335,13 @@ def handle_connect(username: str, location):
     """Will be used later for online users."""
     socketid = request.sid
     username_list = []
-    icons = {
-        'settings': '⚙️',
-        'chat': ''
-    }
+    icons = {'settings': '⚙️', 'chat': ''}
 
-    dbm.Online.insert_one({"username": username, "socketid": socketid, "location": location})
+    dbm.Online.insert_one({
+        "username": username,
+        "socketid": socketid,
+        "location": location
+    })
 
     for key in dbm.Online.find():
         user_info = key["username"]
@@ -492,6 +506,26 @@ def connect(roomid):
 
     emit("room_data", room, to=socketid, namespace='/')
 
+
+@scheduler.task('interval', id='mute_gc', seconds=60, misfire_grace_time=500)
+def update_permission():
+    """Background task to see if user should be unmuted."""
+    users = dbm.Accounts.find()
+    for user_info in users:
+        user = user_info['username']
+        permission = user_info['permission']
+
+        if filtering.is_user_expired(permission):
+            print(f"{user} is no longer muted.")
+            dbm.Accounts.update_one({'username': user},
+                                    {'$set': {
+                                        'permission': 'true'
+                                    }})
+            cmds.log_mutes(f"{user} is no longer muted.")
+
+
+# start background tasks
+scheduler.start()
 
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=8080)

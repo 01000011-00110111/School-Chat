@@ -220,3 +220,14 @@ def failed_message(result, roomid):
 
     fail_str = fail_strings.get((result[1]), "")  # result[2]), "")
     emit("message_chat", (fail_str, roomid), namespace="/")
+
+
+def is_user_expired(permission_str):
+    """checks if the user's time maches the time (idk you explain it better to me please)"""
+    parts = permission_str.split(' ')
+    if len(parts) == 3 and parts[0] == 'muted':
+        expiration_time_str = ' '.join(parts[1:])
+        expiration_time = datetime.strptime(expiration_time_str,
+                                                     "%Y-%m-%d %H:%M:%S")
+        current_time = datetime.now()
+        return current_time >= expiration_time

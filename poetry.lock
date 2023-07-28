@@ -30,12 +30,29 @@ python-versions = ">=3.6"
 frozenlist = ">=1.1.0"
 
 [[package]]
-name = "ansicon"
-version = "1.89.0"
-description = "Python wrapper for loading Jason Hood's ANSICON"
+name = "apscheduler"
+version = "3.10.1"
+description = "In-process task scheduler with Cron-like capabilities"
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.6"
+
+[package.dependencies]
+pytz = "*"
+six = ">=1.4.0"
+tzlocal = ">=2.0,<3.0.0 || >=4.0.0"
+
+[package.extras]
+doc = ["sphinx", "sphinx-rtd-theme"]
+gevent = ["gevent"]
+mongodb = ["pymongo (>=3.0)"]
+redis = ["redis (>=3.0)"]
+rethinkdb = ["rethinkdb (>=2.4.0)"]
+sqlalchemy = ["sqlalchemy (>=1.4)"]
+testing = ["pytest", "pytest-asyncio", "pytest-cov", "pytest-tornado5"]
+tornado = ["tornado (>=4.3)"]
+twisted = ["twisted"]
+zookeeper = ["kazoo"]
 
 [[package]]
 name = "async-timeout"
@@ -60,19 +77,15 @@ tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)"
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "mypy (>=0.900,!=0.940)", "pytest-mypy-plugins", "cloudpickle"]
 
 [[package]]
-name = "beautifulsoup4"
-version = "4.11.1"
-description = "Screen-scraping library"
+name = "backports.zoneinfo"
+version = "0.2.1"
+description = "Backport of the standard library zoneinfo module"
 category = "main"
 optional = false
-python-versions = ">=3.6.0"
-
-[package.dependencies]
-soupsieve = ">1.2"
+python-versions = ">=3.6"
 
 [package.extras]
-html5lib = ["html5lib"]
-lxml = ["lxml"]
+tzdata = ["tzdata"]
 
 [[package]]
 name = "better-profanity"
@@ -94,17 +107,6 @@ python-versions = ">=3.7"
 docs = ["sphinx", "sphinx-copybutton", "furo"]
 lint = ["pre-commit"]
 test = ["hypothesis", "pytest", "pytest-benchmark", "pytest-cov", "pytest-xdist", "sortedcollections", "sortedcontainers", "sphinx"]
-
-[[package]]
-name = "bs4"
-version = "0.0.1"
-description = "Dummy package for Beautiful Soup"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-beautifulsoup4 = "*"
 
 [[package]]
 name = "certifi"
@@ -145,24 +147,6 @@ optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
 
 [[package]]
-name = "console"
-version = "0.9907"
-description = "Comprehensive, composable utility library for ANSI terminals. Better, stronger, faster.  Tch-tch-tch-tch…"
-category = "main"
-optional = false
-python-versions = ">=3.4"
-
-[package.dependencies]
-colorama = {version = "*", markers = "os_name == \"nt\" and platform_version < \"10.0.10586\""}
-ezenv = ">=0.92"
-jinxed = {version = "*", markers = "os_name == \"nt\""}
-
-[package.extras]
-all = ["pyfiglet", "webcolors"]
-figlet = ["pyfiglet"]
-webcolors = ["webcolors"]
-
-[[package]]
 name = "debugpy"
 version = "1.6.3"
 description = "An implementation of the Debug Adapter Protocol for Python"
@@ -187,18 +171,6 @@ trio = ["trio (>=0.14,<0.20)"]
 wmi = ["wmi (>=1.5.1,<2.0.0)"]
 
 [[package]]
-name = "emit"
-version = "0.4.0"
-description = "Build a graph to process streams"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.extras]
-rq-routing = ["rq (>=0.3.4)", "redis (>=2.7.2)"]
-celery-routing = ["celery (>=3.0.13)"]
-
-[[package]]
 name = "eventlet"
 version = "0.33.2"
 description = "Highly concurrent networking library"
@@ -210,14 +182,6 @@ python-versions = "*"
 dnspython = ">=1.15.0"
 greenlet = ">=0.3"
 six = ">=1.10.0"
-
-[[package]]
-name = "ezenv"
-version = "0.92"
-description = "A more convenient interface to environment variables."
-category = "main"
-optional = false
-python-versions = "*"
 
 [[package]]
 name = "flask"
@@ -239,6 +203,19 @@ async = ["asgiref (>=3.2)"]
 dotenv = ["python-dotenv"]
 
 [[package]]
+name = "flask-apscheduler"
+version = "1.12.4"
+description = "Adds APScheduler support to Flask"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+apscheduler = ">=3.2.0,<4.0.0"
+flask = ">=0.10.1"
+python-dateutil = ">=2.4.2"
+
+[[package]]
 name = "flask-socketio"
 version = "5.3.2"
 description = "Socket.IO integration for Flask applications"
@@ -249,17 +226,6 @@ python-versions = ">=3.6"
 [package.dependencies]
 Flask = ">=0.9"
 python-socketio = ">=5.0.2"
-
-[[package]]
-name = "flask-sslify"
-version = "0.1.5"
-description = "Force SSL on your Flask app."
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-Flask = "*"
 
 [[package]]
 name = "frozenlist"
@@ -357,17 +323,6 @@ MarkupSafe = ">=2.0"
 i18n = ["Babel (>=2.7)"]
 
 [[package]]
-name = "jinxed"
-version = "1.2.0"
-description = "Jinxed Terminal Library"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-ansicon = {version = "*", markers = "platform_system == \"Windows\""}
-
-[[package]]
 name = "markupsafe"
 version = "2.1.1"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -382,41 +337,6 @@ description = "multidict implementation"
 category = "main"
 optional = false
 python-versions = ">=3.7"
-
-[[package]]
-name = "multiprocessing"
-version = "2.6.2.1"
-description = "Backport of the multiprocessing package to Python 2.4 and 2.5"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
-name = "numpy"
-version = "1.23.4"
-description = "NumPy is the fundamental package for array computing with Python."
-category = "main"
-optional = false
-python-versions = ">=3.8"
-
-[[package]]
-name = "openai"
-version = "0.27.6"
-description = "Python client library for the OpenAI API"
-category = "main"
-optional = false
-python-versions = ">=3.7.1"
-
-[package.dependencies]
-aiohttp = "*"
-requests = ">=2.20"
-tqdm = "*"
-
-[package.extras]
-datalib = ["numpy", "pandas (>=1.2.3)", "pandas-stubs (>=1.1.0.11)", "openpyxl (>=3.0.7)"]
-dev = ["black (>=21.6b0,<22.0.0)", "pytest (>=6.0.0,<7.0.0)", "pytest-asyncio", "pytest-mock"]
-embeddings = ["scikit-learn (>=1.0.2)", "tenacity (>=8.0.1)", "matplotlib", "plotly", "numpy", "scipy", "pandas (>=1.2.3)", "pandas-stubs (>=1.1.0.11)", "openpyxl (>=3.0.7)"]
-wandb = ["wandb", "numpy", "pandas (>=1.2.3)", "pandas-stubs (>=1.1.0.11)", "openpyxl (>=3.0.7)"]
 
 [[package]]
 name = "packaging"
@@ -440,18 +360,6 @@ python-versions = ">=3.6"
 [package.extras]
 qa = ["flake8 (==3.8.3)", "mypy (==0.782)"]
 testing = ["docopt", "pytest (<6.0.0)"]
-
-[[package]]
-name = "pillow"
-version = "9.5.0"
-description = "Python Imaging Library (Fork)"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-
-[package.extras]
-docs = ["furo", "olefile", "sphinx (>=2.4)", "sphinx-copybutton", "sphinx-inline-tabs", "sphinx-removed-in", "sphinxext-opengraph"]
-tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
 
 [[package]]
 name = "pluggy"
@@ -515,6 +423,17 @@ python-versions = ">=3.6.8"
 diagrams = ["railroad-diagrams", "jinja2"]
 
 [[package]]
+name = "python-dateutil"
+version = "2.8.2"
+description = "Extensions to the standard Python datetime module"
+category = "main"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
+
+[package.dependencies]
+six = ">=1.5"
+
+[[package]]
 name = "python-engineio"
 version = "4.3.4"
 description = "Engine.IO server and client for Python"
@@ -573,6 +492,14 @@ validation = ["pydantic (>=1.7.4)"]
 global = ["appdirs (>=1.4.4)"]
 gen_docs = ["pytoolconfig", "sphinx-rtd-theme (>=1.0.0)", "sphinx-autodoc-typehints (>=1.18.1)", "sphinx (>=4.5.0)"]
 doc = ["sphinx (>=4.5.0)", "tabulate (>=0.8.9)"]
+
+[[package]]
+name = "pytz"
+version = "2023.3"
+description = "World timezone definitions, modern and historical"
+category = "main"
+optional = false
+python-versions = "*"
 
 [[package]]
 name = "replit"
@@ -664,22 +591,6 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
-name = "soupsieve"
-version = "2.3.2.post1"
-description = "A modern CSS selector implementation for Beautiful Soup."
-category = "main"
-optional = false
-python-versions = ">=3.6"
-
-[[package]]
-name = "timedelta"
-version = "2020.12.3"
-description = "datetime.timedelta replacement"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
@@ -696,29 +607,35 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
-name = "tqdm"
-version = "4.65.0"
-description = "Fast, Extensible Progress Meter"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-colorama = {version = "*", markers = "platform_system == \"Windows\""}
-
-[package.extras]
-dev = ["py-make (>=0.1.0)", "twine", "wheel"]
-notebook = ["ipywidgets (>=6)"]
-slack = ["slack-sdk"]
-telegram = ["requests"]
-
-[[package]]
 name = "typing-extensions"
 version = "3.10.0.2"
 description = "Backported and Experimental Type Hints for Python 3.5+"
 category = "main"
 optional = false
 python-versions = "*"
+
+[[package]]
+name = "tzdata"
+version = "2023.3"
+description = "Provider of IANA time zone data"
+category = "main"
+optional = false
+python-versions = ">=2"
+
+[[package]]
+name = "tzlocal"
+version = "5.0.1"
+description = "tzinfo object for the local timezone"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+"backports.zoneinfo" = {version = "*", markers = "python_version < \"3.9\""}
+tzdata = {version = "*", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+devenv = ["black", "check-manifest", "flake8", "pyroma", "pytest-cov", "pytest-mock (>=3.3)", "pytest (>=4.3)", "zest.releaser"]
 
 [[package]]
 name = "ujson"
@@ -764,17 +681,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "xterm"
-version = "0.7.3"
-description = "Custom keyboard and mouse events for xTerm terminals"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-Pillow = "*"
-
-[[package]]
 name = "yapf"
 version = "0.32.0"
 description = "A formatter for Python code."
@@ -809,31 +715,27 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8.0,<3.9"
-content-hash = "b2ca6c40c69e11c9614586e2a3367b838cd0cf46a39c30b24f9aec997c1820b2"
+content-hash = "11c1583e476f89b07c1d21a7f34a0cd757581cadeb9ad3b70ef3de8f496639e2"
 
 [metadata.files]
 aiohttp = []
 aiosignal = []
-ansicon = []
+apscheduler = []
 async-timeout = []
 attrs = []
-beautifulsoup4 = []
+"backports.zoneinfo" = []
 better-profanity = []
 bidict = []
-bs4 = []
 certifi = []
 charset-normalizer = []
 click = []
 colorama = []
-console = []
 debugpy = []
 dnspython = []
-emit = []
 eventlet = []
-ezenv = []
 flask = []
+flask-apscheduler = []
 flask-socketio = []
-flask-sslify = []
 frozenlist = []
 greenlet = []
 gunicorn = []
@@ -842,40 +744,35 @@ importlib-metadata = []
 itsdangerous = []
 jedi = []
 jinja2 = []
-jinxed = []
 markupsafe = []
 multidict = []
-multiprocessing = []
-numpy = []
-openai = []
 packaging = []
 parso = []
-pillow = []
 pluggy = []
 psutil = []
 pyflakes = []
 pymongo = []
 pyparsing = []
+python-dateutil = []
 python-engineio = []
 python-lsp-jsonrpc = []
 python-socketio = []
 pytoolconfig = []
+pytz = []
 replit = []
 replit-python-lsp-server = []
 requests = []
 rope = []
 six = []
-soupsieve = []
-timedelta = []
 toml = []
 tomli = []
-tqdm = []
 typing-extensions = []
+tzdata = []
+tzlocal = []
 ujson = []
 urllib3 = []
 werkzeug = []
 whatthepatch = []
-xterm = []
 yapf = []
 yarl = []
 zipp = []
