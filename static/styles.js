@@ -62,7 +62,7 @@ function setDarkStyle() {
     // set theme in cookie
     setTheme("dark");
     // get all id tags
-    let body = document.getElementById("body");
+    let body = document.getElementsByTagName("body")[0]; 
     let chat = document.getElementById("chat");
     let message = document.getElementById("message");
     let chatbox = document.getElementById("chatbox");
@@ -95,7 +95,7 @@ function setLightStyle() {
     // set theme in cookie    
     setTheme("light");
     // get all id tags
-    let body = document.getElementById("body");
+    let body = document.getElementsByTagName("body")[0]; 
     let chat = document.getElementById("chat");
     let message = document.getElementById("message");
     let chatbox = document.getElementById("chatbox");
@@ -129,7 +129,7 @@ function set4thStyle() {
     // set theme in cookie
     setTheme('4th');
     // get all id tags
-    let body = document.getElementById("body");
+    let body = document.getElementsByTagName("body")[0]; 
     let chat = document.getElementById("chat");
     let message = document.getElementById("message");
     let chatbox = document.getElementById("chatbox");
@@ -164,7 +164,7 @@ function setOgDevStyle() {
     // set theme in cookie
     setTheme("ogdev");
     // get all id tags
-    let body = document.getElementById("body");
+    let body = document.getElementsByTagName("body")[0]; 
     let chat = document.getElementById("chat");
     let message = document.getElementById("message");
     let chatbox = document.getElementById("chatbox");
@@ -198,7 +198,7 @@ function setDevStyle() {
     // set theme in cookie
     setTheme("dev");
     // get all id tags
-    let body = document.getElementById("body");
+    let body = document.getElementsByTagName("body")[0]; 
     let chat = document.getElementById("chat");
     let message = document.getElementById("message");
     let chatbox = document.getElementById("chatbox");
