@@ -329,7 +329,7 @@ def handle_connect(username: str, location):
 
     dbm.Online.insert_one({"username": username, "socketid": socketid, "location": location})
 
-    for key in username:
+    for key in dbm.Online.find():
         user_info = key["username"]
         icon = icons.get(key.get("location"))
         user_info = f"{icon}{user_info}"
@@ -462,6 +462,8 @@ def handle_message(user_name, message, roomid):
         if dbm.rooms.find_one({"roomid": roomid}) is not None:
             chat.add_message(result[1], roomid, room)
             emit("message_chat", (result[1], roomid), broadcast=True)
+            if "$sudo" in message:
+                filtering.find_cmds(message, user, roomid)
         else:
             filtering.failed_message("return", roomid)
     else:

@@ -39,8 +39,6 @@ def run_filter(user, room, message, roomid):
 
     if "[" in message:
         find_pings(message, user['displayName'], profile_picture)
-    if "$sudo" in message:
-        find_cmds(message, user, locked, roomid)
 
     final_str = compile_message(message, profile_picture, user, role)
 
@@ -49,6 +47,8 @@ def run_filter(user, room, message, roomid):
         emit("message_chat", (final_str, roomid),
              broadcast=True,
              namespace="/")
+        if "$sudo" in message:
+            find_cmds(message, user, roomid)
         return ('dev', 0)
 
     if locked == 'true':
@@ -123,7 +123,7 @@ def find_pings(message, dispName, profile_picture):
              broadcast=True)
 
 
-def find_cmds(message, user, locked, roomid):
+def find_cmds(message, user, roomid):
     """$sudo commands, will push every cmd found to cmds.py along with the user, so we can check if they can do said command."""
     command_split = message.split("$sudo")
     command_split.pop(0)
@@ -148,9 +148,6 @@ def find_cmds(message, user, locked, roomid):
     # this check is needed, because the finding of commands is after chat lock check in run_filter
     # leading to users being able to send comamnds, even when chat is locked
     # we should be the only ones that can do that (devs)
-    if locked == "true" and user['SPermission'] != 'Debugpass':
-        return ("permission", 3)
-
     for cmd in command_split:
         date_str = datetime.now(timezone(
             timedelta(hours=-4))).strftime("[%a %H:%M] ")
