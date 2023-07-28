@@ -8,6 +8,7 @@ Also not done whatsoever, many things have to be done beforehand
 Steps to make the chat run
 
 ## No systemd service (easy route)
+#### NOTE: `$sudo shutdown` and `$sudo restart` will NOT work if you do not use systemd!
 - Put your mongodb authentication string into `keys.py`
 - create a venv (and install packages via poetry inside that venv)
 - Make `chat.txt`, `Chat-backup.txt`, `chat-rooms_log.txt`, and `command_log.txt` inside the folder named backend

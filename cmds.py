@@ -302,14 +302,38 @@ def run_shutdown(**kwargs):
     """Stop the server, but also tell everyone that the server is going down."""
     if check_if_dev(user) == 1:
         emit("message_chat", (
-            "[SYSTEM]: <font color='#ff7f00'>Server going down in 2 Seconds (unknown ETA on restart)</font>",
+            "[SYSTEM]: <font color='#ff7f00'>Server shutting down... (unknown ETA on restart)</font>",
             roomid),
              broadcast=True,
              namespace='/')
         sleep(2)
         scheduler.shutdown()
         # replace with systemd methoud
-        os.system('pkill gunicorn')
+        sysbus = dbus.SystemBus()
+        systemd1 = sysbus.get_object('org.freedesktop.systemd1', '/org/freedesktop/systemd1')
+        manager = dbus.Interface(systemd1, 'org.freedesktop.systemd1.Manager')
+        job = manager.StopUnit('chatserverd.service', 'fail')
+    else:
+        respond_command(("reason", 2, "not_dev"), roomid, None)
+
+
+def run_restart(**kwargs):
+    user = kwargs['user']
+    roomid = kwargs['roomid']
+    """Restart the server, but also tell everyone that the server is going down."""
+    if check_if_dev(user) == 1:
+        # later, implement this so it sends it to EVERY room that the server is going down, not just the one that the cmd is sent in...
+        emit("message_chat", (
+            "[SYSTEM]: <font color='#ff7f00'>Server restarting... (~30sec ETA on restart)</font>",
+            roomid),
+             broadcast=True,
+             namespace='/')
+        sleep(2)
+        scheduler.shutdown()
+        sysbus = dbus.SystemBus()
+        systemd1 = sysbus.get_object('org.freedesktop.systemd1', '/org/freedesktop/systemd1')
+        manager = dbus.Interface(systemd1, 'org.freedesktop.systemd1.Manager')
+        job = manager.RestartUnit('chatserverd.service', 'fail')
     else:
         respond_command(("reason", 2, "not_dev"), roomid, None)
 
