@@ -323,6 +323,7 @@ def run_restart(**kwargs):
     """Restart the server, but also tell everyone that the server is going down."""
     if check_if_dev(user) == 1:
         # later, implement this so it sends it to EVERY room that the server is going down, not just the one that the cmd is sent in...
+        # could make it modular (for anouncments? maybe idk)
         emit("message_chat", (
             "[SYSTEM]: <font color='#ff7f00'>Server restarting... (~30sec ETA on restart)</font>",
             roomid),

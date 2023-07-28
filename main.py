@@ -40,13 +40,13 @@ import rooms
 LOGFILE = "backend/chat.txt"
 
 app = flask.Flask(__name__)
-app.config['SECRET'] = os.urandom(9001)
+app.config['SECRET'] = os.urandom(9001)#ITS OVER 9000!!!!!!
 
 logging.basicConfig(filename="backend/webserver.log",
                     filemode='a',
-                    level=logging.INFO)
-root = logging.getLogger()
-root.addHandler(default_handler)
+                    level=logging.ERROR)
+root = logging.getLogger().setLevel(logging.ERROR)
+
 socketio = SocketIO(app)
 
 scheduler.init_app(app)
@@ -524,7 +524,7 @@ def update_permission():
             cmds.log_mutes(f"{user} is no longer muted.")
 
 
-# start background tasks
+# start background tasks should we move this down to 534
 scheduler.start()
 
 if __name__ == "__main__":
