@@ -27,11 +27,11 @@ def get_chat(file: str) -> List:
     return ret_val
 
 
-def get_line_count(file) -> List:
+def get_line_count(file, roomid) -> List:
     """Return the line count in the logfile."""
     if file == "main":
-        with open(LOGFILE, "r", encoding="utf8") as f_in:
-            lines = 'this is no longer a active file'
+        room = dbm.rooms.find_one({"roomid": roomid})
+        lines = len(room["messages"])
         return lines
     elif file == "backup":
         with open(LOGFILE_B, "r", encoding="utf8") as f_in:
@@ -56,8 +56,8 @@ def line_blanks(**kwargs) -> None:
 
 def get_stats(roomid) -> str:
     """Return full stats list to chat."""
-    lines = get_line_count('main')
-    lines_b = get_line_count('backup')
+    lines = get_line_count('main', roomid)
+    lines_b = get_line_count('backup', roomid)
     # other stats on the repl
     p_in = psutil.Process()
     with p_in.oneshot():

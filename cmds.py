@@ -366,7 +366,7 @@ def send_lines(**kwargs):
     """Respond with the current line count for the room (TBD)"""
     # to rework this so it uses add_message
     roomid = kwargs['roomid']
-    lines = chat.get_line_count("main")
+    lines = chat.get_line_count("main", roomid)
     msg = f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n"
     chat.add_message(msg, roomid, dbm)
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")

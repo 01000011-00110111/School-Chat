@@ -150,7 +150,8 @@ def signup() -> ResponseReturnValue:
         if user_allowed == 'false' or desplayname_allowed == 'false':
             return flask.render_template(
                 "signup-index.html",
-                error='That Username/Display name is not allowed!',
+                error='That Username/Display name is too must be over 3 and under 13 letters long',
+                # error='That Username/Display name is not allowed!',
                 SRole=SRole,
             )
         if SPassword != SPassword2:
@@ -524,7 +525,7 @@ def update_permission():
             cmds.log_mutes(f"{user} is no longer muted.")
 
 
-# start background tasks should we move this down to 534
+# start background tasks should we move this down to 533?
 scheduler.start()
 
 if __name__ == "__main__":
