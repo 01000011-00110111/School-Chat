@@ -53,6 +53,7 @@ def find_command(**kwargs):
         'banned': send_perms,
         'muted': send_perms,
         'ping': ping,
+        'restart': run_restart
     }
     try:
         response_strings[kwargs['commands']['v0']](**kwargs)

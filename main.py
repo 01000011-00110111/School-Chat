@@ -546,5 +546,14 @@ def update_permission():
 # start background tasks should we move this down to 533?
 scheduler.start()
 
+@socketio.on('connect')
+def emit_on_startup():
+    emit("message_chat", (
+        "[SYSTEM]: <font color='#ff7f00'>Server is back up</font>",
+        'ilQvQwgOhm9kNAOrRqbr'),
+            broadcast=True,
+            namespace='/')
+
+
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=8080)
