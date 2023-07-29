@@ -69,7 +69,8 @@ def run_filter(user, room, message, roomid):
 
 def check_mute(user):
     """checks if the user is muted or banned."""
-    if user["permission"] == "muted":
+    permission = user["permission"].split(' ')
+    if permission[0] == "muted":
         return 1
     elif user["permission"] == "banned":
         return 2

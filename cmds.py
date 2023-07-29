@@ -138,47 +138,50 @@ def mute_user(**kwargs):
         if user_dbm['permission'] in ('banned', 'muted'):
             return
         else:
-            time_match = re.match(r'^(\d+)([dh])$', time)
+            time_match = re.match(r'^(\d+)([dhm])$', time)
             if time_match:
-                time_number = time_match.group(1)
+                permission_str = "muted"
+                time_final = None
+                time_number = int(time_match.group(1))
                 time_letter = time_match.group(2)
                 current_time = datetime.now()
+            
                 if time_letter == 'd':
-                    time_final = time_number + " days"
-                    expiration_time = current_time + timedelta(
-                        days=int(time_number))
+                    time_final = f"{time_number} days"
+                    expiration_time = current_time + timedelta(days=time_number)
                 elif time_letter == 'h':
-                    time_final = time_number + " hours"
-                    expiration_time = current_time + timedelta(
-                        hours=int(time_number))
+                    time_final = f"{time_number} hours"
+                    expiration_time = current_time + timedelta(hours=time_number)
+                elif time_letter == 'm':
+                    time_final = f"{time_number} minutes"
+                    expiration_time = current_time + timedelta(minutes=time_number)
                 elif time_letter == 'f':
-                    time_final == ''
-                    permission_str = "muted"
-                expiration_time_str = expiration_time.strftime(
-                    "%Y-%m-%d %H:%M:%S")
+                    time_final = None
+            
                 if time_letter != 'f':
+                    expiration_time_str = expiration_time.strftime("%Y-%m-%d %H:%M:%S")
                     permission_str = f"muted {expiration_time_str}"
+            
+                dbm.Accounts.update_one({"displayName": username},
+                                        {"$set": {
+                                            "permission": permission_str
+                                        }})
 
-            dbm.Accounts.update_one({"displayName": username},
-                                    {"$set": {
-                                        "permission": permission_str
-                                    }})
-
-            if reason == '' and time_final == '':
+            if reason == '' and time_final is None:
                 message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time.</font>'
                 log_mutes(f"{username} is muted by a mod or admin.")
-            elif time_final == '':
+            elif time_final is None:
                 message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time. Reason: {reason}.</font>'
                 log_mutes(f"{username} is muted because {reason} by a mod or admin.")
             elif reason == '':
                 message = f'[SYSTEM]: <font color="#ff7f00">{username} is mutted for {time_final}.</font>'
                 log_mutes(f"{username} is muted for {time_final} by a mod or admin.")
             else:
-                message = f'[SYSTEM]: <font color="#ff7f00">{username} is mutted for {time_final}. Reason: {reason} .</font>'
+                message = f'[SYSTEM]: <font color="#ff7f00">{username} is mutted for {time_final}. Reason: {reason}.</font>'
                 log_mutes(f"{username} is muted because {reason} for {time_final} by a mod or admin.")
-            
-            chat.add_message(message, roomid, 'true')
-            emit("message_chat", (message, roomid), broadcast=True)
+                
+                chat.add_message(message, roomid, 'true')
+                emit("message_chat", (message, roomid), broadcast=True)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
 

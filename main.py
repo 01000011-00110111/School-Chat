@@ -62,8 +62,9 @@ banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
                     '[system]', '[System]', 'System')
 
 # license stuff
-print("Copyright (C) 2023  cserver45, cseven")
-print("License info can be viewed in main.py or the LICENSE file.")
+if __name__ == "__main__":
+    print("Copyright (C) 2023  cserver45, cseven")
+    print("License info can be viewed in main.py or the LICENSE file.")
 
 
 # easter egg time lol
@@ -140,6 +141,19 @@ def signup() -> ResponseReturnValue:
         SPassword2 = request.form.get("SPassword2")
         SRole = request.form.get("SRole")
         SDisplayname = request.form.get("SDisplayname")
+
+        if bool(re.search(r'[\s\[,"\'<>{\]]', SUsername)) is True:
+            return flask.render_template(
+                "signup-index.html",
+                error='The display name contains a space or a special character.',
+                SRole=SRole,
+            )
+        elif bool(re.search(r'[\s\[,"\'<>{\]]', SUsername)) is True:
+            return flask.render_template(
+                "signup-index.html",
+                error='The username contains a space or a special character.',
+                SRole=SRole,
+            )
         check = r'^[A-Za-z]{3,12}$'
         user_allowed = re.match(
             check, SUsername
@@ -289,7 +303,10 @@ def customize_accounts() -> ResponseReturnValue:
             #     return flask.render_template("settings.html",
             #          error='Your password must not match your current one.',
             # **return_list)
-
+            if bool(re.search(r'[\s\[,"\'<>{\]]', displayname)) is True:
+                return flask.render_template("settings.html",
+                    error='The display name contains a space or a special character.',
+                    **return_list)
             check = r'^[A-Za-z]{3,12}$'
             # user_allowed = re.match(check, user)# and not re.search(r'dev|mod', SUsername, re.IGNORECASE)
             desplayname_allowed = re.match(
@@ -515,14 +532,15 @@ def update_permission():
     for user_info in users:
         user = user_info['username']
         permission = user_info['permission']
+        username = users['displayName']
 
         if filtering.is_user_expired(permission):
-            print(f"{user} is no longer muted.")
+            print(f"{username} is no longer muted.")
             dbm.Accounts.update_one({'username': user},
                                     {'$set': {
                                         'permission': 'true'
                                     }})
-            cmds.log_mutes(f"{user} is no longer muted.")
+            cmds.log_mutes(f"{username} is no longer muted.")
 
 
 # start background tasks should we move this down to 533?
