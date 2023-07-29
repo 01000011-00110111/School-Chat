@@ -21,4 +21,3 @@ node_modules/*
 .config/*
 replit.nix
 .replit
-keys.py
