@@ -532,7 +532,7 @@ def update_permission():
     for user_info in users:
         user = user_info['username']
         permission = user_info['permission']
-        username = users['displayName']
+        username = user_info['displayName']
 
         if filtering.is_user_expired(permission):
             print(f"{username} is no longer muted.")

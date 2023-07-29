@@ -10,6 +10,7 @@ backend/muted.txt
 backend/command_log.txt
 airhorn_default.wav
 backend/chat-rooms_log.txt
+backend/permision.txt
 
 # running files
 __pycache__/*

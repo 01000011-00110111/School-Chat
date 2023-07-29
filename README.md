@@ -9,9 +9,9 @@ Steps to make the chat run
 
 ## No systemd service (easy route)
 #### NOTE: `$sudo shutdown` and `$sudo restart` will NOT work if you do not use systemd!
-- Put your mongodb authentication string into `keys.py`
+- Put your mongodb authentication string and your keys for mod and dev into `keys.py`
 - create a venv (and install packages via poetry inside that venv)
-- Make `chat.txt`, `Chat-backup.txt`, `chat-rooms_log.txt`, and `command_log.txt` inside the folder named backend
+- Make `Chat-backup.txt`, `chat-rooms_log.txt`, `permission.txt`, and `command_log.txt` inside the folder named backend
 - Add your ssl pem and key into nginx and change them to your domain name
 - Paste this config file into the `sites-enabled` directory where you have nginx installed (usually its somthing like `/etc/nginx`), and name it what your domain name is called:
   - change `yourdomain` to what your domain name is called
