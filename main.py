@@ -553,7 +553,7 @@ def emit_on_startup():
     global startup_msg
     if startup_msg:
         emit("message_chat", (
-            "[SYSTEM]: <font color='#ff7f00'>Server is back up</font>",
+            "[SYSTEM]: <font color='#ff7f00'>Server is back online!</font>",
             'ilQvQwgOhm9kNAOrRqbr'),
                 broadcast=True,
                 namespace='/')
