@@ -10,6 +10,31 @@ Steps to make the chat run
 ## No systemd service (easy route)
 #### NOTE: `$sudo shutdown` and `$sudo restart` will NOT work if you do not use systemd!
 - Put your mongodb authentication string and your keys for mod and dev into `keys.py`
+- in the data base make a database named `Chat` and add 3 collections named `Accounts`, `Online`, `rooms`
+- inside of rooms add 2 documents to the database
+```
+"roomid":"ilQvQwgOhm9kNAOrRqbr",
+"generatedBy":"[SYSTEM]",
+"generatedAt":"2022-10-24T20:00:00",
+"roomName":"add your room name",
+"canSend":"everyone",
+"whitelisted":"everyone",
+"blacklisted":"empty",
+"locked":"false",
+"messages":[]
+```
+
+```
+"roomid":"jN7Ht3giH9EDBvpvnqRB",
+"generatedBy":"[SYSTEM]",
+"generatedAt":"2023-70-29T21:30:00",
+"roomName":"add your room name",
+"canSend":"devonly",
+"whitelisted":"devonly",
+"blacklisted":"empty",
+"locked":"false",
+"messages":[]
+```
 - create a venv (and install packages via poetry inside that venv)
 - Make `Chat-backup.txt`, `chat-rooms_log.txt`, `permission.txt`, and `command_log.txt` inside the folder named backend
 - Add your ssl pem and key into nginx and change them to your domain name
