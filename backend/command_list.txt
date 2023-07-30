@@ -26,7 +26,6 @@
 <h2>User commands:</h2>
 <ul>
     <li><code>"$sudo command prompt"</code>:This is how you type a command in chat (prompt is only for commands that need text.</li>
-    <li><code>"$sudo E"</code>: test command.</li>
     <li><code>"$sudo song (text)"</code>: Send as Song (added public for now).</li>
     <li><code>"$sudo JOTD (text)"</code>: Send as JOTD (added public for now).</li>
     <li><code>"$sudo ronline/ro"</code>: Refresh the online list.</li>
