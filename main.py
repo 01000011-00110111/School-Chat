@@ -28,7 +28,7 @@ from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
 from flask_apscheduler import APScheduler
 
-client = pymongo.MongoClient(os.environ["devmongo"])
+client = pymongo.MongoClient(os.environ["mongo_key"])
 dbm = client.Chat
 scheduler = APScheduler()
 

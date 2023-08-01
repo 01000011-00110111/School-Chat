@@ -10,8 +10,7 @@ from flask_socketio import emit
 from main import dbm
 import cmds
 
-LOGFILE = "backend/chat.txt"
-LOGFILE_B = "backend/Chat-backup.txt"
+LOGFILE_B = "Chat-backup.txt"
 
 
 # Returns a list of dictionaries. Each dictionary in the list
