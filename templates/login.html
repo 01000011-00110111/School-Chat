@@ -1,20 +1,31 @@
 {% extends 'index.html' %} 
 {% block content %}
-<div class="LoginPopup" id="LoginPopup">
-    <div>
-      <h2>Login</h2>
-        <form method="post">
-            <input type="text" id="user" placeholder="Username" autocomplete="off" class="LoginInput" name="username">
-            <input type="password" id="passwd" placeholder="Password" autocomplete="off" class="LoginInput" name="password"><br>
-            <input type="checkbox" id="tosCH" style="margin-top: 20px;" name='TOSagree'> <a href="notdone" target="_blank">Rules & TOS</a>
-            <!--- This works, but is not the best way to do it --->
-            <input type="text" name="socketid" hidden value="getSocketid();"> 
-            <button type='submit' class="LoginBTN" name="login">Log In</button>
-            <a href="/signup" style="color:#2990f9;">Create an account here</a>
-        </form>
+<div style="display: flex;">
+    <div class="LoginPopup" id="LoginPopup">
+        <div>
+        <h2>Login</h2>
+            <form method="post">
+                <input type="text" id="user" placeholder="Username" autocomplete="off" class="LoginInput" name="username">
+                <input type="password" id="passwd" placeholder="Password" autocomplete="off" class="LoginInput" name="password"><br>
+                <input type="checkbox" id="tosCH" style="margin-top: 20px;" name='TOSagree'> <a href="notdone" target="_blank">Rules & TOS</a>
+                <!--- This works, but is not the best way to do it --->
+                <input type="text" name="socketid" hidden value="getSocketid();"> 
+                <button type='submit' class="LoginBTN" name="login">Log In</button>
+                <a href="/signup" style="color:#2990f9;">Create an account here</a>
+            </form>
+        </div>
+        {% if error %}
+            <h2 style="color:red; pointer-events: none;">{{error}}</h2>
+        {% endif %}
     </div>
-    {% if error %}
-        <h2 style="color:red; pointer-events: none;">{{error}}</h2>
-    {% endif %}
+    <div class="ChatinfoLP">
+        <h1 class="LoginTTL">School Chat</h1>
+        <hr>
+        <h4 class="LoginTXT">School chat was made by cserver, and cseven as a chating method for chating at school.</h4>
+    </div>
+    <div class="activenav" id="activenav">
+        <hr id="online_border">
+        <div id="online_users"></div>
+    </div>
 </div>
 {% endblock %}

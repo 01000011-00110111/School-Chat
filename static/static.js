@@ -14,7 +14,7 @@ socket.on("online", (db) => {
     let online_count = db.length;
     for (onlineUser of db) {
         online = online + onlineUser + newline;
-        onlinels = onlinels + "<a onclick=changeWisperUser('" + onlineUser + "')>" + onlineUser + '</a>';
+        onlinels = onlinels + `<a onclick="openuserinfo(${onlineUser})>` + onlineUser + '</a>';
     }
     let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online;
     // onlinelsDiv["innerHTML"] = onlinels;
