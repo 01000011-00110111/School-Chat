@@ -533,3 +533,17 @@ def chat_room_edit(**kwargs):
     elif command == "info":
         response = ('reason', 0, 'info')
         respond_command(response, roomid, room_name)
+
+
+def warn_user(user):
+    """adds a new warning to the user"""
+    warn_count = user["warned"]
+    current_time = datetime.now()
+    expiration_time = current_time + timedelta(days=30)
+    date = expiration_time.strftime("%Y-%m-%d %H:%M:%S")
+    warn_updated = int(warn_count) +1
+    dbm.Accounts.update_one(
+        {"username": user["username"]},
+            {'$set': {
+                'warned': f"{str(warn_updated)} {date}"
+        }})

@@ -148,7 +148,7 @@ def signup() -> ResponseReturnValue:
                 error='The display name contains a space or a special character.',
                 SRole=SRole,
             )
-        elif bool(re.search(r'[\s\[,"\'<>{\]]', SUsername)) is True:
+        elif bool(re.search(r'[\s[,"\'<>{\]]', SUsername)) is True:
             return flask.render_template(
                 "signup-index.html",
                 error='The username contains a space or a special character.',
@@ -203,6 +203,8 @@ def signup() -> ResponseReturnValue:
             "#ffffff",
             "permission":
             "true",
+            "warned":
+            '0',
             "SPermission":
             ""
         })
@@ -289,21 +291,21 @@ def customize_accounts() -> ResponseReturnValue:
             if theme is None:
                 return flask.render_template(
                     "settings.html",
-                    error='That Display name is already taken!',
+                    error='Pick a theme before updating!',
                     **return_list)
             if (dbm.Accounts.find_one({"displayName": displayname}) is not None
                     and user["displayName"] != displayname
-                ) or displayname in banned_usernames:
+                ) and displayname in banned_usernames:
                 return flask.render_template(
                     "settings.html",
                     error='That Display name is already taken!',
-                    **return_list)
+                    **return_list)    
 
             # if passwd != user["password"]: #need to make a check if they are not changing or we can just remove password changing from this methid to somthing else
             #     return flask.render_template("settings.html",
             #          error='Your password must not match your current one.',
             # **return_list)
-            if bool(re.search(r'[\s\[,"\'<>{\]]', displayname)) is True:
+            if bool(re.search(r'[\s[,"\'<>{\]]', displayname)) is True:
                 return flask.render_template("settings.html",
                     error='The display name contains a space or a special character.',
                     **return_list)
@@ -497,9 +499,9 @@ def handle_message(user_name, message, roomid):
             if "$sudo" in message:
                 filtering.find_cmds(message, user, roomid)
         else:
-            filtering.failed_message("return", roomid)
+            filtering.failed_message("return", roomid, user)
     else:
-        filtering.failed_message(result, roomid)
+        filtering.failed_message(result, roomid, user)
 
 
 # pylint: enable=C0103
@@ -541,6 +543,23 @@ def update_permission():
                                         'permission': 'true'
                                     }})
             cmds.log_mutes(f"{username} is no longer muted.")
+
+
+@scheduler.task('interval', id='check_warns', seconds=60, misfire_grace_time=500)
+def update_permission():
+    """Background task to see if user should be unmuted."""
+    users = dbm.Accounts.find()
+    for user_info in users:
+        user = user_info['username']
+        username = user_info['displayName']
+
+        if filtering.is_warned_expired(permission):
+            print(f"{username} warnings have been reset.")
+            dbm.Accounts.update_one({'username': user},
+                                    {'$set': {
+                                        'warned': '0'
+                                    }})
+            cmds.log_mutes(f"{username} warnings have been reset.")
 
 
 # start background tasks should we move this down to 533?

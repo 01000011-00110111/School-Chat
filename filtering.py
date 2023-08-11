@@ -6,6 +6,8 @@ import re
 from datetime import datetime, timezone, timedelta
 from better_profanity import profanity
 from flask_socketio import emit
+# from markdown import markdown
+# from bs4 import BeautifulSoup
 import chat
 import profanity_words
 import cmds
@@ -14,10 +16,14 @@ import rooms
 # get our custom whitelist words (that shouldnot be banned in the first place)
 profanity.load_censor_words(whitelist_words=profanity_words.whitelist_words)
 profanity.add_censor_words(profanity_words.censored)
+preuser = 'system'
+message_count = 0
 
 
 def run_filter(user, room, message, roomid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
+    global preuser
+    global message_count
     locked = check_lock(room)
     perms = check_perms(user)
     can_send = check_allowed_sending(user, room)
@@ -40,31 +46,47 @@ def run_filter(user, room, message, roomid):
     if "[" in message:
         find_pings(message, user['displayName'], profile_picture)
 
-    final_str = compile_message(message, profile_picture, user, role)
+    # print (preuser)
+    # messageM = markdown(message)
+    # messageMarked = apply_custom_styling(messageM)
+    final_str = compile_message(message, profile_picture, user, role, preuser, message_count)
+    print (message_count, preuser)
 
+    #check if locked or allowed to send
+    if locked == 'true' and perms != "dev":
+        return ("permission", 3)
+
+    if can_send == "everyone":
+        return_str = ('msg', final_str)
+    elif can_send == 'mod':
+        if perms == 'mod':
+            return_str = ('msg', final_str)
+        else:
+            return_str = ('permission', 5)
+    else:
+        return_str = ('permission', 5)
+
+    #check for spam then update message count and prev user
+    if message_count == 15 and preuser == user["username"]:
+        cmds.warn_user(user)
+        return ('permission', 8)
+        
+    if preuser != user["username"]:
+        message_count = 0
+
+    preuser = user["username"]
+    message_count += 1
+    
     if perms == "dev":
         chat.add_message(final_str, roomid, 'true')
         emit("message_chat", (final_str, roomid),
              broadcast=True,
              namespace="/")
         if "$sudo" in message:
-            find_cmds(message, user, roomid)
+            find_cmds(message, user, roomid)        
         return ('dev', 0)
 
-    if locked == 'true':
-        return ("permission", 3)
-
-    if can_send == "everyone":
-        return ('msg', final_str)
-    elif can_send == 'mod':
-        if perms == 'mod':
-            return ('msg', final_str)
-        else:
-            return ('permission', 5)
-    else:
-        return ('permission', 5)
-
-    return ('msg', final_str)
+    return return_str
 
 
 def check_mute(user):
@@ -110,6 +132,18 @@ def filter_message(message):
     return profanity.censor(message)
 
 
+def apply_custom_styling(html_content):
+    soup = BeautifulSoup(html_content, 'html.parser')
+
+    elements = soup.find_all()
+    for element in elements:
+        element['style'] = 'margin: -3.5%; padding-left: 37%;'
+
+    modified_html_content = str(soup)
+
+    return modified_html_content
+
+
 def find_pings(message, dispName, profile_picture):
     """Gotta catch 'em all! (checks for pings in the users message)"""
     pings = re.findall(r'(?<=\[).+?(?=\])', message)
@@ -138,7 +172,7 @@ def find_cmds(message, user, roomid):
         find_roomid = re.sub(r"\([^()]+\)", "", command_string).strip()
         room_check = rooms.check_roomids(find_roomid)
         if room_check is False:
-            failed_message(('permission', 7), roomid)
+            failed_message(('permission', 7), roomid, user)
             return
         if len(match) == 2:
             origin_room = roomid
@@ -168,19 +202,20 @@ def find_cmds(message, user, roomid):
                               origin_room=origin_room)
 
 
-def compile_message(message, profile_picture, user, role):
+def compile_message(message, profile_picture, user, role, preuser, message_count):
     """Taken from old methold of making messages"""
     to_hyperlink(message)
-    profile = "<img class='pfp' src='" + profile_picture + "'></img>"
-    user_string = "<font color='" + user['userColor'] + "'>" + user[
-        'displayName'] + "</font>"
-    message_string = "<font color='" + user[
-        'messageColor'] + "'>" + message + "</font>"
+    profile = f"<img class='pfp' src='{profile_picture}'></img>"
+    user_string = f"<font color='{user['userColor']}'>{user['displayName']}</font>"
+    message_string = f"<font color='{user['messageColor']}'>{message}</font>"
     role_string = do_dev_easter_egg(role, user)
     date_str = datetime.now(timezone(
         timedelta(hours=-4))).strftime("[%a %I:%M %p] ")
 
-    # because accounts will now be required, we don't need the check if a role exists for the user
+    # should we change it to a f string
+    # if user["username"] == preuser:
+    #     message = message_string
+    # else:
     message = date_str + profile + " " + user_string + " (" + role_string + ")" + " - " + message_string
     return message
 
@@ -190,14 +225,12 @@ def do_dev_easter_egg(role, user):
     role_color = user['roleColor']
     if role_color == "#00ff00":
         role_string = "<font class='Dev_colors-loop'>" + role + "</font>"
-    elif role_color == "#3262a8":
-        role_string = "<font class='ow_colors-loop'>" + role + "</font>"
     else:
         role_string = "<font color='" + role_color + "'>" + role + "</font>"
     return role_string
 
 
-def failed_message(result, roomid):
+def failed_message(result, roomid, user):
     """Tell the client that your message could not be sent for whatever the reason was."""
     fail_strings = {
         (1):
@@ -212,7 +245,10 @@ def failed_message(result, roomid):
         "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you do not have enough permission to use this chat room.</font>",
         (6):
         "[SYSTEM]: <font color='#ff7f00'>You can't send messages in this chat room because this chat room no longer exists,  select a chat room that does exist.</font>",
-        (7): "this chat room id does not exists"
+        (7):
+        "[SYSTEM]: <font color='#ff7f00'>this chat room id does not exist.</font>",
+        (8):
+        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send more than 15 messages in a row.</font>"
     }
     if result[0] == "dev":
         if result[1] == 6: fail_str = fail_strings.get((result[1]), "")
@@ -228,6 +264,17 @@ def is_user_expired(permission_str):
     parts = permission_str.split(' ')
     if len(parts) == 3 and parts[0] == 'muted':
         expiration_time_str = ' '.join(parts[1:])
+        expiration_time = datetime.strptime(expiration_time_str,
+                                                     "%Y-%m-%d %H:%M:%S")
+        current_time = datetime.now()
+        return current_time >= expiration_time
+
+
+def is_warned_expired(warned_str):
+    """checks if the user's time maches the time (idk you explain it better to me please)"""
+    parts = warned_str.split(' ')
+    if len(parts) == 2:
+        expiration_time_str = ''.join(parts[1:])
         expiration_time = datetime.strptime(expiration_time_str,
                                                      "%Y-%m-%d %H:%M:%S")
         current_time = datetime.now()
