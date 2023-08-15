@@ -5,3 +5,6 @@
 
 # import os
 # os.environ['mongo_key'] = your mongo key
+# os.environ['email'] = your chat email
+# os.environ['password'] = email's app password
+# os.environ['URL'] = your domain
