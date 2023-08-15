@@ -22,25 +22,36 @@ import keys
 import re
 import flask
 import pymongo
+import uuid
 from flask import request
-from flask.logging import default_handler
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
 from flask_apscheduler import APScheduler
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address  #, default_error_responder
 
 client = pymongo.MongoClient(os.environ["mongo_key"])
 dbm = client.Chat
 scheduler = APScheduler()
 
+#vars for files
+verification_code_list = [{"62f383f6-6102-4c4d-9e57-ba5fc2c70b3a": "test8"}]
+
 import chat
 import cmds
 import filtering
 import rooms
+import accounting
 
 LOGFILE = "backend/chat.txt"
 
 app = flask.Flask(__name__)
-app.config['SECRET'] = os.urandom(9001)#ITS OVER 9000!!!!!!
+app.config['SECRET'] = os.urandom(9001)  #ITS OVER 9000!!!!!!
+
+# rate limiting
+# limiter = Limiter(get_remote_address,
+#                   app=app,
+#                   on_breach=default_error_responder)
 
 logging.basicConfig(filename="backend/webserver.log",
                     filemode='a',
@@ -130,87 +141,120 @@ def changelog_page() -> ResponseReturnValue:
     return html_file
 
 
-@app.route('/signup', methods=["POST", "GET"])
-def signup() -> ResponseReturnValue:
+# custom error message for signup, instead of generic 429 error
+#def signup_ratelimit_error_responder(request_limit: RequestLimit):
+#    return jsonify({"error": "rate_limit_exceeded"})
+#BROKEN CSERVER
+
+# lets see if flask will like different functions for different routes on the endpoint
+# ok good it works, so ip ratelimiting should work (and does) This is a temp thing untill emailing is made
+@app.route('/signup', methods=["POST"])
+# @limiter.limit("1 per day")
+def signup_post() -> ResponseReturnValue:
+    """The creating of an account."""
+    global verification_code_list
+    global verification_code
+    SUsername = request.form.get("SUsername")
+    SPassword = request.form.get("SPassword")
+    SPassword2 = request.form.get("SPassword2")
+    SRole = request.form.get("SRole")
+    SDisplayname = request.form.get("SDisplayname")
+    SEmail = request.form.get("SEmail")
+
+    if bool(re.search(r'[\s\[,"\'<>{\]]', SUsername)) is True:
+        return flask.render_template(
+            "signup-index.html",
+            error='The display name contains a space or a special character.',
+            SRole=SRole,
+        )
+    elif bool(re.search(r'[\s[,"\'<>{\]]', SUsername)) is True:
+        return flask.render_template(
+            "signup-index.html",
+            error='The username contains a space or a special character.',
+            SRole=SRole,
+        )
+    check = r'^[A-Za-z]{3,12}$'
+    user_allowed = re.match(
+        check, SUsername
+    )  # and not re.search(r'dev|mod', SUsername, re.IGNORECASE) #The and needs to be moved to a seperate one to check for letter limit
+    desplayname_allowed = re.match(
+        check, SDisplayname
+    )  # and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
+    if user_allowed == 'false' or desplayname_allowed == 'false':
+        return flask.render_template(
+            "signup-index.html",
+            error=
+            'That Username/Display name is too long. It must be over 3 letters and under 13 letters.',
+            # error='That Username/Display name is not allowed!',
+            SRole=SRole,
+        )
+    if SPassword != SPassword2:
+        return flask.render_template("signup-index.html",
+                                     error='Password boxes do not match!',
+                                     SUsername=SUsername,
+                                     SRole=SRole,
+                                     SDisplayname=SDisplayname)
+    possible_user = dbm.Accounts.find_one({"username": SUsername})
+    possible_dispuser = dbm.Accounts.find_one({"displayName": SDisplayname})
+    if possible_user is not None or possible_dispuser is not None or SUsername in banned_usernames or SDisplayname in banned_usernames:
+        return flask.render_template(
+            "signup-index.html",
+            error='That Username/Display name is already taken!',
+            SRole=SRole)
+    verification_code = str(uuid.uuid4())
+    dbm.Accounts.insert_one({
+        "username":
+        SUsername,
+        "password":
+        hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
+        "user_id":
+        verification_code,
+        "email":
+        SEmail,
+        "role":
+        SRole,
+        "profile":
+        "",
+        "theme":
+        "dark",
+        "displayName":
+        SDisplayname,
+        "messageColor":
+        "#ffffff",
+        "roleColor":
+        "#ffffff",
+        "userColor":
+        "#ffffff",
+        "permission":
+        "locked",
+        "warned":
+        '0',
+        "SPermission":
+        ""
+    })
+    accounting.email_var_account(SUsername, SEmail, verification_code)
+    return flask.redirect(flask.url_for('login_page'))
+
+
+@app.route('/signup', methods=["GET"])
+def signup_get() -> ResponseReturnValue:
     """Serve the signup page."""
     # I wonder if moving this to filtering.py would work
     # to be done later TM
-    if request.method == "POST":
-        SUsername = request.form.get("SUsername")
-        SPassword = request.form.get("SPassword")
-        SPassword2 = request.form.get("SPassword2")
-        SRole = request.form.get("SRole")
-        SDisplayname = request.form.get("SDisplayname")
+    return flask.render_template('signup-index.html')
 
-        if bool(re.search(r'[\s\[,"\'<>{\]]', SUsername)) is True:
-            return flask.render_template(
-                "signup-index.html",
-                error='The display name contains a space or a special character.',
-                SRole=SRole,
-            )
-        elif bool(re.search(r'[\s[,"\'<>{\]]', SUsername)) is True:
-            return flask.render_template(
-                "signup-index.html",
-                error='The username contains a space or a special character.',
-                SRole=SRole,
-            )
-        check = r'^[A-Za-z]{3,12}$'
-        user_allowed = re.match(
-            check, SUsername
-        )  # and not re.search(r'dev|mod', SUsername, re.IGNORECASE) #The and needs to be moved to a seperate one to check for letter limit
-        desplayname_allowed = re.match(
-            check, SDisplayname
-        )  # and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
-        if user_allowed == 'false' or desplayname_allowed == 'false':
-            return flask.render_template(
-                "signup-index.html",
-                error='That Username/Display name is too must be over 3 and under 13 letters long',
-                # error='That Username/Display name is not allowed!',
-                SRole=SRole,
-            )
-        if SPassword != SPassword2:
-            return flask.render_template("signup-index.html",
-                                         error='Password boxes do not match!',
-                                         SUsername=SUsername,
-                                         SRole=SRole,
-                                         SDisplayname=SDisplayname)
-        possible_user = dbm.Accounts.find_one({"username": SUsername})
-        possible_dispuser = dbm.Accounts.find_one(
-            {"displayName": SDisplayname})
-        if possible_user is not None or possible_dispuser is not None or SUsername in banned_usernames or SDisplayname in banned_usernames:
-            return flask.render_template(
-                "signup-index.html",
-                error='That Username/Display name is already taken!',
-                SRole=SRole)
-        dbm.Accounts.insert_one({
-            "username":
-            SUsername,
-            "password":
-            hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
-            "role":
-            SRole,
-            "profile":
-            "",
-            "theme":
-            "dark",
-            "displayName":
-            SDisplayname,
-            "messageColor":
-            "#ffffff",
-            "roleColor":
-            "#ffffff",
-            "userColor":
-            "#ffffff",
-            "permission":
-            "true",
-            "warned":
-            '0',
-            "SPermission":
-            ""
-        })
-        return flask.redirect(flask.url_for('login_page'))
-    else:
-        return flask.render_template('signup-index.html')
+
+@app.route('/verify/<verification_code>')
+def verify(verification_code):
+    user_id = dbm.Accounts.find_one({"user_id": verification_code})
+    if user_id is not None:
+        dbm.Accounts.update_one({"user_id": verification_code},
+                                {"$set": {
+                                    "permission": 'true'
+                                }})
+        user = user_id["username"]
+        return f"User: {user} has been verified You may now chat in any chat room you like"
+    return "Invalid verification code."
 
 
 @app.route('/backup')
@@ -294,20 +338,22 @@ def customize_accounts() -> ResponseReturnValue:
                     error='Pick a theme before updating!',
                     **return_list)
             if (dbm.Accounts.find_one({"displayName": displayname}) is not None
-                    and user["displayName"] != displayname
-                ) and displayname in banned_usernames:
+                    and user["displayName"]
+                    != displayname) and displayname in banned_usernames:
                 return flask.render_template(
                     "settings.html",
                     error='That Display name is already taken!',
-                    **return_list)    
+                    **return_list)
 
             # if passwd != user["password"]: #need to make a check if they are not changing or we can just remove password changing from this methid to somthing else
             #     return flask.render_template("settings.html",
             #          error='Your password must not match your current one.',
             # **return_list)
             if bool(re.search(r'[\s[,"\'<>{\]]', displayname)) is True:
-                return flask.render_template("settings.html",
-                    error='The display name contains a space or a special character.',
+                return flask.render_template(
+                    "settings.html",
+                    error=
+                    'The display name contains a space or a special character.',
                     **return_list)
             check = r'^[A-Za-z]{3,12}$'
             # user_allowed = re.match(check, user)# and not re.search(r'dev|mod', SUsername, re.IGNORECASE)
@@ -463,6 +509,8 @@ def get_rooms(username):
     room_access = rooms.get_chat_rooms()
     if user_name["SPermission"] == "Debugpass":
         emit('roomsList', room_access, namespace='/', to=request.sid)
+    elif user_name["permission"] == "locked":
+        emit('roomsList', [{'id': 'ilQvQwgOhm9kNAOrRqbr', 'name': 'e'}], namespace='/', to=request.sid)
     else:
         accessible_rooms = [{
             'id': r['id'],
@@ -545,7 +593,10 @@ def update_permission():
             cmds.log_mutes(f"{username} is no longer muted.")
 
 
-@scheduler.task('interval', id='check_warns', seconds=60, misfire_grace_time=500)
+@scheduler.task('interval',
+                id='check_warns',
+                seconds=60,
+                misfire_grace_time=500)
 def update_permission():
     """Background task to see if user should be unmuted."""
     users = dbm.Accounts.find()
@@ -571,13 +622,13 @@ startup_msg = True
 def emit_on_startup():
     global startup_msg
     if startup_msg:
-        emit("message_chat", (
-            "[SYSTEM]: <font color='#ff7f00'>Server is back online!</font>",
-            'ilQvQwgOhm9kNAOrRqbr'),
-                broadcast=True,
-                namespace='/')
+        emit("message_chat",
+             ("[SYSTEM]: <font color='#ff7f00'>Server is back online!</font>",
+              'ilQvQwgOhm9kNAOrRqbr'),
+             broadcast=True,
+             namespace='/')
         startup_msg = False
-    
+
 
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=8080)

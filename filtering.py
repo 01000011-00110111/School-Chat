@@ -6,7 +6,7 @@ import re
 from datetime import datetime, timezone, timedelta
 from better_profanity import profanity
 from flask_socketio import emit
-# from markdown import markdown
+from markdown import markdown
 # from bs4 import BeautifulSoup
 import chat
 import profanity_words
@@ -44,13 +44,13 @@ def run_filter(user, room, message, roomid):
         profile_picture = user['profile']
 
     if "[" in message:
-        find_pings(message, user['displayName'], profile_picture)
+        find_pings(message, user['displayName'], profile_picture, roomid)
 
     # print (preuser)
-    # messageM = markdown(message)
+    messageM = markdown(message)
     # messageMarked = apply_custom_styling(messageM)
-    final_str = compile_message(message, profile_picture, user, role, preuser, message_count)
-    print (message_count, preuser)
+    final_str = compile_message(messageM, profile_picture, user, role, preuser, message_count)
+    # print (message_count, preuser)
 
     #check if locked or allowed to send
     if locked == 'true' and perms != "dev":
@@ -144,15 +144,17 @@ def apply_custom_styling(html_content):
     return modified_html_content
 
 
-def find_pings(message, dispName, profile_picture):
+def find_pings(message, dispName, profile_picture, roomid):
     """Gotta catch 'em all! (checks for pings in the users message)"""
     pings = re.findall(r'(?<=\[).+?(?=\])', message)
+    room = rooms.get_chat_rooms()
     for ping in pings:
         emit("ping", {
             "who": ping,
             "from": dispName,
             "pfp": profile_picture,
-            "message": message
+            "message": message,
+            "name": room["name"]
         },
              namespace="/",
              broadcast=True)
@@ -213,10 +215,10 @@ def compile_message(message, profile_picture, user, role, preuser, message_count
         timedelta(hours=-4))).strftime("[%a %I:%M %p] ")
 
     # should we change it to a f string
-    # if user["username"] == preuser:
-    #     message = message_string
-    # else:
-    message = date_str + profile + " " + user_string + " (" + role_string + ")" + " - " + message_string
+    if user["username"] == preuser:
+        message = message_string
+    else:
+        message = date_str + profile + " " + user_string + " (" + role_string + ")" + " - " + message_string
     return message
 
 

@@ -39,11 +39,11 @@ function pingHandle(Obj=null) {
     }
 }
 
-socket.on("ping", ({ who, from, pfp, message }) => {
+socket.on("ping", ({ who, from, pfp, message, room }) => {
     let user_name = window.localStorage.getItem("username");
     console.log(who, from, message);
     if (user_name === who) {
-        new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
+        new Notification("You have been pinged by:", { body: from + ` in ${room}: ` + message, icon: '/static/favicon.ico'});
     } else if (who === "everyone") {
         new Notification("You have been pinged by:", { body: from + ": " + message, icon: '/static/favicon.ico'});
     }
@@ -97,6 +97,8 @@ function CheckIfExist(params) {
 
 socket.on("room_data", (data) => {
     window.sessionStorage.setItem("roomid", data['roomid']);
+    // change uri when room changes (for looks really)
+    history.pushState({}, `chat${data['name']}`)
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     let chat = ""; 
