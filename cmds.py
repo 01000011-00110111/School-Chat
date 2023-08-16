@@ -413,9 +413,9 @@ def respond_command(result, roomid, name):
         (2, 'edit'):
         f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to blacklist the users {usersB}.</font>",
         (3, 'edit'):
-        "[SYSTEM]: <font color='#ff7f00'>.</font>",
+        "[SYSTEM]: <font color='#ff7f00'>You can not blacklist a user that is whitlisted.</font>",
         (4, 'edit'):
-        "[SYSTEM]: <font color='#ff7f00'>.</font>",
+        "[SYSTEM]: <font color='#ff7f00'>You can not whitlisted a user that is blacklisted.</font>",
         (0, 'info'):
         f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} was made by {generatedBy} at {generatedAt} and the chat room status is currently set to locked = {locked}.</font>",
         (0, 'rooms'):
@@ -513,26 +513,29 @@ def chat_room_edit(**kwargs):
     commands = kwargs['commands']
     room_name = commands.get('v1', '')
     command = commands.get('v2', '')
+    function = commands.get('v3', '')
     room = dbm.rooms.find_one({"roomName": room_name})
-    print(room)
+    print(command, room_name, function)
 
     if command not in ['create', 'test'] and room is None:
         command = ''
         respond_command(('reason', 0, 'rooms'), roomid, room_name)
 
-    if command == 'delete':
+    if command == 'delete' and function == '':
         response = rooms.delete_chat_room(room_name, user)
         respond_command(response, roomid, room_name)
-    elif command == "create":
+    elif command == "create" and function == '':
         response = rooms.create_rooms(room_name, user, user["displayName"])
         respond_command(response, roomid, room_name)
     elif command in ["whitelist", "blacklist"]:
-        users = ','.join(list(commands.values())[3:])
-        response = rooms.chat_room_edit(command, room_name, user, users)
+        users = ','.join(list(commands.values())[4:])
+        response = rooms.chat_room_edit(command, function, room_name, user, users)
         respond_command(response, roomid, room_name)
-    elif command == "info":
+    elif command == "info" and function == '':
         response = ('reason', 0, 'info')
         respond_command(response, roomid, room_name)
+    else:
+        print('add a failed response')
 
 
 def warn_user(user):
