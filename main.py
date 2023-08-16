@@ -201,6 +201,16 @@ def signup_post() -> ResponseReturnValue:
             "signup-index.html",
             error='That Username/Display name is already taken!',
             SRole=SRole)
+    possible_email = dbm.Accounts.find_one({"email": SEmail})
+    if possible_email is not None:
+       return flask.render_template(
+            "signup-index.html",
+            error='That Email is allready used!',
+           SEmail=SEmail,
+           SUsername=SUsername,
+           SDisplayname=SDisplayname,
+           SRole=SRole
+       )
     verification_code = str(uuid.uuid4())
     dbm.Accounts.insert_one({
         "username":

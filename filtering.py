@@ -47,9 +47,9 @@ def run_filter(user, room, message, roomid):
         find_pings(message, user['displayName'], profile_picture, roomid)
 
     # print (preuser)
-    messageM = markdown(message)
+    # messageM = markdown(message)
     # messageMarked = apply_custom_styling(messageM)
-    final_str = compile_message(messageM, profile_picture, user, role, preuser, message_count)
+    final_str = compile_message(message, profile_picture, user, role, preuser, message_count)
     # print (message_count, preuser)
 
     #check if locked or allowed to send
@@ -215,10 +215,10 @@ def compile_message(message, profile_picture, user, role, preuser, message_count
         timedelta(hours=-4))).strftime("[%a %I:%M %p] ")
 
     # should we change it to a f string
-    if user["username"] == preuser:
-        message = message_string
-    else:
-        message = date_str + profile + " " + user_string + " (" + role_string + ")" + " - " + message_string
+    # if user["username"] == preuser:
+    #     message = message_string
+    # else:
+    message = date_str + profile + " " + user_string + " (" + role_string + ")" + " - " + message_string
     return message
 
 
