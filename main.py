@@ -144,10 +144,10 @@ def changelog_page() -> ResponseReturnValue:
 # custom error message for signup, instead of generic 429 error
 #def signup_ratelimit_error_responder(request_limit: RequestLimit):
 #    return jsonify({"error": "rate_limit_exceeded"})
+# yes ik the stuff above is horibbly broken, but the other stuff is fine
 #BROKEN CSERVER
 
-# lets see if flask will like different functions for different routes on the endpoint
-# ok good it works, so ip ratelimiting should work (and does) This is a temp thing untill emailing is made
+
 @app.route('/signup', methods=["POST"])
 # @limiter.limit("1 per day")
 def signup_post() -> ResponseReturnValue:
@@ -203,14 +203,12 @@ def signup_post() -> ResponseReturnValue:
             SRole=SRole)
     possible_email = dbm.Accounts.find_one({"email": SEmail})
     if possible_email is not None:
-       return flask.render_template(
-            "signup-index.html",
-            error='That Email is allready used!',
-           SEmail=SEmail,
-           SUsername=SUsername,
-           SDisplayname=SDisplayname,
-           SRole=SRole
-       )
+        return flask.render_template("signup-index.html",
+                                     error='That Email is allready used!',
+                                     SEmail=SEmail,
+                                     SUsername=SUsername,
+                                     SDisplayname=SDisplayname,
+                                     SRole=SRole)
     verification_code = str(uuid.uuid4())
     dbm.Accounts.insert_one({
         "username":
@@ -487,30 +485,6 @@ def handle_online(username: str):
     emit("online", username_list, broadcast=True)
 
 
-@socketio.on("ban_cmd")
-def ban_user(username: str, user):
-    """Ban a user from the chat forever."""
-    cmds.ban_user(username, user, '')
-
-
-@socketio.on("mute_cmd")
-def mute_user(username: str, user):
-    """mute a user from the chat."""
-    cmds.mute_user(username, user, '', '')
-
-
-@socketio.on("unmute_cmd")
-def unmute_user(username: str, user):
-    """unmute a user from the chat."""
-    cmds.unmute_user(username, user)
-
-
-@socketio.on("admin_cmd")
-def handle_admin_stuff(cmd: str, user, roomid):
-    """Admin commands will be sent here."""
-    cmds.find_command(commands={"v0": cmd}, user=user, roomid=roomid)
-
-
 @socketio.on("get_rooms")
 def get_rooms(username):
     """Grabs the chat rooms."""
@@ -520,7 +494,12 @@ def get_rooms(username):
     if user_name["SPermission"] == "Debugpass":
         emit('roomsList', room_access, namespace='/', to=request.sid)
     elif user_name["permission"] == "locked":
-        emit('roomsList', [{'id': 'ilQvQwgOhm9kNAOrRqbr', 'name': 'e'}], namespace='/', to=request.sid)
+        emit('roomsList', [{
+            'id': 'ilQvQwgOhm9kNAOrRqbr',
+            'name': 'e'
+        }],
+             namespace='/',
+             to=request.sid)
     else:
         accessible_rooms = [{
             'id': r['id'],

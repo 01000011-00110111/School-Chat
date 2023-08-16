@@ -53,7 +53,7 @@ socket.on("reset_chat", (who, roomid) => {
     if (roomid === window.sessionStorage.getItem('roomid')) {
         let chatDiv = document.getElementById("chat");
         if (who === "admin") {
-            chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by a admin.</font><br>";
+            chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by an admin.</font><br>";
         } else if (who === "auto") {
             chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font><br>";
         }
@@ -97,8 +97,6 @@ function CheckIfExist(params) {
 
 socket.on("room_data", (data) => {
     window.sessionStorage.setItem("roomid", data['roomid']);
-    // change uri when room changes (for looks really)
-    history.pushState({}, `chat${data['name']}`)
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     let chat = ""; 
