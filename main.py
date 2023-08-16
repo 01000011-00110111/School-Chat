@@ -564,7 +564,10 @@ def connect(roomid):
     emit("room_data", room, to=socketid, namespace='/')
 
 
-@scheduler.task('interval', id='mute_gc', seconds=60, misfire_grace_time=500)
+@scheduler.task('interval',
+                id='permission_gc',
+                seconds=60,
+                misfire_grace_time=500)
 def update_permission():
     """Background task to see if user should be unmuted."""
     users = dbm.Accounts.find()
@@ -593,6 +596,7 @@ def update_permission():
 # start background tasks should we move this down to 533?
 scheduler.start()
 startup_msg = True
+
 
 @socketio.on('connect')
 def emit_on_startup():
