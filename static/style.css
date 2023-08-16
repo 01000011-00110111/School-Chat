@@ -287,9 +287,7 @@ body {
 
 
 .rainbow-text-loop {
-/*   font-size: 1.5rem; */
   display: inline-block;
-/*   margin-top: 1rem; */
   text-shadow: 2px 2px 4px #000000;
   -webkit-animation: rainbow 5s infinite; 
 }
@@ -306,29 +304,6 @@ body {
   80%{color: DeepPink;}
   90%{color: DodgerBlue;}
   100%{color: orange;}
-}
-
-
-.rainbow-text-loop-b {
-  font-size: 1.5rem;
-  display: inline-block;
-  margin-top: 1rem;
-  text-shadow: 2px 2px 4px #000000;
-  -webkit-animation: rainbowb 5s infinite; 
-}
-
-@-webkit-keyframes rainbowb{
-  0%{background-color: orange;}  
-  10%{background-color: purple;} 
-  20%{background-color: red;}
-  30%{background-color: CadetBlue;}
-  40%{background-color: yellow;}
-  50%{background-color: coral;}
-  60%{background-color: green;}
-  70%{background-color: cyan;}
-  80%{background-color: DeepPink;}
-  90%{background-color: DodgerBlue;}
-  100%{background-color: orange;}
 }
 
 .Dev_colors-loop {
@@ -350,20 +325,6 @@ body {
   100%{color: #f47106;}
 }
 
-@-webkit-keyframes ow_colors {
-  0%{color: orange;}  
-  10%{color: purple;} 
-  20%{color: red;}
-  30%{color: CadetBlue;}
-  40%{color: yellow;}
-  50%{color: coral;}
-  60%{color: green;}
-  70%{color: cyan;}
-  80%{color: DeepPink;}
-  90%{color: DodgerBlue;}
-  100%{color: orange;}
-}
-
 /* Login popup */
 
 .LoginInput {
@@ -377,25 +338,26 @@ body {
 }
 
 .LoginPopup {
-  background: white;
-  color: black;
-  width: 350px;
-  height: 350px;
-  border-radius: 20px;
-  text-align: center;
-  margin: auto auto;
-  padding-top: 5px;
-  margin-top: 6%;
+    background: #ffffff;
+    color: black;
+    width: 350px;
+    height: 390px;
+    border-radius: 0px 20px 20px 0px;
+    text-align: center;
+    margin-left: -8px;
+    margin-top: -7px;
+    padding-top: 30%;
+    position: fixed;
 }
 
 .LoginBTN {
-  background: #2990f9;
-  color: white;
-  border: 0px;
-  width: 92%;
-  height: 40px;
-  border-radius: 10px;
-  margin-top: 30px;
+    background: #2990f9;
+    color: white;
+    border: 0px;
+    width: 92%;
+    height: 40px;
+    border-radius: 10px;
+    margin-top: 30px;
 }
 
 .LoginBTN:hover {
@@ -436,4 +398,19 @@ body {
   padding: 12px 16px;
   text-decoration: none;
   display: block;
+}
+
+.ChatinfoLP {
+    text-align: center;
+    margin-left: 26.8%;
+    width: 1000px;
+}
+  
+.LoginTTL {
+    font-size: 80px;
+}
+
+.LoginTXT {
+    color: white;
+    text-align: left;
 }
