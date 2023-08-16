@@ -581,19 +581,7 @@ def update_permission():
                                     }})
             cmds.log_mutes(f"{username} is no longer muted.")
 
-
-@scheduler.task('interval',
-                id='check_warns',
-                seconds=60,
-                misfire_grace_time=500)
-def update_permission():
-    """Background task to see if user should be unmuted."""
-    users = dbm.Accounts.find()
-    for user_info in users:
-        user = user_info['username']
-        username = user_info['displayName']
-
-        if filtering.is_warned_expired(permission):
+        elif filtering.is_warned_expired(permission):
             print(f"{username} warnings have been reset.")
             dbm.Accounts.update_one({'username': user},
                                     {'$set': {
@@ -605,7 +593,6 @@ def update_permission():
 # start background tasks should we move this down to 533?
 scheduler.start()
 startup_msg = True
-
 
 @socketio.on('connect')
 def emit_on_startup():
