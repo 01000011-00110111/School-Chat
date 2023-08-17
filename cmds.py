@@ -38,6 +38,7 @@ def find_command(**kwargs):
         'status': send_stats,
         'lock': lock,
         'unlock': unlock,
+        'golballock': globalock,
         'ronline': reload_users,
         'ro': reload_users,
         'clear': reset_chat_user,
@@ -147,41 +148,50 @@ def mute_user(**kwargs):
                 time_number = int(time_match.group(1))
                 time_letter = time_match.group(2)
                 current_time = datetime.now()
-            
+
                 if time_letter == 'd':
                     time_final = f"{time_number} days"
-                    expiration_time = current_time + timedelta(days=time_number)
+                    expiration_time = current_time + timedelta(
+                        days=time_number)
                 elif time_letter == 'h':
                     time_final = f"{time_number} hours"
-                    expiration_time = current_time + timedelta(hours=time_number)
+                    expiration_time = current_time + timedelta(
+                        hours=time_number)
                 elif time_letter == 'm':
                     time_final = f"{time_number} minutes"
-                    expiration_time = current_time + timedelta(minutes=time_number)
+                    expiration_time = current_time + timedelta(
+                        minutes=time_number)
                 elif time_letter == 'f':
                     time_final = None
-            
+
                 if time_letter != 'f':
-                    expiration_time_str = expiration_time.strftime("%Y-%m-%d %H:%M:%S")
+                    expiration_time_str = expiration_time.strftime(
+                        "%Y-%m-%d %H:%M:%S")
                     permission_str = f"muted {expiration_time_str}"
-            
-                dbm.Accounts.update_one({"displayName": username},
-                                        {"$set": {
-                                            "permission": permission_str
-                                        }})
+
+                dbm.Accounts.update_one(
+                    {"displayName": username},
+                    {"$set": {
+                        "permission": permission_str
+                    }})
 
             if reason == '' and time_final is None:
                 message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time.</font>'
                 log_mutes(f"{username} is muted by a mod or admin.")
             elif time_final is None:
                 message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time. Reason: {reason}.</font>'
-                log_mutes(f"{username} is muted because {reason} by a mod or admin.")
+                log_mutes(
+                    f"{username} is muted because {reason} by a mod or admin.")
             elif reason == '':
                 message = f'[SYSTEM]: <font color="#ff7f00">{username} is mutted for {time_final}.</font>'
-                log_mutes(f"{username} is muted for {time_final} by a mod or admin.")
+                log_mutes(
+                    f"{username} is muted for {time_final} by a mod or admin.")
             else:
                 message = f'[SYSTEM]: <font color="#ff7f00">{username} is mutted for {time_final}. Reason: {reason}.</font>'
-                log_mutes(f"{username} is muted because {reason} for {time_final} by a mod or admin.")
-                
+                log_mutes(
+                    f"{username} is muted because {reason} for {time_final} by a mod or admin."
+                )
+
                 chat.add_message(message, roomid, 'true')
                 emit("message_chat", (message, roomid), broadcast=True)
     else:
@@ -315,7 +325,8 @@ def run_shutdown(**kwargs):
         scheduler.shutdown()
         # replace with systemd methoud
         sysbus = dbus.SystemBus()
-        systemd1 = sysbus.get_object('org.freedesktop.systemd1', '/org/freedesktop/systemd1')
+        systemd1 = sysbus.get_object('org.freedesktop.systemd1',
+                                     '/org/freedesktop/systemd1')
         manager = dbus.Interface(systemd1, 'org.freedesktop.systemd1.Manager')
         job = manager.StopUnit('chatserverd.service', 'fail')
     else:
@@ -337,7 +348,8 @@ def run_restart(**kwargs):
         sleep(2)
         scheduler.shutdown()
         sysbus = dbus.SystemBus()
-        systemd1 = sysbus.get_object('org.freedesktop.systemd1', '/org/freedesktop/systemd1')
+        systemd1 = sysbus.get_object('org.freedesktop.systemd1',
+                                     '/org/freedesktop/systemd1')
         manager = dbus.Interface(systemd1, 'org.freedesktop.systemd1.Manager')
         job = manager.RestartUnit('chatserverd.service', 'fail')
     else:
@@ -429,6 +441,8 @@ def respond_command(result, roomid, name):
         "[SYSTEM]: <font color='#ff7f00'>You forgot the time!</font>",
         (1, 'wrong_room'):
         "[SYSTEM]: <font color='#ff7f00'>You can only run this command in the dev chat room</font>",
+        (1, "not_confirmed"):
+        "[SYSTEM]: <font color='#ff7f00'>Are you sure you want to run this?</font>",
     }
     response_str = response_strings.get((result[1], result[2]))
     if result[1] in [0, 2, 3] and result[2] in ['create', 'delete', 'edit']:
@@ -469,6 +483,24 @@ def help_command(**kwargs):
     command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(
         line.strip() for line in lines[start_index:end_index + 1]) + "</font>"
     emit("message_chat", (command_line, roomid), namespace="/")
+
+
+def globalock(**kwargs):
+    """Locks all chatrooms, only used in emergencies."""
+    user = kwargs['user']
+    roomid = kwargs['roomid']
+    confirm = kwargs['commands']['v1']
+    if check_if_dev(user) != 1:
+        respond_command(("reason", 2, "not_dev"), roomid, None)
+        return
+
+    if confirm != "yes":
+        respond_command(("reason", 1, "not_confirmed"), roomid, None)
+    else:
+        message = "[SYSTEM]: <font color='#ff7f00'>All Chatrooms locked by Admin.</font>"
+        chat.add_message(message, "all", dbm)
+        emit("message_chat", (message, "all"), broadcast=True)
+        dbm.rooms.update_many({}, {'$set': {"locked": 'true'}})
 
 
 def lock(**kwargs):
@@ -516,7 +548,7 @@ def chat_room_edit(**kwargs):
     command = commands.get('v2', '')
     function = commands.get('v3', '')
     room = dbm.rooms.find_one({"roomName": room_name})
-    print(command, room_name, function)
+    # print(command, room_name, function)
 
     if command not in ['create', 'test'] and room is None:
         command = ''
@@ -530,7 +562,8 @@ def chat_room_edit(**kwargs):
         respond_command(response, roomid, room_name)
     elif command in ["whitelist", "blacklist"]:
         users = ','.join(list(commands.values())[4:])
-        response = rooms.chat_room_edit(command, function, room_name, user, users)
+        response = rooms.chat_room_edit(command, function, room_name, user,
+                                        users)
         respond_command(response, roomid, room_name)
     elif command == "info" and function == '':
         response = ('reason', 0, 'info')
@@ -545,9 +578,9 @@ def warn_user(user):
     current_time = datetime.now()
     expiration_time = current_time + timedelta(days=30)
     date = expiration_time.strftime("%Y-%m-%d %H:%M:%S")
-    warn_updated = int(warn_count) +1
+    warn_updated = int(warn_count) + 1
     dbm.Accounts.update_one(
         {"username": user["username"]},
-            {'$set': {
-                'warned': f"{str(warn_updated)} {date}"
+        {'$set': {
+            'warned': f"{str(warn_updated)} {date}"
         }})

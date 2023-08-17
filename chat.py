@@ -132,11 +132,14 @@ def backup_log(message_text: str, roomid) -> None:
 
 
 def send_message_DB(message_text: str, roomid) -> None:
-    """addes messages to the chat room in the dartbase"""
-    dbm.rooms.update_one({"roomid": roomid},
-                         {'$push': {
-                             'messages': message_text
-                         }})
+    """addes messages to the chat room in the database"""
+    if roomid == "all":
+        dbm.rooms.update_many({}, {'$push': {'messages': message_text}})
+    else:
+        dbm.rooms.update_one({"roomid": roomid},
+                             {'$push': {
+                                 'messages': message_text
+                             }})
 
 
 def set_message_DB(roomid, is_admin: bool):
