@@ -81,7 +81,7 @@ def get_stats(roomid) -> str:
 def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
     room = dbm.rooms.find_one({"roomid": roomid})
-    lines = len(room["messages"])
+    lines = len(room["messages"]) if roomid != "all" else 1
     if lines >= 500 and permission != 'true' and roomid != "ilQvQwgOhm9kNAOrRqbr":
         reset_chat(message_text, False, roomid)
     elif roomid == "ilQvQwgOhm9kNAOrRqbr" and lines >= 1000 and permission != 'true':
@@ -125,7 +125,7 @@ def backup_log(message_text: str, roomid) -> None:
     with open(LOGFILE_B, "a", encoding="utf8") as f_out:
         date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
         room = dbm.rooms.find_one({"roomid": roomid})
-        name = room["roomName"]
+        name = room["roomName"] if roomid != "all" else "All rooms"
         f_out.write(
             f"[{date}], [{name}, Roomid: ({roomid})] The message said: {message_text}\n"
         )

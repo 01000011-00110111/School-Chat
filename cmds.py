@@ -7,6 +7,8 @@ from main import dbm, scheduler
 from flask_socketio import emit
 import time
 from time import sleep
+# below is needed for systemd restart, do not remove
+# import dbus
 import os
 import re
 from datetime import datetime, timedelta
@@ -37,8 +39,8 @@ def find_command(**kwargs):
         'blanks': chat.line_blanks,
         'status': send_stats,
         'lock': lock,
+        'globalock': globalock,
         'unlock': unlock,
-        'golballock': globalock,
         'ronline': reload_users,
         'ro': reload_users,
         'clear': reset_chat_user,
@@ -441,7 +443,7 @@ def respond_command(result, roomid, name):
         "[SYSTEM]: <font color='#ff7f00'>You forgot the time!</font>",
         (1, 'wrong_room'):
         "[SYSTEM]: <font color='#ff7f00'>You can only run this command in the dev chat room</font>",
-        (1, "not_confirmed"):
+        (3, "not_confirmed"):
         "[SYSTEM]: <font color='#ff7f00'>Are you sure you want to run this?</font>",
     }
     response_str = response_strings.get((result[1], result[2]))
@@ -495,7 +497,7 @@ def globalock(**kwargs):
         return
 
     if confirm != "yes":
-        respond_command(("reason", 1, "not_confirmed"), roomid, None)
+        respond_command(("reason", 3, "not_confirmed"), roomid, None)
     else:
         message = "[SYSTEM]: <font color='#ff7f00'>All Chatrooms locked by Admin.</font>"
         chat.add_message(message, "all", dbm)
