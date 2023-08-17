@@ -43,6 +43,7 @@ def find_command(**kwargs):
         'clear': reset_chat_user,
         'rc': reset_chat_user,
         'shutdown': run_shutdown,
+        'restart': run_restart,
         'lines': send_lines,
         'pstats': send_lines,
         'system': send_system,
