@@ -414,3 +414,16 @@ body {
     color: white;
     text-align: left;
 }
+
+
+.version {
+    background: #2d2d2d;
+    color: white;
+    border: 1px solid grey;
+    /* padding: .25em; */
+    position: fixed;
+    bottom: -20px;
+    left: 92.8%;
+    transform-origin: top left;
+    border-radius: 5%;
+}
