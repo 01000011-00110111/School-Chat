@@ -2,14 +2,12 @@
 backend/Backups/*
 
 # chatlog
-backend/chat.lock
 backend/webserver.log
 backend/Chat-backup.txt
-backend/muted.txt
 backend/command_log.txt
 airhorn_default.wav
 backend/chat-rooms_log.txt
-backend/permision.txt
+backend/permission.txt
 
 # running files
 __pycache__/*
