@@ -346,7 +346,7 @@ body {
     text-align: center;
     margin-left: -8px;
     margin-top: -7px;
-    padding-top: 30%;
+    padding-top: 25%;
     position: fixed;
 }
 
@@ -403,7 +403,7 @@ body {
 .ChatinfoLP {
     text-align: center;
     margin-left: 26.8%;
-    width: 1000px;
+    width: 800px;
 }
   
 .LoginTTL {
