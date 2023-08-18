@@ -34,8 +34,6 @@ client = pymongo.MongoClient(os.environ["mongo_key"])
 dbm = client.Chat
 scheduler = APScheduler()
 
-#vars for files
-verification_code_list = [{"62f383f6-6102-4c4d-9e57-ba5fc2c70b3a": "test8"}]
 
 import chat
 import cmds
@@ -145,7 +143,6 @@ def changelog_page() -> ResponseReturnValue:
 #def signup_ratelimit_error_responder(request_limit: RequestLimit):
 #    return jsonify({"error": "rate_limit_exceeded"})
 # yes ik the stuff above is horibbly broken, but the other stuff is fine
-#BROKEN CSERVER
 
 
 @app.route('/signup', methods=["POST"])
@@ -215,7 +212,7 @@ def signup_post() -> ResponseReturnValue:
         SUsername,
         "password":
         hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
-        "user_id":
+        "userId":
         verification_code,
         "email":
         SEmail,
@@ -247,14 +244,12 @@ def signup_post() -> ResponseReturnValue:
 @app.route('/signup', methods=["GET"])
 def signup_get() -> ResponseReturnValue:
     """Serve the signup page."""
-    # I wonder if moving this to filtering.py would work
-    # to be done later TM
     return flask.render_template('signup-index.html')
 
 
 @app.route('/verify/<verification_code>')
 def verify(verification_code):
-    user_id = dbm.Accounts.find_one({"user_id": verification_code})
+    user_id = dbm.Accounts.find_one({"userId": verification_code})
     if user_id is not None:
         dbm.Accounts.update_one({"user_id": verification_code},
                                 {"$set": {
@@ -306,6 +301,7 @@ def customize_accounts() -> ResponseReturnValue:
                     user=username,
                     passwd=
                     'we are not adding password editing just yet',  #hashlib.sha384(bytes(password, 'utf-8')).hexdigest(),
+                    email=user["email"],
                     displayName=user["displayName"],
                     role=user["role"],
                     user_color=user["userColor"],
@@ -325,6 +321,7 @@ def customize_accounts() -> ResponseReturnValue:
             messageC = request.form.get("message_color")
             roleC = request.form.get("role_color")
             userC = request.form.get("user_color")
+            email = request.form.get("email")
             # passwd = request.form.get("password")
             profile = request.form.get("profile")
             theme = request.form.get("theme")
@@ -338,7 +335,8 @@ def customize_accounts() -> ResponseReturnValue:
                 "role_color": roleC,
                 "message_color": messageC,
                 "profile": profile,
-                "theme": theme
+                "theme": theme,
+                "email": email
             }
             if theme is None:
                 return flask.render_template(
@@ -352,7 +350,23 @@ def customize_accounts() -> ResponseReturnValue:
                     "settings.html",
                     error='That Display name is already taken!',
                     **return_list)
-
+            if (dbm.Accounts.find_one({"email": email}) is None
+                    and user["email"] != email):
+                verification_code = str(uuid.uuid4())
+                print(verification_code)
+                dbm.Accounts.update_one(
+                    {'username': userid},
+                    {"$set": {
+                        'userId': verification_code
+                    }})
+                accounting.email_var_account(
+                    user["username"], email, verification_code
+                )  # it gets a invalid code when the verify link is perssed
+            elif (dbm.Accounts.find_one({"email": email}) is not None
+                  and user["email"] != email):
+                return flask.render_template("settings.html",
+                                             error='that email is taken',
+                                             **return_list)
             # if passwd != user["password"]: #need to make a check if they are not changing or we can just remove password changing from this methid to somthing else
             #     return flask.render_template("settings.html",
             #          error='Your password must not match your current one.',
@@ -384,7 +398,8 @@ def customize_accounts() -> ResponseReturnValue:
                         "displayName": displayname,
                         "role": role,
                         "profile": profile,
-                        "theme": theme
+                        "theme": theme,
+                        "email": email
                         # "username": userid,
                         # "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest()
                     }
@@ -479,7 +494,6 @@ def handle_online(username: str):
                               "username": username
                           }})
     username_list = []
-    # lets see if this works
     for key in dbm.Online.find():
         username_list.append(key["username"])
     emit("online", username_list, broadcast=True)

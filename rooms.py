@@ -45,6 +45,11 @@ def get_chat_rooms():
     return rooms
 
 
+def get_chat_room(roomid):
+    """grabs a chat room"""
+    return dbm.rooms.find_one({'roomid': roomid})
+
+
 def create_rooms(name, user, username):
     """Someone wants to make a chat room."""
     if len(name) > 10:
@@ -189,7 +194,7 @@ def whitelist(room_name, set_type, user, users, room, username, dev):
                 users = f"{pre_users},{users}"
             else:
                 return ('response', 5, 'edit')# message about that user is allready in the whitelis
-            print(users)
+            # print(users)
         message = 'users: ' + users
         update_whitelist(room_name, message)
         main.get_rooms(user["username"])

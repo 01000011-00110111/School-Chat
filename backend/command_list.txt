@@ -10,6 +10,7 @@
     <li><code>"$sudo blanks"</code>: Sends 100 blank lines in the chat room you are currently in.</li>
     <li><code>"$sudo lines/pstats"</code>: Gets the line count of the chat room you are on.</li>
     <li><code>"$sudo ban (username) (reason)"</code>: The reason is optional.</li>
+    <li><code>"$sudo globalock (confirm)"</code>: Locks all rooms. Only use in emergencies</li>
 </ul>
 
 <h2>Mod commands:</h2>

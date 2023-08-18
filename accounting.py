@@ -13,7 +13,7 @@ def email_var_account(username, email, verification_code):
     sender_email = os.environ['email']
     sender_password = os.environ['password']
     receiver_email = email
-    subject = f'verification of {username}'
+    subject = f'Verification of {username}!'
     
     # Create the email content
     for i in range(1):  # Send 1 emails (you can adjust the number as needed)
@@ -72,9 +72,11 @@ def email_var_account(username, email, verification_code):
     # msg['Message-ID'] = message_id
 
     message_id = f"<{uuid.uuid4()}@{URL}>"
+    print(message_id)
     msg.add_header('Message-ID', message_id)
 
     msg.attach(MIMEText(message_body, 'html'))
+    print(msg.as_string())
 
     
     # Connect to the SMTP server

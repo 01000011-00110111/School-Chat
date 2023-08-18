@@ -6,7 +6,7 @@ import re
 from datetime import datetime, timezone, timedelta
 from better_profanity import profanity
 from flask_socketio import emit
-from markdown import markdown
+# from markdown import markdown
 # from bs4 import BeautifulSoup
 import chat
 import profanity_words
@@ -147,14 +147,15 @@ def apply_custom_styling(html_content):
 def find_pings(message, dispName, profile_picture, roomid):
     """Gotta catch 'em all! (checks for pings in the users message)"""
     pings = re.findall(r'(?<=\[).+?(?=\])', message)
-    room = rooms.get_chat_rooms()
+    room = rooms.get_chat_room(roomid)
     for ping in pings:
+        message = message.replace(f"[{ping}]", '')
         emit("ping", {
             "who": ping,
             "from": dispName,
             "pfp": profile_picture,
             "message": message,
-            "name": room["name"]
+            "name": room["roomName"]
         },
              namespace="/",
              broadcast=True)
