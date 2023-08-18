@@ -7,7 +7,6 @@ from datetime import datetime, timezone, timedelta
 from better_profanity import profanity
 from flask_socketio import emit
 # from markdown import markdown
-# from bs4 import BeautifulSoup
 import chat
 import profanity_words
 import cmds
@@ -48,7 +47,6 @@ def run_filter(user, room, message, roomid):
 
     # print (preuser)
     # messageM = markdown(message)
-    # messageMarked = apply_custom_styling(messageM)
     final_str = compile_message(message, profile_picture, user, role, preuser, message_count)
     # print (message_count, preuser)
 
@@ -130,18 +128,6 @@ def to_hyperlink(text):
 def filter_message(message):
     """No one likes profanity, especially flagging systems."""
     return profanity.censor(message)
-
-
-def apply_custom_styling(html_content):
-    soup = BeautifulSoup(html_content, 'html.parser')
-
-    elements = soup.find_all()
-    for element in elements:
-        element['style'] = 'margin: -3.5%; padding-left: 37%;'
-
-    modified_html_content = str(soup)
-
-    return modified_html_content
 
 
 def find_pings(message, dispName, profile_picture, roomid):
