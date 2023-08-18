@@ -8,6 +8,7 @@ backend/command_log.txt
 airhorn_default.wav
 backend/chat-rooms_log.txt
 backend/permission.txt
+backend/accounts.txt
 
 # running files
 __pycache__/*

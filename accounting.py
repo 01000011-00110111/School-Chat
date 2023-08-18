@@ -1,9 +1,14 @@
 import os
 import smtplib
 import uuid
+from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+def log_accounts(message):
+    """Log when a command is issued."""
+    with open('backend/accounts.txt', 'a', encoding="utf8") as file:
+        file.write(message + '\n')
     
 def email_var_account(username, email, verification_code):
     # Email configuration
@@ -72,7 +77,7 @@ def email_var_account(username, email, verification_code):
     # msg['Message-ID'] = message_id
 
     message_id = f"<{uuid.uuid4()}@{URL}>"
-    print(message_id)
+    # print(message_id)
     msg.add_header('Message-ID', message_id)
 
     msg.attach(MIMEText(message_body, 'html'))
@@ -95,3 +100,14 @@ def email_var_account(username, email, verification_code):
     finally:
         server.quit()
         return verification_code_list
+
+
+def is_account_expired(permission_str):
+    """checks if the user's time maches the time (idk you explain it better to me please)"""
+    parts = permission_str.split(' ')
+    if len(parts) == 3 and parts[0] == 'locked':
+        expiration_time_str = ' '.join(parts[1:])
+        expiration_time = datetime.strptime(expiration_time_str,
+                                                     "%Y-%m-%d %H:%M:%S")
+        current_time = datetime.now()
+        return current_time >= expiration_time

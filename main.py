@@ -29,6 +29,7 @@ from flask_socketio import SocketIO, emit
 from flask_apscheduler import APScheduler
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address  #, default_error_responder
+from datetime import datetime
 
 client = pymongo.MongoClient(os.environ["mongo_key"])
 dbm = client.Chat
@@ -207,6 +208,10 @@ def signup_post() -> ResponseReturnValue:
                                      SDisplayname=SDisplayname,
                                      SRole=SRole)
     verification_code = str(uuid.uuid4())
+    from datetime import datetime, timedelta
+    current_time = datetime.now()
+    time = current_time + timedelta(hours=10)
+    formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
     dbm.Accounts.insert_one({
         "username":
         SUsername,
@@ -231,13 +236,14 @@ def signup_post() -> ResponseReturnValue:
         "userColor":
         "#ffffff",
         "permission":
-        "locked",
+        f"locked {formatted_time}",
         "warned":
         '0',
         "SPermission":
         ""
     })
     accounting.email_var_account(SUsername, SEmail, verification_code)
+    accounting.log_accounts(f'A user has made a account named {SUsername}')
     return flask.redirect(flask.url_for('login_page'))
 
 
@@ -256,6 +262,7 @@ def verify(verification_code):
                                     "permission": 'true'
                                 }})
         user = user_id["username"]
+        accounting.log_accounts(f'The account {user} has been verified and may now chat in any chat room')
         return f"User: {user} has been verified You may now chat in any chat room you like"
     return "Invalid verification code."
 
@@ -404,6 +411,7 @@ def customize_accounts() -> ResponseReturnValue:
                         # "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest()
                     }
                 })
+            accounting.log_accounts(f'The account {user} has updated some settings (one day ill add what they updated)')
             return flask.render_template('settings.html',
                                          error="updated account",
                                          **return_list)
@@ -605,6 +613,22 @@ def update_permission():
                                         'warned': '0'
                                     }})
             cmds.log_mutes(f"{username} warnings have been reset.")
+
+
+@scheduler.task('interval',# connor if you want to combine you can this deletes the account if it was not vared in 10 hours 
+                id='check_accounts',
+                seconds=60,
+                misfire_grace_time=500)
+def check_accounts():
+    """checks accounts for any accounts that need deleting"""
+    users = dbm.Accounts.find()
+    for user_info in users:
+        user = user_info['username']
+        permission = user_info['permission']
+        # username = user_info['displayName']
+        if accounting.is_account_expired(permission):
+            accounting.log_accounts(f'The account {user} has been deleted because it was not verified')
+            dbm.Accounts.delete_one({'username': user})
 
 
 # start background tasks should we move this down to 533?
