@@ -92,7 +92,6 @@ def check_if_mod(user):
 
 def check_if_owner(roomid, user):
     """Return if a user is a mod or not."""
-    dbm.rooms.find_one({})
     return 1 if dbm.rooms.find_one({'roomid': roomid})["generatedBy"] == user['username'] else 0
     
 
