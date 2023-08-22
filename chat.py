@@ -150,6 +150,8 @@ def set_message_DB(roomid, is_admin: bool):
     """clears the database"""
     if is_admin == True:
         message_text = system_response("message", 1)
+    elif is_admin == False:
+        message_text = system_response("message", 4)
     else:
         message_text = system_response("message", 2)
     dbm.rooms.update_one({"roomid": roomid},
