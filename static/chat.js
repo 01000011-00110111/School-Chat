@@ -54,6 +54,8 @@ socket.on("reset_chat", (who, roomid) => {
         let chatDiv = document.getElementById("chat");
         if (who === "admin") {
             chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by an admin.</font><br>";
+        } else if (who === 'owner/mod') {
+            chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by this chat rooms Owner or mod.</font>"
         } else if (who === "auto") {
             chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font><br>";
         }
@@ -99,6 +101,8 @@ socket.on("room_data", (data) => {
     window.sessionStorage.setItem("roomid", data['roomid']);
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
+    // why oh why does chrome say no to this.
+    //window.history.pushState({"pageTitle": `${data['name']} - Chat`},"", `dev.school-chat.us/chat${data['name']}`);
     let chat = ""; 
     for (let messageObj of data['messages']) {
         chat = chat + messageObj + newline;
@@ -115,7 +119,6 @@ function changeRoom(room) {
 function toHyperlink(str) {
     var pattern1 = /(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
     var str1 = str.replace(pattern1, "<a href='$1'>$1</a>");
-    // make it show without the https://
     var pattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
     var str2 = str1.replace(pattern2, '$1<a target="_blank" href="http://$2">$2</a>');
     var pattern3 = /mailto:([^\?]*)/gm;

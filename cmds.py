@@ -54,6 +54,8 @@ def find_command(**kwargs):
         'jotd': send_joke,
         'permlist': send_perms,
         'roomlist': list_rooms,
+        'rules': rule_list,
+        'sc': open_git,
         'banned': send_perms,
         'muted': send_perms,
         'ping': ping,
@@ -88,12 +90,19 @@ def check_if_mod(user):
     """Return if a user is a mod or not."""
     return 1 if user['SPermission'] == 'modpass' else 0
 
+def check_if_owner(roomid, user):
+    """Return if a user is a mod or not."""
+    dbm.rooms.find_one({})
+    return 1 if dbm.rooms.find_one({'roomid': roomid})["generatedBy"] == user['username'] else 0
+    
 
 def reset_chat_user(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1 or check_if_mod(user) == 1:
         chat.reset_chat(False, True, roomid)
+    elif check_if_owner(roomid, user) == 1:
+        chat.reset_chat(False, False, roomid)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
@@ -185,11 +194,11 @@ def mute_user(**kwargs):
                 log_mutes(
                     f"{username} is muted because {reason} by a mod or admin.")
             elif reason == '':
-                message = f'[SYSTEM]: <font color="#ff7f00">{username} is mutted for {time_final}.</font>'
+                message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for {time_final}.</font>'
                 log_mutes(
                     f"{username} is muted for {time_final} by a mod or admin.")
             else:
-                message = f'[SYSTEM]: <font color="#ff7f00">{username} is mutted for {time_final}. Reason: {reason}.</font>'
+                message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for {time_final}. Reason: {reason}.</font>'
                 log_mutes(
                     f"{username} is muted because {reason} for {time_final} by a mod or admin."
                 )
@@ -245,6 +254,11 @@ def send_perms(**kwargs):
         emit("message_chat", (final_msg, roomid), broadcast=True)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
+
+
+def open_git():
+    """makes a link to the github page eather git notes or issues page"""
+    print('make url')
 
 
 def list_rooms(**kwargs):
@@ -485,6 +499,11 @@ def help_command(**kwargs):
     command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(
         line.strip() for line in lines[start_index:end_index + 1]) + "</font>"
     emit("message_chat", (command_line, roomid), namespace="/")
+
+
+def rule_list():
+    """grabs the rule list of a room"""
+    print('WORK ON IT ME')
 
 
 def globalock(**kwargs):

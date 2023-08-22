@@ -29,12 +29,11 @@ from flask_socketio import SocketIO, emit
 from flask_apscheduler import APScheduler
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address  #, default_error_responder
-from datetime import datetime
+from datetime import datetime, timedelta
 
 client = pymongo.MongoClient(os.environ["mongo_key"])
 dbm = client.Chat
 scheduler = APScheduler()
-
 
 import chat
 import cmds
@@ -65,6 +64,8 @@ scheduler.api_enabled = True
 # clear db, so that old users don't stay
 dbm.Online.delete_many({})
 
+# note for later: rename profanity_words.py to word_lists.py and move this there
+# along with any other static lists
 banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
                     '[URL]', 'mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD',
                     'SYSTEM', '[SYSTEM]', "SONG", "[Song]", "[SONG]", "[song]",
@@ -208,7 +209,6 @@ def signup_post() -> ResponseReturnValue:
                                      SDisplayname=SDisplayname,
                                      SRole=SRole)
     verification_code = str(uuid.uuid4())
-    from datetime import datetime, timedelta
     current_time = datetime.now()
     time = current_time + timedelta(hours=10)
     formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -257,12 +257,14 @@ def signup_get() -> ResponseReturnValue:
 def verify(verification_code):
     user_id = dbm.Accounts.find_one({"userId": verification_code})
     if user_id is not None:
-        dbm.Accounts.update_one({"user_id": verification_code},
+        dbm.Accounts.update_one({"userId": verification_code},
                                 {"$set": {
                                     "permission": 'true'
                                 }})
         user = user_id["username"]
-        accounting.log_accounts(f'The account {user} has been verified and may now chat in any chat room')
+        accounting.log_accounts(
+            f'The account {user} has been verified and may now chat in any chat room'
+        )
         return f"User: {user} has been verified You may now chat in any chat room you like"
     return "Invalid verification code."
 
@@ -285,7 +287,6 @@ def customize_accounts() -> ResponseReturnValue:
     """customize the accounts"""
     if request.method == "POST":
         if 'login' in request.form:
-            # redo client side checks here on server side, like signup
             username = request.form.get("username")
             password = request.form.get("password")
             TOSagree = request.form.get("TOSagree")
@@ -301,6 +302,9 @@ def customize_accounts() -> ResponseReturnValue:
             if TOSagree != "on":
                 return flask.render_template(
                     'login.html', error='You did not agree to the TOS!')
+            if user["permission"].split(' ') == 'locked':
+                return flask.render_template(
+                    'login.html', error='You must verifiy your account before you can customize it!')
             if username == user["username"] and hashlib.sha384(
                     bytes(password, 'utf-8')).hexdigest() == user["password"]:
                 return flask.render_template(
@@ -316,7 +320,7 @@ def customize_accounts() -> ResponseReturnValue:
                     message_color=user["messageColor"],
                     profile=user["profile"],
                     theme=user["theme"]
-                )  # this could be a security issue later on (if they figure out this) we can move editing passwords to the same system as reseting passwords
+                )
             else:
                 return flask.render_template(
                     'login.html',
@@ -411,7 +415,9 @@ def customize_accounts() -> ResponseReturnValue:
                         # "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest()
                     }
                 })
-            accounting.log_accounts(f'The account {user} has updated some settings (one day ill add what they updated)')
+            accounting.log_accounts(
+                f'The account {user} has updated some settings (one day ill add what they updated)'
+            )
             return flask.render_template('settings.html',
                                          error="updated account",
                                          **return_list)
@@ -513,9 +519,10 @@ def get_rooms(username):
     user_name = dbm.Accounts.find_one({"username": username})
     user = user_name["displayName"]
     room_access = rooms.get_chat_rooms()
+    permission = user_name["permission"].split(' ')
     if user_name["SPermission"] == "Debugpass":
         emit('roomsList', room_access, namespace='/', to=request.sid)
-    elif user_name["permission"] == "locked":
+    elif permission[0] == "locked":
         emit('roomsList', [{
             'id': 'ilQvQwgOhm9kNAOrRqbr',
             'name': 'e'
@@ -555,8 +562,10 @@ def handle_message(user_name, message, roomid):
         if dbm.rooms.find_one({"roomid": roomid}) is not None:
             chat.add_message(result[1], roomid, room)
             emit("message_chat", (result[1], roomid), broadcast=True)
-            if "$sudo" in message:
+            if "$sudo" in message and result[2] != 3:
                 filtering.find_cmds(message, user, roomid)
+            elif '$sudo'in message and result[2] == 3:
+                filtering.failed_message(('permission', 9), roomid, user)
         else:
             filtering.failed_message("return", roomid, user)
     else:
@@ -615,10 +624,13 @@ def update_permission():
             cmds.log_mutes(f"{username} warnings have been reset.")
 
 
-@scheduler.task('interval',# connor if you want to combine you can this deletes the account if it was not vared in 10 hours 
-                id='check_accounts',
-                seconds=60,
-                misfire_grace_time=500)
+@scheduler.task(
+    'interval',
+    # connor if you want to combine you can this deletes the account if it was not vared in 10 hours
+    # yeah ill prob combine these later, remove unneeded db calls
+    id='check_accounts',
+    seconds=60,
+    misfire_grace_time=500)
 def check_accounts():
     """checks accounts for any accounts that need deleting"""
     users = dbm.Accounts.find()
@@ -627,7 +639,9 @@ def check_accounts():
         permission = user_info['permission']
         # username = user_info['displayName']
         if accounting.is_account_expired(permission):
-            accounting.log_accounts(f'The account {user} has been deleted because it was not verified')
+            accounting.log_accounts(
+                f'The account {user} has been deleted because it was not verified'
+            )
             dbm.Accounts.delete_one({'username': user})
 
 

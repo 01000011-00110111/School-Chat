@@ -28,7 +28,7 @@ def run_filter(user, room, message, roomid):
     can_send = check_allowed_sending(user, room)
     user_muted = check_mute(user)
 
-    if user_muted != 0 and perms != 'dev':
+    if user_muted not in [0,3] and perms != 'dev':
         return ('permission', user_muted)
 
     if perms != "dev":
@@ -44,7 +44,7 @@ def run_filter(user, room, message, roomid):
 
     if "[" in message:
         find_pings(message, user['displayName'], profile_picture, roomid)
-
+        
     # print (preuser)
     # messageM = markdown(message)
     final_str = compile_message(message, profile_picture, user, role, preuser, message_count)
@@ -52,22 +52,22 @@ def run_filter(user, room, message, roomid):
 
     #check if locked or allowed to send
     if locked == 'true' and perms != "dev":
-        return ("permission", 3)
+        return ("permission", 3, user_muted)
 
     if can_send == "everyone":
-        return_str = ('msg', final_str)
+        return_str = ('msg', final_str, user_muted)
     elif can_send == 'mod':
         if perms == 'mod':
-            return_str = ('msg', final_str)
+            return_str = ('msg', final_str, user_muted)
         else:
-            return_str = ('permission', 5)
+            return_str = ('permission', 5, user_muted)
     else:
-        return_str = ('permission', 5)
+        return_str = ('permission', 5, user_muted)
 
     #check for spam then update message count and prev user
     if message_count == 15 and preuser == user["username"]:
         cmds.warn_user(user)
-        return ('permission', 8)
+        return ('permission', 8, user_muted)
         
     if preuser != user["username"]:
         message_count = 0
@@ -81,9 +81,11 @@ def run_filter(user, room, message, roomid):
              broadcast=True,
              namespace="/")
         if "$sudo" in message:
-            find_cmds(message, user, roomid)        
-        return ('dev', 0)
-
+            find_cmds(message, user, roomid)
+            # if 'system' in message:
+            #     return_str = ('command', 1, final_str)
+        return ('dev', 0, user_muted)
+        
     return return_str
 
 
@@ -94,6 +96,8 @@ def check_mute(user):
         return 1
     elif user["permission"] == "banned":
         return 2
+    elif permission[0] == "locked":
+        return 3
     return 0
 
 
@@ -237,7 +241,9 @@ def failed_message(result, roomid, user):
         (7):
         "[SYSTEM]: <font color='#ff7f00'>this chat room id does not exist.</font>",
         (8):
-        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send more than 15 messages in a row.</font>"
+        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send more than 15 messages in a row.</font>",
+        (9):
+        "[SYSTEM]: <font color='#ff7f00'>You must verify your acount before you can use commands.</font>"
     }
     if result[0] == "dev":
         if result[1] == 6: fail_str = fail_strings.get((result[1]), "")
@@ -268,3 +274,5 @@ def is_warned_expired(warned_str):
                                                      "%Y-%m-%d %H:%M:%S")
         current_time = datetime.now()
         return current_time >= expiration_time
+        
+        

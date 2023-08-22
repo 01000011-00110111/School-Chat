@@ -103,6 +103,8 @@ def insert_room(code, user, generated_at, name, username):
         "everyone",
         "blacklisted":
         "empty",
+        "mods":
+        '',
         "locked":
         'false',
         "messages": [

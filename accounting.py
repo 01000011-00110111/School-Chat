@@ -103,7 +103,7 @@ def email_var_account(username, email, verification_code):
 
 
 def is_account_expired(permission_str):
-    """checks if the user's time maches the time (idk you explain it better to me please)"""
+    """checks if the user's time matches the time (idk you explain it better to me please)"""
     parts = permission_str.split(' ')
     if len(parts) == 3 and parts[0] == 'locked':
         expiration_time_str = ' '.join(parts[1:])

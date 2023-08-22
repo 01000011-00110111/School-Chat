@@ -97,6 +97,8 @@ def reset_chat(message: str, admin: bool, roomid) -> str:
     set_message_DB(roomid, admin)
     if admin == True:
         emit("reset_chat", ("admin", roomid), broadcast=True, namespace="/")
+    elif admin == False:
+        emit("reset_chat", ("owner/mod", roomid), broadcast=True, namespace="/")
     else:
         emit("reset_chat", ("auto", roomid), broadcast=True, namespace="/")
     return ('good', 0)
@@ -113,7 +115,9 @@ def system_response(message, id):
         2:
         "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>",
         3:
-        '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>'
+        '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>',
+        4:
+        "[SYSTEM]: <font color='#ff7f00'>Chat reset by this chat rooms Owner or mod.</font>"
     }
 
     system_answer = system_response.get(id)
