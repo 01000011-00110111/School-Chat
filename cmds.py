@@ -93,6 +93,11 @@ def check_if_mod(user):
 def check_if_owner(roomid, user):
     """Return if a user is a mod or not."""
     return 1 if dbm.rooms.find_one({'roomid': roomid})["generatedBy"] == user['username'] else 0
+
+
+def check_if_room_mod(roomid, user):
+    """Return if a user is a mod or not."""
+    return 1 if dbm.rooms.find_one({'roomid': roomid})["mods"] == user['username'] else 0
     
 
 def reset_chat_user(**kwargs):
@@ -100,7 +105,7 @@ def reset_chat_user(**kwargs):
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1 or check_if_mod(user) == 1:
         chat.reset_chat(False, True, roomid)
-    elif check_if_owner(roomid, user) == 1:
+    elif check_if_owner(roomid, user) == 1 or check_if_room_mod(roomid, user) == 1:
         chat.reset_chat(False, False, roomid)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
