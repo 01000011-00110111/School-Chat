@@ -10,6 +10,7 @@ from time import sleep
 # below is needed for systemd restart, do not remove
 # import dbus
 import os
+from collections import deque
 import re
 from datetime import datetime, timedelta
 import rooms
@@ -59,7 +60,8 @@ def find_command(**kwargs):
         'banned': send_perms,
         'muted': send_perms,
         'ping': ping,
-        'restart': run_restart
+        'restart': run_restart,
+        'cmd_logs': send_cmd_logs,
     }
     try:
         response_strings[kwargs['commands']['v0']](**kwargs)
@@ -90,22 +92,26 @@ def check_if_mod(user):
     """Return if a user is a mod or not."""
     return 1 if user['SPermission'] == 'modpass' else 0
 
+
 def check_if_owner(roomid, user):
     """Return if a user is a mod or not."""
-    return 1 if dbm.rooms.find_one({'roomid': roomid})["generatedBy"] == user['username'] else 0
+    return 1 if dbm.rooms.find_one(
+        {'roomid': roomid})["generatedBy"] == user['username'] else 0
 
 
 def check_if_room_mod(roomid, user):
     """Return if a user is a mod or not."""
-    return 1 if dbm.rooms.find_one({'roomid': roomid})["mods"] == user['username'] else 0
-    
+    return 1 if dbm.rooms.find_one({'roomid': roomid
+                                    })["mods"] == user['username'] else 0
+
 
 def reset_chat_user(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1 or check_if_mod(user) == 1:
         chat.reset_chat(False, True, roomid)
-    elif check_if_owner(roomid, user) == 1 or check_if_room_mod(roomid, user) == 1:
+    elif check_if_owner(roomid, user) == 1 or check_if_room_mod(roomid,
+                                                                user) == 1:
         chat.reset_chat(False, False, roomid)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
@@ -409,6 +415,23 @@ def send_lines(**kwargs):
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
+def send_cmd_logs(**kwargs):
+    """Send the last 10 lines in command_log.txt"""
+    user = kwargs['user']
+    roomid = kwargs['roomid']
+    if check_if_dev(user) == 1:
+        with open("backend/command_log.txt", "r") as f:
+            cmds_log = deque(f, 10)
+        cmd_log_txt = ""
+        for cmd in cmds_log:
+            cmd_log_txt += f"{cmd}<br>"
+        msg = f"[SYSTEM]: <font color='#ff7f00'>Last 10 Command Log Entries:<br>{cmd_log_txt}</font>\n"
+        chat.add_message(msg, roomid, dbm)
+        emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+    else:
+        respond_command(("reason", 2, "not_dev"), roomid, None)
+
+
 def respond_command(result, roomid, name):
     """Tell the client that can't run this command for what reason."""
     room = dbm.rooms.find_one({"roomName": name})
@@ -599,11 +622,11 @@ def chat_room_edit(**kwargs):
 
 def warn_user(user):
     """adds a new warning to the user"""
-    warn_count = user["warned"]
+    warn_count = user["warned"].split(' ')
     current_time = datetime.now()
     expiration_time = current_time + timedelta(days=30)
     date = expiration_time.strftime("%Y-%m-%d %H:%M:%S")
-    warn_updated = int(warn_count) + 1
+    warn_updated = int(warn_count[0]) + 1
     dbm.Accounts.update_one(
         {"username": user["username"]},
         {'$set': {
