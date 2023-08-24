@@ -3,23 +3,62 @@
 <script src="static/settings.js" defer></script>
 {% endblock %}
 {% block content %}
-<div id="example">
-</div>
-<form method="post">
-    <h3 id="user_colorTXT">message settings</h3>
-            <p id="user_colorTXT">Email</p>
-            <input type="text" id="email" value='{{email}}' placeholder="Email" name="email" class='std_box'><br>
-            <p id="user_colorTXT">Username: </p>
-            <input type="text" id="username" value='{{displayName}}' placeholder="Username" name="display" maxlength="12" class='std_box'><br>
-            <input type="color" value='{{user_color}}' id="user_color" name="user_color"><br>
-            <p id="user_colorTXT">Role: </p>
-            <input type="text" id="role" name="role" placeholder="role" value='{{role}}' maxlength="18" class='std_box'><br>
-            <input type="color" value='{{role_color}}' id="role_color" name="role_color"><br>
-            <p id="user_colorTXT">Message: </p>
-            <input type="color" value='{{message_color}}' id="message_color" name="message_color"><br>
-            <p id="user_colorTXT">Profile pictures</p>
-            <input type="text" id="profile" name="profile" placeholder="Profile Picture" value='{{profile}}' class='std_box'><br>
-    <div class="themeDropdown">
+<form method="post" style="display: grid;">
+    <div id="ProfileDisplay">
+      <img id="PfPdisplay" src="{{profile}}">
+      <div style="display: grid; align-content: center; margin-left: 16px;
+}">
+        <h1>{{displayName}}</h1>
+        <h6 id="RoleDisplay" style="margin: -20px 0;">{{role}}</h6>
+      </div>
+    </div>
+  
+    <div style="display: flex; border-bottom: 1px; border-bottom-color: white; border-bottom-style: solid;">
+      <div style="display: grid;">
+        <h3>User Profile</h3>
+        <p>Update your profile picture and account details here</p>
+      </div>
+      
+      <div style="display: flex; align-self: center; margin-left: auto;">
+        <button class="StatusBTN">Cancel</button>
+        <button type="submit" id="change" name="update" class="StatusBTN">Save Changes</button>
+      </div>
+    </div>
+
+  <div>
+    <div style="display: flex; border-bottom: 1px; border-bottom-color: white; border-bottom-style: solid;">
+      <div style="display: grid;">
+        <h3 id="user_colorTXT">Public Profile</h3>
+        <p style="margin: -80% 0;">This will be displayed on your profile</p>
+      </div>
+
+      <div style="width: 60%; margin-left: 150px;">
+              <p id="user_colorTXT">Username: </p>
+              <input type="text" id="username" value='{{displayName}}' placeholder="Username" name="display" maxlength="12" class='std_box'><br>
+              <input type="color" value='{{user_color}}' id="user_color" name="user_color"><br>
+              <p id="user_colorTXT">Role: </p>
+              <input type="text" id="role" name="role" placeholder="role" value='{{role}}' maxlength="18" class='std_box'><br>
+              <input type="color" value='{{role_color}}' id="role_color" name="role_color"><br>
+              <p id="user_colorTXT">Message: </p>
+              <input type="color" value='{{message_color}}' id="message_color" name="message_color"><br>
+              <p id="user_colorTXT">Profile pictures</p>
+              <input type="text" id="profile" name="profile" placeholder="Profile Picture" value='{{profile}}' class='std_box'><br>
+      </div>
+      
+    </div>
+
+    <div style="display: flex; border-bottom: 1px; border-bottom-color: white; border-bottom-style: solid;">
+      <div style="display: grid;">
+        <h3>Account</h3>
+        <p style="margin: -115px 0;">This is your private account information</p>
+      </div>
+
+      <div style="width: 60%; margin-left: 130px;">
+        <p id="user_colorTXT">Email</p>
+        <input type="text" id="email" value='{{email}}' placeholder="Email" name="email" class='std_box'>
+
+
+        <div class="themeDropdown">
         <button type="button" class="themeBtn" onclick="toggleDropdown()">Themes</button>
         <div class="themeContent">
             <a class="themeOption" id='dark' onclick="setTheme('dark');">Dark</a>
@@ -38,14 +77,31 @@
     <br>
     <!-- <input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
     <input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br> -->
-    <button type="submit" id="change" name="update">Update</button>
+      </div>
+    </div>
+
+    <div style="display: flex; border-bottom: 1px; border-bottom-color: white; border-bottom-style: solid;">
+      <div style="display: grid;">
+        <h3>Extras</h3>
+        <p>This is for settings that don't have a category</p>
+      </div>
+
+      <div style="width: 60%; margin-left: 130px;">
+
+      </div>
+    </div>
+  </div>
 </form>
-<hr id="border">
+
+<div id="example">
+          
+</div>
+
 {% if error %}
     <h2 style="color:red; pointer-events: none;">{{error}}</h2>
 {% endif %}
 <h6><a href="https://github.com/01000011-00110111/School-Chat">Source Code</a></h6>
-<div class="activenav" id="activenav">
+<!-- <div class="activenav" id="activenav">
     <div class="AccountPopup">
         <input type="image" id="pfpmenu" src="static/favicon.ico" class="PictureBTN" onclick="OpenAC();"/>
         <div id="AccControls" class='AccControls'>
@@ -56,5 +112,5 @@
     </div>
     <hr id="online_border">
     <div id="online_users"></div>
-</div>
+</div> -->
 {% endblock %}

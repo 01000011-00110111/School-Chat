@@ -2,21 +2,6 @@
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 
-function login() {
-    let loginuserElement = document.getElementById("user");
-    let passwordElement = document.getElementById("pass");
-    let loginuser = loginuserElement["value"];
-    let passwd = passwordElement["value"];
-    let tosch = document.getElementById("tosCH");
-
-    if (loginuser === "" || passwd === "" || tosch.checked == false) {
-        return;
-    } else {
-        socket.emit('login', loginuser, passwd);
-    }
-}
-
-
 socket.on("login_att", (state) => {
     if (state === 'true') {
         socket.emit('get_prefs', document.getElementById("user")["value"]);

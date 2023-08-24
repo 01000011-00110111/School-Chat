@@ -9,10 +9,10 @@ body {
 }
 
 #example {
-    position: absolute;
-    margin-left: 52%;
-    line-height: 40px;
-    max-width: 690px;
+  position: absolute;
+  line-height: 40px;
+  max-width: 1000px;
+  margin-left: 16%;
 }
 
 #border {
@@ -246,7 +246,9 @@ body {
     background-color:  #000000;
     color:  #ffffff;
     font-size: 20px;
-    border-radius: 10px;
+    border-radius: 7px;
+    width: 45%;
+    height: 40px;
 }
 
 /* signup page */
@@ -420,4 +422,21 @@ body {
     left: 92.8%;
     transform-origin: top left;
     border-radius: 5%;
+}
+
+#PfPdisplay {
+  width: 130px;
+  height: 130px;
+  border-radius: 100%;
+  border: 4px;
+  border-color: red;
+  border-style: solid;
+}
+
+#ProfileDisplay {
+  display: flex;
+}
+
+.StatusBTN {
+  height: 40px;
 }

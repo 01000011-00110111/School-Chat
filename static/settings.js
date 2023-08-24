@@ -96,10 +96,11 @@ function updateExamples() {
 }
 
 // Create examples when the page loads
-createExamples();
+
+// createExamples();
 
 // Update examples every 500 milliseconds (0.5 seconds)
-setInterval(updateExamples, 500);
+// setInterval(updateExamples, 500);
 socket.emit("username", window.localStorage.getItem("username"), 'settings');
 
 
