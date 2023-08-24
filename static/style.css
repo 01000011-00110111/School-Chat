@@ -312,12 +312,6 @@ body {
   -webkit-animation: Dev_colors 5s infinite; 
 }
 
-.ow_colors-loop {
-  display: inline-block;
-  text-shadow: 2px 2px 4px #000000;
-  -webkit-animation: ow_colors 10s infinite; 
-}
-
 @-webkit-keyframes Dev_colors {
   0%{color: #f47106;} 
   25%{color: blue;}

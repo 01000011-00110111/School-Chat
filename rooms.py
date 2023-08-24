@@ -180,6 +180,8 @@ def chat_room_edit(request, function, room_name, user, users):
                     f"{username} tried to clear the blacklist in chat room {room_name}"
                 )
             return ('response', 1, 'edit')
+    elif request == 'permote spell fix later':
+        print('grant users mod perms in the chat room')
     elif request == "add more stuff later":
         print('what to add')
 

@@ -1,6 +1,7 @@
 <h2>Dev commands:</h2>
 <ul>
-    <li><code>"$sudo (command) room id"</code>: You can run any command for any room by typing it in this format.</li>
+    <li><code>"$sudo command prompt"</code>:This is how you type a command in chat (prompt is only for commands that need text.</li>
+    <li><code>"$sudo (command) room id"</code>: You can run any command for any room by typing it in this format. ONLY IN DEV CHAT!</li>
     <li><code>"$sudo roomlist"</code>: Shows you all room names and IDs.</li>
     <li><code>"$sudo system (message)"</code>: Send a message as the system.</li>
     <li><code>"$sudo Admin"</code>: Send as admin (not added).</li>
@@ -33,8 +34,17 @@
     <li><code>"$sudo chat (room name) create"</code>: Creates a chat room with the name you set.</li>
     <li><code>"$sudo chat (room name) delete"</code>: Deletes the chat room with the name you typed.</li>
     <li><code>"$sudo chat (room name) info"</code>: Tells you the info of the chat room you typed.</li>
+</ul>
+
+<h2>Room Mod commands:</h2>
+<ul>
+    <li><code>"$sudo chat mute (username) (time) (reason)" Mutes a user in the chat room your in (all commands here are not added).</li>
+</ul>
+
+<h2>Room Owner commands:</h2>
+<ul>
     <li><code>"$sudo chat (room name) whitelist (users)"</code>: Whitelist users in the chat room you typed.</li>
     <li><code>"$sudo chat (room name) blacklist (users)"</code>: Blacklist users in the chat room you typed.</li>
 </ul>
 
-<p>End.</p>
+end

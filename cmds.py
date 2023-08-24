@@ -159,6 +159,9 @@ def mute_user(**kwargs):
     issuer = kwargs['user']
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
         user_dbm = dbm.Accounts.find_one({"displayName": username})
+        if user_dbm["SPermission"] in ['Debugpass','modpass']:
+            print('add a message you can not ban or mute a dev or mod')
+            return
         if user_dbm['permission'] in ('banned', 'muted'):
             return
         else:
@@ -514,13 +517,13 @@ def help_command(**kwargs):
         for i, line in enumerate(lines):
             if 'mod commands' in line.lower():
                 start_index = i
-            elif 'end' in line.lower():
+            elif 'Room Owner commands:' in line.lower():
                 end_index = i - 1
     else:
         for i, line in enumerate(lines):
             if 'user commands' in line.lower():
                 start_index = i
-            elif 'end' in line.lower():
+            elif 'Room Mod commands:' in line.lower():
                 end_index = i - 1
 
     command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(

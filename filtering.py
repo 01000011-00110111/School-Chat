@@ -145,7 +145,8 @@ def find_pings(message, dispName, profile_picture, roomid):
             "from": dispName,
             "pfp": profile_picture,
             "message": message,
-            "name": room["roomName"]
+            "name": room["roomName"],
+            "roomid": room["roomid"]
         },
              namespace="/",
              broadcast=True)
@@ -218,6 +219,8 @@ def do_dev_easter_egg(role, user):
     role_color = user['roleColor']
     if role_color == "#00ff00":
         role_string = "<font class='Dev_colors-loop'>" + role + "</font>"
+    elif role_color == "rainbow":
+        role_string = "<font class='rainbow-text-loop'>" + role + "</font>"
     else:
         role_string = "<font color='" + role_color + "'>" + role + "</font>"
     return role_string

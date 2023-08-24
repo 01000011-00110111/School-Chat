@@ -519,8 +519,17 @@ def get_rooms(username):
     user_name = dbm.Accounts.find_one({"username": username})
     user = user_name["displayName"]
     room_access = rooms.get_chat_rooms()
-    permission = user_name["permission"].split(' ')
+    permission = user_name["permission"].split(' ')                    
     if user_name["SPermission"] == "Debugpass":
+        emit('roomsList', room_access, namespace='/', to=request.sid)
+    elif user_name['SPermission'] == "modpass":
+        rooms_to_remove = []
+        for r in room_access:
+            if (r['whitelisted'] != 'devonly'):
+                rooms_to_remove.append(r)
+        
+        for r in rooms_to_remove:
+            room_access.remove(r)
         emit('roomsList', room_access, namespace='/', to=request.sid)
     elif permission[0] == "locked":
         emit('roomsList', [{
@@ -544,7 +553,7 @@ def get_rooms(username):
                         u.strip()
                         for u in r['blacklisted'].split("users:")[1].split(",")
                     ] and r['whitelisted'] == 'everyone')) and (
-                        r['whitelisted'] != 'devonly')]
+                        r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly')]
         emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
 
 
