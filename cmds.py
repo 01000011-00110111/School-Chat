@@ -62,6 +62,7 @@ def find_command(**kwargs):
         'ping': ping,
         'restart': run_restart,
         'cmd_logs': send_cmd_logs,
+        'room_logs': send_room_logs,
     }
     try:
         response_strings[kwargs['commands']['v0']](**kwargs)
@@ -159,7 +160,7 @@ def mute_user(**kwargs):
     issuer = kwargs['user']
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
         user_dbm = dbm.Accounts.find_one({"displayName": username})
-        if user_dbm["SPermission"] in ['Debugpass','modpass']:
+        if user_dbm["SPermission"] in ['Debugpass', 'modpass']:
             print('add a message you can not ban or mute a dev or mod')
             return
         if user_dbm['permission'] in ('banned', 'muted'):
@@ -433,6 +434,23 @@ def send_cmd_logs(**kwargs):
         emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
     else:
         respond_command(("reason", 2, "not_dev"), roomid, None)
+
+
+def send_room_logs(**kwargs):
+    """Send the last 10 lines in chat-rooms_log.txt"""
+    user = kwargs['user']
+    roomid = kwargs['roomid']
+    if check_if_mod(user) == 1 or check_if_dev(user) == 1:
+        with open("backend/chat-rooms_log.txt", "r") as f:
+            cmds_log = deque(f, 10)
+        cmd_log_txt = ""
+        for cmd in cmds_log:
+            cmd_log_txt += f"{cmd}<br>"
+        msg = f"[SYSTEM]: <font color='#ff7f00'>Last 10 Room Log Entries:<br>{cmd_log_txt}</font>\n"
+        chat.add_message(msg, roomid, dbm)
+        emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+    else:
+        respond_command(("reason", 2, "not_mod"), roomid, None)
 
 
 def respond_command(result, roomid, name):
