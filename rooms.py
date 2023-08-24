@@ -281,7 +281,7 @@ def update_blacklist(room_name, message):
 
 
 def check_roomids(roomid):
-    """checks if the room id you have is a real room id"""
+    """checks if the roomid you have is a real roomid"""
     roomid_check = dbm.rooms.find_one({"roomid": roomid})
     if roomid_check is not None:
         return (True)

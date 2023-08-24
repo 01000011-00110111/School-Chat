@@ -108,7 +108,7 @@ def check_lock(room):
 
 
 def check_allowed_sending(user, room):
-    """this is a check to se if the database allowes you to send"""  # we can make this more advanced if we want
+    """this is a check to se if the database allowes you to send"""
     return (room["canSend"])
 
 
