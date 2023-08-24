@@ -28,7 +28,7 @@ def run_filter(user, room, message, roomid):
     can_send = check_allowed_sending(user, room)
     user_muted = check_mute(user)
 
-    if user_muted not in [0,3] and perms != 'dev':
+    if user_muted not in [0, 3] and perms != 'dev':
         return ('permission', user_muted)
 
     if perms != "dev":
@@ -44,14 +44,15 @@ def run_filter(user, room, message, roomid):
 
     if "[" in message:
         find_pings(message, user['displayName'], profile_picture, roomid)
-        
+
     # print (preuser)
     # messageM = markdown(message)
-    final_str = compile_message(message, profile_picture, user, role, preuser, message_count)
+    final_str = compile_message(message, profile_picture, user, role, preuser,
+                                message_count)
     # print (message_count, preuser)
 
     #check if locked or allowed to send
-    if locked == 'true' and perms != "dev":
+    if locked == 'true' and perms not in ["dev", "mod"]:
         return ("permission", 3, user_muted)
 
     if can_send == "everyone":
@@ -65,17 +66,17 @@ def run_filter(user, room, message, roomid):
         return_str = ('permission', 5, user_muted)
 
     #check for spam then update message count and prev user
-    if message_count == 15 and preuser == user["username"]:
+    if message_count == 15 and preuser == user["username"] and perms != "dev":
         cmds.warn_user(user)
         return ('permission', 8, user_muted)
-        
+
     if preuser != user["username"]:
         message_count = 0
 
     preuser = user["username"]
     message_count += 1
-    
-    if perms == "dev":
+
+    if perms in ["dev", "mod"]:
         chat.add_message(final_str, roomid, 'true')
         emit("message_chat", (final_str, roomid),
              broadcast=True,
@@ -84,8 +85,8 @@ def run_filter(user, room, message, roomid):
             find_cmds(message, user, roomid)
             # if 'system' in message:
             #     return_str = ('command', 1, final_str)
-        return ('dev', 0, user_muted)
-        
+        return ('dev/mod', 0, user_muted)
+
     return return_str
 
 
@@ -196,7 +197,8 @@ def find_cmds(message, user, roomid):
                               origin_room=origin_room)
 
 
-def compile_message(message, profile_picture, user, role, preuser, message_count):
+def compile_message(message, profile_picture, user, role, preuser,
+                    message_count):
     """Taken from old methold of making messages"""
     to_hyperlink(message)
     profile = f"<img class='pfp' src='{profile_picture}'></img>"
@@ -263,7 +265,7 @@ def is_user_expired(permission_str):
     if len(parts) == 3 and parts[0] == 'muted':
         expiration_time_str = ' '.join(parts[1:])
         expiration_time = datetime.strptime(expiration_time_str,
-                                                     "%Y-%m-%d %H:%M:%S")
+                                            "%Y-%m-%d %H:%M:%S")
         current_time = datetime.now()
         return current_time >= expiration_time
 
@@ -274,8 +276,6 @@ def is_warned_expired(warned_str):
     if len(parts) == 2:
         expiration_time_str = ''.join(parts[1:])
         expiration_time = datetime.strptime(expiration_time_str,
-                                                     "%Y-%m-%d %H:%M:%S")
+                                            "%Y-%m-%d %H:%M:%S")
         current_time = datetime.now()
         return current_time >= expiration_time
-        
-        
