@@ -3,7 +3,7 @@
 // https://github.com/01000011-00110111/School-Chat
 
 let prevValues = {};
-const numExamples = 6; // Number of examples to create
+const numExamples = 1; // Number of examples to create
 
 const responses = [
     { message: "This is a test response.", rarity: 95 },
@@ -14,7 +14,7 @@ const responses = [
     { message: "Try $sudo help in chat to find out all the command you can use.", rarity: 60 },
     { message: "Never gonna give you up, never gonna let you down.", rarity: 45 },
     { message: "This is how the chat was made https://stackoverflow.com.", rarity: 5 },
-    { message: "Challenge if you can the rarest message on 4 messages and show proof to a dev then you rainbow role colors!", rarity: 2 },
+    { message: "Challenge if you can the rarest message on 4 messages and show proof to a dev then you rainbow role colors!(This challenge is over new one soon)", rarity: 2 },
     { message: "Try $sudo E in chat.", rarity: 1 },
 ];
 
@@ -97,10 +97,10 @@ function updateExamples() {
 
 // Create examples when the page loads
 
-// createExamples();
+createExamples();
 
-// Update examples every 500 milliseconds (0.5 seconds)
-// setInterval(updateExamples, 500);
+// Update examples every 250 milliseconds (0.25 seconds)
+setInterval(updateExamples, 250);
 socket.emit("username", window.localStorage.getItem("username"), 'settings');
 
 

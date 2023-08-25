@@ -9,10 +9,10 @@ body {
 }
 
 #example {
-  position: absolute;
-  line-height: 40px;
-  max-width: 1000px;
-  margin-left: 16%;
+    line-height: 40px;
+    max-width: 1000px;
+    margin-top: 3%;
+    margin-bottom: 3%;
 }
 
 #border {
@@ -439,4 +439,23 @@ body {
 
 .StatusBTN {
   height: 40px;
+}
+
+#Btm-nav {
+  position: fixed;
+  background: #e5dcdc1c;
+  width: 15%;
+  height: 36%;
+  margin: 429px 15px;
+  display: grid;
+  border-radius: 10px;
+}
+.btm-pop {
+  background: transparent;
+  font-size: 21px;
+  border-top: 3px solid black;
+  border-bottom: 3px;
+  border-left: 0px;
+  border-right: 0px;
+  color: white;
 }
