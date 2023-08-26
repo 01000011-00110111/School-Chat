@@ -134,11 +134,11 @@ def login_page() -> ResponseReturnValue:
         return flask.render_template('login.html')
 
 
-@app.route('/changelog')
-def changelog_page() -> ResponseReturnValue:
-    """Serve the changelog, so old links don't break (after making the main page be the changelog)."""
-    html_file = flask.render_template('update-log.html')
-    return html_file
+# @app.route('/changelog')
+# def changelog_page() -> ResponseReturnValue:
+#     """Serve the changelog, so old links don't break (after making the main page be the changelog)."""
+#     html_file = flask.render_template('update-log.html')
+#     return html_file
 
 
 # custom error message for signup, instead of generic 429 error
