@@ -40,6 +40,7 @@ import cmds
 import filtering
 import rooms
 import accounting
+import log
 
 LOGFILE = "backend/chat.txt"
 
@@ -139,7 +140,6 @@ def login_page() -> ResponseReturnValue:
 #     """Serve the changelog, so old links don't break (after making the main page be the changelog)."""
 #     html_file = flask.render_template('update-log.html')
 #     return html_file
-
 
 # custom error message for signup, instead of generic 429 error
 #def signup_ratelimit_error_responder(request_limit: RequestLimit):
@@ -304,7 +304,10 @@ def customize_accounts() -> ResponseReturnValue:
                     'login.html', error='You did not agree to the TOS!')
             if user["permission"].split(' ') == 'locked':
                 return flask.render_template(
-                    'login.html', error='You must verifiy your account before you can customize it!')
+                    'login.html',
+                    error=
+                    'You must verifiy your account before you can customize it!'
+                )
             if username == user["username"] and hashlib.sha384(
                     bytes(password, 'utf-8')).hexdigest() == user["password"]:
                 return flask.render_template(
@@ -319,8 +322,7 @@ def customize_accounts() -> ResponseReturnValue:
                     role_color=user["roleColor"],
                     message_color=user["messageColor"],
                     profile=user["profile"],
-                    theme=user["theme"]
-                )
+                    theme=user["theme"])
             else:
                 return flask.render_template(
                     'login.html',
@@ -519,15 +521,16 @@ def get_rooms(username):
     user_name = dbm.Accounts.find_one({"username": username})
     user = user_name["displayName"]
     room_access = rooms.get_chat_rooms()
-    permission = user_name["permission"].split(' ')                    
+    permission = user_name["permission"].split(' ')
     if user_name["SPermission"] == "Debugpass":
         emit('roomsList', room_access, namespace='/', to=request.sid)
     elif user_name['SPermission'] == "modpass":
         rooms_to_remove = []
         for r in room_access:
-            if (r['whitelisted'] != 'devonly'):
+            if (r['whitelisted'] == 'devonly'):
+                # this could be simplfied into one for loop you know
                 rooms_to_remove.append(r)
-        
+
         for r in rooms_to_remove:
             room_access.remove(r)
         emit('roomsList', room_access, namespace='/', to=request.sid)
@@ -552,8 +555,8 @@ def get_rooms(username):
                     and 'users:' in r['blacklisted'] and user not in [
                         u.strip()
                         for u in r['blacklisted'].split("users:")[1].split(",")
-                    ] and r['whitelisted'] == 'everyone')) and (
-                        r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly')]
+                    ] and r['whitelisted'] == 'everyone')
+        ) and (r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly')]
         emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
 
 
@@ -573,7 +576,7 @@ def handle_message(user_name, message, roomid):
             emit("message_chat", (result[1], roomid), broadcast=True)
             if "$sudo" in message and result[2] != 3:
                 filtering.find_cmds(message, user, roomid)
-            elif '$sudo'in message and result[2] == 3:
+            elif '$sudo' in message and result[2] == 3:
                 filtering.failed_message(('permission', 9), roomid, user)
         else:
             filtering.failed_message("return", roomid, user)
@@ -635,7 +638,7 @@ def update_permission():
 
 @scheduler.task(
     'interval',
-    # connor if you want to combine you can this deletes the account if it was not vared in 10 hours
+    # cserver if you want to combine you can this deletes the account if it was not vared in 10 hours
     # yeah ill prob combine these later, remove unneeded db calls
     id='check_accounts',
     seconds=60,
