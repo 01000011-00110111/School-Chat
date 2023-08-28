@@ -2,11 +2,6 @@
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 
-
-socket.on("ping_test", (Obj) => {
-    pingHandle(Obj);
-});
-
 socket.on("message_chat", (message, roomid) => {
     renderChat((message), roomid);
 });
@@ -25,19 +20,6 @@ socket.on("pingTime", (time, roomid) => {
 socket.on("force_username", (statement) => {
     socket.emit("username", window.localStorage.getItem("username"), 'chat');
 });
-
-
-function pingHandle(Obj=null) {
-    user = document.getElementById("user")["value"];
-    if (Obj === null) {
-        let start = Date.now();
-        socket.emit('pingtest', start);
-    } else {
-        let end = Date.now();
-        let diff = end - Obj['start']
-        socket.emit('admin_message', '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + diff + 'ms RTT</font>', user);
-    }
-}
 
 socket.on("ping", ({ who, from, pfp, message, name, roomid}) => {
     let user_name = window.localStorage.getItem("username");
@@ -62,12 +44,6 @@ socket.on("reset_chat", (who, roomid) => {
         }
     }
 });
-
-function getSocketid() {
-    // not the best way, but it works. hey thats ok thats what our chat is made of plus hopes and dreams 
-    return socket.socket.sessionid;
-}
-
 
 function runStartup() {
     setDarkStyle();
