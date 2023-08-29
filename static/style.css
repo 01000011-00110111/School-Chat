@@ -6,6 +6,17 @@
 body {
   background-color: #000000;
   color: #dd7016;
+  width: 100%;
+  height: 100%;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+#LoginContent {
+  padding-bottom: 13%;
 }
 
 #example {
@@ -22,8 +33,8 @@ body {
 }
 
 #online_users {
-    padding-left: 0.5%;
-    padding-top: 3.5%;
+    padding-left: 0.7%;
+    padding-top: 4.2%;
     color: white;
 }
 
@@ -59,7 +70,6 @@ body {
     width: 50px;
     height: 50px;
     margin-left: 8.8%;
-    position: fixed;
 }
 
 #chat {
@@ -91,6 +101,7 @@ body {
     left: 25%;
     right: 25%;
     padding-left: 5%;
+    padding-right: 3%;
     vertical-align: middle;
     font-size: 20px;
     border: 0;
@@ -133,7 +144,7 @@ body {
 }
 
 #img {
-    right: 25%;
+    right: 5%;
     padding-left: 5%;
 }
 
@@ -252,41 +263,37 @@ body {
 }
 
 /* signup page */
-.signuptext {
-    border-radius: 20px;
-    height: 30px;
-    width: 30%;
-    margin-bottom: 10px;
-    text-align: center;
-    margin-left: 37%;
+.signuptext { /* ok if you cant fix as long you find the issue then i can fix it | alright */
+  border-radius: 9px;
+  height: 31px;
+  width: 228%;
+  text-align: left;
+  justify-self: center;
+  margin: 7px 0;
+  color: black;
+  text-indent: 12px;
+  font-weight: bold;
+  font-family: sans-serif;
 }
-
+  
 .signuptext:hover {
     background: green;
 }
 
 .signupbtn {
-    margin-top: 30px;
-    font-size: 20px;
-    width: 15%;
-    border-radius: 20px;
-    height: 30px;
+    width: 228%;
+    border-radius: 8px;
+    height: 42px;
     border-color: black;
     color: white;
-    background: darkgray;
-    margin-left: 45%;
-    background: white;
+    background: #6303a4;
     font-size: 20px;
+    justify-self: center;
 }
 
 .signupbtn:hover {
     background: green;
 }
-
-#SUsername {
-    margin-top: 11%;
-}
-
 
 .rainbow-text-loop {
   display: inline-block;
@@ -336,14 +343,14 @@ body {
 .LoginPopup {
     background: #ffffff;
     color: black;
-    width: 350px;
-    height: 390px;
+    width: 24%;
+    height: 100%;
     border-radius: 0px 20px 20px 0px;
     text-align: center;
     margin-left: -8px;
     margin-top: -7px;
-    padding-top: 25%;
-    position: fixed;
+    display: grid;
+    align-content: end;
 }
 
 .LoginBTN {
@@ -364,8 +371,6 @@ body {
     border-radius: 100px;
     width: 50px;
     height: 50px;
-    right: 30px;
-    position: fixed;
 }
 
 .AccControls {
@@ -376,8 +381,8 @@ body {
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   top: 55px;
-  left: 190px;
   border-radius: 10px;
+  margin: 6px -12px;
 }
 
 .AccountPopup {
@@ -385,8 +390,8 @@ body {
   width: 80px;
   height: 150px;
   text-align: center;
-  position: absolute;
-  left: -70px;
+  position: fixed;
+  left: 94%;
 }
 
 .AccountPopup a {
@@ -398,8 +403,8 @@ body {
 
 .ChatinfoLP {
     text-align: center;
-    margin-left: 26.8%;
-    width: 800px;
+    margin-left: 76px;
+    width: 65%;
 }
   
 .LoginTTL {
@@ -450,6 +455,7 @@ body {
   display: grid;
   border-radius: 10px;
 }
+
 .btm-pop {
   background: transparent;
   font-size: 21px;
@@ -458,4 +464,15 @@ body {
   border-left: 0px;
   border-right: 0px;
   color: white;
+}
+
+.SignUpForm {
+  background: #ffffff;
+  height: 81%;
+  width: 33%;
+  border-radius: 12px;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  margin: 68px auto;
 }

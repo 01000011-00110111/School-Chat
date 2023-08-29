@@ -184,23 +184,24 @@ def find_cmds(message, user, roomid):
     # this check is needed, because the finding of commands is after chat lock check in run_filter
     # leading to users being able to send comamnds, even when chat is locked
     # we should be the only ones that can do that (devs)
-    # for cmd in command_split:
-    date_str = datetime.now(timezone(#that removes the multi command feture hope it dont break
-        timedelta(hours=-4))).strftime("[%a %H:%M] ")
-    Lmessage = date_str + user['username'] + ":" + command_split
-    log.log_commands(Lmessage)
+    for cmd in command_split:
+        date_str = datetime.now(timezone(
+            timedelta(hours=-4))).strftime("[%a %H:%M] ")
+        Lmessage = date_str + user['username'] + ":" + cmd
+        log.log_commands(Lmessage)
 
-    command = command_split.split()
-    commands = {}
+        command = cmd.split()
+        commands = {}
 
-    for index, command in enumerate(command):
-        var_name = "v%d" % index
-        commands[var_name] = command
-    if 'v0' in commands:
-        cmds.find_command(commands=commands,
-                          user=user,
-                          roomid=roomid,
-                          origin_room=origin_room)
+        for index, command in enumerate(command):
+            var_name = "v%d" % index
+            commands[var_name] = command
+        if 'v0' in commands:
+            cmds.find_command(commands=commands,
+                              user=user,
+                              roomid=roomid,
+                              origin_room=origin_room)
+            break # that will work
 
 
 def compile_message(message, profile_picture, user, role, preuser,

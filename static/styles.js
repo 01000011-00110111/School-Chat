@@ -91,7 +91,7 @@ function setDarkStyle() {
     }
 }
 
-function setLightStyle() {
+function setLightstyle() {
     // set theme in cookie    
     setTheme("light");
     // get all id tags
@@ -107,16 +107,16 @@ function setLightStyle() {
     let snav_text = sidenav.getElementsByTagName("a");
     let snav_iter = snav_text.length;
     // then set the color to what it is in the css document
-    body.style.backgroundColor = "#ffffff";
+    body.style.backgroundColor = "#c0bfbc";
     chat.style.color = "#000000";
     message.style.color = "#000000";
     chatbox.style.backgroundColor = "#deddda";
     sides.style.backgroundColor = "#c0bfbc";
-    sidebar.style.backgroundColor = "#171717";
+    sidebar.style.backgroundColor = "#000000";
     topleft.style.backgroundColor = "#5A5A5A";
     topleft.style.color = "#1b0670";
-    send.style.backgroundColor = "#192080";
-    send.style.color = "#ffffff";
+    send.style.backgroundColor = "#3daec4";
+    send.style.color = "#33575e";
     sidenav.style.backgroundColor = "#b9c6c9";
     // for loop to cycle thru links in sidebar
     for (let i = 0; i < snav_iter; i++) {

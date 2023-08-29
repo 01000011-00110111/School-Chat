@@ -1,13 +1,13 @@
 {% extends 'index.html' %} 
 {% block content %}
-<div style="display: flex;">
+<div style="display: flex; height: 100%; width: 100%;">
     <div class="LoginPopup" id="LoginPopup">
-        <div>
+        <div id="LoginContent">
         <h2>Login</h2>
             <form method="post">
                 <input type="text" id="user" placeholder="Username" autocomplete="off" class="LoginInput" name="username">
                 <input type="password" id="passwd" placeholder="Password" autocomplete="off" class="LoginInput" name="password"><br>
-                <input type="checkbox" id="tosCH" style="margin-top: 20px;" name='TOSagree'> <a href="notdone" target="_blank">TOS</a>
+                <input type="checkbox" id="tosCH" style="margin-top: 20px;" name='TOSagree'>Accept <a href="" style="text-decoration: none;color: #7c0ed7;">Terms &amp; Conditions</a>
                 <button type='submit' class="LoginBTN" name="login">Log In</button>
                 <a href="/signup" style="color:#2990f9;">Create an account here</a>
             </form>
@@ -36,9 +36,9 @@
             <p>(if you have more rules open the Issue <a href="https://github.com/01000011-00110111/School-Chat/discussions/97">Rules</a> and comment the rule there!)</p>
         </h4>
     </div>
-    <div class="activenav" id="activenav">
+    <!-- <div class="activenav" id="activenav">
         <hr id="online_border">
         <div id="online_users"></div>
-    </div>
+    </div> -->
 </div>
 {% endblock %}
