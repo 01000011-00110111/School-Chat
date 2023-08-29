@@ -11,7 +11,7 @@ import main
 
 def chat_room_log(message):
     """logs all deletes, creations, and edits done to chat rooms"""
-    with open('backend/chat-rooms_log.txt', 'a') as file:
+    with open('backend/chat-rooms_log.txt', 'a', encoding="utf8") as file:
         file.write(f'{message}\n')
 
 
@@ -55,13 +55,12 @@ def create_rooms(name, user, username):
     if len(name) > 10:
         result = ('reason', 1, "create")
         return result
-    else:
-        result = create_chat_room(username, name, user)
+
+    result = create_chat_room(username, name, user)
     if result[1] == 0:
         main.get_rooms(user["username"])
-        return result
-    else:
-        return result
+
+    return result
 
 
 def create_chat_room(username, name, userinfo):
@@ -88,6 +87,7 @@ def create_chat_room(username, name, userinfo):
 
 
 def insert_room(code, user, generated_at, name, username):
+    """Create a room in the db."""
     dbm.rooms.insert_one({
         "roomid":
         code,
@@ -116,19 +116,19 @@ def insert_room(code, user, generated_at, name, username):
 def delete_chat_room(room_name, user):
     """Deletes the chat room the chat room owner or dev selected"""
     rooms = dbm.rooms.find_one({"roomName": room_name})
-    madeBy = rooms["generatedBy"]
+    made_by = rooms["generatedBy"]
     username = user["displayName"]
     date_str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
-    if madeBy == user["username"]:
-        if rooms["roomid"] is ['jN7Ht3giH9EDBvpvnqRB', "ilQvQwgOhm9kNAOrRqbr"]:
+    if made_by == user["username"]:
+        if rooms["roomid"] == ['jN7Ht3giH9EDBvpvnqRB', "ilQvQwgOhm9kNAOrRqbr"]:
             return ("reason", 3, "delete")
-        response = delete_room(username, room_name, date_str)
+        response = delete_room(room_name)
         logmessage = f"{username} deleted {room_name} at {date_str}"
     elif user["SPermission"] == "Debugpass":
-        if rooms["roomid"] is ['jN7Ht3giH9EDBvpvnqRB', "ilQvQwgOhm9kNAOrRqbr"]:
+        if rooms["roomid"] == ['jN7Ht3giH9EDBvpvnqRB', "ilQvQwgOhm9kNAOrRqbr"]:
             return ("reason", 2, "delete")
-        response = delete_room(username, room_name, date_str)
-        logmessage = f"{username} deleted {room_name} owned by {madeBy} at {date_str}"
+        response = delete_room(room_name)
+        logmessage = f"{username} deleted {room_name} owned by {made_by} at {date_str}"
     else:
         logmessage = f"{username} tried to delete {room_name} at {date_str}"
         response = ("reason", 1, "delete")
@@ -137,10 +137,10 @@ def delete_chat_room(room_name, user):
         main.get_rooms(user["username"])
 
     chat_room_log(logmessage)
-    return (response)
+    return response
 
 
-def delete_room(username, room_name, date_str):
+def delete_room(room_name):
     """Deletes the chat room off the database"""
     dbm.rooms.find_one_and_delete({"roomName": room_name})
     return ("reason", 0, "delete")
@@ -152,9 +152,11 @@ def chat_room_edit(request, function, room_name, user, users):
     username = user["displayName"]
     if request == "whitelist":
         if room["generatedBy"] == user["username"]:
-            return whitelist(room_name, function, user, users, room, username, False)
+            return whitelist(room_name, function, user, users, room, username,
+                             False)
         elif user["SPermission"] == "Debugpass":
-            return whitelist(room_name, function, user, users, room, username, True)
+            return whitelist(room_name, function, user, users, room, username,
+                             True)
         else:
             if users not in ['clear', '', 'everyone']:
                 chat_room_log(
@@ -167,9 +169,11 @@ def chat_room_edit(request, function, room_name, user, users):
             return ('response', 1, 'edit')
     elif request == "blacklist":
         if room["generatedBy"] == user["username"]:
-            return blacklist(room_name, function, user, users, room, username, False)
+            return blacklist(room_name, function, user, users, room, username,
+                             False)
         elif user["SPermission"] == "Debugpass":
-            return blacklist(room_name, function, user, users, room, username, True)
+            return blacklist(room_name, function, user, users, room, username,
+                             True)
         else:
             if users not in ['clear', '']:
                 chat_room_log(
@@ -190,14 +194,18 @@ def whitelist(room_name, set_type, user, users, room, username, dev):
     """Whitelist user a dev or the owner picks"""
     pre_user_list = dbm.rooms.find_one({'roomName': room_name})
     pre_users = pre_user_list["whitelisted"]
-    if users.split(',') in pre_user_list["blacklisted"].split(','):# if doesnt work then check split and check each one
+    if users.split(',') in pre_user_list["blacklisted"].split(
+            ','):  # if doesnt work then check split and check each one
         return ('response', 3, 'edit')
     if users not in ['clear', '', 'everyone']:
         if set_type == 'add':
-            if pre_users != 'everyone' and users.split(',') != pre_users.split(','):# if dont work split them then try again
+            if pre_users != 'everyone' and users.split(',') != pre_users.split(
+                    ','):  # if dont work split them then try again
                 users = f"{pre_users},{users}"
             else:
-                return ('response', 5, 'edit')# message about that user is allready in the whitelis
+                return (
+                    'response', 5, 'edit'
+                )  # message about that user is allready in the whitelis
             # print(users)
         message = 'users: ' + users
         update_whitelist(room_name, message)
@@ -270,7 +278,7 @@ def update_whitelist(room_name, message):  #combine whitelist and blacklist
                          {"$set": {
                              "whitelisted": message
                          }})
-    
+
 
 def update_blacklist(room_name, message):
     """Adds the blacklisted users to the database"""
@@ -284,6 +292,6 @@ def check_roomids(roomid):
     """checks if the roomid you have is a real roomid"""
     roomid_check = dbm.rooms.find_one({"roomid": roomid})
     if roomid_check is not None:
-        return (True)
+        return True
     else:
-        return (False)
+        return False
