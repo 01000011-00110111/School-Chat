@@ -32,6 +32,11 @@ def run_filter(user, room, message, roomid):
     if user_muted not in [0, 3] and perms != 'dev':
         return ('permission', user_muted)
 
+    if bool(re.search(r'[<>]', message)) is True:
+        cmds.warn_user(user)
+        return ('permission', 10, user_muted)
+        
+
     if perms != "dev":
         message = filter_message(message)
         role = profanity.censor(user['role'])
@@ -179,23 +184,23 @@ def find_cmds(message, user, roomid):
     # this check is needed, because the finding of commands is after chat lock check in run_filter
     # leading to users being able to send comamnds, even when chat is locked
     # we should be the only ones that can do that (devs)
-    for cmd in command_split:
-        date_str = datetime.now(timezone(
-            timedelta(hours=-4))).strftime("[%a %H:%M] ")
-        Lmessage = date_str + user['username'] + ":" + cmd
-        log.log_commands(Lmessage)
+    # for cmd in command_split:
+    date_str = datetime.now(timezone(#that removes the multi command feture hope it dont break
+        timedelta(hours=-4))).strftime("[%a %H:%M] ")
+    Lmessage = date_str + user['username'] + ":" + command_split
+    log.log_commands(Lmessage)
 
-        command = cmd.split()
-        commands = {}
+    command = command_split.split()
+    commands = {}
 
-        for index, command in enumerate(command):
-            var_name = "v%d" % index
-            commands[var_name] = command
-        if 'v0' in commands:
-            cmds.find_command(commands=commands,
-                              user=user,
-                              roomid=roomid,
-                              origin_room=origin_room)
+    for index, command in enumerate(command):
+        var_name = "v%d" % index
+        commands[var_name] = command
+    if 'v0' in commands:
+        cmds.find_command(commands=commands,
+                          user=user,
+                          roomid=roomid,
+                          origin_room=origin_room)
 
 
 def compile_message(message, profile_picture, user, role, preuser,
@@ -247,9 +252,11 @@ def failed_message(result, roomid, user):
         (7):
         "[SYSTEM]: <font color='#ff7f00'>this chat room id does not exist.</font>",
         (8):
-        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send more than 15 messages in a row.</font>",
+        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send more than 15 messages in a row. (You have been warned)</font>",
         (9):
-        "[SYSTEM]: <font color='#ff7f00'>You must verify your acount before you can use commands.</font>"
+        "[SYSTEM]: <font color='#ff7f00'>You must verify your account before you can use commands.</font>",
+        (10):
+        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send code in the chat. (You have been warned)</font>"
     }
     if result[0] == "dev":
         if result[1] == 6: fail_str = fail_strings.get((result[1]), "")
