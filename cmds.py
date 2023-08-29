@@ -5,16 +5,14 @@
 import chat
 from main import dbm, scheduler
 import log
-from flask_socketio import emit
+import rooms
 import time
 from time import sleep
 # below is needed for systemd restart, do not remove
-# import dbus
-import os
-from collections import deque
+#import dbus
 import re
 from datetime import datetime, timedelta
-import rooms
+from flask_socketio import emit
 
 
 def find_command(**kwargs):
@@ -49,7 +47,6 @@ def find_command(**kwargs):
         'banned': send_perms,
         'muted': send_perms,
         'ping': ping,
-        'restart': run_restart,
         'cmd_logs': send_cmd_logs,
         'room_logs': send_room_logs,
     }
@@ -69,6 +66,7 @@ def E(**kwargs):
 
 
 def send_stats(**kwargs):
+    """Send stats into the chat."""
     roomid = kwargs['roomid']
     emit("message_chat", (chat.get_stats(roomid), roomid), broadcast=True)
 
@@ -96,6 +94,7 @@ def check_if_room_mod(roomid, user):
 
 
 def reset_chat_user(**kwargs):
+    """Reset the current chatroom."""
     user = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1 or check_if_mod(user) == 1:
@@ -130,7 +129,8 @@ def ban_user(**kwargs):
         log.log_mutes(f"{username} is banned by a mod or admin.")
     else:
         message = f'[SYSTEM]: <font color="#ff7f00"> {username} has been banned. Reason: {reason}.</font>'
-        log.log_mutes(f"{username} is banned because {reason} by a mod or admin.")
+        log.log_mutes(
+            f"{username} is banned because {reason} by a mod or admin.")
 
     chat.add_message(message, roomid, 'true')
     emit("message_chat", (message, roomid), broadcast=True)
@@ -141,7 +141,7 @@ def mute_user(**kwargs):
     roomid = kwargs['roomid']
     username = kwargs['commands']['v1']
     try:
-        time = kwargs['commands']['v2']
+        time_str = kwargs['commands']['v2']
     except KeyError:
         respond_command(("reason", 1, "no_time"), roomid, None)
         return
@@ -154,60 +154,56 @@ def mute_user(**kwargs):
             return
         if user_dbm['permission'] in ('banned', 'muted'):
             return
-        else:
-            time_match = re.match(r'^(\d+)([dhm])$', time)
-            if time_match:
-                permission_str = "muted"
+
+        time_match = re.match(r'^(\d+)([dhm])$', time_str)
+        if time_match:
+            permission_str = "muted"
+            time_final = None
+            time_number = int(time_match.group(1))
+            time_letter = time_match.group(2)
+            current_time = datetime.now()
+
+            if time_letter == 'd':
+                time_final = f"{time_number} days"
+                expiration_time = current_time + timedelta(days=time_number)
+            elif time_letter == 'h':
+                time_final = f"{time_number} hours"
+                expiration_time = current_time + timedelta(hours=time_number)
+            elif time_letter == 'm':
+                time_final = f"{time_number} minutes"
+                expiration_time = current_time + timedelta(minutes=time_number)
+            elif time_letter == 'f':
                 time_final = None
-                time_number = int(time_match.group(1))
-                time_letter = time_match.group(2)
-                current_time = datetime.now()
 
-                if time_letter == 'd':
-                    time_final = f"{time_number} days"
-                    expiration_time = current_time + timedelta(
-                        days=time_number)
-                elif time_letter == 'h':
-                    time_final = f"{time_number} hours"
-                    expiration_time = current_time + timedelta(
-                        hours=time_number)
-                elif time_letter == 'm':
-                    time_final = f"{time_number} minutes"
-                    expiration_time = current_time + timedelta(
-                        minutes=time_number)
-                elif time_letter == 'f':
-                    time_final = None
+            if time_letter != 'f':
+                expiration_time_str = expiration_time.strftime(
+                    "%Y-%m-%d %H:%M:%S")
+                permission_str = f"muted {expiration_time_str}"
 
-                if time_letter != 'f':
-                    expiration_time_str = expiration_time.strftime(
-                        "%Y-%m-%d %H:%M:%S")
-                    permission_str = f"muted {expiration_time_str}"
+            dbm.Accounts.update_one({"displayName": username},
+                                    {"$set": {
+                                        "permission": permission_str
+                                    }})
 
-                dbm.Accounts.update_one(
-                    {"displayName": username},
-                    {"$set": {
-                        "permission": permission_str
-                    }})
+        if reason == '' and time_final is None:
+            message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time.</font>'
+            log.log_mutes(f"{username} is muted by a mod or admin.")
+        elif time_final is None:
+            message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time. Reason: {reason}.</font>'
+            log.log_mutes(
+                f"{username} is muted because {reason} by a mod or admin.")
+        elif reason == '':
+            message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for {time_final}.</font>'
+            log.log_mutes(
+                f"{username} is muted for {time_final} by a mod or admin.")
+        else:
+            message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for {time_final}. Reason: {reason}.</font>'
+            log.log_mutes(
+                f"{username} is muted because {reason} for {time_final} by a mod or admin."
+            )
 
-            if reason == '' and time_final is None:
-                message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time.</font>'
-                log.log_mutes(f"{username} is muted by a mod or admin.")
-            elif time_final is None:
-                message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time. Reason: {reason}.</font>'
-                log.log_mutes(
-                    f"{username} is muted because {reason} by a mod or admin.")
-            elif reason == '':
-                message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for {time_final}.</font>'
-                log.log_mutes(
-                    f"{username} is muted for {time_final} by a mod or admin.")
-            else:
-                message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for {time_final}. Reason: {reason}.</font>'
-                log.log_mutes(
-                    f"{username} is muted because {reason} for {time_final} by a mod or admin."
-                )
-
-                chat.add_message(message, roomid, 'true')
-                emit("message_chat", (message, roomid), broadcast=True)
+            chat.add_message(message, roomid, 'true')
+            emit("message_chat", (message, roomid), broadcast=True)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
@@ -221,16 +217,16 @@ def unmute_user(**kwargs):
         user = dbm.Accounts.find_one({"displayName": username})
         if user['permission'] in ('banned', 'true'):
             return
-        else:
-            dbm.Accounts.update_one({"displayName": username},
-                                    {"$set": {
-                                        "permission": "true"
-                                    }})
-            message = f'[SYSTEM]: <font color="#ff7f00">{username} has been unmuted.</font>'
 
-            log.log_mutes(f"{username} is unmuted by a mod or admin.")
-            chat.add_message(message, roomid, 'true')
-            emit("message_chat", (message, roomid), broadcast=True)
+        dbm.Accounts.update_one({"displayName": username},
+                                {"$set": {
+                                    "permission": "true"
+                                }})
+        message = f'[SYSTEM]: <font color="#ff7f00">{username} has been unmuted.</font>'
+
+        log.log_mutes(f"{username} is unmuted by a mod or admin.")
+        chat.add_message(message, roomid, 'true')
+        emit("message_chat", (message, roomid), broadcast=True)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
@@ -331,9 +327,9 @@ def send_system(**kwargs):  #add a check for a user later
 
 
 def run_shutdown(**kwargs):
+    """Stop the server, but also tell everyone that the server is going down."""
     user = kwargs['user']
     roomid = kwargs['roomid']
-    """Stop the server, but also tell everyone that the server is going down."""
     if check_if_dev(user) == 1:
         emit("message_chat", (
             "[SYSTEM]: <font color='#ff7f00'>Server shutting down... (unknown ETA on restart)</font>",
@@ -353,9 +349,9 @@ def run_shutdown(**kwargs):
 
 
 def run_restart(**kwargs):
+    """Restart the server, but also tell everyone that the server is going down."""
     user = kwargs['user']
     roomid = kwargs['roomid']
-    """Restart the server, but also tell everyone that the server is going down."""
     if check_if_dev(user) == 1:
         # later, implement this so it sends it to EVERY room that the server is going down, not just the one that the cmd is sent in...
         # could make it modular (for anouncments? maybe idk)
@@ -375,7 +371,7 @@ def run_restart(**kwargs):
         respond_command(("reason", 2, "not_dev"), roomid, None)
 
 
-def reload_users(**kwargs):
+def reload_users(_):
     """Reload the online list manually."""
     dbm.Online.delete_many({})
     emit("force_username", "", broadcast=True)
@@ -435,11 +431,11 @@ def send_room_logs(**kwargs):
 def respond_command(result, roomid, name):
     """Tell the client that can't run this command for what reason."""
     room = dbm.rooms.find_one({"roomName": name})
-    generatedBy = room["generatedBy"] if room is not None else ""
-    generatedAt = room["generatedAt"] if room is not None else ""
+    generated_by = room["generatedBy"] if room is not None else ""
+    generated_at = room["generatedAt"] if room is not None else ""
     locked = room["locked"] if room is not None else ""
-    usersW = room["whitelisted"] if room is not None else ""
-    usersB = room["blacklisted"] if room is not None else ""
+    users_w = room["whitelisted"] if room is not None else ""
+    users_b = room["blacklisted"] if room is not None else ""
 
     response_strings = {
         (1, None):
@@ -463,17 +459,17 @@ def respond_command(result, roomid, name):
         (4, 'create'):
         f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
         (0, 'edit'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to whitelist the users {usersW}.</font>",
+        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to whitelist the users {users_w}.</font>",
         (1, 'edit'):
         f"[SYSTEM]: <font color='#ff7f00'>You are not allowed to edit the chat room named {name}.</font>",
         (2, 'edit'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to blacklist the users {usersB}.</font>",
+        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to blacklist the users {users_b}.</font>",
         (3, 'edit'):
         "[SYSTEM]: <font color='#ff7f00'>You can not blacklist a user that is whitlisted.</font>",
         (4, 'edit'):
         "[SYSTEM]: <font color='#ff7f00'>You can not whitlisted a user that is blacklisted.</font>",
         (0, 'info'):
-        f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} was made by {generatedBy} at {generatedAt} and the chat room status is currently set to locked = {locked}.</font>",
+        f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} was made by {generated_by} at {generated_at} and the chat room status is currently set to locked = {locked}.</font>",
         (0, 'rooms'):
         f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} does not exist. Please enter a chat room that does exist.</font>",
         (2, 'not_dev'):
@@ -499,7 +495,7 @@ def help_command(**kwargs):
     """sends a message with a file full of commands that the user can use."""
     roomid = kwargs['roomid']
     issuer = kwargs['user']
-    with open('backend/command_list.txt', 'r') as file:
+    with open('backend/command_list.txt', 'r', encoding="utf8") as file:
         lines = file.readlines()
     start_index = None
     end_index = None
@@ -512,16 +508,27 @@ def help_command(**kwargs):
                 end_index = i - 1
     elif check_if_mod(issuer) == 1:
         for i, line in enumerate(lines):
-            if 'mod commands' in line.lower():
+            if 'admin commands' in line.lower():
                 start_index = i
-            elif 'Room Owner commands:' in line.lower():
+            elif 'end' in line.lower():
                 end_index = i - 1
     else:
         for i, line in enumerate(lines):
-            if 'user commands' in line.lower():
-                start_index = i
-            elif 'Room Mod commands:' in line.lower():
-                end_index = i - 1
+            if check_if_owner(roomid, issuer) == 1:
+                if 'user commands' in line.lower():
+                    start_index = i
+                elif 'end' in line.lower():
+                    end_index = i - 1
+            elif check_if_room_mod(issuer) == 1:
+                if 'user commands' in line.lower():
+                    start_index = i
+                elif 'room owner commands' in line.lower():
+                    end_index = i - 1
+            else:
+                if 'user commands' in line.lower():
+                    start_index = i
+                elif 'room mod commands' in line.lower():
+                    end_index = i - 1
 
     command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(
         line.strip() for line in lines[start_index:end_index + 1]) + "</font>"
