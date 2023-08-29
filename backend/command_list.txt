@@ -12,9 +12,11 @@
     <li><code>"$sudo lines/pstats"</code>: Gets the line count of the chat room you are on.</li>
     <li><code>"$sudo ban (username) (reason)"</code>: The reason is optional.</li>
     <li><code>"$sudo globalock (confirm)"</code>: Locks all rooms. Only use in emergencies</li>
+    <li><code>"$sudo cmd_logs"</code>: Sends the last 10 entries in the command log.</li>
+    <li><code>"$sudo room_logs"</code>: Sends the last 10 entries in the room logs.</li>
 </ul>
 
-<h2>Mod commands:</h2>
+<h2>Admin commands:</h2>
 <ul>
     <li><code>"$sudo command prompt"</code>:This is how you type a command in chat (prompt is only for commands that need text.</li>
     <li><code>"$sudo mute (username) (time) (reason)"</code>: Reason and time are optional.</li>
