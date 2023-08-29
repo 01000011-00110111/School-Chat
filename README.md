@@ -9,7 +9,8 @@ Steps to make the chat run
 
 ## No systemd service (easy route)
 #### NOTE: `$sudo shutdown` and `$sudo restart` will NOT work if you do not use systemd!
-- Put your mongodb authentication string and your keys for mod and dev into `keys.py`
+- Put your mongodb authentication string and your keys for mod and dev into `example.keys.py`
+- Rename `example.keys.py` to `keys.py`
 - in the data base make a database named `Chat` and add 3 collections named `Accounts`, `Online`, `rooms`
 - inside of rooms add 2 documents to the database
 ```
