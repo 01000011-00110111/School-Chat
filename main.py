@@ -164,13 +164,16 @@ def signup_post() -> ResponseReturnValue:
         return flask.render_template(
             "signup-index.html",
             error='The display name contains a space or a special character.',
-            SRole=SRole,
         )
     elif bool(re.search(r'[\s[,"\'<>{\]]', SUsername)) is True:
         return flask.render_template(
             "signup-index.html",
             error='The username contains a space or a special character.',
-            SRole=SRole,
+        )
+    elif bool(re.search(r'[\s[,"\'<>{\]]', SRole)) is True:
+        return flask.render_template(
+            "signup-index.html",
+            error='The Role contains a space or a special character.',
         )
     check = r'^[A-Za-z]{3,12}$'
     user_allowed = re.match(
@@ -179,11 +182,17 @@ def signup_post() -> ResponseReturnValue:
     desplayname_allowed = re.match(
         check, SDisplayname
     )  # and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
+    if re.match(r'^[A-Za-z]{3,18}$', SRole) is True:
+        return flask.render_template(
+            "signup-index.html",
+            error='That Role name is too long. It must be at least 1 letter long or under 18 and under.',
+        )
+        
     if user_allowed == 'false' or desplayname_allowed == 'false':
         return flask.render_template(
             "signup-index.html",
             error=
-            'That Username/Display name is too long. It must be over 3 letters and under 13 letters.',
+            'That Username/Display name is too long. It must be at least 1 letter long or 12 and under',
             # error='That Username/Display name is not allowed!',
             SRole=SRole,
         )
@@ -634,23 +643,7 @@ def update_permission():
                                         'warned': '0'
                                     }})
             log.log_mutes(f"{username} warnings have been reset.")
-
-
-@scheduler.task(
-    'interval',
-    # cserver if you want to combine you can this deletes the account if it was not vared in 10 hours
-    # yeah ill prob combine these later, remove unneeded db calls
-    id='check_accounts',
-    seconds=60,
-    misfire_grace_time=500)
-def check_accounts():
-    """checks accounts for any accounts that need deleting"""
-    users = dbm.Accounts.find()
-    for user_info in users:
-        user = user_info['username']
-        permission = user_info['permission']
-        # username = user_info['displayName']
-        if accounting.is_account_expired(permission):
+        elif accounting.is_account_expired(permission):
             accounting.log_accounts(
                 f'The account {user} has been deleted because it was not verified'
             )
