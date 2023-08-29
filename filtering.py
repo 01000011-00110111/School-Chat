@@ -10,6 +10,7 @@ from flask_socketio import emit
 import chat
 import profanity_words
 import cmds
+import log
 import rooms
 
 # get our custom whitelist words (that shouldnot be banned in the first place)
@@ -182,7 +183,7 @@ def find_cmds(message, user, roomid):
         date_str = datetime.now(timezone(
             timedelta(hours=-4))).strftime("[%a %H:%M] ")
         Lmessage = date_str + user['username'] + ":" + cmd
-        cmds.log_commands(Lmessage)
+        log.log_commands(Lmessage)
 
         command = cmd.split()
         commands = {}

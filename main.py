@@ -625,7 +625,7 @@ def update_permission():
                                     {'$set': {
                                         'permission': 'true'
                                     }})
-            cmds.log_mutes(f"{username} is no longer muted.")
+            log.log_mutes(f"{username} is no longer muted.")
 
         elif filtering.is_warned_expired(permission):
             print(f"{username} warnings have been reset.")
@@ -633,7 +633,7 @@ def update_permission():
                                     {'$set': {
                                         'warned': '0'
                                     }})
-            cmds.log_mutes(f"{username} warnings have been reset.")
+            log.log_mutes(f"{username} warnings have been reset.")
 
 
 @scheduler.task(

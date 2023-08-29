@@ -4,6 +4,7 @@
 """
 import chat
 from main import dbm, scheduler
+import log
 from flask_socketio import emit
 import time
 from time import sleep
@@ -14,18 +15,6 @@ from collections import deque
 import re
 from datetime import datetime, timedelta
 import rooms
-
-
-def log_commands(message):
-    """Log when a command is issued."""
-    with open('backend/command_log.txt', 'a', encoding="utf8") as file:
-        file.write(message + '\n')
-
-
-def log_mutes(message):
-    """Log when a unmuted user is issued."""
-    with open('backend/permission.txt', 'a', encoding="utf8") as file:
-        file.write(message + '\n')
 
 
 def find_command(**kwargs):
@@ -138,10 +127,10 @@ def ban_user(**kwargs):
                             }})
     if reason == '':
         message = f'[SYSTEM]: <font color="#ff7f00">{username} has been banned.</font>'
-        log_mutes(f"{username} is banned by a mod or admin.")
+        log.log_mutes(f"{username} is banned by a mod or admin.")
     else:
         message = f'[SYSTEM]: <font color="#ff7f00"> {username} has been banned. Reason: {reason}.</font>'
-        log_mutes(f"{username} is banned because {reason} by a mod or admin.")
+        log.log_mutes(f"{username} is banned because {reason} by a mod or admin.")
 
     chat.add_message(message, roomid, 'true')
     emit("message_chat", (message, roomid), broadcast=True)
@@ -202,18 +191,18 @@ def mute_user(**kwargs):
 
             if reason == '' and time_final is None:
                 message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time.</font>'
-                log_mutes(f"{username} is muted by a mod or admin.")
+                log.log_mutes(f"{username} is muted by a mod or admin.")
             elif time_final is None:
                 message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time. Reason: {reason}.</font>'
-                log_mutes(
+                log.log_mutes(
                     f"{username} is muted because {reason} by a mod or admin.")
             elif reason == '':
                 message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for {time_final}.</font>'
-                log_mutes(
+                log.log_mutes(
                     f"{username} is muted for {time_final} by a mod or admin.")
             else:
                 message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for {time_final}. Reason: {reason}.</font>'
-                log_mutes(
+                log.log_mutes(
                     f"{username} is muted because {reason} for {time_final} by a mod or admin."
                 )
 
@@ -239,7 +228,7 @@ def unmute_user(**kwargs):
                                     }})
             message = f'[SYSTEM]: <font color="#ff7f00">{username} has been unmuted.</font>'
 
-            log_mutes(f"{username} is unmuted by a mod or admin.")
+            log.log_mutes(f"{username} is unmuted by a mod or admin.")
             chat.add_message(message, roomid, 'true')
             emit("message_chat", (message, roomid), broadcast=True)
     else:
@@ -424,12 +413,7 @@ def send_cmd_logs(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1:
-        with open("backend/command_log.txt", "r") as f:
-            cmds_log = deque(f, 10)
-        cmd_log_txt = ""
-        for cmd in cmds_log:
-            cmd_log_txt += f"{cmd}<br>"
-        msg = f"[SYSTEM]: <font color='#ff7f00'>Last 10 Command Log Entries:<br>{cmd_log_txt}</font>\n"
+        msg = log.get_cmd_logs()
         chat.add_message(msg, roomid, dbm)
         emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
     else:
@@ -441,12 +425,7 @@ def send_room_logs(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_mod(user) == 1 or check_if_dev(user) == 1:
-        with open("backend/chat-rooms_log.txt", "r") as f:
-            cmds_log = deque(f, 10)
-        cmd_log_txt = ""
-        for cmd in cmds_log:
-            cmd_log_txt += f"{cmd}<br>"
-        msg = f"[SYSTEM]: <font color='#ff7f00'>Last 10 Room Log Entries:<br>{cmd_log_txt}</font>\n"
+        msg = log.get_room_logs()
         chat.add_message(msg, roomid, dbm)
         emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
     else:
