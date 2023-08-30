@@ -16,6 +16,7 @@ whitelist_words = [
     'suck',
     'hebe',
     'gay',
+    'fart',
 ]
 
 censored = [
