@@ -254,7 +254,7 @@ def signup_post() -> ResponseReturnValue:
         ""
     })
     accounting.email_var_account(SUsername, SEmail, verification_code)
-    accounting.log_accounts(f'A user has made a account named {SUsername}')
+    log.log_accounts(f'A user has made a account named {SUsername}')
     return flask.redirect(flask.url_for('login_page'))
 
 
@@ -273,7 +273,7 @@ def verify(verification_code):
                                     "locked": 'true'
                                 }})
         user = user_id["username"]
-        accounting.log_accounts(
+        log.log_accounts(
             f'The account {user} has been verified and may now chat in any chat room'
         )
         return f"User: {user} has been verified You may now chat in any chat room you like"
@@ -432,7 +432,7 @@ def customize_accounts() -> ResponseReturnValue:
                         # "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest()
                     }
                 })
-            accounting.log_accounts(
+            log.log_accounts(
                 f'The account {user} has updated some settings (one day ill add what they updated)'
             )
             return flask.render_template('settings.html',
@@ -650,7 +650,7 @@ def update_permission():
                                     }})
             log.log_mutes(f"{username} warnings have been reset.")
         elif accounting.is_account_expired(permission):
-            accounting.log_accounts(
+            log.log_accounts(
                 f'The account {user} has been deleted because it was not verified'
             )
             dbm.Accounts.delete_one({'username': user})

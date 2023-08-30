@@ -4,11 +4,6 @@ import uuid
 from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
-def log_accounts(message):
-    """Log when a command is issued."""
-    with open('backend/accounts.txt', 'a', encoding="utf8") as file:
-        file.write(message + '\n')
     
 def email_var_account(username, email, verification_code):
     # Email configuration

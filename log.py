@@ -4,6 +4,10 @@
 """
 from collections import deque
 
+def log_accounts(message):
+    """Log when something happens to an account."""
+    with open('backend/accounts.txt', 'a', encoding="utf8") as file:
+        file.write(message + '\n')
 
 def log_commands(message) -> None:
     """Log when a command is issued."""
