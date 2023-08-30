@@ -103,7 +103,7 @@ def check_mute(user):
         return 1
     elif user["permission"] == "banned":
         return 2
-    elif permission[0] == "locked":
+    elif user["locked"].split(' ')[0] == "locked":
         return 3
     return 0
 

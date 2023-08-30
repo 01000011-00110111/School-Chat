@@ -245,6 +245,8 @@ def signup_post() -> ResponseReturnValue:
         "userColor":
         "#ffffff",
         "permission":
+        'true',
+        'locked':
         f"locked {formatted_time}",
         "warned":
         '0',
@@ -268,7 +270,7 @@ def verify(verification_code):
     if user_id is not None:
         dbm.Accounts.update_one({"userId": verification_code},
                                 {"$set": {
-                                    "permission": 'true'
+                                    "locked": 'true'
                                 }})
         user = user_id["username"]
         accounting.log_accounts(
@@ -311,7 +313,7 @@ def customize_accounts() -> ResponseReturnValue:
             if TOSagree != "on":
                 return flask.render_template(
                     'login.html', error='You did not agree to the TOS!')
-            if user["permission"].split(' ') == 'locked':
+            if user["locked"].split(' ') == 'locked':
                 return flask.render_template(
                     'login.html',
                     error=
@@ -534,7 +536,7 @@ def get_rooms(username):
     user_name = dbm.Accounts.find_one({"username": username})
     user = user_name["displayName"]
     room_access = rooms.get_chat_rooms()
-    permission = user_name["permission"].split(' ')
+    permission = user_name["locked"].split(' ')
     if user_name["SPermission"] == "Debugpass":
         emit('roomsList', room_access, namespace='/', to=request.sid)
     elif user_name['SPermission'] == "modpass":
