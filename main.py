@@ -234,7 +234,7 @@ def verify(verification_code):
     if user_id is not None:
         dbm.Accounts.update_one({"userId": verification_code},
                                 {"$set": {
-                                    "locked": 'true'
+                                    "locked": 'false'
                                 }})
         user = user_id["username"]
         log.log_accounts(

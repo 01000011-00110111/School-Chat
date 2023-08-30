@@ -47,7 +47,7 @@ def run_filter(user, room, message, roomid):
     else:
         profile_picture = user['profile']
 
-    if "[" in message:
+    if "[" in message and locked != 'true':
         find_pings(message, user['displayName'], profile_picture, roomid)
 
     # print (preuser)
@@ -156,6 +156,7 @@ def find_pings(message, dispName, profile_picture, roomid):
         },
              namespace="/",
              broadcast=True)
+        break # ez one per message fix lol
 
 
 def find_cmds(message, user, roomid):
@@ -200,7 +201,7 @@ def find_cmds(message, user, roomid):
                               user=user,
                               roomid=roomid,
                               origin_room=origin_room)
-            break  # that will work
+            break  # that will work ez one per message fix lol
 
 
 def compile_message(message, profile_picture, user, role, preuser,
