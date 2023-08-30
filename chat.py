@@ -117,7 +117,7 @@ def system_response(message, id):
         3:
         '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>',
         4:
-        "[SYSTEM]: <font color='#ff7f00'>Chat reset by this chat rooms Owner or mod.</font>"
+        "[SYSTEM]: <font color='#ff7f00'>Chat reset by this chat rooms Owner or Mod.</font>"
     }
 
     system_answer = system_response.get(id)

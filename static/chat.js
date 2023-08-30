@@ -38,7 +38,7 @@ socket.on("reset_chat", (who, roomid) => {
         if (who === "admin") {
             chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by an admin.</font><br>";
         } else if (who === 'owner/mod') {
-            chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by this chat rooms Owner or mod.</font><br>"
+            chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by this chat rooms Owner or Mod.</font><br>"
         } else if (who === "auto") {
             chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font><br>";
         }

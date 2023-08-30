@@ -376,12 +376,12 @@ def customize_accounts() -> ResponseReturnValue:
                 return flask.render_template(
                     "settings.html",
                     error='The display name contains a space or a special character.',
-                )
+                    **return_list)
             elif bool(re.search(r'[\s[,"\'<>{\]]', role)) is True:
                 return flask.render_template(
                     "settings.html",
                     error='The Role contains a space or a special character.',
-                )
+                    **return_list)
             if (dbm.Accounts.find_one({"email": email}) is None
                     and user["email"] != email):
                 verification_code = str(uuid.uuid4())
@@ -403,12 +403,6 @@ def customize_accounts() -> ResponseReturnValue:
             #     return flask.render_template("settings.html",
             #          error='Your password must not match your current one.',
             # **return_list)
-            if bool(re.search(r'[\s[,"\'<>{\]]', displayname)) is True:
-                return flask.render_template(
-                    "settings.html",
-                    error=
-                    'The display name contains a space or a special character.',
-                    **return_list)
             check = r'^[A-Za-z]{3,12}$'
             # user_allowed = re.match(check, user)# and not re.search(r'dev|mod', SUsername, re.IGNORECASE)
             desplayname_allowed = re.match(
