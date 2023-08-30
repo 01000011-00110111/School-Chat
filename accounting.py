@@ -1,4 +1,9 @@
+"""Stuff to handle accounts
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 import os
+import re
 import smtplib
 import uuid
 from datetime import datetime
@@ -106,3 +111,27 @@ def is_account_expired(permission_str):
                                                      "%Y-%m-%d %H:%M:%S")
         current_time = datetime.now()
         return current_time >= expiration_time
+
+def run_regex_signup(SUsername, SRole, SDisplayname):
+    """Run Checks on the username."""
+    if bool(re.search(r'[\s\[,"\'<>{\]]', SUsername)) is True:
+        flagged = True
+        error = 'The display name contains a space or a special character.'
+    elif bool(re.search(r'[\s[,"\'<>{\]]', SUsername)) is True:
+        flagged = True
+        error = 'The username contains a space or a special character.'
+    elif bool(re.search(r'[\s[,"\'<>{\]]', SRole)) is True:
+        flagged = True
+        error = 'The Role contains a space or a special character.'
+    check = r'^[A-Za-z]{3,12}$'
+    user_allowed = re.match(check, SUsername)
+    desplayname_allowed = re.match(check, SDisplayname)
+    if re.match(r'^[A-Za-z]{3,18}$', SRole) is True:
+        flagged = True
+        error = 'That Role name is too long. It must be at least 1 letter long or under 18.'
+
+    if user_allowed == 'false' or desplayname_allowed == 'false':
+        flagged = True
+        error = 'That Username/Display name is too long. It must be at least 1 letter long or 12 and under'
+    
+    return (flagged, error if not None else None)

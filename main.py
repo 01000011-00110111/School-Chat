@@ -41,7 +41,7 @@ import filtering
 import rooms
 import accounting
 import log
-import words_lists
+import word_lists
 
 LOGFILE = "backend/chat.txt"
 
@@ -153,43 +153,13 @@ def signup_post() -> ResponseReturnValue:
     SDisplayname = request.form.get("SDisplayname")
     SEmail = request.form.get("SEmail")
 
-    if bool(re.search(r'[\s\[,"\'<>{\]]', SUsername)) is True:
+    result, msg = accounting.run_regex_signup(SUsername, SRole, SDisplayname)
+    if result is not None:
         return flask.render_template(
             "signup-index.html",
-            error='The display name contains a space or a special character.',
-        )
-    elif bool(re.search(r'[\s[,"\'<>{\]]', SUsername)) is True:
-        return flask.render_template(
-            "signup-index.html",
-            error='The username contains a space or a special character.',
-        )
-    elif bool(re.search(r'[\s[,"\'<>{\]]', SRole)) is True:
-        return flask.render_template(
-            "signup-index.html",
-            error='The Role contains a space or a special character.',
-        )
-    check = r'^[A-Za-z]{3,12}$'
-    user_allowed = re.match(
-        check, SUsername
-    )  # and not re.search(r'dev|mod', SUsername, re.IGNORECASE) #The and needs to be moved to a seperate one to check for letter limit
-    desplayname_allowed = re.match(
-        check, SDisplayname
-    )  # and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
-    if re.match(r'^[A-Za-z]{3,18}$', SRole) is True:
-        return flask.render_template(
-            "signup-index.html",
-            error=
-            'That Role name is too long. It must be at least 1 letter long or under 18 and under.',
+            error=msg,
         )
 
-    if user_allowed == 'false' or desplayname_allowed == 'false':
-        return flask.render_template(
-            "signup-index.html",
-            error=
-            'That Username/Display name is too long. It must be at least 1 letter long or 12 and under',
-            # error='That Username/Display name is not allowed!',
-            SRole=SRole,
-        )
     if SPassword != SPassword2:
         return flask.render_template("signup-index.html",
                                      error='Password boxes do not match!',
@@ -198,7 +168,7 @@ def signup_post() -> ResponseReturnValue:
                                      SDisplayname=SDisplayname)
     possible_user = dbm.Accounts.find_one({"username": SUsername})
     possible_dispuser = dbm.Accounts.find_one({"displayName": SDisplayname})
-    if possible_user is not None or possible_dispuser is not None or SUsername in banned_usernames or SDisplayname in word_lists.banned_usernames:
+    if possible_user is not None or possible_dispuser is not None or SUsername in word_lists.banned_usernames or SDisplayname in word_lists.banned_usernames:
         return flask.render_template(
             "signup-index.html",
             error='That Username/Display name is already taken!',
