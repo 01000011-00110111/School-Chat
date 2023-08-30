@@ -29,3 +29,14 @@ function OpenAC() {
         AC.style.display = "grid";
     }
 }
+
+function OpenTOS() {
+  let TOSPopup = document.getElementById("tos-popup");
+  TOSPopup.style.display = "grid";
+}
+
+function CloseTOS() {
+  let TOSPopup = document.getElementById("tos-popup");
+
+  TOSPopup.style.display = "none";
+}

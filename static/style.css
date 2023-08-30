@@ -476,3 +476,81 @@ html {
   justify-content: center;
   margin: 68px auto;
 }
+
+
+#tos-btm {
+  position: fixed;
+  align-self: end;
+  width: 35%;
+  justify-content: space-evenly;
+  display: flex;
+  height: 10%;
+  border-top-width: 2px;
+  border-top-style: solid;
+  border-top-color: #00000063;
+  background: white;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+#tos-popup {
+  background: white;
+  position: fixed;
+  z-index: 99;
+  width: 35%;
+  height: 60%;
+  display: none;
+  margin: 123px 44%;
+  border-radius: 12px;
+}
+
+.tos-btn {
+  width: 77%;
+  height: 60%;
+  align-self: center;
+  border-style: double;
+  border-color: #9c58ff;
+  color: #d40ad4;
+  border-radius: 12px;
+}
+
+#tos-accept {
+  background: #561b56;
+}
+
+#tos-decline {
+  background: transparent;
+}
+
+#tos-body {
+  width: 100%;
+  height: 78%;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  align-content: baseline;
+  display: grid;
+}
+
+#tos-header {
+  width: 100%;
+  height: 60%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+#header-2 img {
+  width: 70px;
+  height: 70px;
+  border-radius: 100%;
+}
+#header-2 {
+  margin: 26px -23px;
+  display: grid;
+}
+
+.header-item {
+  width: 100%;
+  justify-content: center;
+}
