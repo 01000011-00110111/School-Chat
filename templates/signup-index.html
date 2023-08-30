@@ -11,16 +11,20 @@
         <meta name="googlebot" content="noindex,nofollow,nositelinkssearchbox,nopagereadaloud,notranslate">
 	</head>
 
-    <body>
-        <p>1 no spaces (it breaks code)<br> 2 must be at max 8 letters (to not overflow sizing)<br> 3 no usernames with code in them (so it will not break code and let people send whispers to you)</p><br>
-        <form method="post">
-            <input type="email" class="signuptext" id="SEmail" name='SEmail' placeholder="Emaiil:" required value="{{SEmial}}"><br>
-            <input type="text" class="signuptext" id="SUsername" name='SUsername' placeholder="Username:" maxlength="25" required value="{{SUsername}}"><br>
-            <input type="text" class="signuptext" name='SDisplayname' placeholder="Displayname:" maxlength="15" required value="{{SDisplayname}}"><br>
-            <input type="text" class="signuptext" name='SRole' placeholder="Role:" maxlength="18" required value="{{SRole}}"><br>
-            <input type="password" class="signuptext" name='SPassword' placeholder="Password:" required><br>
-            <input type="password" class="signuptext" name='SPassword2' placeholder="Confirm password" required><br>
-            <button type="submit" class="signupbtn" id="signup" name='submit'>Signup</button>
+    <body style="background-color: #3c5480;">
+<form method="post" class="SignUpForm">
+            <div>
+  <h1>School Chat</h1>
+</div><input type="email" class="signuptext" id="SEmail" name="SEmail" placeholder="Email:" required="" value="">
+            <input type="text" class="signuptext" id="SUsername" name="SUsername" placeholder="Username:" maxlength="25" required="" value="">
+            <input type="text" class="signuptext" name="SDisplayname" placeholder="Displayname:" maxlength="15" required="" value="">
+            
+            <input type="text" class="signuptext" name="SRole" placeholder="Role:" maxlength="18" required="" value=""><input type="password" class="signuptext" name="SPassword" placeholder="Password:" required="">
+            <input type="password" class="signuptext" name="SPassword2" placeholder="Confirm password" required="">
+            <div style="display: flex;color: black;">
+  <input type="checkbox">
+  <p>Accept <a href="" style="text-decoration: none;color: #7c0ed7;">Terms &amp; Conditions</a></p>
+</div><button type="submit" class="signupbtn" id="signup" name="submit">Signup</button>
         </form>
         {% if error %}
         <h2 style="color:red; pointer-events: none;" class="signuptext">{{error}}</h2>

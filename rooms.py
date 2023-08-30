@@ -207,7 +207,7 @@ def whitelist(room_name, set_type, user, users, room, username, dev):
                     'response', 5, 'edit'
                 )  # message about that user is allready in the whitelis
             # print(users)
-        message = 'users: ' + users
+        message = 'users:' + users
         update_whitelist(room_name, message)
         main.get_rooms(user["username"])
         if dev is True:
@@ -244,7 +244,7 @@ def blacklist(room_name, set_type, user, users, room, username, dev):
     if users not in ['clear', '']:
         if set_type == 'add':
             users = f"{pre_users},{users}"
-        message = 'users: ' + users
+        message = 'users:' + users
         update_blacklist(room_name, message)
         main.get_rooms(user["username"])
         if dev is True:
