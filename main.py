@@ -18,7 +18,7 @@
 import os
 import logging
 import hashlib
-import keys
+# import keys
 import re
 import flask
 import pymongo
@@ -372,10 +372,20 @@ def customize_accounts() -> ResponseReturnValue:
                     "settings.html",
                     error='That Display name is already taken!',
                     **return_list)
+            if bool(re.search(r'[\s\[,"\'<>{\]]', displayname)) is True:
+                return flask.render_template(
+                    "settings.html",
+                    error='The display name contains a space or a special character.',
+                )
+            elif bool(re.search(r'[\s[,"\'<>{\]]', role)) is True:
+                return flask.render_template(
+                    "settings.html",
+                    error='The Role contains a space or a special character.',
+                )
             if (dbm.Accounts.find_one({"email": email}) is None
                     and user["email"] != email):
                 verification_code = str(uuid.uuid4())
-                print(verification_code)
+                # print(verification_code)
                 dbm.Accounts.update_one(
                     {'username': userid},
                     {"$set": {

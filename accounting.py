@@ -81,7 +81,7 @@ def email_var_account(username, email, verification_code):
     msg.add_header('Message-ID', message_id)
 
     msg.attach(MIMEText(message_body, 'html'))
-    print(msg.as_string())
+    # print(msg.as_string())
 
     
     # Connect to the SMTP server
