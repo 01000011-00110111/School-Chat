@@ -41,6 +41,7 @@ import filtering
 import rooms
 import accounting
 import log
+import words_lists
 
 LOGFILE = "backend/chat.txt"
 
@@ -64,14 +65,6 @@ scheduler.api_enabled = True
 
 # clear db, so that old users don't stay
 dbm.Online.delete_many({})
-
-# note for later: rename profanity_words.py to word_lists.py and move this there
-# along with any other static lists
-banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
-                    '[URL]', 'mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD',
-                    'SYSTEM', '[SYSTEM]', "SONG", "[Song]", "[SONG]", "[song]",
-                    " ", "  ", "   ", "cseven", "cserver", 'system',
-                    '[system]', '[System]', 'System')
 
 # license stuff
 if __name__ == "__main__":
@@ -185,9 +178,10 @@ def signup_post() -> ResponseReturnValue:
     if re.match(r'^[A-Za-z]{3,18}$', SRole) is True:
         return flask.render_template(
             "signup-index.html",
-            error='That Role name is too long. It must be at least 1 letter long or under 18 and under.',
+            error=
+            'That Role name is too long. It must be at least 1 letter long or under 18 and under.',
         )
-        
+
     if user_allowed == 'false' or desplayname_allowed == 'false':
         return flask.render_template(
             "signup-index.html",
@@ -204,7 +198,7 @@ def signup_post() -> ResponseReturnValue:
                                      SDisplayname=SDisplayname)
     possible_user = dbm.Accounts.find_one({"username": SUsername})
     possible_dispuser = dbm.Accounts.find_one({"displayName": SDisplayname})
-    if possible_user is not None or possible_dispuser is not None or SUsername in banned_usernames or SDisplayname in banned_usernames:
+    if possible_user is not None or possible_dispuser is not None or SUsername in banned_usernames or SDisplayname in word_lists.banned_usernames:
         return flask.render_template(
             "signup-index.html",
             error='That Username/Display name is already taken!',
@@ -368,8 +362,8 @@ def customize_accounts() -> ResponseReturnValue:
                     error='Pick a theme before updating!',
                     **return_list)
             if (dbm.Accounts.find_one({"displayName": displayname}) is not None
-                    and user["displayName"]
-                    != displayname) and displayname in banned_usernames:
+                    and user["displayName"] != displayname
+                ) and displayname in word_lists.banned_usernames:
                 return flask.render_template(
                     "settings.html",
                     error='That Display name is already taken!',
@@ -377,7 +371,8 @@ def customize_accounts() -> ResponseReturnValue:
             if bool(re.search(r'[\s\[,"\'<>{\]]', displayname)) is True:
                 return flask.render_template(
                     "settings.html",
-                    error='The display name contains a space or a special character.',
+                    error=
+                    'The display name contains a space or a special character.',
                     **return_list)
             elif bool(re.search(r'[\s[,"\'<>{\]]', role)) is True:
                 return flask.render_template(

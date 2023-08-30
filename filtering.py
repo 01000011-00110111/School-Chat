@@ -8,14 +8,14 @@ from better_profanity import profanity
 from flask_socketio import emit
 # from markdown import markdown
 import chat
-import profanity_words
+import word_lists
 import cmds
 import log
 import rooms
 
 # get our custom whitelist words (that shouldnot be banned in the first place)
-profanity.load_censor_words(whitelist_words=profanity_words.whitelist_words)
-profanity.add_censor_words(profanity_words.censored)
+profanity.load_censor_words(whitelist_words=word_lists.whitelist_words)
+profanity.add_censor_words(word_lists.censored)
 preuser = 'system'
 message_count = 0
 
@@ -35,7 +35,6 @@ def run_filter(user, room, message, roomid):
     if bool(re.search(r'[<>]', message)) is True:
         cmds.warn_user(user)
         return ('permission', 10, user_muted)
-        
 
     if perms != "dev":
         message = filter_message(message)
@@ -201,7 +200,7 @@ def find_cmds(message, user, roomid):
                               user=user,
                               roomid=roomid,
                               origin_room=origin_room)
-            break # that will work
+            break  # that will work
 
 
 def compile_message(message, profile_picture, user, role, preuser,
