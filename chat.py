@@ -3,7 +3,6 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 from time import time
-from datetime import timedelta, datetime
 from typing import List
 import psutil
 from flask_socketio import emit
@@ -89,7 +88,7 @@ def add_message(message_text: str, roomid, permission) -> None:
         reset_chat(message_text, False, roomid)
     else:
         (send_message_DB(message_text,
-                         roomid), backup_log(message_text, roomid))
+                         roomid), log.backup_log(message_text, roomid))
     return ('room', 1)
 
 
@@ -122,17 +121,6 @@ def system_response(message, id):
 
     system_answer = system_response.get(id)
     return system_answer
-
-
-def backup_log(message_text: str, roomid) -> None:
-    """adds the newest message from any chat rooom in the backup file"""
-    with open(LOGFILE_B, "a", encoding="utf8") as f_out:
-        date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
-        room = dbm.rooms.find_one({"roomid": roomid})
-        name = room["roomName"] if roomid != "all" else "All rooms"
-        f_out.write(
-            f"[{date}], [{name}, Roomid: ({roomid})] The message said: {message_text}\n"
-        )
 
 
 def send_message_DB(message_text: str, roomid) -> None:

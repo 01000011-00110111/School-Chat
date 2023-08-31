@@ -3,6 +3,8 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 from collections import deque
+from main import dbm
+from datetime import datetime
 
 def log_accounts(message):
     """Log when something happens to an account."""
@@ -39,3 +41,13 @@ def get_cmd_logs() -> str:
     for cmd in cmds_log:
         cmd_log_txt += f"{cmd}<br>"
     return f"[SYSTEM]: <font color='#ff7f00'>Last 10 Command Log Entries:<br>{cmd_log_txt}</font>\n"
+
+def backup_log(message_text: str, roomid) -> None:
+    """adds the newest message from any chat rooom in the backup file"""
+    with open("backend/Chat-backup.txt", "a", encoding="utf8") as f_out:
+        date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
+        room = dbm.rooms.find_one({"roomid": roomid})
+        name = room["roomName"] if roomid != "all" else "All rooms"
+        f_out.write(
+            f"[{date}], [{name}, Roomid: ({roomid})] The message said: {message_text}\n"
+        )

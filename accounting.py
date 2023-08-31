@@ -136,4 +136,4 @@ def run_regex_signup(SUsername, SRole, SDisplayname):
         flagged = True
         error = 'That Username/Display name is too long. It must be at least 1 letter long or 12 and under'
 
-    return (flagged, error) #
+    return (flagged, error)
