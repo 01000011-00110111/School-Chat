@@ -262,6 +262,7 @@ def customize_accounts() -> ResponseReturnValue:
     """customize the accounts"""
     if request.method == "POST":
         if 'login' in request.form:
+            # note for later: most of this code will disappear when flask-login is implemented (same for login_page())
             username = request.form.get("username")
             password = request.form.get("password")
             TOSagree = request.form.get("TOSagree")
@@ -594,6 +595,7 @@ def connect(roomid):
 def update_permission():
     """Background task to see if user should be unmuted."""
     users = dbm.Accounts.find()
+    # filtering.reload_users(e = '1')
     for user_info in users:
         user = user_info['username']
         permission = user_info['permission']

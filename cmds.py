@@ -371,8 +371,9 @@ def run_restart(**kwargs):
         respond_command(("reason", 2, "not_dev"), roomid, None)
 
 
-def reload_users(_):
+def reload_users(**kwargs):
     """Reload the online list manually."""
+    # print('test')
     dbm.Online.delete_many({})
     emit("force_username", "", broadcast=True)
 
