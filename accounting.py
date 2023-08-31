@@ -7,8 +7,14 @@ import re
 import smtplib
 import uuid
 from datetime import datetime
+from better_profanity import profanity
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import word_lists
+
+# get our custom whitelist words (that should not be banned in the first place)
+profanity.load_censor_words(whitelist_words=word_lists.whitelist_words)
+profanity.add_censor_words(word_lists.censored)
 
 
 def email_var_account(username, email, verification_code):
@@ -135,5 +141,16 @@ def run_regex_signup(SUsername, SRole, SDisplayname):
     if user_allowed == 'false' or desplayname_allowed == 'false':
         flagged = True
         error = 'That Username/Display name is too long. It must be at least 1 letter long or 12 and under'
+
+    # check for profanity
+    if profanity.contains_profanity(SUsername):
+        flagged = True
+        error = 'Your Username Contains Profanity, please remove.'
+    elif profanity.contains_profanity(SDisplayname):
+        flagged = True
+        error = 'Your Display Name Contains Profanity, please remove.'
+    elif profanity.contains_profanity(SRole):
+        flagged = True
+        error = 'Your Role Contains Profanity, please remove.'
 
     return (flagged, error)
