@@ -9,7 +9,8 @@ import uuid
 from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-    
+
+
 def email_var_account(username, email, verification_code):
     # Email configuration
     URL = os.environ['URL']
@@ -19,7 +20,7 @@ def email_var_account(username, email, verification_code):
     sender_password = os.environ['password']
     receiver_email = email
     subject = f'Verification of {username}!'
-    
+
     # Create the email content
     for i in range(1):  # Send 1 emails (you can adjust the number as needed)
         verification_code_list = {username: verification_code}
@@ -64,11 +65,10 @@ def email_var_account(username, email, verification_code):
         </html>
         """
 
-    
     message_body = message_body.replace("[Recipient's Name]", username)
-    message_body = message_body.replace("[Verification Link]", f'https://{URL}/verify/{verification_code}')
-    
-    
+    message_body = message_body.replace(
+        "[Verification Link]", f'https://{URL}/verify/{verification_code}')
+
     msg = MIMEMultipart()
     msg['From'] = sender_email
     msg['To'] = receiver_email
@@ -83,20 +83,19 @@ def email_var_account(username, email, verification_code):
     msg.attach(MIMEText(message_body, 'html'))
     # print(msg.as_string())
 
-    
     # Connect to the SMTP server
     try:
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()
         server.login(sender_email, sender_password)
-    
+
         # Send the email
         server.sendmail(sender_email, receiver_email, msg.as_string())
         # print('Email sent successfully!')
-    
+
     except Exception as e:
         print('An error occurred:', e)
-    
+
     finally:
         server.quit()
         return verification_code_list
@@ -108,12 +107,15 @@ def is_account_expired(permission_str):
     if len(parts) == 3 and parts[0] == 'locked':
         expiration_time_str = ' '.join(parts[1:])
         expiration_time = datetime.strptime(expiration_time_str,
-                                                     "%Y-%m-%d %H:%M:%S")
+                                            "%Y-%m-%d %H:%M:%S")
         current_time = datetime.now()
         return current_time >= expiration_time
 
+
 def run_regex_signup(SUsername, SRole, SDisplayname):
     """Run Checks on the username."""
+    flagged = False
+    error = None
     if bool(re.search(r'[\s\[,"\'<>{\]]', SUsername)) is True:
         flagged = True
         error = 'The display name contains a space or a special character.'
@@ -133,5 +135,5 @@ def run_regex_signup(SUsername, SRole, SDisplayname):
     if user_allowed == 'false' or desplayname_allowed == 'false':
         flagged = True
         error = 'That Username/Display name is too long. It must be at least 1 letter long or 12 and under'
-    
-    return (flagged, error if not None else None)
+
+    return (flagged, error) #
