@@ -9,6 +9,7 @@ import psutil
 from flask_socketio import emit
 from main import dbm
 import cmds
+import log
 
 LOGFILE_B = "backend/Chat-backup.txt"
 
@@ -95,16 +96,15 @@ def add_message(message_text: str, roomid, permission) -> None:
 def reset_chat(message: str, admin: bool, roomid) -> str:
     """Admin function for reseting chat. Also used by the GC."""
     set_message_DB(roomid, admin)
-    if admin == True:
+    if admin == False:
+        emit("reset_chat", ("owner/mod", roomid),
+             broadcast=True,
+             namespace="/")
+    elif admin == True:
         emit("reset_chat", ("admin", roomid), broadcast=True, namespace="/")
-    elif admin == False:
-        emit("reset_chat", ("owner/mod", roomid), broadcast=True, namespace="/")
     else:
         emit("reset_chat", ("auto", roomid), broadcast=True, namespace="/")
     return ('good', 0)
-
-
-# I like this again
 
 
 def system_response(message, id):
