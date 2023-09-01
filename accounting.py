@@ -153,17 +153,30 @@ def run_regex_signup(SUsername, SRole, SDisplayname):
         flagged = True
         error = 'Your Role Contains Profanity, please remove.'
 
+    # simple check for html in signup elements
+    if bool(re.search(r'[<>]', SUsername)) is True:
+        flagged = True
+        error = 'HTML Elements are not allowed in your username!'
+    elif bool(re.search(r'[<>]', SDisplayname)) is True:
+        flagged = True
+        error = 'HTML Elements are not allowed in your display name!'
+    elif bool(re.search(r'[<>]', SRole)) is True:
+        flagged = True
+        error = 'HTML Elements are not allowed in your role!'
+
     return (flagged, error)
+
 
 # email checks
 def load_disposable_domains():
     with open('backend/domains.txt', 'r') as file:
         return {line.strip() for line in file.readlines()}
-            
+
+
 def check_if_disposable_email(email):
     if '@' not in email:
         return 1
-    
+
     email_domain = email.split('@')[1]
     disposable_domains = load_disposable_domains()
 
@@ -171,4 +184,3 @@ def check_if_disposable_email(email):
         return 2
     else:
         return 0
-
