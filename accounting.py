@@ -154,3 +154,21 @@ def run_regex_signup(SUsername, SRole, SDisplayname):
         error = 'Your Role Contains Profanity, please remove.'
 
     return (flagged, error)
+
+# email checks
+def load_disposable_domains():
+    with open('backend/domains.txt', 'r') as file:
+        return {line.strip() for line in file.readlines()}
+            
+def check_if_disposable_email(email):
+    if '@' not in email:
+        return 1
+    
+    email_domain = email.split('@')[1]
+    disposable_domains = load_disposable_domains()
+
+    if email_domain in disposable_domains:
+        return 2
+    else:
+        return 0
+

@@ -54,18 +54,23 @@ function runStartup() {
     let user = document.getElementById("user")["value"];
     socket.emit("username", username, 'chat');
     socket.emit("get_rooms", user);
-    changeRoom('ilQvQwgOhm9kNAOrRqbr')
+    // changeRoom('ilQvQwgOhm9kNAOrRqbr')
 }
 
 socket.on("roomsList", (result) => {
-    for (room of result) {CheckIfExist(result);}
     let newline = "<br>"
     let rooms = "";
     let RoomDiv = document.getElementById("ChatRoomls");
     for (room of result) {
-        rooms = rooms + "<a onclick=changeRoom('" + room.id + "')>/" + room.name + '</a>';
+        if (room.id != 'zxMhhAPfWOxuZylxwkES') {
+        rooms = rooms + "<hr><a onclick=changeRoom('" + room.id + "')>/" + room.name + '</a><hr>';
+        }else {
+            rooms = "<hr>verify to have access to chat rooms<hr>"
+            changeRoom('zxMhhAPfWOxuZylxwkES')
+          }
     }
     RoomDiv["innerHTML"] = rooms;
+    for (room of result) {CheckIfExist(result);}
 });
 
 function CheckIfExist(params) {
@@ -79,7 +84,7 @@ socket.on("room_data", (data) => {
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // why oh why does chrome say no to this.
-    //window.history.pushState({"pageTitle": `${data['name']} - Chat`},"", `dev.school-chat.us/chat${data['name']}`);
+    //window.history.pushState({"pageTitle": `${data['name']} - Chat`},"", `(removed the url)${data['name']}`);
     let chat = ""; 
     for (let messageObj of data['messages']) {
         chat = chat + messageObj + newline;

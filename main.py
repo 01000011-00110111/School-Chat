@@ -27,8 +27,8 @@ from flask import request
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
 from flask_apscheduler import APScheduler
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address  #, default_error_responder
+# from flask_limiter import Limiter
+# from flask_limiter.util import get_remote_address  #, default_error_responder
 from datetime import datetime, timedelta
 
 client = pymongo.MongoClient(os.environ["mongo_key"])
@@ -159,7 +159,13 @@ def signup_post() -> ResponseReturnValue:
             "signup-index.html",
             error=msg,
         )
-
+    email_check = accounting.check_if_disposable_email(SEmail)
+    if email_check == 2:
+        return flask.render_template("signup-index.html",
+                                     error='That email is banned!')
+    elif email_check == 1:
+        return flask.render_template("signup-index.html",
+                             error='That email is not valid!')
     if SPassword != SPassword2:
         return flask.render_template("signup-index.html",
                                      error='Password boxes do not match!',
@@ -517,8 +523,8 @@ def get_rooms(username):
         emit('roomsList', room_access, namespace='/', to=request.sid)
     elif permission[0] == "locked":
         emit('roomsList', [{
-            'id': 'ilQvQwgOhm9kNAOrRqbr',
-            'name': 'e'
+            'id': 'zxMhhAPfWOxuZylxwkES',
+            'name': ''
         }],
              namespace='/',
              to=request.sid)
@@ -537,7 +543,7 @@ def get_rooms(username):
                         u.strip()
                         for u in r['blacklisted'].split("users:")[1].split(",")
                     ] and r['whitelisted'] == 'everyone')
-        ) and (r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly')]
+        ) and (r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly' or r['whitelisted'] != 'lockedonly')]
         emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
 
 
