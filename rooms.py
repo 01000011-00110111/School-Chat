@@ -39,6 +39,8 @@ def get_chat_rooms():
         rooms.append({
             'name': r['roomName'],
             'id': r['roomid'],
+            'generatedBy': r['generatedBy'],
+            # 'mods': r['mods'],
             'whitelisted': r['whitelisted'],
             'blacklisted': r['blacklisted']
         })
@@ -92,7 +94,9 @@ def insert_room(code, user, generated_at, name, username):
         "roomid":
         code,
         "generatedBy":
-        user,
+        username,
+        "mods":
+        '',
         "generatedAt":
         generated_at,
         "roomName":
@@ -100,11 +104,9 @@ def insert_room(code, user, generated_at, name, username):
         "canSend":
         'everyone',
         "whitelisted":
-        "everyone",
+        "username",
         "blacklisted":
         "empty",
-        "mods":
-        '',
         "locked":
         'false',
         "messages": [
@@ -193,83 +195,127 @@ def chat_room_edit(request, function, room_name, user, users):
 def whitelist(room_name, set_type, user, users, room, username, dev):
     """Whitelist user a dev or the owner picks"""
     pre_user_list = dbm.rooms.find_one({'roomName': room_name})
-    pre_users = pre_user_list["whitelisted"]
-    if users.split(',') in pre_user_list["blacklisted"].split(
-            ','):  # if doesnt work then check split and check each one
-        return ('response', 3, 'edit')
-    if users not in ['clear', '', 'everyone']:
-        if set_type == 'add':
-            if pre_users != 'everyone' and users.split(',') != pre_users.split(
-                    ','):  # if dont work split them then try again
-                users = f"{pre_users},{users}"
+    users_to_add = users.split(',')
+    blacklisted_users = pre_user_list["blacklisted"].replace("users:", "").split(',')
+    whitelisted_users = pre_user_list["whitelisted"].replace("users:", "").split(',')
+    add_users = []
+    new_users = []
+    
+    for user in users_to_add:
+    
+        if user not in ['clear','everyone'] and set_type == 'add':
+            if user in blacklisted_users:
+                if dev is True:
+                    log = f"The dev {username} tried to whitelist the users: {users} but one or more where already in the whitelist. In chat room {room_name}"
+                else:
+                    log = f"The user {username} tried to whitelist the users: {users} but one or more where already in the whitelist. In chat room {room_name}"
+                chat_room_log(log)
+                return (4, 'W')
+            if user not in whitelisted_users:
+                new_users.append(user)
+                response = (3, 'W')
             else:
-                return (
-                    'response', 5, 'edit'
-                )  # message about that user is allready in the whitelis
-            # print(users)
-        message = 'users:' + users
-        update_whitelist(room_name, message)
-        main.get_rooms(user["username"])
-        if dev is True:
-            chat_room_log(
-                f"The dev {username} whitelisted {users} in chat room {room_name}"
-            )
+                if dev is True:
+                    log = f"The dev {username} tried to whitelist the users: {users} but one or more where already in the blacklist. In chat room {room_name}"
+                else:
+                    log = f"The user {username} tried to whitelist the users: {users} but one or more where already in the blacklist. In chat room {room_name}"
+                chat_room_log(log)
+                return (5, 'W')
+        elif user not in ['clear','everyone'] and set_type == 'set':
+            new_users.append(user)
+            add_users = f"users:{','.join(new_users)}"
+            response = (0, 'W')
+        elif (user in ['clear','everyone'] and user not in ['modonly','devonly'] 
+              and set_type == 'set'):
+            new_users.append('everyone')
+            add_users = ','.join(new_users)
+            response = (1, 'W')
+        elif user not in ['modonly','devonly'] and set_type == 'set':
+            new_users.append(user)
+            add_users = ','.join(new_users)
+            response = (2, 'W')
+            
+    if set_type == 'add':
+        add_users = f"users:{','.join(whitelisted_users)},{''.join(new_users)}"
+    
+    update_whitelist(room_name, add_users)
+    main.get_rooms(user["username"])
+    if dev is True:
+        if set_type == 'add':
+            log = f"The dev {username} added {users} to the whitelist in chat room {room_name}"
         else:
-            chat_room_log(
-                f"The user{username} whitelisted {users} in chat room {room_name}"
-            )
-        return ('response', 0, 'edit')
-    elif users in ['clear', '', 'everyone']:
-        message = 'everyone'
-        set_type = 'set'
-        update_whitelist(room_name, message)
-        main.get_rooms(user["username"])
-        if dev is True:
-            chat_room_log(
-                f"The dev {username} set the whitelist to everyone in chat room {room_name}"
-            )
+            log = f"The dev {username} set the whitelist to everyone in chat room {room_name}"
+    else:
+        if set_type == 'add':
+            log = f"The user {username} added {users} to the whitelist in chat room {room_name}"
         else:
-            chat_room_log(
-                f"The user {username} set the whitelist to everyone in chat room {room_name}"
-            )
-        return ('response', 0, 'edit')
+            log =  f"The user {username} set the whitelist to everyone in chat room {room_name}"
+    chat_room_log(log)
+    return response
 
 
 def blacklist(room_name, set_type, user, users, room, username, dev):
     """Blacklist user a dev or the owner picks"""
     pre_user_list = dbm.rooms.find_one({'roomName': room_name})
-    pre_users = pre_user_list["blacklisted"]
-    if users in pre_user_list["whitelisted"]:
-        return ('response', 4, 'edit')
-    if users not in ['clear', '']:
+    users_to_add = users.split(',')
+    blacklisted_users = pre_user_list["blacklisted"].replace("users:", "").split(',')
+    whitelisted_users = pre_user_list["whitelisted"].replace("users:", "").split(',')
+    add_users = []
+    new_users = []
+    
+    for user in users_to_add:
+        
+        if user not in ['clear','everyone'] and set_type == 'add':
+            if user in whitelisted_users:
+                if dev is True:
+                    log = f"The dev {username} tried to blacklist the users: {users} but one or more where already in the whitelist. In chat room {room_name}"
+                else:
+                    log = f"The user {username} tried to blacklist the users: {users} but one or more where already in the whitelist. In chat room {room_name}"
+                chat_room_log(log)
+                return (3, 'B')
+            if user not in blacklisted_users:
+                new_users.append(user)
+                response = (2, 'B')
+            else:
+                if dev is True:
+                    log = f"The dev {username} tried to blacklist the users: {users} but one or more where already in the blacklist. In chat room {room_name}"
+                else:
+                    log = f"The user {username} tried to blacklist the users: {users} but one or more where already in the blacklist. In chat room {room_name}"
+                chat_room_log(log)
+                return (4, 'B')
+        elif user not in ['clear','everyone'] and set_type == 'set':
+            if user == pre_user_list['generatedBy'] and user not in blacklisted_users:
+                if dev is True:
+                    log = f"The dev {username} tried to blacklist the Owner. In chat room {room_name}"
+                else:
+                    log = f"The user {username} tried to blacklist the Owner. In chat room {room_name}"
+                chat_room_log(log)
+                return (5, 'B')
+            new_users.append(user)
+            add_users = ','.join(new_users)
+            response = (0, 'B')
+        elif user in ['clear','empty'] and set_type == 'set':
+            new_users.append('empty')
+            add_users = ','.join(new_users)
+            response = (1, 'B')
+    
+    if set_type == 'add':
+        add_users = f"users:{','.join(blacklisted_users)},{''.join(new_users)}"
+    
+    update_blacklist(room_name, add_users)
+    main.get_rooms(user["username"])
+    if dev is True:
         if set_type == 'add':
-            users = f"{pre_users},{users}"
-        message = 'users:' + users
-        update_blacklist(room_name, message)
-        main.get_rooms(user["username"])
-        if dev is True:
-            chat_room_log(
-                f"The dev {username} blacklisted {users} in chat room {room_name}"
-            )
+            log = f"The dev {username} added {users} to the blacklist in chat room {room_name}"
         else:
-            chat_room_log(
-                f"The user{username} blacklisted {users} in chat room {room_name}"
-            )
-        return ('response', 2, 'edit')
-    elif users in ['clear', '']:
-        message = 'empty'
-        set_type = 'set'
-        update_blacklist(room_name, message)
-        main.get_rooms(user["username"])
-        if dev is True:
-            chat_room_log(
-                f"The dev {username} set the blacklist to everyone in chat room {room_name}"
-            )
+            log = f"The dev {username} set the blacklist to everyone in chat room {room_name}"
+    else:
+        if set_type == 'add':
+            log = f"The user {username} added {users} to the blacklist in chat room {room_name}"
         else:
-            chat_room_log(
-                f"The user {username} set the blacklist to everyone in chat room {room_name}"
-            )
-        return ('response', 2, 'edit')
+            log =  f"The user {username} set the blacklist to everyone in chat room {room_name}"
+    chat_room_log(log)
+    return response
 
 
 def update_whitelist(room_name, message):  #combine whitelist and blacklist

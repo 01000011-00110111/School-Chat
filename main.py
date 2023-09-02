@@ -284,7 +284,7 @@ def customize_accounts() -> ResponseReturnValue:
             if TOSagree != "on":
                 return flask.render_template(
                     'login.html', error='You did not agree to the TOS!')
-            if user["locked"].split(' ') == 'locked':
+            if user["locked"].split(' ')[0] == 'locked':
                 return flask.render_template(
                     'login.html',
                     error=
@@ -543,7 +543,7 @@ def get_rooms(username):
                         u.strip()
                         for u in r['blacklisted'].split("users:")[1].split(",")
                     ] and r['whitelisted'] == 'everyone')
-        ) and (r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly' or r['whitelisted'] != 'lockedonly')]
+        ) and (user_name['username'] == r['generatedBy'] or user_name['displayName'] == r['mods']) and (r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly' or r['whitelisted'] != 'lockedonly')]
         emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
 
 

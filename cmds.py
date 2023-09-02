@@ -436,6 +436,8 @@ def respond_command(result, roomid, name):
     generated_at = room["generatedAt"] if room is not None else ""
     locked = room["locked"] if room is not None else ""
     users_w = room["whitelisted"] if room is not None else ""
+    if users_W == 'devonly': users_w = 'devs'
+    elif users_w == 'modonly': users_w = 'devs and mods'
     users_b = room["blacklisted"] if room is not None else ""
 
     response_strings = {
@@ -459,16 +461,32 @@ def respond_command(result, roomid, name):
         "[SYSTEM]: <font color='#ff7f00'>Your chat room must have a name at least 1 letter long.</font>",
         (4, 'create'):
         f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
+        (0, 'W'):
+        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to only whitelist the users {users_w}.</font>",
+        (1, 'W'):
+        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to whitelist everyone.</font>",
+        (2, 'W'):
+        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to whitelist it only for {users_w}.</font>",
+        (3, 'W'):
+        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to add the users {users_w} to the whitelist.</font>",
+        (4, 'W'):
+        "[SYSTEM]: <font color='#ff7f00'>A user you tried to whitelist is in the blacklist.</font>",
+        (5, 'W'):
+        f"[SYSTEM]: <font color='#ff7f00'>A user you tried to add is allready whitelisted. The list: {users_w}.</font>",
         (0, 'edit'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to whitelist the users {users_w}.</font>",
-        (1, 'edit'):
         f"[SYSTEM]: <font color='#ff7f00'>You are not allowed to edit the chat room named {name}.</font>",
-        (2, 'edit'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to blacklist the users {users_b}.</font>",
-        (3, 'edit'):
-        "[SYSTEM]: <font color='#ff7f00'>You can not blacklist a user that is whitlisted.</font>",
-        (4, 'edit'):
-        "[SYSTEM]: <font color='#ff7f00'>You can not whitlisted a user that is blacklisted.</font>",
+        (0, 'B'):
+        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to only blacklist the users {users_w}.</font>",
+        (1, 'B'):
+        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to blacklist no one.</font>",
+        (2, 'B'):
+        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to add the users {users_w} to the blacklist.</font>",
+        (3, 'B'):
+        "[SYSTEM]: <font color='#ff7f00'>A user you tried to blacklist is in the whitelist.</font>",
+        (4, 'B'):
+        f"[SYSTEM]: <font color='#ff7f00'>A user you tried to add is allready blacklisted. The list: {users_w}.</font>",
+        (5, 'B'):
+        "[SYSTEM]: <font color='#ff7f00'>You can not blacklist the room owner.</font>",
         (0, 'info'):
         f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} was made by {generated_by} at {generated_at} and the chat room status is currently set to locked = {locked}.</font>",
         (0, 'rooms'):
