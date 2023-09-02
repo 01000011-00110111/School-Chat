@@ -436,7 +436,7 @@ def respond_command(result, roomid, name):
     generated_at = room["generatedAt"] if room is not None else ""
     locked = room["locked"] if room is not None else ""
     users_w = room["whitelisted"] if room is not None else ""
-    if users_W == 'devonly': users_w = 'devs'
+    if users_w == 'devonly': users_w = 'devs'
     elif users_w == 'modonly': users_w = 'devs and mods'
     users_b = room["blacklisted"] if room is not None else ""
 
@@ -480,11 +480,11 @@ def respond_command(result, roomid, name):
         (1, 'B'):
         f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to blacklist no one.</font>",
         (2, 'B'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to add the users {users_w} to the blacklist.</font>",
+        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to add the users {users_b} to the blacklist.</font>",
         (3, 'B'):
         "[SYSTEM]: <font color='#ff7f00'>A user you tried to blacklist is in the whitelist.</font>",
         (4, 'B'):
-        f"[SYSTEM]: <font color='#ff7f00'>A user you tried to add is allready blacklisted. The list: {users_w}.</font>",
+        f"[SYSTEM]: <font color='#ff7f00'>A user you tried to add is allready blacklisted. The list: {users_b}.</font>",
         (5, 'B'):
         "[SYSTEM]: <font color='#ff7f00'>You can not blacklist the room owner.</font>",
         (0, 'info'):
