@@ -9,10 +9,10 @@ Steps to make the chat run
 
 ## No systemd service (easy route)
 #### NOTE: `$sudo shutdown` and `$sudo restart` will NOT work if you do not use systemd!
-- Put your mongodb authentication string and your keys for mod and dev into `example.keys.py`
+- Put your mongodb authentication string and other strings and your keys for mod and dev into `example.keys.py`
 - Rename `example.keys.py` to `keys.py`
 - in the data base make a database named `Chat` and add 3 collections named `Accounts`, `Online`, `rooms`
-- inside of rooms add 2 documents to the database
+- inside of rooms add 4 documents to the database
 ```
 "roomid":"ilQvQwgOhm9kNAOrRqbr",
 "generatedBy":"[SYSTEM]",
@@ -28,7 +28,8 @@ Steps to make the chat run
 ```
 "roomid":"jN7Ht3giH9EDBvpvnqRB",
 "generatedBy":"[SYSTEM]",
-"generatedAt":"2023-70-29T21:30:00",
+"mods":"",
+"generatedAt":"2023-07-29T21:30:00",
 "roomName":"add your room name",
 "canSend":"devonly",
 "whitelisted":"devonly",
@@ -36,6 +37,33 @@ Steps to make the chat run
 "locked":"false",
 "messages":[]
 ```
+
+```
+"roomid":"wTZOyPgelLPWTittBAjj",
+"generatedBy":"[SYSTEM]",
+"mods":"",
+"generatedAt":"2023-08-25T11:20:00",
+"roomName":"add your room name",
+"canSend":"modonly",
+"whitelisted":"modonly",
+"blacklisted":"empty",
+"locked":"false",
+"messages":[]
+```
+
+```
+"roomid":"zxMhhAPfWOxuZylxwkES",
+"generatedBy":"[SYSTEM]",
+"mods":"",
+"generatedAt":"2023-07-1T21:53:00",
+"roomName":"add your room name",
+"canSend":"everyone",
+"whitelisted":"lockedonly",
+"blacklisted":"empty",
+"locked":"false",
+"messages":[]
+```
+
 - create a venv (and install packages via poetry inside that venv)
 - Make `Chat-backup.txt`, `chat-rooms_log.txt`, `permission.txt`, `accounts.txt`, and `command_log.txt` inside the folder named backend
 - Add your ssl pem and key into nginx and change them to your domain name
