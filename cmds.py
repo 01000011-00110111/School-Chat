@@ -476,7 +476,7 @@ def respond_command(result, roomid, name):
         (0, 'edit'):
         f"[SYSTEM]: <font color='#ff7f00'>You are not allowed to edit the chat room named {name}.</font>",
         (0, 'B'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to only blacklist the users {users_w}.</font>",
+        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to only blacklist the users {users_b}.</font>",
         (1, 'B'):
         f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to blacklist no one.</font>",
         (2, 'B'):
