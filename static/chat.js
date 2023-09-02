@@ -21,6 +21,10 @@ socket.on("force_username", (statement) => {
     socket.emit("username", window.localStorage.getItem("username"), 'chat');
 });
 
+socket.on("force_room_update", (statement) => {
+    socket.emit("get_rooms", user);
+});
+
 socket.on("ping", ({ who, from, pfp, message, name, roomid}) => {
     let user_name = window.localStorage.getItem("username");
     room = window.sessionStorage.getItem("roomid");

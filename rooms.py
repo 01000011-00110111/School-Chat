@@ -6,6 +6,7 @@ import random
 from string import ascii_uppercase
 from datetime import datetime
 from main import dbm
+from flask_socketio import emit
 import main
 
 
@@ -60,7 +61,7 @@ def create_rooms(name, user, username):
 
     result = create_chat_room(username, name, user)
     if result[1] == 0:
-        main.get_rooms(user["username"])
+        emit("force_room_update", broadcast=True)
 
     return result
 
@@ -136,7 +137,7 @@ def delete_chat_room(room_name, user):
         response = ("reason", 1, "delete")
 
     if response[1] == 0:
-        main.get_rooms(user["username"])
+        emit("force_room_update", broadcast=True)
 
     chat_room_log(logmessage)
     return response
@@ -239,7 +240,7 @@ def whitelist(room_name, set_type, user, users, room, username, dev):
         add_users = f"users:{','.join(whitelisted_users)},{''.join(new_users)}"
     
     update_whitelist(room_name, add_users)
-    main.get_rooms(user["username"])
+    emit("force_room_update", broadcast=True)
     if dev is True:
         if set_type == 'add':
             log = f"The dev {username} added {users} to the whitelist in chat room {room_name}"
@@ -303,7 +304,7 @@ def blacklist(room_name, set_type, user, users, room, username, dev):
         add_users = f"users:{','.join(blacklisted_users)},{''.join(new_users)}"
     
     update_blacklist(room_name, add_users)
-    main.get_rooms(user["username"])
+    emit("force_room_update", broadcast=True)
     if dev is True:
         if set_type == 'add':
             log = f"The dev {username} added {users} to the blacklist in chat room {room_name}"
