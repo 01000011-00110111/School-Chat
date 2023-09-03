@@ -20,7 +20,7 @@ preuser = 'system'
 message_count = 0
 
 
-def run_filter(user, room, message, roomid):
+def run_filter(user, room, message, roomid, userid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
     global preuser
     global message_count
@@ -28,6 +28,11 @@ def run_filter(user, room, message, roomid):
     perms = check_perms(user)
     can_send = check_allowed_sending(user, room)
     user_muted = check_mute(user)
+
+    # we must check if the current user is acutally them, good idea for this to be first
+    if userid != user['userId']:
+        # don't add a warn_user here, we can't trust the user value the client sent because this went off
+        return ('permission', 12, user_muted)
 
     if user_muted not in [0, 3] and perms != 'dev':
         return ('permission', user_muted)
@@ -50,14 +55,10 @@ def run_filter(user, room, message, roomid):
     if "[" in message and locked != 'true':
         find_pings(message, user['displayName'], profile_picture, roomid)
 
-    # print (preuser)
-    # messageM = markdown(message)
     final_str = compile_message(message, profile_picture, user, role, preuser,
                                 message_count)
-    
-    # print (message_count, preuser)
 
-    #check if locked or allowed to send
+    # check if locked or allowed to send
     if locked == 'true' and perms not in ["dev", "mod"]:
         return ("permission", 3, user_muted)
 
@@ -250,7 +251,9 @@ def failed_message(result, roomid, user):
         (9):
         "[SYSTEM]: <font color='#ff7f00'>You must verify your account before you can use commands.</font>",
         (10):
-        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send code in the chat. (You have been warned)</font>"
+        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send code in the chat. (You have been warned)</font>",
+        (12):
+        "[SYSTEM]: <font color='#ff7f00'>Are you trying to do some funny business? (You failed lol)</font>",
     }
     # if result[0] == "dev/mod":
     #     if result[1] == 6: fail_str = fail_strings.get((result[1]), "")

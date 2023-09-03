@@ -159,6 +159,7 @@ def login_page() -> ResponseReturnValue:
             resp.set_cookie('Username', user['username'])
             resp.set_cookie('Theme', user['theme'])
             resp.set_cookie('Profile', user['profile'])
+            resp.set_cookie('Userid', user['userId'])
             return resp
         else:
             return flask.render_template(
@@ -300,8 +301,11 @@ def get_logs_page() -> ResponseReturnValue:
 @login_required
 def settings_page() -> ResponseReturnValue:
     """Serve the settings page for the user."""
-    # later I will check the cookie username is the same as the one for the session somehow
     user = dbm.Accounts.find_one({"username": request.cookies.get('Username')})
+    if request.cookies.get('userId') != user['userId']:
+        # someone is trying something funny
+        return flask.Response("Something funny happened. Try Again (Unauthorized)", status=401)
+
     return flask.render_template(
                     'settings.html',
                     user=user['username'],
@@ -512,7 +516,7 @@ def get_rooms(username):
 
 # pylint: disable=C0103
 @socketio.on('message_chat')
-def handle_message(user_name, message, roomid):
+def handle_message(user_name, message, roomid, userid):
     """New New chat message handling pipeline."""
     # later I will check the if the username is the same as the one for the session somehow
     room = dbm.rooms.find_one({"roomid": roomid})
@@ -520,7 +524,7 @@ def handle_message(user_name, message, roomid):
     if dbm.rooms.find_one({"roomid": roomid}) is None:
         result = ("Permission", 6)
     else:
-        result = filtering.run_filter(user, room, message, roomid)
+        result = filtering.run_filter(user, room, message, roomid, userid)
     if result[0] == 'msg':
         if dbm.rooms.find_one({"roomid": roomid}) is not None:
             chat.add_message(result[1], roomid, room)

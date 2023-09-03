@@ -116,6 +116,7 @@ function toHyperlink(str) {
 function sendMessage() {
     let messageElement = document.getElementById("message");
     let user = getCookie('Username')
+    let userid = getCookie('Userid')
     let message = messageElement["value"];
     if (message === "") {
         return;
@@ -124,7 +125,8 @@ function sendMessage() {
     let chatDiv = document.getElementById("chat");
     messageL = toHyperlink(message);
     messageElement["value"] = "";
-    socket.emit('message_chat', user, messageL, window.sessionStorage.getItem("roomid"));
+    // this is needed, because this goes over socketio, not a normal http request
+    socket.emit('message_chat', user, messageL, window.sessionStorage.getItem("roomid"), userid);
     window.scrollTo(0, chatDiv.scrollHeight);
 }
 
