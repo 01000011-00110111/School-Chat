@@ -27,6 +27,8 @@ from flask import request
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
 from flask_apscheduler import APScheduler
+from flask_login import LoginManager
+from flask_login import current_user, login_user, logout_user, login_required
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
 from datetime import datetime, timedelta
@@ -46,12 +48,14 @@ import word_lists
 LOGFILE = "backend/chat.txt"
 
 app = flask.Flask(__name__)
-app.config['SECRET'] = os.urandom(9001)  #ITS OVER 9000!!!!!!
+app.secret_key = os.urandom(9001)#ITS OVER 9000!!!!!!
 
 # rate limiting
 # limiter = Limiter(get_remote_address,
 #                   app=app,
 #                   on_breach=default_error_responder)
+
+login_manager = LoginManager()
 
 logging.basicConfig(filename="backend/webserver.log",
                     filemode='a',
@@ -62,9 +66,46 @@ socketio = SocketIO(app)
 
 scheduler.init_app(app)
 scheduler.api_enabled = True
+login_manager.init_app(app)
+login_manager.login_view = 'login_page'
 
 # clear db, so that old users don't stay
 dbm.Online.delete_many({})
+
+class User:
+    def __init__(self, username):
+        self.username = username
+
+    @staticmethod
+    def is_authenticated():
+        return True
+
+    @staticmethod
+    def is_active():
+        return True
+
+    @staticmethod
+    def is_anonymous():
+        return False
+
+    def get_id(self):
+        return self.username
+
+    @staticmethod
+    def check_password(password_hash, password):
+        return hashlib.sha384(bytes(password, 'utf-8')).hexdigest() == password_hash
+    
+    @staticmethod
+    def check_username(username, db_username):
+        return username == db_username
+
+
+    @login_manager.user_loader
+    def load_user(username):
+        u = dbm.Accounts.find_one({"username": username})
+        if not u:
+            return None
+        return User(username=u['username'])
 
 # license stuff
 if __name__ == "__main__":
@@ -72,55 +113,50 @@ if __name__ == "__main__":
     print("License info can be viewed in main.py or the LICENSE file.")
 
 
-# easter egg time lol
-@app.route("/f")
-def f_but_better() -> ResponseReturnValue:
-    """Not an easter egg I promise."""
-    return flask.redirect(flask.url_for('signup'))
-
-
-# this will not make sense for a little bit
-@app.route('/defnotchat')
+@app.route('/')
+@login_required
 def chat_page() -> ResponseReturnValue:
-    """Serve the main chat, stops bypass bans."""
-    html_file = flask.render_template('chat.html')
-    return html_file
+    """Serve the main chat window."""
+    return flask.render_template('chat.html')
 
 
-@app.route('/', methods=["POST", "GET"])
+@app.route('/logout')
+def logout():
+    """Log out the current user"""
+    logout_user()
+    return flask.redirect(flask.url_for('login_page'))
+
+
+@app.route('/login', methods=["POST", "GET"])
 def login_page() -> ResponseReturnValue:
-    """Show the login page"""
+    """Show the login page."""
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
     if request.method == "POST":
         # redo client side checks here on server side, like signup
         username = request.form.get("username")
         password = request.form.get("password")
         TOSagree = request.form.get("TOSagree")
-        try:
-            # not 100% sure this will catch a failed attempt, doesnt get them
-            user = dbm.Accounts.find_one({"username": username})
-            if user is None:
-                return flask.render_template(
-                    'login.html', error="That account does not exist!")
-        except TypeError:
-            return flask.render_template('login.html',
-                                         error="That account does not exist!")
+        next_page = request.form.get("next_page")
+        user = dbm.Accounts.find_one({"username": username})
+        if user is None:
+            return flask.render_template(
+                'login.html', error="That account does not exist!")
         if TOSagree != "on":
             return flask.render_template('login.html',
                                          error='You did not agree to the TOS!')
-        if username == user["username"] and hashlib.sha384(
-                bytes(password, 'utf-8')).hexdigest() == user["password"]:
-            # I have no idea if this will work, and it shoulden't, but lets see
-            # exactly what I thought, hmmmmm
-            # its because there is no socketid here, how to get said id hm
-            """emit("return_prefs", {
-                "displayName": user["displayName"],
-                "profile": user["profile"],
-                "theme": user["theme"],
-            },
-                 namespace="/")"""
-            return flask.render_template(
-                'chat.html', user=username
-            )  # this could be a security issue later on (if they figure out this) this is how most things do it so we are file
+
+        if User.check_username(username, user["username"]) and User.check_password(user['password'], password):
+            user_obj = User(username=user['username'])
+            login_user(user_obj)
+            if next_page is None:
+                next_page = flask.url_for('chat_page')
+            resp = flask.make_response(flask.redirect(next_page))
+            resp.set_cookie('Username', user['username'])
+            resp.set_cookie('Theme', user['theme'])
+            resp.set_cookie('Profile', user['profile'])
+            return resp
         else:
             return flask.render_template(
                 'login.html', error="That username or password is incorrect!")
@@ -456,37 +492,6 @@ def handle_disconnect():
         emit("online", username_list, broadcast=True)
     except TypeError:
         pass
-
-
-@socketio.on('login')
-def login_handle(username, password):
-    """make the login work."""
-    try:
-        # not 100% sure this will catch a failed attempt, doesnt get them
-        user = dbm.Accounts.find_one({"username": username})
-    except TypeError:
-        emit("login_att", "failed", namespace="/")
-    if username == user["username"] and hashlib.sha384(bytes(
-            password, 'utf-8')).hexdigest() == user["password"]:
-        emit("login_att", "true", namespace="/")
-    else:
-        emit("login_att", "failed", namespace="/")
-
-
-@socketio.on('get_prefs')
-def return_user_prefs(username):
-    """Return roles, colors, and theme to logged in user."""
-    user = dbm.Accounts.find_one({"username": username})
-
-    try:
-        emit("return_prefs", {
-            "displayName": user["displayName"],
-            "profile": user["profile"],
-            "theme": user["theme"],
-        },
-             namespace="/")
-    except TypeError:
-        emit("return_prefs", {"failed": True}, namespace="/")
 
 
 @socketio.on('username_msg')
