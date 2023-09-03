@@ -39,7 +39,6 @@ def find_command(**kwargs):
         'pstats': send_lines,
         'system': send_system,
         'song': send_song,
-        'jotd': send_joke,
         'permlist': send_perms,
         'roomlist': list_rooms,
         'rules': rule_list,
@@ -290,35 +289,30 @@ def list_rooms(**kwargs):
             respond_command(("reason", 1, "wrong_room"), roomid, None)
 
 
-def send_joke(**kwargs):  #add a check for a user later
-    """Sends as joke of the day."""
-    user = kwargs['user']
-    roomid = kwargs['roomid']
-    commands = kwargs['commands']
-    message = ' '.join(list(commands.values())[1:])
-    room = dbm.rooms.find_one({"roomid": roomid})
-    final_msg = f"[Joke of the day]: <font color='#D51956'>{message}</font>"
-    chat.add_message(final_msg, roomid, room)
-    emit("message_chat", (final_msg, roomid), broadcast=True)
-
-
-def send_song(**kwargs):  #add a check for a user later
+def send_song(**kwargs):
     """Sends as song."""
+    # this works as long as owen is a mod
     user = kwargs['user']
     roomid = kwargs['roomid']
     commands = kwargs['commands']
-    message = ' '.join(list(commands.values())[1:])
-    room = dbm.rooms.find_one({"roomid": roomid})
-    final_msg = f"<font color='#08bd71'>[SONG]: {message}</font>"
-    chat.add_message(final_msg, roomid, room)
-    emit("message_chat", (final_msg, roomid), broadcast=True)
+    if check_if_dev(user) == True or check_if_mod(user) == True:
+        message = ' '.join(list(commands.values())[1:])
+        room = dbm.rooms.find_one({"roomid": roomid})
+        final_msg = f"<font color='#08bd71'>[SONG]: {message}</font>"
+        chat.add_message(final_msg, roomid, room)
+        emit("message_chat", (final_msg, roomid), broadcast=True)
+    else:
+        respond_command(("reason", 2, "not_mod"), roomid, None)
 
 
-def send_system(**kwargs):  #add a check for a user later
-    """Sends as the server for specal dev messages"""
+def send_system(**kwargs):
+    """Sends as the server for specal dev messages."""
     user = kwargs['user']
     roomid = kwargs['roomid']
     commands = kwargs['commands']
+    if check_if_dev(user) != True:
+        respond_command(("reason", 2, "not_dev"), roomid, None)
+        return
     message = ' '.join(list(commands.values())[1:])
     room = dbm.rooms.find_one({"roomid": roomid})
     final_msg = f"[SYSTEM]: <font color='#ff7f00'>{message}</font>"
