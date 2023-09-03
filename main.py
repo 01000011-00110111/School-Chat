@@ -121,6 +121,7 @@ def chat_page() -> ResponseReturnValue:
 
 
 @app.route('/logout')
+@login_required
 def logout():
     """Log out the current user"""
     logout_user()
