@@ -13,6 +13,6 @@ function ajaxGetRequest(path, callback){
     request.send();
 }
 
-function dummyajax(jsonData) {
+function dummyajax(_jsonData) {
     return;
 }

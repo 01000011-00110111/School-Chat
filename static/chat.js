@@ -17,11 +17,11 @@ socket.on("pingTime", (time, roomid) => {
 });
 
 
-socket.on("force_username", (statement) => {
+socket.on("force_username", (_statement) => {
     socket.emit("username", getCookie("Username"), 'chat');
 });
 
-socket.on("force_room_update", (statement) => {
+socket.on("force_room_update", (_statement) => {
     socket.emit("get_rooms", user);
 });
 
@@ -49,12 +49,6 @@ socket.on("reset_chat", (who, roomid) => {
     }
 });
 
-// it returns from the dead!
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  }
   
 
 function runStartup() {
@@ -82,7 +76,7 @@ socket.on("roomsList", (result, permission) => {
     for (room of result) {CheckIfExist(result);}
 });
 
-function CheckIfExist(params) {
+function CheckIfExist(_params) {
     if (window.sessionStorage.getItem("roomid") != room.id) {
         changeRoom('ilQvQwgOhm9kNAOrRqbr')
     } else {return}

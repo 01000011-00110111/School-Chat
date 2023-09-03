@@ -104,7 +104,7 @@ setInterval(updateExamples, 250);
 socket.emit("username", getCookie("Username"), 'settings');
 
 
-socket.on("force_username", (statement) => {
+socket.on("force_username", (_statement) => {
     socket.emit("username", getCookie("Username"), 'settings');
 });
 
