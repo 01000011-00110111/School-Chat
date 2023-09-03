@@ -30,7 +30,7 @@
 
 - The issues flagged as `good first issue` are ones that usually don't take a lot of effort, and should be easy for anyone to do.
 - If the issue is flagged as `help wanted`, we really need people to finish this, and any help would be greatly apreciated.
-- Any issue flagged as `Documentation` is a nice-to-have done whenever, and might make some issues have the g`ood first issue` added to them afterwards (snowball effect)
+- Any issue flagged as `Documentation` is a nice-to-have done whenever, and might make some issues have the `good first issue` added to them afterwards (snowball effect)
 
 # Getting started
 ### How to submit a contribution
