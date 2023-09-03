@@ -510,7 +510,7 @@ def get_rooms(username):
     room_access = rooms.get_chat_rooms()
     permission = user_name["locked"].split(' ')
     if user_name["SPermission"] == "Debugpass":
-        emit('roomsList', room_access, namespace='/', to=request.sid)
+        emit('roomsList', (room_access, 'dev'), namespace='/', to=request.sid)
     elif user_name['SPermission'] == "modpass":
         rooms_to_remove = []
         for r in room_access:
@@ -520,12 +520,12 @@ def get_rooms(username):
 
         for r in rooms_to_remove:
             room_access.remove(r)
-        emit('roomsList', room_access, namespace='/', to=request.sid)
+        emit('roomsList', (room_access, 'mod'), namespace='/', to=request.sid)
     elif permission[0] == "locked":
-        emit('roomsList', [{
+        emit('roomsList', ([{
             'id': 'zxMhhAPfWOxuZylxwkES',
             'name': ''
-        }],
+        }], user_name['locked']),
              namespace='/',
              to=request.sid)
     else:
@@ -544,7 +544,7 @@ def get_rooms(username):
                         for u in r['blacklisted'].split("users:")[1].split(",")
                     ] and r['whitelisted'] == 'everyone')
         ) and (user_name['username'] == r['generatedBy'] or user_name['displayName'] == r['mods']) and (r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly' or r['whitelisted'] != 'lockedonly')]
-        emit('roomsList', accessible_rooms, namespace='/', to=request.sid)
+        emit('roomsList', (accessible_rooms, user_name['locked']), namespace='/', to=request.sid)
 
 
 # pylint: disable=C0103

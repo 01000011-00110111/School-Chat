@@ -61,12 +61,12 @@ function runStartup() {
     // changeRoom('ilQvQwgOhm9kNAOrRqbr')
 }
 
-socket.on("roomsList", (result) => {
+socket.on("roomsList", (result, permission) => {
     let newline = "<br>"
     let rooms = "";
     let RoomDiv = document.getElementById("ChatRoomls");
     for (room of result) {
-        if (room.id != 'zxMhhAPfWOxuZylxwkES') {
+        if (permission != 'locked') {
         rooms = rooms + "<hr><a onclick=changeRoom('" + room.id + "')>/" + room.name + '</a><hr>';
         }else {
             rooms = "<hr>verify to have access to chat rooms<hr>"

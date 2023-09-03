@@ -123,12 +123,12 @@ def delete_chat_room(room_name, user):
     username = user["displayName"]
     date_str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     if made_by == user["username"]:
-        if rooms["roomid"] == ['jN7Ht3giH9EDBvpvnqRB', "ilQvQwgOhm9kNAOrRqbr"]:
+        if len(rooms["roomid"]) == 20:
             return ("reason", 3, "delete")
         response = delete_room(room_name)
         logmessage = f"{username} deleted {room_name} at {date_str}"
     elif user["SPermission"] == "Debugpass":
-        if rooms["roomid"] == ['jN7Ht3giH9EDBvpvnqRB', "ilQvQwgOhm9kNAOrRqbr"]:
+        if len(rooms["roomid"]) == 20:
             return ("reason", 2, "delete")
         response = delete_room(room_name)
         logmessage = f"{username} deleted {room_name} owned by {made_by} at {date_str}"

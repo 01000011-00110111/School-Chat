@@ -54,6 +54,7 @@ def run_filter(user, room, message, roomid):
     # messageM = markdown(message)
     final_str = compile_message(message, profile_picture, user, role, preuser,
                                 message_count)
+    
     # print (message_count, preuser)
 
     #check if locked or allowed to send
@@ -82,15 +83,7 @@ def run_filter(user, room, message, roomid):
     message_count += 1
 
     if perms in ["dev", "mod"]:
-        chat.add_message(final_str, roomid, 'true')
-        emit("message_chat", (final_str, roomid),
-             broadcast=True,
-             namespace="/")
-        if "$sudo" in message:
-            find_cmds(message, user, roomid)
-            # if 'system' in message:
-            #     return_str = ('command', 1, final_str)
-        return ('dev/mod', 0, user_muted)
+        return_str = ('msg', final_str, user_muted)
 
     return return_str
 
@@ -259,9 +252,9 @@ def failed_message(result, roomid, user):
         (10):
         "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send code in the chat. (You have been warned)</font>"
     }
-    if result[0] == "dev":
-        if result[1] == 6: fail_str = fail_strings.get((result[1]), "")
-        else: return
+    # if result[0] == "dev/mod":
+    #     if result[1] == 6: fail_str = fail_strings.get((result[1]), "")
+    #     else: return
     # if result[0] == "return": emit("message_chat", ('', roomid), namespace="/") what is this
 
     fail_str = fail_strings.get((result[1]), "")  # result[2]), "")
