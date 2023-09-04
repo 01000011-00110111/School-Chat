@@ -573,6 +573,7 @@ def globalock(**kwargs):
 
 def lock(**kwargs):
     """locks the chat so that only devs can send"""
+    command = kwargs['commands']['v1']
     user = kwargs['user']
     roomid = kwargs['roomid']
     room = dbm.rooms.find_one({'roomid': roomid})
@@ -582,10 +583,18 @@ def lock(**kwargs):
         emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
     elif check_if_dev(user) == 1 or check_if_mod(user) == 1:
-        message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>"
-        chat.add_message(message, roomid, dbm)
-        emit("message_chat", (message, roomid), broadcast=True)
-        dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true admin'}})
+        if command == 'admin':
+            message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>"
+            chat.add_message(message, roomid, dbm)
+            emit("message_chat", (message, roomid), broadcast=True)
+            dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true admin'}})
+        elif command == None:
+            message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>"
+            chat.add_message(message, roomid, dbm)
+            emit("message_chat", (message, roomid), broadcast=True)
+            dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
+        else:
+            print('failed command response')
     elif check_if_room_mod(user) == 1 and room.split(' ')['locked'][1] != 'admin':
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by room Moderator.</font>"
         chat.add_message(message, roomid, dbm)
