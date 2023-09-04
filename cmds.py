@@ -9,7 +9,15 @@ import rooms
 import time
 from time import sleep
 # below is needed for systemd restart, do not remove
-#import dbus
+try:
+    import dbus
+except ModuleNotFoundError:
+    print(
+        'DBus python library not installed or found, support for $sudo shutdown or $sudo restart is disabled.'
+    )
+    systemd_available = False
+else:
+    systemd_available = True
 import re
 from datetime import datetime, timedelta
 from flask_socketio import emit
@@ -324,6 +332,9 @@ def run_shutdown(**kwargs):
     """Stop the server, but also tell everyone that the server is going down."""
     user = kwargs['user']
     roomid = kwargs['roomid']
+    if systemd_available == False:
+        respond_command(("reason", 10, "systemd_disabled"), roomid, None)
+        return
     if check_if_dev(user) == 1:
         emit("message_chat", (
             "[SYSTEM]: <font color='#ff7f00'>Server shutting down... (unknown ETA on restart)</font>",
@@ -495,6 +506,8 @@ def respond_command(result, roomid, name):
         "[SYSTEM]: <font color='#ff7f00'>You can only run this command in the dev chat room</font>",
         (3, "not_confirmed"):
         "[SYSTEM]: <font color='#ff7f00'>Are you sure you want to run this?</font>",
+        (10, "systemd_disabled"):
+        "[SYSTEM]: <font color='#ff7f00'>SystemD is currently disabled on this server. $sudo shutdown and $sudo restart are disabled.</font>",
     }
     response_str = response_strings.get((result[1], result[2]))
     if result[1] in [0, 2, 3] and result[2] in ['create', 'delete', 'edit']:

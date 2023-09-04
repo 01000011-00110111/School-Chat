@@ -124,6 +124,7 @@ server {
 
 
 ## Systemd route (auto restart and other nice features)
+- make sure you have the optional systemd dependency installed (run `poetry install --extras "systemd"`)
 - do the above, but also copy the `example.chatserverd.service` file and edit anywhere it mentions:
  - `<dir_path>` to where the files are stored
  - `<user>` for what user this is running under
