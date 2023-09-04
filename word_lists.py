@@ -1,4 +1,4 @@
-"""
+""" List of censored words, and any other lists we might need.
     Copyright (C) 2023  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
@@ -30,3 +30,5 @@ banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
                     'SYSTEM', '[SYSTEM]', "SONG", "[Song]", "[SONG]", "[song]",
                     " ", "  ", "   ", "cseven", "cserver", 'system',
                     '[system]', '[System]', 'System')
+
+approved_links = ('/settings', '/backup')

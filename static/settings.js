@@ -101,11 +101,11 @@ createExamples();
 
 // Update examples every 250 milliseconds (0.25 seconds)
 setInterval(updateExamples, 250);
-socket.emit("username", window.localStorage.getItem("username"), 'settings');
+socket.emit("username", getCookie("Username"), 'settings');
 
 
-socket.on("force_username", (statement) => {
-    socket.emit("username", window.localStorage.getItem("username"), 'settings');
+socket.on("force_username", (_statement) => {
+    socket.emit("username", getCookie("Username"), 'settings');
 });
 
 

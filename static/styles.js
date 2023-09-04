@@ -6,7 +6,7 @@
 function setTheme(theme) {
     // set theme when button is pressed
     // other style function will change this, not directly called
-    window.localStorage.setItem("theme", theme);
+    document.cookie = `Theme=${theme};`
 }
 
 function ProfilesB() {

@@ -17,16 +17,16 @@ socket.on("pingTime", (time, roomid) => {
 });
 
 
-socket.on("force_username", (statement) => {
-    socket.emit("username", window.localStorage.getItem("username"), 'chat');
+socket.on("force_username", (_statement) => {
+    socket.emit("username", getCookie("Username"), 'chat');
 });
 
-socket.on("force_room_update", (statement) => {
+socket.on("force_room_update", (_statement) => {
     socket.emit("get_rooms", user);
 });
 
 socket.on("ping", ({ who, from, pfp, message, name, roomid}) => {
-    let user_name = window.localStorage.getItem("username");
+    let user_name = getCookie("Username");
     room = window.sessionStorage.getItem("roomid");
     console.log(who, from, message);
     if (user_name === who && roomid === room) {
@@ -49,15 +49,14 @@ socket.on("reset_chat", (who, roomid) => {
     }
 });
 
+  
+
 function runStartup() {
     setDarkStyle();
     window.sessionStorage.setItem("roomid", 'ilQvQwgOhm9kNAOrRqbr');
-    socket.emit('get_prefs', document.getElementById("user")["value"]);
-    socket.emit('get_perms');
-    username = window.localStorage.getItem("username");
-    let user = document.getElementById("user")["value"];
+    username = getCookie("Username");
     socket.emit("username", username, 'chat');
-    socket.emit("get_rooms", user);
+    socket.emit("get_rooms", username);
     // changeRoom('ilQvQwgOhm9kNAOrRqbr')
 }
 
@@ -68,7 +67,7 @@ socket.on("roomsList", (result, permission) => {
     for (room of result) {
         if (permission != 'locked') {
         rooms = rooms + "<hr><a onclick=changeRoom('" + room.id + "')>/" + room.name + '</a><hr>';
-        }else {
+        } else {
             rooms = "<hr>verify to have access to chat rooms<hr>"
             changeRoom('zxMhhAPfWOxuZylxwkES')
           }
@@ -77,7 +76,7 @@ socket.on("roomsList", (result, permission) => {
     for (room of result) {CheckIfExist(result);}
 });
 
-function CheckIfExist(params) {
+function CheckIfExist(_params) {
     if (window.sessionStorage.getItem("roomid") != room.id) {
         changeRoom('ilQvQwgOhm9kNAOrRqbr')
     } else {return}
@@ -117,7 +116,8 @@ function toHyperlink(str) {
 
 function sendMessage() {
     let messageElement = document.getElementById("message");
-    let user = document.getElementById("user")["value"]
+    let user = getCookie('Username')
+    let userid = getCookie('Userid')
     let message = messageElement["value"];
     if (message === "") {
         return;
@@ -126,7 +126,8 @@ function sendMessage() {
     let chatDiv = document.getElementById("chat");
     messageL = toHyperlink(message);
     messageElement["value"] = "";
-    socket.emit('message_chat', user, messageL, window.sessionStorage.getItem("roomid"));
+    // this is needed, because this goes over socketio, not a normal http request
+    socket.emit('message_chat', user, messageL, window.sessionStorage.getItem("roomid"), userid);
     window.scrollTo(0, chatDiv.scrollHeight);
 }
 
