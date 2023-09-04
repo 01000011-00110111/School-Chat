@@ -9,7 +9,15 @@ import rooms
 import time
 from time import sleep
 # below is needed for systemd restart, do not remove
-#import dbus
+try:
+    import dbus
+except ModuleNotFoundError:
+    print(
+        'DBus python library not installed or found, support for $sudo shutdown or $sudo restart is disabled.'
+    )
+    systemd_available = False
+else:
+    systemd_available = True
 import re
 from datetime import datetime, timedelta
 from flask_socketio import emit
@@ -39,7 +47,6 @@ def find_command(**kwargs):
         'pstats': send_lines,
         'system': send_system,
         'song': send_song,
-        'jotd': send_joke,
         'permlist': send_perms,
         'roomlist': list_rooms,
         'rules': rule_list,
@@ -290,35 +297,30 @@ def list_rooms(**kwargs):
             respond_command(("reason", 1, "wrong_room"), roomid, None)
 
 
-def send_joke(**kwargs):  #add a check for a user later
-    """Sends as joke of the day."""
-    user = kwargs['user']
-    roomid = kwargs['roomid']
-    commands = kwargs['commands']
-    message = ' '.join(list(commands.values())[1:])
-    room = dbm.rooms.find_one({"roomid": roomid})
-    final_msg = f"[Joke of the day]: <font color='#D51956'>{message}</font>"
-    chat.add_message(final_msg, roomid, room)
-    emit("message_chat", (final_msg, roomid), broadcast=True)
-
-
-def send_song(**kwargs):  #add a check for a user later
+def send_song(**kwargs):
     """Sends as song."""
+    # this works as long as owen is a mod
     user = kwargs['user']
     roomid = kwargs['roomid']
     commands = kwargs['commands']
-    message = ' '.join(list(commands.values())[1:])
-    room = dbm.rooms.find_one({"roomid": roomid})
-    final_msg = f"<font color='#08bd71'>[SONG]: {message}</font>"
-    chat.add_message(final_msg, roomid, room)
-    emit("message_chat", (final_msg, roomid), broadcast=True)
+    if check_if_dev(user) == True or check_if_mod(user) == True:
+        message = ' '.join(list(commands.values())[1:])
+        room = dbm.rooms.find_one({"roomid": roomid})
+        final_msg = f"<font color='#08bd71'>[SONG]: {message}</font>"
+        chat.add_message(final_msg, roomid, room)
+        emit("message_chat", (final_msg, roomid), broadcast=True)
+    else:
+        respond_command(("reason", 2, "not_mod"), roomid, None)
 
 
-def send_system(**kwargs):  #add a check for a user later
-    """Sends as the server for specal dev messages"""
+def send_system(**kwargs):
+    """Sends as the server for specal dev messages."""
     user = kwargs['user']
     roomid = kwargs['roomid']
     commands = kwargs['commands']
+    if check_if_dev(user) != True:
+        respond_command(("reason", 2, "not_dev"), roomid, None)
+        return
     message = ' '.join(list(commands.values())[1:])
     room = dbm.rooms.find_one({"roomid": roomid})
     final_msg = f"[SYSTEM]: <font color='#ff7f00'>{message}</font>"
@@ -330,6 +332,9 @@ def run_shutdown(**kwargs):
     """Stop the server, but also tell everyone that the server is going down."""
     user = kwargs['user']
     roomid = kwargs['roomid']
+    if systemd_available == False:
+        respond_command(("reason", 10, "systemd_disabled"), roomid, None)
+        return
     if check_if_dev(user) == 1:
         emit("message_chat", (
             "[SYSTEM]: <font color='#ff7f00'>Server shutting down... (unknown ETA on restart)</font>",
@@ -501,6 +506,8 @@ def respond_command(result, roomid, name):
         "[SYSTEM]: <font color='#ff7f00'>You can only run this command in the dev chat room</font>",
         (3, "not_confirmed"):
         "[SYSTEM]: <font color='#ff7f00'>Are you sure you want to run this?</font>",
+        (10, "systemd_disabled"):
+        "[SYSTEM]: <font color='#ff7f00'>SystemD is currently disabled on this server. $sudo shutdown and $sudo restart are disabled.</font>",
     }
     response_str = response_strings.get((result[1], result[2]))
     if result[1] in [0, 2, 3] and result[2] in ['create', 'delete', 'edit']:

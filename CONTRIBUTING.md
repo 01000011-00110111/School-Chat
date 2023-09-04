@@ -9,7 +9,7 @@
 - UI/UX design changes, its not the best currently
 - Documentation: it helps everyone in the long run, especially end-users
 - Bug fixes/reports
-- Fixes to support more users, new python versions, new interpreters (pypy as an example)
+- Fixes to support more users, new Python versions, new interpreters (PyPy as an example)
 - Possibly some new features
 
 ### What I'm NOT looking for
@@ -21,39 +21,40 @@
 # Ground Rules
 ### What must be followed:
 
-- Make sure any pull request actually works, and does not break existing code
-- For a major new feature (like the one mentioned in what im looking for), create a issue so we can keep track of what gets done when, and have a checklist of what needs to get done.
+- Make sure all pull requests actually work, and do not break existing code
+- For a major new feature (like the one mentioned in What I'm looking for), create a issue so we can keep track of what gets done when, and have a checklist of what needs to get done.
 - Either have one major feature per version or a few smaller ones (small bug fixes/hotfixes), and not huge differences between versions.
 - Don't be hurtful to new contributers; Instead, be constructive and show them what they did wrong.
 
 # Your First Contribution
 
-- The issues flagged as good first issue are ones that usually don't take a lot of effort, and should be easy for anyone to do.
-- If the issue is flagged as help wanted, we really need people to finish this, and any help would be greatly apreciated.
-- Any issue flagged as Documentation is a nice-to-have done whenever, and might make some issues have the good first issue added to them afterwards (snowball effect)
+- The issues flagged as `good first issue` are ones that usually don't take a lot of effort, and should be easy for anyone to do.
+- If the issue is flagged as `help wanted`, we really need people to finish this, and any help would be greatly apreciated.
+- Any issue flagged as `Documentation` is a nice-to-have done whenever, and might make some issues have the `good first issue` added to them afterwards (snowball effect)
 
 # Getting started
-### How to subit a contribution
+### How to submit a contribution
 #### For all contributions:
 
 1. Fork this repo
 2. Do the changes in your fork (please name your commits for what you actually changed, and not just `bugfix`)
-3. Test the changes, see if they work well, and the way you wanted it to:
+3. Test the changes, see if they work well, and the way you want them to:
 4. Send a pull request with the right labels, and we'll look at it
 
 # How to report a bug
 ### Security Issues
 
 ### If you find a security vulnerability, please do NOT open an issue. PLEASE email `cservergaming@gmail.com` or `alfredburford@icloud.com` instead with the subject line including `SECURITY ISSUE:`.
-- Later I might setup the github security disclosure system, but for now just email the address above.
+- You may also submit your security concern through Github's Security Advisories Section.
 
 #### Make sure its a security issue beforehand though:
 
-1. Should this not be acessable to the end user
-2. Is this exposing private infomation (that could be used malicously)
-3. Can something be disabled without authorization (this should never apply hopefully)
+ Ask yourself these questions:
+1. Should this not be acessable to the end user?
+2. Is this exposing private infomation? (that could be used malicously)
+3. Can something be disabled without authorization? (this should never apply hopefully)
 
-If you answered yes to any of the above, please do what is mentioned above and email `cservergaming@gmail.com` or `alfredburford@icloud.com`
+If you answered yes to any of the above, please do what is mentioned above and email `cservergaming@gmail.com` or `alfredburford@icloud.com` or submit your security concern through Github's Security Advisories Section.
 
 ### Filing a bug report (not a security issue)
 

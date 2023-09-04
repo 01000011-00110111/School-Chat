@@ -86,8 +86,9 @@ socket.on("room_data", (data) => {
     window.sessionStorage.setItem("roomid", data['roomid']);
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
-    // why oh why does chrome say no to this.
-    //window.history.pushState({"pageTitle": `${data['name']} - Chat`},"", `(removed the url)${data['name']}`);
+    // update the url when the room is changed.
+    window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `${data['roomName']}`);
+    document.title = `/${data['roomName']} - Chat`
     let chat = ""; 
     for (let messageObj of data['messages']) {
         chat = chat + messageObj + newline;

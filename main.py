@@ -492,7 +492,7 @@ def get_rooms(username):
         emit('roomsList', ([{
             'id': 'zxMhhAPfWOxuZylxwkES',
             'name': ''
-        }], user_name['locked']),
+        }], 'locked'),
              namespace='/',
              to=request.sid)
     else:
