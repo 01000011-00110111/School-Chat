@@ -8,3 +8,4 @@
 # os.environ['email'] = your chat email
 # os.environ['password'] = email's app password
 # os.environ['URL'] = your domain
+# os.environ['secret_key'] = set this to something secret (and long)

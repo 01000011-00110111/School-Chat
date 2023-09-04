@@ -6,6 +6,7 @@ import os
 import re
 import smtplib
 import uuid
+import hashlib
 from datetime import datetime
 from better_profanity import profanity
 from email.mime.text import MIMEText
@@ -17,7 +18,7 @@ profanity.load_censor_words(whitelist_words=word_lists.whitelist_words)
 profanity.add_censor_words(word_lists.censored)
 
 
-def email_var_account(username, email, verification_code):
+def email_var_account(username, email, verification_code, userid):
     # Email configuration
     URL = os.environ['URL']
     smtp_server = 'smtp.gmail.com'
@@ -73,21 +74,17 @@ def email_var_account(username, email, verification_code):
 
     message_body = message_body.replace("[Recipient's Name]", username)
     message_body = message_body.replace(
-        "[Verification Link]", f'https://{URL}/verify/{verification_code}')
+        "[Verification Link]", f'https://{URL}/verify/{userid}/{verification_code}')
 
     msg = MIMEMultipart()
     msg['From'] = sender_email
     msg['To'] = receiver_email
     msg['Subject'] = subject
-    # message_id = f"<{uuid.uuid4()}@{URL}>"
-    # msg['Message-ID'] = message_id
 
     message_id = f"<{uuid.uuid4()}@{URL}>"
-    # print(message_id)
     msg.add_header('Message-ID', message_id)
 
     msg.attach(MIMEText(message_body, 'html'))
-    # print(msg.as_string())
 
     # Connect to the SMTP server
     try:
@@ -97,7 +94,6 @@ def email_var_account(username, email, verification_code):
 
         # Send the email
         server.sendmail(sender_email, receiver_email, msg.as_string())
-        # print('Email sent successfully!')
 
     except Exception as e:
         print('An error occurred:', e)
@@ -184,3 +180,16 @@ def check_if_disposable_email(email):
         return 2
     else:
         return 0
+
+def create_verification_code(user):
+    """Creates the user's verification code."""
+
+    # this creaets a SHA384 hash of the person's username, password, and email
+    # along with a secret we add in an env var
+    # we can't use the secret flask uses because it gets regnerated on server restart
+    # to generate the verification code added on to the end of the url
+    username_hash = hashlib.sha224(bytes(user['username'], 'utf-8')).hexdigest()
+    email_hash = hashlib.sha224(bytes(user['email'], 'utf-8')).hexdigest()
+    combined_hashes = username_hash + email_hash + user['password'] + os.environ['secret_key']
+    verification_code = hashlib.sha224(bytes(combined_hashes, 'utf-8')).hexdigest()
+    return verification_code

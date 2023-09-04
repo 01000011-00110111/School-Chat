@@ -194,7 +194,7 @@ def signup_post() -> ResponseReturnValue:
     SEmail = request.form.get("SEmail")
 
     result, msg = accounting.run_regex_signup(SUsername, SRole, SDisplayname)
-    if result is not None:
+    if result is not False:
         return flask.render_template(
             "signup-index.html",
             error=msg,
@@ -214,6 +214,7 @@ def signup_post() -> ResponseReturnValue:
                                      SDisplayname=SDisplayname)
     possible_user = dbm.Accounts.find_one({"username": SUsername})
     possible_dispuser = dbm.Accounts.find_one({"displayName": SDisplayname})
+    print("again")
     if possible_user is not None or possible_dispuser is not None or SUsername in word_lists.banned_usernames or SDisplayname in word_lists.banned_usernames:
         return flask.render_template(
             "signup-index.html",
@@ -227,7 +228,7 @@ def signup_post() -> ResponseReturnValue:
                                      SUsername=SUsername,
                                      SDisplayname=SDisplayname,
                                      SRole=SRole)
-    verification_code = str(uuid.uuid4())
+    userid = str(uuid.uuid4())
     current_time = datetime.now()
     time = current_time + timedelta(hours=10)
     formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -237,7 +238,7 @@ def signup_post() -> ResponseReturnValue:
         "password":
         hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
         "userId":
-        verification_code,
+        userid,
         "email":
         SEmail,
         "role":
@@ -263,7 +264,16 @@ def signup_post() -> ResponseReturnValue:
         "SPermission":
         ""
     })
-    accounting.email_var_account(SUsername, SEmail, verification_code)
+    # I have to make the dict manually, else it's a wasted db call
+    accounting.email_var_account(SUsername, 
+                                SEmail, 
+                                accounting.create_verification_code({   
+                                            "username": SUsername, 
+                                            "password": hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(), 
+                                            "email": SEmail,
+                                            }),
+                                userid
+                                )
     log.log_accounts(f'A user has made a account named {SUsername}')
     return flask.redirect(flask.url_for('login_page'))
 
@@ -274,19 +284,22 @@ def signup_get() -> ResponseReturnValue:
     return flask.render_template('signup-index.html')
 
 
-@app.route('/verify/<verification_code>')
-def verify(verification_code):
-    user_id = dbm.Accounts.find_one({"userId": verification_code})
+@app.route('/verify/<userid>/<verification_code>')
+def verify(userid, verification_code):
+    """Verify a user."""
+    user_id = dbm.Accounts.find_one({"userId": userid})
     if user_id is not None:
-        dbm.Accounts.update_one({"userId": verification_code},
-                                {"$set": {
-                                    "locked": 'false'
-                                }})
-        user = user_id["username"]
-        log.log_accounts(
-            f'The account {user} has been verified and may now chat in any chat room'
-        )
-        return f"User: {user} has been verified You may now chat in any chat room you like"
+        user_code = accounting.create_verification_code(user_id)
+        if user_code == verification_code:
+            dbm.Accounts.update_one({"userId": userid},
+                                    {"$set": {
+                                        "locked": 'false'
+                                    }})
+            user = user_id["username"]
+            log.log_accounts(
+                f'The account {user} has been verified and may now chat in any chat room'
+            )
+            return f"User: {user} has been verified You may now chat in any chat room you like."
     return "Invalid verification code."
 
 
@@ -302,7 +315,7 @@ def get_logs_page() -> ResponseReturnValue:
 def settings_page() -> ResponseReturnValue:
     """Serve the settings page for the user."""
     user = dbm.Accounts.find_one({"username": request.cookies.get('Username')})
-    if request.cookies.get('userId') != user['userId']:
+    if request.cookies.get('Userid') != user['userId']:
         # someone is trying something funny
         return flask.Response("Something funny happened. Try Again (Unauthorized)", status=401)
 
@@ -372,16 +385,10 @@ def customize_accounts() -> ResponseReturnValue:
             **return_list)
     if (dbm.Accounts.find_one({"email": email}) is None
             and user["email"] != email):
-        verification_code = str(uuid.uuid4())
-        # print(verification_code)
-        dbm.Accounts.update_one(
-            {'username': userid},
-            {"$set": {
-                'userId': verification_code
-            }})
+        verification_code = accounting.create_verification_code(user)
         accounting.email_var_account(
-            user["username"], email, verification_code
-        )  # it gets a invalid code when the verify link is perssed
+            user["username"], email, verification_code, user['userid']
+        )
     elif (dbm.Accounts.find_one({"email": email}) is not None
             and user["email"] != email):
         return flask.render_template("settings.html",
@@ -407,8 +414,6 @@ def customize_accounts() -> ResponseReturnValue:
                 "profile": profile,
                 "theme": theme,
                 "email": email
-                # "username": userid,
-                # "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest()
             }
         })
     log.log_accounts(
@@ -509,7 +514,7 @@ def get_rooms(username):
                     and 'users:' in r['blacklisted'] and user not in [
                         u.strip()
                         for u in r['blacklisted'].split("users:")[1].split(",")
-                    ] and r['whitelisted'] == 'everyone')
+                    ] and r['whitelisted'] == 'everyone') # fix this insanity cseven (its horribly broken currently)
         ) and (user_name['username'] == r['generatedBy'] or user_name['displayName'] == r['mods']) and (r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly' or r['whitelisted'] != 'lockedonly')]
         emit('roomsList', (accessible_rooms, user_name['locked']), namespace='/', to=request.sid)
 
@@ -615,4 +620,4 @@ def emit_on_startup():
 
 
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=8080)
+    socketio.run(app, host="0.0.0.0", port=8080, debug=True)
