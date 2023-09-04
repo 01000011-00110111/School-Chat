@@ -87,7 +87,7 @@ socket.on("room_data", (data) => {
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
-    window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `${data['roomName']}`);
+    window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['roomName']}`);
     document.title = `/${data['roomName']} - Chat`
     let chat = ""; 
     for (let messageObj of data['messages']) {

@@ -113,11 +113,18 @@ if __name__ == "__main__":
     print("License info can be viewed in main.py or the LICENSE file.")
 
 
-@app.route('/')
+@app.route('/chat')
 @login_required
 def chat_page() -> ResponseReturnValue:
     """Serve the main chat window."""
     return flask.render_template('chat.html')
+
+@app.route('/chat/<room_name>')
+@login_required
+def specific_chat_page() -> ResponseReturnValue:
+    """Get the specific room in the uri."""
+    # later we can set this up to get the specific room (with permssions)
+    return flask.redirect(flask.url_for("chat_page"))
 
 
 @app.route('/logout')
@@ -129,10 +136,11 @@ def logout():
 
 
 @app.route('/login', methods=["POST", "GET"])
+@app.route('/', methods=['GET', 'POST'])
 def login_page() -> ResponseReturnValue:
     """Show the login page."""
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return flask.redirect(url_for('chat_page'))
 
     if request.method == "POST":
         # redo client side checks here on server side, like signup
@@ -620,4 +628,4 @@ def emit_on_startup():
 
 
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=8080, debug=True)
+    socketio.run(app, host="0.0.0.0", port=8080)

@@ -48,7 +48,7 @@ def run_filter(user, room, message, roomid, userid):
         role = user['role']
 
     if user['profile'] == "":
-        profile_picture = 'static/favicon.ico'
+        profile_picture = '/static/favicon.ico'
     else:
         profile_picture = user['profile']
 
