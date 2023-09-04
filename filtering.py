@@ -7,7 +7,7 @@ from datetime import datetime, timezone, timedelta
 from better_profanity import profanity
 from flask_socketio import emit
 # from markdown import markdown
-import chat
+# import chat
 import word_lists
 import cmds
 import log
@@ -54,7 +54,6 @@ def run_filter(user, room, message, roomid):
     # messageM = markdown(message)
     final_str = compile_message(message, profile_picture, user, role, preuser,
                                 message_count)
-    
     # print (message_count, preuser)
 
     #check if locked or allowed to send
@@ -62,7 +61,7 @@ def run_filter(user, room, message, roomid):
         mod_list = room['mod'].split(',')
         if locked == 'true admin':
             return ("permission", 3, user_muted)
-        elif locked == 'true':
+        if locked == 'true':
             for m in mod_list:
                 if m['mod'].split(',') != user['username'] or user['username'] != room['generatedBy']:
                     return ("permission", 3, user_muted)
@@ -108,12 +107,12 @@ def check_mute(user):
 
 def check_lock(room):
     """For now, its just as simple as this, but when rooms come it will be more complicated."""
-    return (room["locked"])
+    return room["locked"]
 
 
 def check_allowed_sending(user, room):
     """this is a check to se if the database allowes you to send"""
-    return (room["canSend"])
+    return room["canSend"]
 
 
 def check_perms(user):
