@@ -27,6 +27,8 @@ from flask import request
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
 from flask_apscheduler import APScheduler
+from flask_login import LoginManager
+from flask_login import current_user, login_user, logout_user, login_required
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
 from datetime import datetime, timedelta
@@ -46,12 +48,14 @@ import word_lists
 LOGFILE = "backend/chat.txt"
 
 app = flask.Flask(__name__)
-app.config['SECRET'] = os.urandom(9001)  #ITS OVER 9000!!!!!!
+app.secret_key = os.urandom(9001)#ITS OVER 9000!!!!!!
 
 # rate limiting
 # limiter = Limiter(get_remote_address,
 #                   app=app,
 #                   on_breach=default_error_responder)
+
+login_manager = LoginManager()
 
 logging.basicConfig(filename="backend/webserver.log",
                     filemode='a',
@@ -62,9 +66,46 @@ socketio = SocketIO(app)
 
 scheduler.init_app(app)
 scheduler.api_enabled = True
+login_manager.init_app(app)
+login_manager.login_view = 'login_page'
 
 # clear db, so that old users don't stay
 dbm.Online.delete_many({})
+
+class User:
+    def __init__(self, username):
+        self.username = username
+
+    @staticmethod
+    def is_authenticated():
+        return True
+
+    @staticmethod
+    def is_active():
+        return True
+
+    @staticmethod
+    def is_anonymous():
+        return False
+
+    def get_id(self):
+        return self.username
+
+    @staticmethod
+    def check_password(password_hash, password):
+        return hashlib.sha384(bytes(password, 'utf-8')).hexdigest() == password_hash
+    
+    @staticmethod
+    def check_username(username, db_username):
+        return username == db_username
+
+
+    @login_manager.user_loader
+    def load_user(username):
+        u = dbm.Accounts.find_one({"username": username})
+        if not u:
+            return None
+        return User(username=u['username'])
 
 # license stuff
 if __name__ == "__main__":
@@ -72,55 +113,54 @@ if __name__ == "__main__":
     print("License info can be viewed in main.py or the LICENSE file.")
 
 
-# easter egg time lol
-@app.route("/f")
-def f_but_better() -> ResponseReturnValue:
-    """Not an easter egg I promise."""
-    return flask.redirect(flask.url_for('signup'))
-
-
-# this will not make sense for a little bit
-@app.route('/defnotchat')
+@app.route('/')
+@login_required
 def chat_page() -> ResponseReturnValue:
-    """Serve the main chat, stops bypass bans."""
-    html_file = flask.render_template('chat.html')
-    return html_file
+    """Serve the main chat window."""
+    return flask.render_template('chat.html')
 
 
-@app.route('/', methods=["POST", "GET"])
+@app.route('/logout')
+@login_required
+def logout():
+    """Log out the current user"""
+    logout_user()
+    return flask.redirect(flask.url_for('login_page'))
+
+
+@app.route('/login', methods=["POST", "GET"])
 def login_page() -> ResponseReturnValue:
-    """Show the login page"""
+    """Show the login page."""
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
     if request.method == "POST":
         # redo client side checks here on server side, like signup
         username = request.form.get("username")
         password = request.form.get("password")
         TOSagree = request.form.get("TOSagree")
-        try:
-            # not 100% sure this will catch a failed attempt, doesnt get them
-            user = dbm.Accounts.find_one({"username": username})
-            if user is None:
-                return flask.render_template(
-                    'login.html', error="That account does not exist!")
-        except TypeError:
-            return flask.render_template('login.html',
-                                         error="That account does not exist!")
+        next_page = request.args.get("next")
+        user = dbm.Accounts.find_one({"username": username})
+        if user is None:
+            return flask.render_template(
+                'login.html', error="That account does not exist!")
         if TOSagree != "on":
             return flask.render_template('login.html',
                                          error='You did not agree to the TOS!')
-        if username == user["username"] and hashlib.sha384(
-                bytes(password, 'utf-8')).hexdigest() == user["password"]:
-            # I have no idea if this will work, and it shoulden't, but lets see
-            # exactly what I thought, hmmmmm
-            # its because there is no socketid here, how to get said id hm
-            """emit("return_prefs", {
-                "displayName": user["displayName"],
-                "profile": user["profile"],
-                "theme": user["theme"],
-            },
-                 namespace="/")"""
-            return flask.render_template(
-                'chat.html', user=username
-            )  # this could be a security issue later on (if they figure out this) this is how most things do it so we are file
+
+        if User.check_username(username, user["username"]) and User.check_password(user['password'], password):
+            user_obj = User(username=user['username'])
+            login_user(user_obj)
+            if next_page is None:
+                next_page = flask.url_for('chat_page')
+            else:
+                next_page = next_page if next_page in word_lists.approved_links else flask.url_for('chat_page')
+            resp = flask.make_response(flask.redirect(next_page))
+            resp.set_cookie('Username', user['username'])
+            resp.set_cookie('Theme', user['theme'])
+            resp.set_cookie('Profile', user['profile'])
+            resp.set_cookie('Userid', user['userId'])
+            return resp
         else:
             return flask.render_template(
                 'login.html', error="That username or password is incorrect!")
@@ -251,52 +291,26 @@ def verify(verification_code):
 
 
 @app.route('/backup')
+@login_required
 def get_logs_page() -> ResponseReturnValue:
     """Serve the chat logs (backup)"""
     html_file = flask.render_template('Backup-chat.html')
     return html_file
 
-
-@app.route('/customizepagereal')
+@app.route('/settings', methods=['GET'])
+@login_required
 def settings_page() -> ResponseReturnValue:
-    """this is the settings page"""
-    return flask.render_template('settings.html')
+    """Serve the settings page for the user."""
+    user = dbm.Accounts.find_one({"username": request.cookies.get('Username')})
+    if request.cookies.get('userId') != user['userId']:
+        # someone is trying something funny
+        return flask.Response("Something funny happened. Try Again (Unauthorized)", status=401)
 
-
-@app.route('/settings', methods=['GET', 'POST'])
-def customize_accounts() -> ResponseReturnValue:
-    """customize the accounts"""
-    if request.method == "POST":
-        if 'login' in request.form:
-            # note for later: most of this code will disappear when flask-login is implemented (same for login_page())
-            username = request.form.get("username")
-            password = request.form.get("password")
-            TOSagree = request.form.get("TOSagree")
-            try:
-                # not 100% sure this will catch a failed attempt, doesnt get them
-                user = dbm.Accounts.find_one({"username": username})
-                if user is None:
-                    return flask.render_template(
-                        'login.html', error="That account does not exist!")
-            except TypeError:
-                return flask.render_template(
-                    'login.html', error="That account does not exist!")
-            if TOSagree != "on":
-                return flask.render_template(
-                    'login.html', error='You did not agree to the TOS!')
-            if user["locked"].split(' ')[0] == 'locked':
-                return flask.render_template(
-                    'login.html',
-                    error=
-                    'You must verifiy your account before you can customize it!'
-                )
-            if username == user["username"] and hashlib.sha384(
-                    bytes(password, 'utf-8')).hexdigest() == user["password"]:
-                return flask.render_template(
+    return flask.render_template(
                     'settings.html',
-                    user=username,
+                    user=user['username'],
                     passwd=
-                    'we are not adding password editing just yet',  #hashlib.sha384(bytes(password, 'utf-8')).hexdigest(),
+                    'we are not adding password editing just yet',
                     email=user["email"],
                     displayName=user["displayName"],
                     role=user["role"],
@@ -305,120 +319,104 @@ def customize_accounts() -> ResponseReturnValue:
                     message_color=user["messageColor"],
                     profile=user["profile"],
                     theme=user["theme"])
-            else:
-                return flask.render_template(
-                    'login.html',
-                    error="That username or password is incorrect!")
-        elif 'update' in request.form:
-            userid = request.form.get("user")
-            displayname = request.form.get("display")
-            role = request.form.get("role")
-            messageC = request.form.get("message_color")
-            roleC = request.form.get("role_color")
-            userC = request.form.get("user_color")
-            email = request.form.get("email")
-            # passwd = request.form.get("password")
-            profile = request.form.get("profile")
-            theme = request.form.get("theme")
-            user = dbm.Accounts.find_one({"username": userid})
-            return_list = {
-                "user": userid,
-                "passwd": 'we are not adding password editing just yet',
+
+@app.route('/settings', methods=['POST'])
+@login_required
+def customize_accounts() -> ResponseReturnValue:
+    """Customize the account."""
+    userid = request.form.get("user")
+    displayname = request.form.get("display")
+    role = request.form.get("role")
+    messageC = request.form.get("message_color")
+    roleC = request.form.get("role_color")
+    userC = request.form.get("user_color")
+    email = request.form.get("email")
+    profile = request.form.get("profile")
+    theme = request.form.get("theme")
+    user = dbm.Accounts.find_one({"username": userid})
+    return_list = {
+        "user": userid,
+        "passwd": 'we are not adding password editing just yet',
+        "displayName": displayname,
+        "role": role,
+        "user_color": userC,
+        "role_color": roleC,
+        "message_color": messageC,
+        "profile": profile,
+        "theme": theme,
+        "email": email
+    }
+    if theme is None:
+        return flask.render_template(
+            "settings.html",
+            error='Pick a theme before updating!',
+            **return_list)
+    if (dbm.Accounts.find_one({"displayName": displayname}) is not None
+            and user["displayName"] != displayname
+        ) and displayname in word_lists.banned_usernames:
+        return flask.render_template(
+            "settings.html",
+            error='That Display name is already taken!',
+            **return_list)
+    # move these into accounting.py after this branch gets merged into main
+    if bool(re.search(r'[\s\[,"\'<>{\]]', displayname)) is True:
+        return flask.render_template(
+            "settings.html",
+            error=
+            'The display name contains a space or a special character.',
+            **return_list)
+    elif bool(re.search(r'[\s[,"\'<>{\]]', role)) is True:
+        return flask.render_template(
+            "settings.html",
+            error='The Role contains a space or a special character.',
+            **return_list)
+    if (dbm.Accounts.find_one({"email": email}) is None
+            and user["email"] != email):
+        verification_code = str(uuid.uuid4())
+        # print(verification_code)
+        dbm.Accounts.update_one(
+            {'username': userid},
+            {"$set": {
+                'userId': verification_code
+            }})
+        accounting.email_var_account(
+            user["username"], email, verification_code
+        )  # it gets a invalid code when the verify link is perssed
+    elif (dbm.Accounts.find_one({"email": email}) is not None
+            and user["email"] != email):
+        return flask.render_template("settings.html",
+                                        error='that email is taken',
+                                        **return_list)
+    check = r'^[A-Za-z]{3,12}$'
+    desplayname_allowed = re.match(check, displayname)
+    if desplayname_allowed == 'false':
+        return flask.render_template(
+            "settings.html",
+            error='That Display name is not allowed!',
+            **return_list)
+
+    dbm.Accounts.update_one(
+        {"username": userid},
+        {
+            "$set": {
+                "messageColor": messageC,
+                "roleColor": roleC,
+                "userColor": userC,
                 "displayName": displayname,
                 "role": role,
-                "user_color": userC,
-                "role_color": roleC,
-                "message_color": messageC,
                 "profile": profile,
                 "theme": theme,
                 "email": email
+                # "username": userid,
+                # "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest()
             }
-            if theme is None:
-                return flask.render_template(
-                    "settings.html",
-                    error='Pick a theme before updating!',
-                    **return_list)
-            if (dbm.Accounts.find_one({"displayName": displayname}) is not None
-                    and user["displayName"] != displayname
-                ) and displayname in word_lists.banned_usernames:
-                return flask.render_template(
-                    "settings.html",
-                    error='That Display name is already taken!',
-                    **return_list)
-            if bool(re.search(r'[\s\[,"\'<>{\]]', displayname)) is True:
-                return flask.render_template(
-                    "settings.html",
-                    error=
-                    'The display name contains a space or a special character.',
-                    **return_list)
-            elif bool(re.search(r'[\s[,"\'<>{\]]', role)) is True:
-                return flask.render_template(
-                    "settings.html",
-                    error='The Role contains a space or a special character.',
-                    **return_list)
-            if (dbm.Accounts.find_one({"email": email}) is None
-                    and user["email"] != email):
-                verification_code = str(uuid.uuid4())
-                # print(verification_code)
-                dbm.Accounts.update_one(
-                    {'username': userid},
-                    {"$set": {
-                        'userId': verification_code
-                    }})
-                accounting.email_var_account(
-                    user["username"], email, verification_code
-                )  # it gets a invalid code when the verify link is perssed
-            elif (dbm.Accounts.find_one({"email": email}) is not None
-                  and user["email"] != email):
-                return flask.render_template("settings.html",
-                                             error='that email is taken',
-                                             **return_list)
-            # if passwd != user["password"]: #need to make a check if they are not changing or we can just remove password changing from this methid to somthing else
-            #     return flask.render_template("settings.html",
-            #          error='Your password must not match your current one.',
-            # **return_list)
-            check = r'^[A-Za-z]{3,12}$'
-            # user_allowed = re.match(check, user)# and not re.search(r'dev|mod', SUsername, re.IGNORECASE)
-            desplayname_allowed = re.match(
-                check, displayname
-            )  # and not re.search(r'dev|mod', SDisplayname, re.IGNORECASE)
-            if desplayname_allowed == 'false':
-                return flask.render_template(
-                    "settings.html",
-                    error='That Display name is not allowed!',
-                    **return_list)
-
-            dbm.Accounts.update_one(
-                {"username": userid},
-                {
-                    "$set": {
-                        "messageColor": messageC,
-                        "roleColor": roleC,
-                        "userColor": userC,
-                        "displayName": displayname,
-                        "role": role,
-                        "profile": profile,
-                        "theme": theme,
-                        "email": email
-                        # "username": userid,
-                        # "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest()
-                    }
-                })
-            log.log_accounts(
-                f'The account {user} has updated some settings (one day ill add what they updated)'
-            )
-            return flask.render_template('settings.html',
-                                         error="updated account",
-                                         **return_list)
-    else:
-        return flask.render_template('login.html')
-
-
-@app.get('/backup_logs')
-def get_backup_chat():
-    """Return the backup-chat.txt contents."""
-    ret_val = chat.get_chat("Chat-backup")
-    return ret_val
+        })
+    log.log_accounts(
+        f'The account {user} has updated some settings (one day ill add what they updated)'
+    )
+    return flask.render_template('settings.html',
+                                error="updated account",
+                                **return_list)
 
 
 # socketio stuff
@@ -456,37 +454,6 @@ def handle_disconnect():
         emit("online", username_list, broadcast=True)
     except TypeError:
         pass
-
-
-@socketio.on('login')
-def login_handle(username, password):
-    """make the login work."""
-    try:
-        # not 100% sure this will catch a failed attempt, doesnt get them
-        user = dbm.Accounts.find_one({"username": username})
-    except TypeError:
-        emit("login_att", "failed", namespace="/")
-    if username == user["username"] and hashlib.sha384(bytes(
-            password, 'utf-8')).hexdigest() == user["password"]:
-        emit("login_att", "true", namespace="/")
-    else:
-        emit("login_att", "failed", namespace="/")
-
-
-@socketio.on('get_prefs')
-def return_user_prefs(username):
-    """Return roles, colors, and theme to logged in user."""
-    user = dbm.Accounts.find_one({"username": username})
-
-    try:
-        emit("return_prefs", {
-            "displayName": user["displayName"],
-            "profile": user["profile"],
-            "theme": user["theme"],
-        },
-             namespace="/")
-    except TypeError:
-        emit("return_prefs", {"failed": True}, namespace="/")
 
 
 @socketio.on('username_msg')
@@ -549,14 +516,15 @@ def get_rooms(username):
 
 # pylint: disable=C0103
 @socketio.on('message_chat')
-def handle_message(user_name, message, roomid):
+def handle_message(user_name, message, roomid, userid):
     """New New chat message handling pipeline."""
+    # later I will check the if the username is the same as the one for the session somehow
     room = dbm.rooms.find_one({"roomid": roomid})
     user = dbm.Accounts.find_one({"username": user_name})
     if dbm.rooms.find_one({"roomid": roomid}) is None:
         result = ("Permission", 6)
     else:
-        result = filtering.run_filter(user, room, message, roomid)
+        result = filtering.run_filter(user, room, message, roomid, userid)
     if result[0] == 'msg':
         if dbm.rooms.find_one({"roomid": roomid}) is not None:
             chat.add_message(result[1], roomid, room)

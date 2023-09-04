@@ -5,7 +5,7 @@ description = "This is a private chat made for chatting with friends."
 authors = ["cseven, cserver"]
 
 [tool.poetry.dependencies]
-python = ">=3.8.0,<3.9"
+python = ">=3.8.0,<3.12"
 replit = "^3.2.4"
 Flask-SocketIO = "^5.3.2"
 psutil = "^5.9.4"
@@ -15,6 +15,7 @@ pymongo = "^4.3.3"
 better-profanity = "^0.7.0"
 Flask = "2.2.3"
 Flask-APScheduler = "^1.12.4"
+Flask-Login = "0.6.2"
 
 [tool.poetry.extras]
 systemd = ['dbus-python']
