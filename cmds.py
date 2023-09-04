@@ -575,13 +575,19 @@ def lock(**kwargs):
     """locks the chat so that only devs can send"""
     user = kwargs['user']
     roomid = kwargs['roomid']
-    if check_if_dev(user) == 1:
-        message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>"
+    room = dbm.rooms.find_one({'roomid': roomid})
+    if check_if_owner(user) == 1 and room.split(' ')['locked'][1] != 'admin':
+        message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by room Owner.</font>"
         chat.add_message(message, roomid, dbm)
         emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
-    elif check_if_mod(user) == 1:
-        message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Moderator.</font>"
+    elif check_if_dev(user) == 1 or check_if_mod(user) == 1:
+        message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>"
+        chat.add_message(message, roomid, dbm)
+        emit("message_chat", (message, roomid), broadcast=True)
+        dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true admin'}})
+    elif check_if_room_mod(user) == 1 and room.split(' ')['locked'][1] != 'admin':
+        message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by room Moderator.</font>"
         chat.add_message(message, roomid, dbm)
         emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
@@ -593,13 +599,19 @@ def unlock(**kwargs):
     """unlocks the chat so that everyone can send"""
     user = kwargs['user']
     roomid = kwargs['roomid']
-    if check_if_dev(user) == 1:
+    room = dbm.rooms.find_one({'roomid': roomid})
+    if check_if_owner(user) == 1 and room.split(' ')['locked'][1] != 'admin':
+        message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by room Owner.</font>"
+        chat.add_message(message, roomid, dbm)
+        emit("message_chat", (message, roomid), broadcast=True)
+        dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
+    elif check_if_dev(user) == 1 or check_if_mod(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>"
         chat.add_message(message, roomid, dbm)
         emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
-    elif check_if_mod(user) == 1:
-        message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Moderator.</font>"
+    elif check_if_room_mod(user) == 1 and room.split(' ')['locked'][1] != 'admin':
+        message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by room Moderator.</font>"
         chat.add_message(message, roomid, dbm)
         emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})

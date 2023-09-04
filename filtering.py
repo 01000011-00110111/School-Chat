@@ -58,13 +58,19 @@ def run_filter(user, room, message, roomid):
     # print (message_count, preuser)
 
     #check if locked or allowed to send
-    if locked == 'true' and perms not in ["dev", "mod"]:
-        return ("permission", 3, user_muted)
+    if perms not in ["dev", "admin"]:
+        mod_list = room['mod'].split(',')
+        if locked == 'true admin':
+            return ("permission", 3, user_muted)
+        elif locked == 'true':
+            for m in mod_list:
+                if m['mod'].split(',') != user['username'] or user['username'] != room['generatedBy']:
+                    return ("permission", 3, user_muted)
 
     if can_send == "everyone":
         return_str = ('msg', final_str, user_muted)
-    elif can_send == 'mod':
-        if perms == 'mod':
+    elif can_send == 'admin':
+        if perms == 'admin':
             return_str = ('msg', final_str, user_muted)
         else:
             return_str = ('permission', 5, user_muted)
@@ -82,7 +88,7 @@ def run_filter(user, room, message, roomid):
     preuser = user["username"]
     message_count += 1
 
-    if perms in ["dev", "mod"]:
+    if perms in ["dev", "admin"]:
         return_str = ('msg', final_str, user_muted)
 
     return return_str
@@ -114,8 +120,8 @@ def check_perms(user):
     """checks if the user has specal perms else return as a user"""
     if user['SPermission'] == 'Debugpass':
         perms = 'dev'
-    elif user['SPermission'] == 'modpass':
-        perms = 'mod'
+    elif user['SPermission'] == 'Adminpass':
+        perms = 'admin'
     else:
         perms = 'user'
     return perms
