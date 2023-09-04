@@ -82,7 +82,7 @@ def create_chat_room(username, name, userinfo):
         response = ('reason', 4, "create")
     else:
         code = generate_unique_code(5)
-        insert_room(code, user, generated_at, name, username)
+        insert_room(code, user, generated_at, name, user)
         logmessage = f"{username} made a room named {name} at {generated_at}"
         response = ('reason', 0, "create")
     chat_room_log(logmessage)
@@ -120,7 +120,7 @@ def delete_chat_room(room_name, user):
     """Deletes the chat room the chat room owner or dev selected"""
     rooms = dbm.rooms.find_one({"roomName": room_name})
     made_by = rooms["generatedBy"]
-    username = user["displayName"]
+    username = user["username"]
     date_str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     if made_by == user["username"]:
         if len(rooms["roomid"]) == 20:
