@@ -57,6 +57,7 @@ function runStartup() {
     username = getCookie("Username");
     socket.emit("username", username, 'chat');
     socket.emit("get_rooms", username);
+    whichEvent(getCookie('Theme'))
     // changeRoom('ilQvQwgOhm9kNAOrRqbr')
 }
 
