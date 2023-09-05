@@ -53,7 +53,11 @@ def run_filter(user, room, message, roomid, userid):
         profile_picture = user['profile']
 
     if "[" in message and locked != 'true':
-        find_pings(message, user['displayName'], profile_picture, roomid)
+        if user['locked'] != 'locked':
+            find_pings(message, user['displayName'], profile_picture, roomid, user)
+        else:
+            cmds.warn_user(user)
+            failed_message(('permission', 11, 'locked'), roomid, user)
 
     final_str = compile_message(message, profile_picture, user, role, preuser,
                                 message_count)
@@ -134,10 +138,11 @@ def filter_message(message):
     return profanity.censor(message)
 
 
-def find_pings(message, dispName, profile_picture, roomid):
+def find_pings(message, dispName, profile_picture, roomid, user):
     """Gotta catch 'em all! (checks for pings in the users message)"""
     pings = re.findall(r'(?<=\[).+?(?=\])', message)
     room = rooms.get_chat_room(roomid)
+    
     for ping in pings:
         message = message.replace(f"[{ping}]", '')
         emit("ping", {
@@ -252,6 +257,8 @@ def failed_message(result, roomid, user):
         "[SYSTEM]: <font color='#ff7f00'>You must verify your account before you can use commands.</font>",
         (10):
         "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send code in the chat. (You have been warned)</font>",
+        (11):
+        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send pings. (You have been warned)</font>",
         (12):
         "[SYSTEM]: <font color='#ff7f00'>Are you trying to do some funny business? (You failed lol)</font>",
     }

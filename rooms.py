@@ -41,7 +41,7 @@ def get_chat_rooms():
             'name': r['roomName'],
             'id': r['roomid'],
             'generatedBy': r['generatedBy'],
-            # 'mods': r['mods'],
+            'mods': r['mods'],
             'whitelisted': r['whitelisted'],
             'blacklisted': r['blacklisted']
         })

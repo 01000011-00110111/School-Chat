@@ -48,7 +48,7 @@ import word_lists
 LOGFILE = "backend/chat.txt"
 
 app = flask.Flask(__name__)
-app.secret_key = os.urandom(9001)#ITS OVER 9000!!!!!!
+app.secret_key = os.urandom(9001)  #ITS OVER 9000!!!!!!
 
 # rate limiting
 # limiter = Limiter(get_remote_address,
@@ -72,7 +72,9 @@ login_manager.login_view = 'login_page'
 # clear db, so that old users don't stay
 dbm.Online.delete_many({})
 
+
 class User:
+
     def __init__(self, username):
         self.username = username
 
@@ -93,12 +95,12 @@ class User:
 
     @staticmethod
     def check_password(password_hash, password):
-        return hashlib.sha384(bytes(password, 'utf-8')).hexdigest() == password_hash
-    
+        return hashlib.sha384(bytes(password,
+                                    'utf-8')).hexdigest() == password_hash
+
     @staticmethod
     def check_username(username, db_username):
         return username == db_username
-
 
     @login_manager.user_loader
     def load_user(username):
@@ -106,6 +108,7 @@ class User:
         if not u:
             return None
         return User(username=u['username'])
+
 
 # license stuff
 if __name__ == "__main__":
@@ -132,7 +135,7 @@ def logout():
 def login_page() -> ResponseReturnValue:
     """Show the login page."""
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return flask.redirect(flask.url_for('index'))
 
     if request.method == "POST":
         # redo client side checks here on server side, like signup
@@ -142,19 +145,22 @@ def login_page() -> ResponseReturnValue:
         next_page = request.args.get("next")
         user = dbm.Accounts.find_one({"username": username})
         if user is None:
-            return flask.render_template(
-                'login.html', error="That account does not exist!")
+            return flask.render_template('login.html',
+                                         error="That account does not exist!")
         if TOSagree != "on":
             return flask.render_template('login.html',
                                          error='You did not agree to the TOS!')
 
-        if User.check_username(username, user["username"]) and User.check_password(user['password'], password):
+        if User.check_username(username,
+                               user["username"]) and User.check_password(
+                                   user['password'], password):
             user_obj = User(username=user['username'])
             login_user(user_obj)
             if next_page is None:
                 next_page = flask.url_for('chat_page')
             else:
-                next_page = next_page if next_page in word_lists.approved_links else flask.url_for('chat_page')
+                next_page = next_page if next_page in word_lists.approved_links else flask.url_for(
+                    'chat_page')
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie('Username', user['username'])
             resp.set_cookie('Theme', user['theme'])
@@ -205,7 +211,7 @@ def signup_post() -> ResponseReturnValue:
                                      error='That email is banned!')
     elif email_check == 1:
         return flask.render_template("signup-index.html",
-                             error='That email is not valid!')
+                                     error='That email is not valid!')
     if SPassword != SPassword2:
         return flask.render_template("signup-index.html",
                                      error='Password boxes do not match!',
@@ -297,6 +303,7 @@ def get_logs_page() -> ResponseReturnValue:
     html_file = flask.render_template('Backup-chat.html')
     return html_file
 
+
 @app.route('/settings', methods=['GET'])
 @login_required
 def settings_page() -> ResponseReturnValue:
@@ -304,21 +311,22 @@ def settings_page() -> ResponseReturnValue:
     user = dbm.Accounts.find_one({"username": request.cookies.get('Username')})
     if request.cookies.get('userId') != user['userId']:
         # someone is trying something funny
-        return flask.Response("Something funny happened. Try Again (Unauthorized)", status=401)
+        return flask.Response(
+            "Something funny happened. Try Again (Unauthorized)", status=401)
 
     return flask.render_template(
-                    'settings.html',
-                    user=user['username'],
-                    passwd=
-                    'we are not adding password editing just yet',
-                    email=user["email"],
-                    displayName=user["displayName"],
-                    role=user["role"],
-                    user_color=user["userColor"],
-                    role_color=user["roleColor"],
-                    message_color=user["messageColor"],
-                    profile=user["profile"],
-                    theme=user["theme"])
+        'settings.html',
+        user=user['username'],
+        passwd='we are not adding password editing just yet',
+        email=user["email"],
+        displayName=user["displayName"],
+        role=user["role"],
+        user_color=user["userColor"],
+        role_color=user["roleColor"],
+        message_color=user["messageColor"],
+        profile=user["profile"],
+        theme=user["theme"])
+
 
 @app.route('/settings', methods=['POST'])
 @login_required
@@ -347,13 +355,12 @@ def customize_accounts() -> ResponseReturnValue:
         "email": email
     }
     if theme is None:
-        return flask.render_template(
-            "settings.html",
-            error='Pick a theme before updating!',
-            **return_list)
+        return flask.render_template("settings.html",
+                                     error='Pick a theme before updating!',
+                                     **return_list)
     if (dbm.Accounts.find_one({"displayName": displayname}) is not None
-            and user["displayName"] != displayname
-        ) and displayname in word_lists.banned_usernames:
+            and user["displayName"]
+            != displayname) and displayname in word_lists.banned_usernames:
         return flask.render_template(
             "settings.html",
             error='That Display name is already taken!',
@@ -362,8 +369,7 @@ def customize_accounts() -> ResponseReturnValue:
     if bool(re.search(r'[\s\[,"\'<>{\]]', displayname)) is True:
         return flask.render_template(
             "settings.html",
-            error=
-            'The display name contains a space or a special character.',
+            error='The display name contains a space or a special character.',
             **return_list)
     elif bool(re.search(r'[\s[,"\'<>{\]]', role)) is True:
         return flask.render_template(
@@ -374,26 +380,24 @@ def customize_accounts() -> ResponseReturnValue:
             and user["email"] != email):
         verification_code = str(uuid.uuid4())
         # print(verification_code)
-        dbm.Accounts.update_one(
-            {'username': userid},
-            {"$set": {
-                'userId': verification_code
-            }})
+        dbm.Accounts.update_one({'username': userid},
+                                {"$set": {
+                                    'userId': verification_code
+                                }})
         accounting.email_var_account(
             user["username"], email, verification_code
         )  # it gets a invalid code when the verify link is perssed
     elif (dbm.Accounts.find_one({"email": email}) is not None
-            and user["email"] != email):
+          and user["email"] != email):
         return flask.render_template("settings.html",
-                                        error='that email is taken',
-                                        **return_list)
+                                     error='that email is taken',
+                                     **return_list)
     check = r'^[A-Za-z]{3,12}$'
     desplayname_allowed = re.match(check, displayname)
     if desplayname_allowed == 'false':
-        return flask.render_template(
-            "settings.html",
-            error='That Display name is not allowed!',
-            **return_list)
+        return flask.render_template("settings.html",
+                                     error='That Display name is not allowed!',
+                                     **return_list)
 
     dbm.Accounts.update_one(
         {"username": userid},
@@ -415,8 +419,8 @@ def customize_accounts() -> ResponseReturnValue:
         f'The account {user} has updated some settings (one day ill add what they updated)'
     )
     return flask.render_template('settings.html',
-                                error="updated account",
-                                **return_list)
+                                 error="updated account",
+                                 **return_list)
 
 
 # socketio stuff
@@ -426,9 +430,10 @@ def handle_connect(username: str, location):
     socketid = request.sid
     username_list = []
     icons = {'settings': '⚙️', 'chat': ''}
-
+    # this is until I pass the displayname to the user instead of the username
+    user = dbm.Accounts.find_one({'username': username})
     dbm.Online.insert_one({
-        "username": username,
+        "username": user['displayName'],
         "socketid": socketid,
         "location": location
     })
@@ -509,9 +514,14 @@ def get_rooms(username):
                     and 'users:' in r['blacklisted'] and user not in [
                         u.strip()
                         for u in r['blacklisted'].split("users:")[1].split(",")
-                    ] and r['whitelisted'] == 'everyone')
-        ) and (user_name['username'] == r['generatedBy'] or user_name['displayName'] == r['mods']) and (r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly' or r['whitelisted'] != 'lockedonly')]
-        emit('roomsList', (accessible_rooms, user_name['locked']), namespace='/', to=request.sid)
+                    ] and r['whitelisted'] == 'everyone')) and (
+                        user_name['username'] == r['generatedBy']
+                        or user_name['displayName'] == r['mods']) and (
+                            r['whitelisted'] != 'devonly' or r['whitelisted']
+                            != 'modonly' or r['whitelisted'] != 'lockedonly')]
+        emit('roomsList', (accessible_rooms, user_name['locked']),
+             namespace='/',
+             to=request.sid)
 
 
 # pylint: disable=C0103
