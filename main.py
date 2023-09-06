@@ -144,7 +144,7 @@ def logout():
 def login_page() -> ResponseReturnValue:
     """Show the login page."""
     if current_user.is_authenticated:
-        return flask.redirect(flask.url_for('index'))
+        return flask.redirect(flask.url_for('chat_page'))
 
     if request.method == "POST":
         # redo client side checks here on server side, like signup
@@ -229,7 +229,7 @@ def signup_post() -> ResponseReturnValue:
                                      SDisplayname=SDisplayname)
     possible_user = dbm.Accounts.find_one({"username": SUsername})
     possible_dispuser = dbm.Accounts.find_one({"displayName": SDisplayname})
-    print("again")
+    # print("again")
     if possible_user is not None or possible_dispuser is not None or SUsername in word_lists.banned_usernames or SDisplayname in word_lists.banned_usernames:
         return flask.render_template(
             "signup-index.html",
