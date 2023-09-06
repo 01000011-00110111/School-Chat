@@ -125,10 +125,11 @@ def chat_page() -> ResponseReturnValue:
 
 @app.route('/chat/<room_name>')
 @login_required
-def specific_chat_page() -> ResponseReturnValue:
+def specific_chat_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
-    return flask.redirect(flask.url_for("chat_page"))
+    # print(room_name)  commit what you've changed here, and then i can
+    return flask.redirect(flask.url_for("chat_page")) #
 
 
 @app.route('/logout')
@@ -416,23 +417,36 @@ def customize_accounts() -> ResponseReturnValue:
                                      error='That Display name is not allowed!',
                                      **return_list)
 
-    dbm.Accounts.update_one({"username": userid}, {
-        "$set": {
-            "messageColor": messageC,
-            "roleColor": roleC,
-            "userColor": userC,
-            "displayName": displayname,
-            "role": role,
-            "profile": profile,
-            "theme": theme,
-            "email": email
-        }
-    })
+    if user['locked'] != 'locked':
+        dbm.Accounts.update_one({"username": userid}, {
+            "$set": {
+                "messageColor": messageC,
+                "roleColor": roleC,
+                "userColor": userC,
+                "displayName": displayname,
+                "role": role,
+                "profile": profile,
+                "theme": theme,
+                "email": email
+            }
+        })
+        error = "Updated account!"
+    else:
+        if user['email'] == email:
+            return flask.render_template('settings.html',
+                             error='You must verify your account before you can change settings',
+                             **return_list)
+        dbm.Accounts.update_one({"username": userid}, {
+            "$set": {
+                "email": email
+            }
+        })
+        error = 'Updated email!'
     log.log_accounts(
         f'The account {user} has updated some settings (one day ill add what they updated)'
     )
     return flask.render_template('settings.html',
-                                 error="updated account",
+                                 error=error,
                                  **return_list)
 
 
@@ -528,8 +542,8 @@ def get_rooms(username):
                         u.strip()
                         for u in r['blacklisted'].split("users:")[1].split(",")
                     ] and r['whitelisted'] == 'everyone')) and (
-                        user_name['username'] == r['generatedBy']
-                        or user_name['displayName'] == r['mods']) and (
+                        # user_name['username'] == r['generatedBy']
+                        # or user_name['displayName'] == r['mods']) and (
                             r['whitelisted'] != 'devonly' or r['whitelisted']
                             != 'modonly' or r['whitelisted'] != 'lockedonly')]
         emit('roomsList', (accessible_rooms, user_name['locked']),
