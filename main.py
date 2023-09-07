@@ -128,8 +128,8 @@ def chat_page() -> ResponseReturnValue:
 def specific_chat_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
-    # print(room_name)  commit what you've changed here, and then i can
-    return flask.redirect(flask.url_for("chat_page")) #
+    # print(room_name)
+    return flask.redirect(flask.url_for("chat_page"))
 
 
 @app.route('/logout')
@@ -382,13 +382,19 @@ def customize_accounts() -> ResponseReturnValue:
         return flask.render_template("settings.html",
                                      error='Pick a theme before updating!',
                                      **return_list)
+    result, error = accounting.run_regex_signup(userid, role, displayname)
+    if result is not False:
+        return flask.render_template(
+            "settings.",
+            error=error,
+        )
     if (dbm.Accounts.find_one({"displayName": displayname}) is not None
             and user["displayName"]
             != displayname) and displayname in word_lists.banned_usernames:
         return flask.render_template(
             "settings.html",
             error='That Display name is already taken!',
-            **return_list)
+            )**return_list
     # move these into accounting.py after this branch gets merged into main
     if bool(re.search(r'[\s\[,"\'<>{\]]', displayname)) is True:
         return flask.render_template(
