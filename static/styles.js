@@ -2,12 +2,6 @@
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 
-// set the theme
-function setTheme(theme) {
-    // set theme when button is pressed
-    // other style function will change this, not directly called
-    document.cookie = `Theme=${theme};`
-}
 
 function ProfilesB() {
     let Profileactive = window.localStorage.getItem("Profileactive");
@@ -59,8 +53,6 @@ function whichEvent(event = "test") {
   
 // sets theme to dark mode
 function setDarkStyle() {
-    // set theme in cookie
-    setTheme("dark");
     // get all id tags
     let body = document.getElementsByTagName("body")[0]; 
     let chat = document.getElementById("chat");
@@ -92,8 +84,6 @@ function setDarkStyle() {
 }
 
 function setLightstyle() {
-    // set theme in cookie    
-    setTheme("light");
     // get all id tags
     let body = document.getElementsByTagName("body")[0]; 
     let chat = document.getElementById("chat");
@@ -126,8 +116,6 @@ function setLightstyle() {
 
 
 function set4thStyle() {
-    // set theme in cookie
-    setTheme('4th');
     // get all id tags
     let body = document.getElementsByTagName("body")[0]; 
     let chat = document.getElementById("chat");
@@ -161,8 +149,6 @@ function set4thStyle() {
 
 
 function setOgDevStyle() {
-    // set theme in cookie
-    setTheme("ogdev");
     // get all id tags
     let body = document.getElementsByTagName("body")[0]; 
     let chat = document.getElementById("chat");
@@ -195,8 +181,6 @@ function setOgDevStyle() {
 }
 
 function setDevStyle() {
-    // set theme in cookie
-    setTheme("dev");
     // get all id tags
     let body = document.getElementsByTagName("body")[0]; 
     let chat = document.getElementById("chat");
