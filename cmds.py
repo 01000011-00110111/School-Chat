@@ -388,7 +388,8 @@ def reload_users(**kwargs):
 def appear_offline(**kwargs):
     """Make the user who ran the command appear offline"""
     user = kwargs['user']
-    dbm.Online.delete_one({'userId': user['userId']})
+    # dbm.Online.delete_one({'userId': user['userId']})
+    dbm.Online.delete_many({})
     emit("force_username", ("", user['userId']), broadcast=True)
 
 
