@@ -446,14 +446,16 @@ def handle_connect(username: str, location):
     username_list = []
     icons = {'settings': '⚙️', 'chat': ''}
     # this is until I pass the displayname to the user instead of the username
-    user = dbm.Accounts.find_one({'username': username})
-    dbm.Online.insert_one({
-        "username": user['displayName'],
-        "socketid": socketid,
-        "location": location
-    })
+    if username != 'pass':
+        user = dbm.Accounts.find_one({'username': username})
+        dbm.Online.insert_one({
+            "username": user['displayName'],
+            "socketid": socketid,
+            "location": location
+        })
 
     for key in dbm.Online.find():
+        if username == 'pass': continue
         user_info = key["username"]
         icon = icons.get(key.get("location"))
         user_info = f"{icon}{user_info}"

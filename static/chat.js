@@ -17,8 +17,10 @@ socket.on("pingTime", (time, roomid) => {
 });
 
 
-socket.on("force_username", (_statement) => {
-    socket.emit("username", getCookie("Username"), 'chat');
+socket.on("force_username", (_statement, ignore_user) => {
+    if (getCookie('Userid') != ignore_user){
+        socket.emit("username", getCookie("Username"), 'chat');
+    } else {socket.emit("username", 'pass', 'chat');}
 });
 
 socket.on("force_room_update", (_statement) => {

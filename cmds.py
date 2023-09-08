@@ -36,7 +36,7 @@ def find_command(**kwargs):
         'status': send_stats,
         'lock': lock,
         'globalock': globalock,
-        'goodbye': offline,
+        'goodbye': appear_offline,
         'unlock': unlock,
         'ronline': reload_users,
         'ro': reload_users,
@@ -381,9 +381,7 @@ def reload_users(**kwargs):
     """Reload the online list manually."""
     # print('test')
     dbm.Online.delete_many({})
-    emit("force_username", "", broadcast=True)
-
-def offline():
+    emit("force_username", ("", None), broadcast=True)
 
 
 def ping(**kwargs):
