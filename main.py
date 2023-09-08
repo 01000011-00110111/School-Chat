@@ -384,27 +384,16 @@ def customize_accounts() -> ResponseReturnValue:
                                      **return_list)
     result, error = accounting.run_regex_signup(userid, role, displayname)
     if result is not False:
-        return flask.render_template(
-            "settings.",
-            error=error,
-        )
+        return flask.render_template("settings.html",
+                                     error=error,
+                                     **return_list)
+
     if (dbm.Accounts.find_one({"displayName": displayname}) is not None
             and user["displayName"]
             != displayname) and displayname in word_lists.banned_usernames:
         return flask.render_template(
             "settings.html",
             error='That Display name is already taken!',
-            )**return_list
-    # move these into accounting.py after this branch gets merged into main
-    if bool(re.search(r'[\s\[,"\'<>{\]]', displayname)) is True:
-        return flask.render_template(
-            "settings.html",
-            error='The display name contains a space or a special character.',
-            **return_list)
-    elif bool(re.search(r'[\s[,"\'<>{\]]', role)) is True:
-        return flask.render_template(
-            "settings.html",
-            error='The Role contains a space or a special character.',
             **return_list)
     if (dbm.Accounts.find_one({"email": email}) is None
             and user["email"] != email):
@@ -415,12 +404,6 @@ def customize_accounts() -> ResponseReturnValue:
           and user["email"] != email):
         return flask.render_template("settings.html",
                                      error='that email is taken',
-                                     **return_list)
-    check = r'^[A-Za-z]{3,12}$'
-    desplayname_allowed = re.match(check, displayname)
-    if desplayname_allowed == 'false':
-        return flask.render_template("settings.html",
-                                     error='That Display name is not allowed!',
                                      **return_list)
 
     if user['locked'] != 'locked':
@@ -439,21 +422,20 @@ def customize_accounts() -> ResponseReturnValue:
         error = "Updated account!"
     else:
         if user['email'] == email:
-            return flask.render_template('settings.html',
-                             error='You must verify your account before you can change settings',
-                             **return_list)
-        dbm.Accounts.update_one({"username": userid}, {
-            "$set": {
-                "email": email
-            }
-        })
+            return flask.render_template(
+                'settings.html',
+                error=
+                'You must verify your account before you can change settings',
+                **return_list)
+        dbm.Accounts.update_one({"username": userid},
+                                {"$set": {
+                                    "email": email
+                                }})
         error = 'Updated email!'
     log.log_accounts(
         f'The account {user} has updated some settings (one day ill add what they updated)'
     )
-    return flask.render_template('settings.html',
-                                 error=error,
-                                 **return_list)
+    return flask.render_template('settings.html', error=error, **return_list)
 
 
 # socketio stuff
@@ -534,24 +516,28 @@ def get_rooms(username):
              namespace='/',
              to=request.sid)
     else:
-        accessible_rooms = [{
-            'id': r['id'],
-            'name': r['name']
-        } for r in room_access if (
-            (r['blacklisted'] == 'empty' and r['whitelisted'] == 'everyone') or
-            (r['whitelisted'] != 'everyone' and 'users:' in r['whitelisted']
-             and user in [
-                 u.strip()
-                 for u in r['whitelisted'].split("users:")[1].split(",")
-             ]) or (r['blacklisted'] != 'empty'
-                    and 'users:' in r['blacklisted'] and user not in [
-                        u.strip()
-                        for u in r['blacklisted'].split("users:")[1].split(",")
-                    ] and r['whitelisted'] == 'everyone')) and (
-                        # user_name['username'] == r['generatedBy']
-                        # or user_name['displayName'] == r['mods']) and (
-                            r['whitelisted'] != 'devonly' or r['whitelisted']
-                            != 'modonly' or r['whitelisted'] != 'lockedonly')]
+        accessible_rooms = [
+            {
+                'id': r['id'],
+                'name': r['name']
+            } for r in room_access if
+            ((r['blacklisted'] == 'empty' and r['whitelisted'] == 'everyone')
+             or (r['whitelisted'] != 'everyone'
+                 and 'users:' in r['whitelisted'] and user in [
+                     u.strip()
+                     for u in r['whitelisted'].split("users:")[1].split(",")
+                 ]) or
+             (r['blacklisted'] != 'empty' and 'users:' in r['blacklisted']
+              and user not in [
+                  u.strip()
+                  for u in r['blacklisted'].split("users:")[1].split(",")
+              ] and r['whitelisted'] == 'everyone')) and
+            (
+                # user_name['username'] == r['generatedBy']
+                # or user_name['displayName'] == r['mods']) and (
+                r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly'
+                or r['whitelisted'] != 'lockedonly')
+        ]
         emit('roomsList', (accessible_rooms, user_name['locked']),
              namespace='/',
              to=request.sid)
