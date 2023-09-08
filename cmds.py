@@ -28,6 +28,7 @@ def find_command(**kwargs):
     response_strings = {
         'E': E,
         'help': help_command,
+        'hello': reload_users,
         'chat': chat_room_edit,
         'mute': mute_user,
         'unmute': unmute_user,
@@ -382,6 +383,13 @@ def reload_users(**kwargs):
     # print('test')
     dbm.Online.delete_many({})
     emit("force_username", ("", None), broadcast=True)
+
+
+def appear_offline(**kwargs):
+    """Make the user who ran the command appear offline"""
+    user = kwargs['user']
+    dbm.Online.delete_one({'userId': user['userId']})
+    emit("force_username", ("", user['userId']), broadcast=True)
 
 
 def ping(**kwargs):
