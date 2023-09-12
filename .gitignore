@@ -17,6 +17,7 @@ venv/*
 node_modules/*
 .upm/*
 .config/*
+.pythonlibs/
 replit.nix
 .replit
 keys.py
