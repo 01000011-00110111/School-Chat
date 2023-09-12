@@ -23,6 +23,8 @@ import re
 import flask
 import pymongo
 import uuid
+import time
+import threading
 from flask import request
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
@@ -645,5 +647,19 @@ def emit_on_startup():
         startup_msg = False
 
 
+@socketio.on('online_refresh')
+def online_refresh():
+    """Background task for online list"""
+    while True:
+        dbm.Online.delete_many({})
+        socketio.emit("force_username", ("", None))
+        print('e')
+        time.sleep(10)# this is using a socketio refresh
+
+
+
 if __name__ == "__main__":
+    # socketio.start_background_task(online_refresh)
+    # o = threading.Thread(target=online_refresh)
+    # o.start()
     socketio.run(app, host="0.0.0.0", port=8080)
