@@ -239,6 +239,10 @@ def whitelist(room_name, set_type, user, users, room, username, dev):
     if set_type == 'add':
         add_users = f"users:{','.join(whitelisted_users)},{''.join(new_users)}"
     
+    #turn the addusers list into a string
+    add_users.split(',') #split the list into a string
+    add_users = ','.join(add_users) #join the list into a string
+    update_blacklist(room_name, add_users)
     update_whitelist(room_name, add_users)
     emit("force_room_update", broadcast=True)
     if dev is True:
@@ -303,6 +307,10 @@ def blacklist(room_name, set_type, user, users, room, username, dev):
     if set_type == 'add':
         add_users = f"users:{','.join(blacklisted_users)},{''.join(new_users)}"
     
+    #turn the addusers list into a string
+    add_users.split(',') #split the list into a string
+    add_users = ','.join(add_users) #join the list into a string
+    update_blacklist(room_name, add_users)
     update_blacklist(room_name, add_users)
     emit("force_room_update", broadcast=True)
     if dev is True:
