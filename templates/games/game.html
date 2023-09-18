@@ -1,0 +1,28 @@
+{% extends 'index.html' %}
+{% block header %}
+<meta charset="UTF-8">
+<title>Chat Games</title>
+<script src="static/games/game.js"></script>
+<link rel="stylesheet" href="static/games/game.css"> 
+{% endblock %}
+{% block content %}
+<div id="topScores" onload="runStartupGame" style="position: absolute; left: 10px; top: 50px; color: #FFF; font-size: 18px;">
+    <h3>Top Scores</h3>
+    <ul id="scoreList"></ul>
+</div>    
+<div id="scoreboard" style="position: absolute; left: 10px; top: 10px; color: #FFF; font-size: 24px;"></div>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<button id="skipButton">Skip Level</button>
+<div class="activenav" id="activenav">
+    <div class="AccountPopup">
+        <input type="image" id="pfpmenu" src="static/favicon.ico" class="PictureBTN" onclick="OpenAC();"/>
+        <div id="AccControls" class='AccControls'>
+            <a href="/logout">Logout</a>
+            <a href="/settings">Settings</a>
+            <a href="#">Random</a>
+        </div>
+    </div>
+    <!-- <hr id="online_border"> -->
+    <div id="online_users"></div>
+</div>
+{% endblock %}

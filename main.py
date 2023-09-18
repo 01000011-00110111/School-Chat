@@ -42,6 +42,7 @@ scheduler = APScheduler()
 import chat
 import cmds
 import filtering
+import games
 import rooms
 import accounting
 import log
@@ -132,6 +133,14 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
     # later we can set this up to get the specific room (with permssions)
     # print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
+
+
+@app.route('/game')
+@login_required
+def signup() -> ResponseReturnValue:
+    """Serve the game page."""
+    #later we wil make the game change every day or 2 days
+    return flask.render_template('games/game.html')
 
 
 @app.route('/logout')
@@ -446,7 +455,7 @@ def handle_connect(username: str, location):
     """Will be used later for online users."""
     socketid = request.sid
     username_list = []
-    icons = {'settings': '⚙️', 'chat': ''}
+    icons = {'settings': '⚙️', 'chat': '', 'games': '🎮'}
     # this is until I pass the displayname to the user instead of the username
     if username != 'pass':
         user = dbm.Accounts.find_one({'username': username})
@@ -662,4 +671,4 @@ if __name__ == "__main__":
     # socketio.start_background_task(online_refresh)
     # o = threading.Thread(target=online_refresh)
     # o.start()
-    socketio.run(app, host="0.0.0.0", port=8080)
+    socketio.run(app, host="0.0.0.0", port=5000)

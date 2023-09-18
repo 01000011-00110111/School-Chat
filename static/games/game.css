@@ -1,0 +1,31 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #222;
+}
+
+canvas {
+    border: 2px solid rgb(255, 255, 255);
+    background-color: black;
+}
+
+#topScores {
+position: absolute;
+left: 10px;
+top: 50px;
+color: #FFF;
+font-size: 18px;
+}
+
+#scoreList {
+list-style-type: none;
+padding: 0;
+}
+
+#scoreList li {
+margin-bottom: 5px;
+}
