@@ -606,8 +606,8 @@ def connect(roomid):
 
 ################################# GAME STUFF #################################
 @socketio.on('update_score')
-def update_score(score, username, game):
-    user = dbm.Accounts.find_one({'username': username})
+def update_score(score, userid, game):
+    user = dbm.Accounts.find_one({'userId': userid})
     display = user['displayName']
     top_scores = dbm.Games.find_one_and_update({'game': game}, {'$push': {'score': f'{display}: {score}'}}, upsert=True)
     emit('score_updated', top_scores['score'], broadcast=True)
