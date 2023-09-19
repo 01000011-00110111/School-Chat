@@ -604,6 +604,28 @@ def connect(roomid):
     emit("room_data", room, to=socketid, namespace='/')
 
 
+################################# GAME STUFF #################################
+@socketio.on('update_score')
+def update_score(score, username, game):
+    user = dbm.Accounts.find_one({'username': username})
+    display = user['displayName']
+    top_scores = dbm.Games.find_one_and_update({'game': game}, {'$push': {'score': f'{display}: {score}'}}, upsert=True)
+    emit('score_updated', top_scores['score'], broadcast=True)
+
+# @socketio.on('update_top_scores')
+# def update_top_scores(score,):
+#     # print(top_scores)
+#     top_scores = dbm.Games.find_one({'game': game})
+#     emit('top_scores_updated', top_scores['score'])
+
+@socketio.on('connect_game')
+def connect(game):
+    top_scores = dbm.Games.find_one({'game': game})
+    emit('top_scores_updated', top_scores['score'])
+
+################################# GAME STUFF #################################
+
+
 @scheduler.task('interval',
                 id='permission_gc',
                 seconds=60,

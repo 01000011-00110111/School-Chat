@@ -8,6 +8,16 @@ body {
     background-color: #222;
 }
 
+#activenavGame {
+    position: fixed;
+    top: 0%;
+    width: 10%;
+    padding-bottom: 54%;
+    margin-left: 88%;
+    border-left: 5px solid #0000ff;
+    color: white;
+}
+
 canvas {
     border: 2px solid rgb(255, 255, 255);
     background-color: black;

@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', function() {
 // Constants
 const SCREEN_WIDTH = 800;
 const SCREEN_HEIGHT = 600;
@@ -9,6 +10,12 @@ const GOAL_COLOR = "#0F0"; // Color for the goal
 // Initialize canvas
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+
+socket.on("force_username", (_statement, ignore_user) => {
+    if (getCookie('Userid') != ignore_user){
+        socket.emit("username", getCookie("Username"), 'games');
+    } else {socket.emit("username", 'pass', 'games');}
+});
 
 // Player
 const player = {
@@ -64,12 +71,10 @@ function updateTopScores(newTopScores) {
 // When a player dies, emit an event to request updated top scores
 // Inside the game logic where a player's score is updated
 function playerDied() {
+    socket.emit('update_score', score, getCookie('Userid'), 'survive');
     score = 0; // Reset the score
     player.hp = 100; // Reset the player's HP
-    socket.emit('update_top_scores');
 }
-
-
 
 
 // Listen for the "top_scores_updated" event from the server
@@ -77,6 +82,14 @@ socket.on('top_scores_updated', function (newTopScores) {
     updateTopScores(newTopScores);
 });
 
+// Get the skip button element by its ID
+const skipButton = document.getElementById('skipButton');
+
+// Add a click event listener to the button
+skipButton.addEventListener('click', () => {
+    // Call the generateNewLevel() function to skip to the next level
+    generateNewLevel();
+});
 
 // Function to check if the player has touched the goal
 function checkGoalCollision() {
@@ -91,17 +104,6 @@ function checkGoalCollision() {
         generateNewLevel(); // Generate a new level
     }
 }
-
-// Get the skip button element by its ID
-const skipButton = document.getElementById('skipButton');
-
-// Add a click event listener to the button
-skipButton.addEventListener('click', () => {
-    // Call the generateNewLevel() function to skip to the next level
-    generateNewLevel();
-});
-
-
 
 
 // Function to draw the score on the screen
@@ -366,4 +368,6 @@ for (let i = 0; i < 5; i++) {
 // Start the game loop
 gameLoop();
 
-function runStartupGame(){socket.emit('update_top_scores');}
+function runStartupGame(){socket.emit('connect_game', 'survive');}
+
+});
