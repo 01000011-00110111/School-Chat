@@ -105,7 +105,7 @@ def insert_room(code, user, generated_at, name, username):
         "canSend":
         'everyone',
         "whitelisted":
-        "username",
+        "everyone",
         "blacklisted":
         "empty",
         "locked":
