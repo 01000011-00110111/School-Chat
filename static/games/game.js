@@ -55,18 +55,17 @@ const walls = generateWalls();
 // Score
 let score = 0;
 
-const topScores = [];
-
-// Function to handle updating top scores on the client
-function updateTopScores(newTopScores) {
-    const scoreList = document.getElementById('scoreList');
-    scoreList.innerHTML = '';
-    newTopScores.forEach((topScore, index) => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `#${index + 1}: ${topScore}`;
-        scoreList.appendChild(listItem);
-    });
-}
+// // Function to handle updating top scores on the client
+// function updateTopScores(newTopScores) {
+//     alert(newTopScores);
+//     const scoreList = document.getElementById('scoreList');
+//     scoreList.innerHTML = '';
+//     newTopScores.forEach((topScore, index) => {
+//         const listItem = document.createElement('li');
+//         listItem.textContent = `#${index + 1}: ${topScore}`;
+//         scoreList.appendChild(listItem);
+//     });
+// }
 
 // When a player dies, emit an event to request updated top scores
 // Inside the game logic where a player's score is updated
@@ -78,8 +77,15 @@ function playerDied() {
 
 
 // Listen for the "top_scores_updated" event from the server
-socket.on('top_scores_updated', function (newTopScores) {
-    updateTopScores(newTopScores);
+socket.on('score_updated', (newTopScores) => {
+    let newline = "<br>"
+    let scorelist = "";
+    let topscores = document.getElementById("scoreList");
+    for (var i = 0; i < newTopScores.length; i++) {
+        var split = newTopScores[i].split(",");
+        scorelist = scorelist + split + newline
+    }
+    topscores["innerHTML"] = scorelist;
 });
 
 // Get the skip button element by its ID
@@ -93,15 +99,10 @@ skipButton.addEventListener('click', () => {
 
 // Function to check if the player has touched the goal
 function checkGoalCollision() {
-    if (
-        player.x < goal.x + goal.width &&
-        player.x + player.width > goal.x &&
-        player.y < goal.y + goal.height &&
-        player.y + player.height > goal.y
-    ) {
+    if (checkCollision(player, goal)) {
         // Player reached the goal
-        score++; // Increase the score
-        generateNewLevel(); // Generate a new level
+        score++;
+        generateNewLevel();
     }
 }
 
@@ -121,10 +122,7 @@ function drawScore() {
 
     // Update the scoreboard div with the current score
     const scoreboardDiv = document.getElementById('scoreboard');
-    scoreboardDiv.textContent = `Score: ${score}`;
-
-    // Emit the updated score to the server
-    socket.emit('update_score', score);
+    // scoreboardDiv.textContent = `Score: ${score}`;
 }
 
 // Game loop
@@ -204,6 +202,14 @@ function positionPlayer() {
     } while (isPointInsideWall(player.x, player.y));
 }
 
+function checkCollision(rect1, rect2) {
+    return (
+        rect1.x < rect2.x + rect2.width &&
+        rect1.x + rect1.width > rect2.x &&
+        rect1.y < rect2.y + rect2.height &&
+        rect1.y + rect1.height > rect2.y
+    );
+}
 
 // Randomly position the goal avoiding walls
 function positionGoal() {
@@ -220,31 +226,29 @@ positionGoal();
 // Move the player with WASD
 function movePlayer() {
     const keys = keyState;
-    if (keys["a"] && !isCollidingWithWalls(player.x - player.speed, player.y)) {
-        player.x -= player.speed;
+    const newX = player.x;
+    const newY = player.y;
+
+    if (keys["a"]) {
+        newX -= player.speed;
     }
-    if (keys["d"] && !isCollidingWithWalls(player.x + player.speed, player.y)) {
-        player.x += player.speed;
+    if (keys["d"]) {
+        newX += player.speed;
     }
-    if (keys["w"] && !isCollidingWithWalls(player.x, player.y - player.speed)) {
-        player.y -= player.speed;
+    if (keys["w"]) {
+        newY -= player.speed;
     }
-    if (keys["s"] && !isCollidingWithWalls(player.x, player.y + player.speed)) {
-        player.y += player.speed;
+    if (keys["s"]) {
+        newY += player.speed;
     }
 
-    // Check boundaries to prevent going out of the screen
-    player.x = Math.max(0, Math.min(player.x, SCREEN_WIDTH - player.width));
-    player.y = Math.max(0, Math.min(player.y, SCREEN_HEIGHT - player.height));
-
-    // Handle player attack
-    if (keys["Space"] && !player.attacking) {
-        attack.active = true;
-        attack.x = player.x + player.width / 2 - attack.width / 2;
-        attack.y = player.y + player.height / 2 - attack.height / 2;
-        player.attacking = true;
+    // Check for collisions with walls
+    if (!isCollidingWithWalls(newX, newY)) {
+        player.x = newX;
+        player.y = newY;
     }
 }
+
 
 // Move enemies toward the player
 function moveEnemies() {
@@ -258,6 +262,7 @@ function moveEnemies() {
         const new_x = enemy.x + normalizedDx * enemy.speed;
         const new_y = enemy.y + normalizedDy * enemy.speed;
 
+        // Check for collisions with walls
         if (!isCollidingWithWalls(new_x, new_y)) {
             enemy.x = new_x;
             enemy.y = new_y;
@@ -367,7 +372,8 @@ for (let i = 0; i < 5; i++) {
  
 // Start the game loop
 gameLoop();
+socket.emit("username", getCookie("Username"), 'games');
+socket.emit('connect_game', 'survive');
 
-function runStartupGame(){socket.emit('connect_game', 'survive');}
 
 });

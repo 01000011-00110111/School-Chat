@@ -609,8 +609,10 @@ def connect(roomid):
 def update_score(score, userid, game):
     user = dbm.Accounts.find_one({'userId': userid})
     display = user['displayName']
-    top_scores = dbm.Games.find_one_and_update({'game': game}, {'$push': {'score': f'{display}: {score}'}}, upsert=True)
-    emit('score_updated', top_scores['score'], broadcast=True)
+    dbm.Games.find_one_and_update({'game': game}, {'$push': {'score': f'{display}: {score}'}}, upsert=True)
+    scores_raw = dbm.Games.find_one({'game': game})['score']
+    scores = games.leaderboard(scores_raw)
+    emit('score_updated', scores, broadcast=True)
 
 # @socketio.on('update_top_scores')
 # def update_top_scores(score,):
@@ -619,9 +621,10 @@ def update_score(score, userid, game):
 #     emit('top_scores_updated', top_scores['score'])
 
 @socketio.on('connect_game')
-def connect(game):
-    top_scores = dbm.Games.find_one({'game': game})
-    emit('top_scores_updated', top_scores['score'])
+def connect_game(game):
+    scores_raw = dbm.Games.find_one({'game': game})['score']
+    scores = games.leaderboard(scores_raw)
+    emit('score_updated', scores)
 
 ################################# GAME STUFF #################################
 

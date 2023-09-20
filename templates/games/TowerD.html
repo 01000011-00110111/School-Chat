@@ -1,0 +1,32 @@
+{% extends 'index.html' %}
+{% block header %}
+<meta charset="UTF-8">
+<title>Chat Games</title>
+<script src="static/games/TowerD.js"></script>
+<link rel="stylesheet" href="static/games/games.css"> 
+{% endblock %}
+{% block content %}
+<div id="topScores" style="position: absolute; left: 10px; top: 50px; color: #FFF; font-size: 18px;">
+    <h3>Top Scores</h3>
+    <ul id="scoreList"></ul>
+</div>    
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<div id="ui">
+    <div id="money">Money: $<span id="moneyValue">100</span></div>
+    <div id="score">Score: <span id="scoreValue">0</span></div>
+    <div id="wave">Wave: <span id="waveValue">1</span></div>
+    <div id="hp">HP: <span id="hpValue">100</span></div>
+</div>
+<div id="towerShop">
+    <!-- Create buttons to buy towers -->
+    <button onclick="buyTower(0)">Buy Tower A ($50)</button>
+    <button onclick="buyTower(1)">Buy Tower B ($75)</button>
+    <!-- Add buttons for other tower types -->
+</div>
+
+<!-- <button id="skipButton">Skip Level</button> -->
+
+<div class="activenav" id="activenavGame">
+    <div id="online_users"></div>
+</div>
+{% endblock %}
