@@ -140,7 +140,7 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
 def signup() -> ResponseReturnValue:
     """Serve the game page."""
     #later we wil make the game change every day or 2 days
-    return flask.render_template('games/game.html')
+    return flask.render_template('games/TowerD.html')
 
 
 @app.route('/logout')

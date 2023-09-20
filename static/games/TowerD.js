@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Access HTML elements here
+    const moneyValue = document.getElementById('moneyValue');
+    const scoreValue = document.getElementById('scoreValue');
+    const waveValue = document.getElementById('waveValue');
+    const hpValue = document.getElementById('hpValue');
+    
     // Constants
     const SCREEN_WIDTH = 800;
     const SCREEN_HEIGHT = 600;
@@ -13,8 +19,28 @@ document.addEventListener('DOMContentLoaded', function () {
     // Towers
     const towers = [];
 
+    // Initialize player's money
+    let money = 100;
+
+    // Initialize wave
+    let wave = 1;
+
+    // Initialize hp
+    let hp = 100;
+
+    // Projectiles array to keep track of tower projectiles
+    const projectiles = [];
+    
     // Enemies
     const enemies = [];
+
+    // Define the goal object
+    const goal = {
+        x: 600,      // Adjust the x-coordinate as needed
+        y: 300,      // Adjust the y-coordinate as needed
+        width: 40,   // Adjust the width as needed
+        height: 40,  // Adjust the height as needed
+    };
 
     // Score
     let score = 0;
@@ -123,22 +149,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Start the game loop
     gameLoop();
+    socket.emit("username", getCookie("Username"), 'games');
+    socket.emit('connect_game', 'survive');
 
-    // Fetch top scores from the server and update the leaderboard
-    function updateLeaderboard() {
-        // Use fetch or AJAX to get the top scores from the server
-        // Parse the response and update the leaderboard HTML element
-        const leaderboard = document.getElementById('scoreList');
-        leaderboard.innerHTML = '';
-        // Loop through the top scores and add them to the leaderboard
-        // Example: leaderboard.innerHTML += `<li>${scoreData.username}: ${scoreData.score}</li>`;
-    }
 
-    // Call the updateLeaderboard function to initially load the top scores
-    updateLeaderboard();
-
-    // You can periodically call updateLeaderboard to refresh the scores
-    setInterval(updateLeaderboard, 5000); // Refresh every 5 seconds
 
     // Define Tower Types
     const towerTypes = [
@@ -148,15 +162,15 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
 
     // UI Elements
-    let money = 100;
     let selectedTower = null;
 
     // Function to update UI elements
     function updateUI() {
-        document.getElementById('moneyValue').textContent = money;
-        document.getElementById('scoreValue').textContent = score;
-        document.getElementById('waveValue').textContent = wave;
-        document.getElementById('hpValue').textContent = hp;
+        // Update UI elements here
+        moneyValue.textContent = money;
+        scoreValue.textContent = score;
+        waveValue.textContent = wave;
+        hpValue.textContent = hp;
     }
 
     // Function to buy towers
@@ -197,32 +211,27 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    let hp = 100;
-    let wave = 1;
-
     // Function to attack enemies
     function attackEnemies() {
         // Implement tower attack logic
     }
 
-    // Fetch the initial top scores when the page loads
-    socket.on('connect', () => {
-        socket.emit('get_top_scores');
+    socket.on("force_username", (_statement, ignore_user) => {
+    if (getCookie('Userid') != ignore_user){
+        socket.emit("username", getCookie("Username"), 'games');
+    } else {socket.emit("username", 'pass', 'games');}
     });
-
-    // Function to handle updating top scores on the client
-    function updateTopScores(newTopScores) {
-        const scoreList = document.getElementById('scoreList');
-        scoreList.innerHTML = '';
-        newTopScores.forEach((topScore, index) => {
-            const listItem = document.createElement('li');
-            listItem.textContent = `#${index + 1}: ${topScore}`;
-            scoreList.appendChild(listItem);
-        });
-    }
-
+    
     // Listen for the "top_scores_updated" event from the server
     socket.on('score_updated', (newTopScores) => {
-        updateTopScores(newTopScores);
+        let newline = "<br>"
+        let scorelist = "";
+        let topscores = document.getElementById("scoreList");
+        for (var i = 0; i < newTopScores.length; i++) {
+            var split = newTopScores[i].split(",");
+            scorelist = scorelist + split + newline
+        }
+        topscores["innerHTML"] = scorelist;
     });
+
 });
