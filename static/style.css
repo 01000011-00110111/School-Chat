@@ -66,9 +66,8 @@ html {
 
 #pfpmenu {
     border-radius: 100px;
-    width: 50px;
-    height: 50px;
-    margin-left: 8.8%;
+    width: 45px;
+    height: 45px;
 }
 
 #chat {
@@ -87,31 +86,26 @@ html {
 #message {
     font-size: 18px;
     width: 100%;
+    border-radius: 15px;
 }
 
 /* id start by getting the text above the area the text box is */
 #chatbox {
-    padding-top: 2%;
-    padding-bottom: 2%;
     display: flex;
-    position: fixed;
-    border-radius: 20px;
-    bottom: 0%;
-    left: 25%;
-    right: 25%;
-    padding-left: 5%;
-    padding-right: 3%;
-    vertical-align: middle;
-    font-size: 20px;
-    border: 0;
+    width: 50%;
+    height: 100%;
+    align-self: center;
 }
 
 #sides {
     position: fixed;
     bottom: 0%;
     width: 100%;
-    padding-bottom: 7%;
-    /*border-top: 5px solid black*/
+    /*border-top: 5px solid black;*/
+    justify-content: center;
+    display: flex;
+    height: 9%;
+    margin: 0px -7.7px;
 }
 
 #activenav {
@@ -122,6 +116,7 @@ html {
     margin-left: 88%;
     border-left: 5px solid #0000ff;
     color: white;
+    display: none;
 }
 
 .activenav {
@@ -131,7 +126,7 @@ html {
 
 #send {
     font-size: 24px;
-    border-radius: 20px;
+    border-radius: 100%;
 }
 
 #send:hover {
@@ -148,27 +143,22 @@ html {
 }
 
 #topleft {
-    position: fixed;
-    width: 0%;
-    padding-top: .5%;
-    /*color: #c2bcbc;*/
-    font-size:40px;
-    cursor:pointer
+    width: 50px;
+    height: 100%;
+    padding-left: 5px;
 }
 
 /* Nav Menu left */
 
 .sidenav {
     height: 100%;
-    width: 0;
     position: fixed;
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #292;
     overflow-x: hidden;
     transition: 0.5s;
-    padding-top: 60px;
+    padding-top: 57px;
 }
 
 .sidenav a {
@@ -178,18 +168,22 @@ html {
     color: #d0c8c8;
     display: block;
     transition: 0.3s;
+    background: black;
+    border-radius: 15px;
+    height: 40px;
+    width: 84%;
 }
 
 .sidenav a:hover {
     color: #f1f1f1;
 }
 
-.sidenav .closebtn {
+.closebtn {
     position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
+    margin: -73px 74%;
+    width: 12px !important;
+    font-size: 40px !important;
+    background: transparent !important;
 }
 
 @media screen and (max-height: 450px) {
@@ -373,7 +367,7 @@ html {
 }
 
 .AccControls {
-  display: none;
+  display: block;
   position: absolute;
   background-color: #3d3846;
   min-width: 60px;
@@ -381,16 +375,14 @@ html {
   z-index: 1;
   top: 55px;
   border-radius: 10px;
-  margin: 6px -12px;
+  margin: 6px -24px;
 }
 
 .AccountPopup {
   display: grid;
-  width: 80px;
-  height: 150px;
   text-align: center;
+  margin: 5px 95%;
   position: fixed;
-  left: 94%;
 }
 
 .AccountPopup a {
@@ -552,4 +544,31 @@ html {
 .header-item {
   width: 100%;
   justify-content: center;
+}
+
+#topbar {
+  background: black;
+  position: fixed;
+  width: 100%;
+  height: 8%;
+  margin: -14.9px -7.7px;
+  padding: 0px;
+  display: flex;
+  box-shadow: 0px -1px 44px 15px #191919;
+}
+
+#RoomDisplay {
+  height: 100%;
+  margin: 16px 0;
+}
+
+.tabs {
+  margin: 19px 29%;
+}
+
+#iconbar {
+  background: #191919;
+  width: 17%;
+  justify-content: center;
+  display: grid;
 }
