@@ -2,8 +2,8 @@
 {% block header %}
 <meta charset="UTF-8">
 <title>Chat Games</title>
-<script src="static/games/game.js"></script>
-<link rel="stylesheet" href="static/games/games.css"> 
+<script src="/static/games/game.js"></script>
+<link rel="stylesheet" href="/static/games/games.css"> 
 {% endblock %}
 {% block content %}
 <div id="topScores" style="position: absolute; left: 10px; top: 50px; color: #FFF; font-size: 18px;">
@@ -16,7 +16,7 @@
 
 <div class="activenav" id="activenav">
     <div class="AccountPopup">
-        <input type="image" id="pfpmenu" src="static/favicon.ico" class="PictureBTN" onclick="OpenAC();"/>
+        <input type="image" id="pfpmenu" src="/static/favicon.ico" class="PictureBTN" onclick="OpenAC();"/>
         <div id="AccControls" class='AccControls'>
             <a href="/logout">Logout</a>
             <a href="/chat">Chat</a>

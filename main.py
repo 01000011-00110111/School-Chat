@@ -137,10 +137,19 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
 
 @app.route('/game')
 @login_required
-def signup() -> ResponseReturnValue:
+def games_sel() -> ResponseReturnValue:
+    """Serve the game page."""
+    return flask.render_template('games/selection.html')
+
+
+@app.route('/game/<game_name>')
+@login_required
+def game_wanted(game_name) -> ResponseReturnValue:
     """Serve the game page."""
     #later we wil make the game change every day or 2 days
-    return flask.render_template('games/TowerD.html')
+    # or let them choose what game, like ive done here
+    # and have a random option aswell (that acts like the I'm feeling lucky button)
+    return flask.render_template(f'games/{game_name}.html')
 
 
 @app.route('/logout')
@@ -609,10 +618,15 @@ def connect(roomid):
 def update_score(score, userid, game):
     user = dbm.Accounts.find_one({'userId': userid})
     display = user['displayName']
-    dbm.Games.find_one_and_update({'game': game}, {'$push': {'score': f'{display}: {score}'}}, upsert=True)
+    dbm.Games.find_one_and_update({'game': game},
+                                  {'$push': {
+                                      'score': f'{display}: {score}'
+                                  }},
+                                  upsert=True)
     scores_raw = dbm.Games.find_one({'game': game})['score']
     scores = games.leaderboard(scores_raw)
     emit('score_updated', scores, broadcast=True)
+
 
 # @socketio.on('update_top_scores')
 # def update_top_scores(score,):
@@ -620,11 +634,13 @@ def update_score(score, userid, game):
 #     top_scores = dbm.Games.find_one({'game': game})
 #     emit('top_scores_updated', top_scores['score'])
 
+
 @socketio.on('connect_game')
 def connect_game(game):
     scores_raw = dbm.Games.find_one({'game': game})['score']
     scores = games.leaderboard(scores_raw)
     emit('score_updated', scores)
+
 
 ################################# GAME STUFF #################################
 
@@ -688,8 +704,7 @@ def online_refresh():
         dbm.Online.delete_many({})
         socketio.emit("force_username", ("", None))
         print('e')
-        time.sleep(10)# this is using a socketio refresh
-
+        time.sleep(10)  # this is using a socketio refresh
 
 
 if __name__ == "__main__":
