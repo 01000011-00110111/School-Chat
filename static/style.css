@@ -109,14 +109,14 @@ html {
 }
 
 #activenav {
-    position: fixed;
-    top: 0%;
-    width: 100%;
-    padding-bottom: 54%;
-    margin-left: 88%;
-    border-left: 5px solid #0000ff;
-    color: white;
-    display: none;
+  position: fixed;
+  top: 7%;
+  width: 100%;
+  padding-bottom: 60%;
+  margin-left: 88%;
+  border-left: 5px solid #000;
+  color: white;
+  box-shadow: 10px 20px 17px 16px #191919;
 }
 
 .activenav {
@@ -555,20 +555,5 @@ html {
   padding: 0px;
   display: flex;
   box-shadow: 0px -1px 44px 15px #191919;
-}
-
-#RoomDisplay {
-  height: 100%;
-  margin: 16px 0;
-}
-
-.tabs {
-  margin: 19px 29%;
-}
-
-#iconbar {
-  background: #191919;
-  width: 17%;
-  justify-content: center;
-  display: grid;
+  z-index: 1;
 }
