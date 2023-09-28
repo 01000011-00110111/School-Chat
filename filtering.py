@@ -37,7 +37,7 @@ def run_filter(user, room, message, roomid, userid):
     if user_muted not in [0, 3] and perms != 'dev':
         return ('permission', user_muted)
 
-    if bool(re.search(r'[<>]', message)) is True:
+    if bool(re.search(r'[<>]', message)) is True and perms != 'dev':
         cmds.warn_user(user)
         return ('permission', 10, user_muted)
 
