@@ -139,7 +139,7 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
 @login_required
 def games_sel() -> ResponseReturnValue:
     """Serve the game page."""
-    return flask.render_template('games/selection.html')
+    return flask.render_template('games.html')
 
 
 @app.route('/game/<game_name>')

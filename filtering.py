@@ -59,7 +59,7 @@ def run_filter(user, room, message, roomid, userid):
             cmds.warn_user(user)
             failed_message(('permission', 11, 'locked'), roomid, user)
 
-    final_str = compile_message(message, profile_picture, user, role, preuser,
+    final_str = compile_message(markdown(message), profile_picture, user, role, preuser,
                                 message_count)
 
     # check if locked or allowed to send
@@ -136,6 +136,33 @@ def to_hyperlink(text):
 def filter_message(message):
     """No one likes profanity, especially flagging systems."""
     return profanity.censor(message)
+
+
+def markdown(message):
+    """our own custom markdown code"""
+    formatting_patterns = {
+        "I:": ("<i>", "</i>"),
+        "B:": ("<b>", "</b>"),
+        "r:": ('<font color="#ff0000">', '</font>'),
+        "g:": ('<font color="#00ff00">', '</font>'),
+        "b:": ('<font color="#0000ff">', '</font>'),
+    }
+    
+    def repl(match):
+        text = match.group(0)
+        
+        if re.match(r'^[0-9A-Fa-f]{6}:.*?:c$', text):
+            hex_color = text[:6]
+            inner_text = text[7:-2]
+            return f'<font color="#{hex_color}">{inner_text}</font>'
+        
+        start_tag, end_tag = formatting_patterns.get(text[:2], ("", ""))
+        inner_text = text[2:-2] if start_tag else text
+        return f"{start_tag}{inner_text}{end_tag}" if start_tag else text
+    
+    pattern = r'([0-9A-Fa-f]{6}:.*?:c)|(I:.*?:I)|(B:.*?:B)|(r:.*?:r)|(g:.*?:g)|(b:.*?:b)'
+    
+    return re.sub(pattern, repl, message)
 
 
 def find_pings(message, dispName, profile_picture, roomid, user):
