@@ -19,12 +19,10 @@ import os
 import logging
 import hashlib
 import keys
-import re
 import flask
 import pymongo
 import uuid
 import time
-import threading
 from flask import request
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
@@ -139,7 +137,7 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
 @login_required
 def games_sel() -> ResponseReturnValue:
     """Serve the game page."""
-    return flask.render_template('games.html')
+    return flask.render_template('games/game.html')
 
 
 @app.route('/game/<game_name>')

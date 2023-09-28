@@ -7,7 +7,7 @@ from datetime import datetime, timezone, timedelta
 from better_profanity import profanity
 from flask_socketio import emit
 # from markdown import markdown
-import chat
+# import chat
 import word_lists
 import cmds
 import log

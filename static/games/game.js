@@ -102,6 +102,7 @@ function checkGoalCollision() {
     if (checkCollision(player, goal)) {
         // Player reached the goal
         score++;
+	if (player.hp < 100){player.hp += 5}
         generateNewLevel();
     }
 }
@@ -224,31 +225,61 @@ positionPlayer();
 positionGoal();
 
 // Move the player with WASD
+// Move the player with WASD
 function movePlayer() {
     const keys = keyState;
-    const newX = player.x;
-    const newY = player.y;
+    if (keys["a"] && !isColliding(player.x - player.speed, player.y)) {
+        player.x -= player.speed;
+    }
+    if (keys["d"] && !isColliding(player.x + player.speed, player.y)) {
+        player.x += player.speed;
+    }
+    if (keys["w"] && !isColliding(player.x, player.y - player.speed)) {
+        player.y -= player.speed;
+    }
+    if (keys["s"] && !isColliding(player.x, player.y + player.speed)) {
+        player.y += player.speed;
+    }
+    if (keys["Space"]) {generateNewLevel();}
+    
 
-    if (keys["a"]) {
-        newX -= player.speed;
-    }
-    if (keys["d"]) {
-        newX += player.speed;
-    }
-    if (keys["w"]) {
-        newY -= player.speed;
-    }
-    if (keys["s"]) {
-        newY += player.speed;
-    }
+    // Check boundaries to prevent going out of the screen
+    player.x = Math.max(0, Math.min(player.x, SCREEN_WIDTH - player.width));
+    player.y = Math.max(0, Math.min(player.y, SCREEN_HEIGHT - player.height));
 
-    // Check for collisions with walls
-    if (!isCollidingWithWalls(newX, newY)) {
-        player.x = newX;
-        player.y = newY;
-    }
+    // Handle player attack
+//     if (keys["Space"] && !player.attacking) {
+//         attack.active = true;
+//         attack.x = player.x + player.width / 2 - attack.width / 2;
+//         attack.y = player.y + player.height / 2 - attack.height / 2;
+//         player.attacking = true;
+//     }
 }
 
+function isColliding(newX, newY) {
+    for (const enemy of enemies) {
+        if (
+            player.x < enemy.x + enemy.width &&
+            player.x + player.width > enemy.x &&
+            player.y < enemy.y + enemy.height &&
+            player.y + player.height > enemy.y
+        ) {
+            return true;
+        }
+    for (const wall of walls) {
+        if (
+            newX < wall.x + wall.width &&
+            newX + player.width > wall.x &&
+            newY < wall.y + wall.height &&
+            newY + player.height > wall.y
+        ) {
+            return true;
+        }
+    }
+    return false;
+  
+    }
+}
 
 // Move enemies toward the player
 function moveEnemies() {
@@ -258,8 +289,8 @@ function moveEnemies() {
         const length = Math.max(Math.abs(dx), Math.abs(dy), 1);
         const normalizedDx = dx / length;
         const normalizedDy = dy / length;
-
-        const new_x = enemy.x + normalizedDx * enemy.speed;
+        
+	const new_x = enemy.x + normalizedDx * enemy.speed;
         const new_y = enemy.y + normalizedDy * enemy.speed;
 
         // Check for collisions with walls
