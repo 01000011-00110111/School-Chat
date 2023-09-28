@@ -5,9 +5,9 @@
 import random
 from string import ascii_uppercase
 from datetime import datetime
-from main import dbm
 from flask_socketio import emit
-import main
+from main import dbm
+#import main
 
 
 def chat_room_log(message):
@@ -157,7 +157,7 @@ def chat_room_edit(request, function, room_name, user, users):
         if room["generatedBy"] == user["username"]:
             return whitelist(room_name, function, user, users, room, username,
                              False)
-        elif user["SPermission"] == "Debugpass":
+        if user["SPermission"] == "Debugpass":
             return whitelist(room_name, function, user, users, room, username,
                              True)
         else:
@@ -174,7 +174,7 @@ def chat_room_edit(request, function, room_name, user, users):
         if room["generatedBy"] == user["username"]:
             return blacklist(room_name, function, user, users, room, username,
                              False)
-        elif user["SPermission"] == "Debugpass":
+        if user["SPermission"] == "Debugpass":
             return blacklist(room_name, function, user, users, room, username,
                              True)
         else:
@@ -201,9 +201,8 @@ def whitelist(room_name, set_type, user, users, room, username, dev):
     whitelisted_users = pre_user_list["whitelisted"].replace("users:", "").split(',')
     add_users = []
     new_users = []
-    
+
     for user in users_to_add:
-    
         if user not in ['clear','everyone'] and set_type == 'add':
             if user in blacklisted_users:
                 if dev is True:
@@ -226,7 +225,7 @@ def whitelist(room_name, set_type, user, users, room, username, dev):
             new_users.append(user)
             add_users = f"users:{','.join(new_users)}"
             response = (0, 'W')
-        elif (user in ['clear','everyone'] and user not in ['modonly','devonly'] 
+        elif (user in ['clear','everyone'] and user not in ['modonly','devonly']
               and set_type == 'set'):
             new_users.append('everyone')
             add_users = ','.join(new_users)
@@ -234,11 +233,10 @@ def whitelist(room_name, set_type, user, users, room, username, dev):
         elif user not in ['modonly','devonly'] and set_type == 'set':
             new_users.append(user)
             add_users = ','.join(new_users)
-            response = (2, 'W')
-            
+            response = (2, 'W')  
     if set_type == 'add':
         add_users = f"users:{','.join(whitelisted_users)},{''.join(new_users)}"
-    
+
     #turn the addusers list into a string
     add_users.split(',') #split the list into a string
     add_users = ','.join(add_users) #join the list into a string
@@ -303,10 +301,10 @@ def blacklist(room_name, set_type, user, users, room, username, dev):
             new_users.append('empty')
             add_users = ','.join(new_users)
             response = (1, 'B')
-    
+
     if set_type == 'add':
         add_users = f"users:{','.join(blacklisted_users)},{''.join(new_users)}"
-    
+
     #turn the addusers list into a string
     add_users.split(',') #split the list into a string
     add_users = ','.join(add_users) #join the list into a string
