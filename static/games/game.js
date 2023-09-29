@@ -55,17 +55,6 @@ const walls = generateWalls();
 // Score
 let score = 0;
 
-// // Function to handle updating top scores on the client
-// function updateTopScores(newTopScores) {
-//     alert(newTopScores);
-//     const scoreList = document.getElementById('scoreList');
-//     scoreList.innerHTML = '';
-//     newTopScores.forEach((topScore, index) => {
-//         const listItem = document.createElement('li');
-//         listItem.textContent = `#${index + 1}: ${topScore}`;
-//         scoreList.appendChild(listItem);
-//     });
-// }
 
 // When a player dies, emit an event to request updated top scores
 // Inside the game logic where a player's score is updated
@@ -107,13 +96,6 @@ function checkGoalCollision() {
     }
 }
 
-
-// Function to draw the score on the screen
-function drawScore() {
-    ctx.fillStyle = "#FFF";
-    ctx.font = "24px Arial";
-    ctx.fillText(`Score: ${score}`, 20, 70); // Adjust the position as needed
-}
 
 // Function to draw the score on the screen
 function drawScore() {
@@ -240,7 +222,7 @@ function movePlayer() {
     if (keys["s"] && !isColliding(player.x, player.y + player.speed)) {
         player.y += player.speed;
     }
-    if (keys["Space"]) {generateNewLevel();}
+    if (keys["space"]) {generateNewLevel();}
     
 
     // Check boundaries to prevent going out of the screen
@@ -301,6 +283,29 @@ function moveEnemies() {
     }
 }
 
+function isCollidingE(newX, newY) {
+        // if (
+        //     player.x < enemy.x + enemy.width &&
+        //     player.x + player.width > enemy.x &&
+        //     player.y < enemy.y + enemy.height &&
+        //     player.y + player.height > enemy.y
+        // ) {
+        //     return true;
+        // }
+    for (const wall of walls) {
+        if (
+            newX < wall.x + wall.width &&
+            newX + enemy.width > wall.x &&
+            newY < wall.y + wall.height &&
+            newY + enemy.height > wall.y
+        ) {
+            return true;
+        }
+    }
+    return false;
+ 
+}
+
 // Check collisions
 function checkCollisions() {
     // Check collisions with enemies
@@ -313,10 +318,10 @@ function checkCollisions() {
         ) {
             // Player and enemy collided, subtract HP
             const currentTime = Date.now();
-            if (currentTime - player.lastHitTime > 10000) { // Check if 10 seconds have passed
+            if (currentTime - player.lastHitTime > 3500) { // Check if 3.5 seconds have passed
                 player.hp -= 10;
                 player.lastHitTime = currentTime;
-                player.knockback = 20; // Apply knockback
+                // player.knockback = 20; // Apply knockback
                 if (player.hp <= 0) {
                     // Game over logic
                     generateNewLevel();

@@ -29,9 +29,9 @@ socket.on("force_room_update", (_statement) => {
 
 socket.on("ping", ({ who, from, pfp, message, name, roomid}) => {
     let user_name = getCookie("Username");
-    room = window.sessionStorage.getItem("roomid");
+    // room = window.sessionStorage.getItem("roomid");
     console.log(who, from, message);
-    if (user_name === who && roomid === room) {
+    if (user_name === who) {
         new Notification("You where pinged by:", { body: from + ` in ${name}: ` + message, icon: '/static/favicon.ico'});
     } else if (who === "everyone") {// add a check to see if the user has access and if so then ping them    
         new Notification("You where pinged by:", { body: from + ` in ${name}: ` + message, icon: '/static/favicon.ico'});
