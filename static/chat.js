@@ -24,7 +24,7 @@ socket.on("force_username", (_statement, ignore_user) => {
 });
 
 socket.on("force_room_update", (_statement) => {
-    socket.emit("get_rooms", getCookie("userid"));
+    socket.emit("get_rooms", getCookie("Userid"));
 });
 
 socket.on("ping", ({ who, from, pfp, message, name, roomid}) => {
@@ -58,7 +58,7 @@ function runStartup() {
     window.sessionStorage.setItem("roomid", 'ilQvQwgOhm9kNAOrRqbr');
     username = getCookie("Username");
     socket.emit("username", username, 'chat');
-    socket.emit("get_rooms", getCookie("userid"));
+    socket.emit("get_rooms", getCookie("Userid"));
     whichEvent(getCookie('Theme'))
     // changeRoom('ilQvQwgOhm9kNAOrRqbr')
 }
