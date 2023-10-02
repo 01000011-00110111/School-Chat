@@ -62,6 +62,8 @@ function playerDied() {
     socket.emit('update_score', score, getCookie('Userid'), 'survive');
     score = 0; // Reset the score
     player.hp = 100; // Reset the player's HP
+    player.speed = 5; // Reset the player's speed
+    // enemy.speed = 100; // Reset the enemys's speed
 }
 
 
@@ -87,11 +89,31 @@ skipButton.addEventListener('click', () => {
 });
 
 // Function to check if the player has touched the goal
+let check_score = 50;
+
 function checkGoalCollision() {
     if (checkCollision(player, goal)) {
-        // Player reached the goal
+        if (player.hp < 100) {
+            player.hp += 5;
+        }
+        if (score >= check_score) {
+            if (player.speed > 2) {
+                check_score += 10;
+                player.speed--;
+                console.log(check_score, player.speed);
+            }
+            if (player.speed === 2) {
+                // for (const enemy of enemies) {
+                //     if (score >= check_score && enemy.speed < 10) { // Use >= instead of ===
+                //         enemy.speed += 0.5; // Update enemy.speed with +=
+                //         console.log(enemy.speed);
+                //     }
+                //     // You can add more conditions for other updates here
+                // }
+                console.log('add somthing later')
+            }
+        }
         score++;
-	if (player.hp < 100){player.hp += 5}
         generateNewLevel();
     }
 }
@@ -210,19 +232,18 @@ positionGoal();
 // Move the player with WASD
 function movePlayer() {
     const keys = keyState;
-    if (keys["a"] && !isColliding(player.x - player.speed, player.y)) {
-        player.x -= player.speed;
+    if ((keys["a"] || keys["ArrowLeft"]) && !isColliding(player.x - player.speed, player.y)) {
+    player.x -= player.speed;
     }
-    if (keys["d"] && !isColliding(player.x + player.speed, player.y)) {
+    if ((keys["d"] || keys["ArrowRight"]) && !isColliding(player.x + player.speed, player.y)) {
         player.x += player.speed;
     }
-    if (keys["w"] && !isColliding(player.x, player.y - player.speed)) {
+    if ((keys["w"] || keys["ArrowUp"]) && !isColliding(player.x, player.y - player.speed)) {
         player.y -= player.speed;
     }
-    if (keys["s"] && !isColliding(player.x, player.y + player.speed)) {
+    if ((keys["s"] || keys["ArrowDown"]) && !isColliding(player.x, player.y + player.speed)) {
         player.y += player.speed;
     }
-    if (keys["space"]) {generateNewLevel();}
     
 
     // Check boundaries to prevent going out of the screen
@@ -238,16 +259,36 @@ function movePlayer() {
 //     }
 }
 
+let held = false;
+
+document.addEventListener("keydown", function(event) {
+  if ((event.keyCode === 32 || event.key === " ") && !held) {
+    held = true;
+    setTimeout(function() {
+      generateNewLevel();
+    }, 0);
+  }
+});
+
+document.addEventListener("keyup", function(event) {
+  if (event.keyCode === 32 || event.key === " ") {
+    // The spacebar was released
+    held = false;
+  }
+});
+
+
+
 function isColliding(newX, newY) {
-    for (const enemy of enemies) {
-        if (
-            player.x < enemy.x + enemy.width &&
-            player.x + player.width > enemy.x &&
-            player.y < enemy.y + enemy.height &&
-            player.y + player.height > enemy.y
-        ) {
-            return true;
-        }
+    // for (const enemy of enemies) {
+    //     if (
+    //         player.x < enemy.x + enemy.width &&
+    //         player.x + player.width > enemy.x &&
+    //         player.y < enemy.y + enemy.height &&
+    //         player.y + player.height > enemy.y
+    //     ) {
+    //         return true;
+    //     }
     for (const wall of walls) {
         if (
             newX < wall.x + wall.width &&
@@ -258,9 +299,7 @@ function isColliding(newX, newY) {
             return true;
         }
     }
-    return false;
-  
-    }
+    return false 
 }
 
 // Move enemies toward the player

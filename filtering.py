@@ -214,7 +214,7 @@ def find_cmds(message, user, roomid):
     origin_room = None
     match = re.findall(r"\(|\)", command_string)
 
-    if perms == 'dev' and roomid == 'jN7Ht3giH9EDBvpvnqRB' and match != []:
+    if perms == 'dev' and roomid == 'jN7Ht3giH9EDBvpvnqRB12' and match != []:
         match_msg = re.findall(r"\((.*?)\)", command_string)
         find_roomid = re.sub(r"\([^()]+\)", "", command_string).strip()
         room_check = rooms.check_roomids(find_roomid)

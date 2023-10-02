@@ -526,9 +526,9 @@ def handle_online(username: str):
 
 
 @socketio.on("get_rooms")
-def get_rooms(username):
+def get_rooms(userid):
     """Grabs the chat rooms."""
-    user_name = dbm.Accounts.find_one({"username": username})
+    user_name = dbm.Accounts.find_one({"userId": userid})
     user = user_name["displayName"]
     room_access = rooms.get_chat_rooms()
     permission = user_name["locked"].split(' ')
