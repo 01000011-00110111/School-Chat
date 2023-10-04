@@ -48,6 +48,8 @@ const goal = {
 
 // Enemies
 const enemies = [];
+let offset_speed = 2
+let offset_attack = 10
 
 // Walls
 const walls = generateWalls();
@@ -103,13 +105,17 @@ function checkGoalCollision() {
                 console.log(check_score, player.speed);
             }
             if (player.speed === 2) {
-                // for (const enemy of enemies) {
-                //     if (score >= check_score && enemy.speed < 10) { // Use >= instead of ===
-                //         enemy.speed += 0.5; // Update enemy.speed with +=
-                //         console.log(enemy.speed);
-                //     }
-                //     // You can add more conditions for other updates here
-                // }
+                for (const enemy of enemies) {
+                    if (score >= check_score && enemy.speed < 10) { // Use >= instead of ===
+                        offset_speed += 0.5; // Update enemy.speed with +=
+                        console.log(enemy.speed + offset_speed);
+                    }
+                    if (score >= check_score && enemy.speed === 10 && enemy.attack < 25){
+                        offset_attack++;
+                        console.log(enemy.attack + offset_attack);
+                    }
+                    // You can add more conditions for other updates here
+                }
                 console.log('add somthing later')
             }
         }
@@ -163,7 +169,8 @@ function generateNewLevel() {
             y: Math.random() * SCREEN_HEIGHT,
             width: 32,
             height: 32,
-            speed: 2,
+            speed: 2 + offset_speed,
+            attack: offset_attack,
         });
     }
 }
@@ -358,7 +365,7 @@ function checkCollisions() {
             // Player and enemy collided, subtract HP
             const currentTime = Date.now();
             if (currentTime - player.lastHitTime > 3500) { // Check if 3.5 seconds have passed
-                player.hp -= 10;
+                player.hp -= enemy.attack;
                 player.lastHitTime = currentTime;
                 // player.knockback = 20; // Apply knockback
                 if (player.hp <= 0) {

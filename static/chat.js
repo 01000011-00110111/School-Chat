@@ -55,7 +55,6 @@ socket.on("reset_chat", (who, roomid) => {
   
 
 function runStartup() {
-    setDarkStyle();
     window.sessionStorage.setItem("roomid", 'ilQvQwgOhm9kNAOrRqbr');
     username = getCookie("Username");
     userid = getCookie("Userid")

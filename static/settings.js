@@ -108,15 +108,38 @@ socket.on("force_username", (_statement) => {
     socket.emit("username", getCookie("Username"), 'settings');
 });
 
+const holidays = {
+  "halloween": {
+    name: "halloween",
+    start: "10-01",
+    end: "10-31"
+  },
+};
 
 function setTheme(theme) {
-    var themeBtn = document.querySelector(".themeBtn");
-    themeBtn.innerText = "You picked: " + capitalizeFirstLetter(theme);
-    document.getElementsByName("theme")[0].value = theme;
-    var themeDropdown = document.querySelector(".themeContent");
-    themeDropdown.style.display = "none";
+  let currentDate = new Date();
+  let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+  let day = currentDate.getDate().toString().padStart(2, '0');
+  var themeBtn = document.querySelector(".themeBtn");
+  var themeDropdown = document.querySelector(".themeContent");
+
+  for (const key in holidays) {
+    const holiday = holidays[key];
+    if (`${month}-${day}` >= holiday.start && `${month}-${day}` <= holiday.end && theme === 'holiday') {
+      theme = holiday.name;
+      break;
+    }
+  }
+
+  console.log(theme);
+
+  themeBtn.innerText = "You picked: " + capitalizeFirstLetter(theme);
+  document.getElementsByName("theme")[0].value = theme;
+  themeDropdown.style.display = "none";
 }
 
 function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+    

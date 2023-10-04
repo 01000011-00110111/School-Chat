@@ -37,8 +37,10 @@ client = pymongo.MongoClient(os.environ["mongo_key"])
 dbm = client.Chat
 scheduler = APScheduler()
 
+import addons
 import chat
 import cmds
+import database
 import filtering
 import games
 import rooms
@@ -453,7 +455,13 @@ def customize_accounts() -> ResponseReturnValue:
                 "email": email
             }
         })
+        resp = flask.make_response(flask.redirect(flask.url_for('chat_page')))
+        resp.set_cookie('Username', user['username'])
+        resp.set_cookie('Theme', theme)
+        resp.set_cookie('Profile', profile)
+        resp.set_cookie('Userid', user['userId'])
         error = "Updated account!"
+        return resp
     else:
         if user['email'] == email:
             return flask.render_template(
@@ -593,6 +601,7 @@ def handle_message(user_name, message, roomid, userid):
         if dbm.rooms.find_one({"roomid": roomid}) is not None:
             chat.add_message(result[1], roomid, room)
             emit("message_chat", (result[1], roomid), broadcast=True)
+            addons.message_addons(message, user, roomid, room)
             if "$sudo" in message and result[2] != 3:
                 filtering.find_cmds(message, user, roomid)
             elif '$sudo' in message and result[2] == 3:
