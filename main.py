@@ -40,7 +40,7 @@ scheduler = APScheduler()
 import addons
 import chat
 import cmds
-import database
+# import database
 import filtering
 import games
 import rooms
