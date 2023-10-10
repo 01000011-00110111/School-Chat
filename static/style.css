@@ -33,8 +33,8 @@ html {
 
 #online_users {
     padding-left: 0.7%;
-    padding-top: 4.3%;
-    color: white;
+    padding-top: 5%;
+    color: #ffffff;
 }
 
 #online_border {
@@ -165,7 +165,6 @@ html {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #292;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -212,6 +211,28 @@ html {
     font-size: 30px;
     display: flex;
 }
+
+#holiday {
+    background-color: #ffffff; 
+    color: #000000;
+    font-size: 30px;
+    display: flex;
+}
+
+#testing {
+    background-color: #494947; 
+    color: #ffffff;
+    font-size: 30px;
+    display: flex;
+}
+
+#winter {
+    background-color: #040c81; 
+    color: #74ade2;
+    font-size: 30px;
+    display: flex;
+}
+
 
 /* Styling for the theme dropdown container */
 .themeDropdown {
@@ -552,4 +573,45 @@ html {
 .header-item {
   width: 100%;
   justify-content: center;
+}
+
+@media screen and (max-width: 450px) {
+  #chatbox {
+    padding-top: 2%;
+    padding-bottom: 2%;
+    display: flex;
+    position: fixed;
+    border-radius: 20px;
+    bottom: 0%;
+    vertical-align: middle;
+    font-size: 20px;
+    border: 0;
+    width: 89%;
+    height: 5%;
+  }
+
+  #chat {
+    z-index: 0;
+    padding-left: 5%;
+    padding-right: 12%;
+    margin-left: 1.5%;
+    line-height: 89px;
+    padding-bottom: 9%;
+    margin-bottom: 2%;
+    margin-top: 1%;
+    padding-top: 9%;
+    word-wrap: break-word;
+    font-size: 35px;
+  }
+
+  #activenav {
+    position: fixed;
+    top: 0%;
+    width: 100%;
+    padding-bottom: 54%;
+    margin-left: 88%;
+    border-left: 5px solid #0000ff;
+    color: white;
+    display: none;
+  }
 }

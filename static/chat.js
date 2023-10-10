@@ -60,7 +60,7 @@ function runStartup() {
     userid = getCookie("Userid")
     socket.emit("username", username, 'chat');
     socket.emit("get_rooms", userid);
-    whichEvent(getCookie('Theme'))
+    setTheme(getCookie('Theme'))
     // changeRoom('ilQvQwgOhm9kNAOrRqbr')
 }
 
@@ -118,6 +118,17 @@ function toHyperlink(str) {
     return str3;
 }
 
+function BTMLog() {
+  if (Math.floor(window.scrollY) === window.scrollMaxY) {
+    console.log("cheese");
+    setTimeout(ToBtm, 10000)
+  } 
+}
+
+function ToBtm() {
+  window.scrollTo(0, chatDiv.scrollHeight);
+}
+
 function sendMessage() {
     let messageElement = document.getElementById("message");
     let user = getCookie('Username')
@@ -134,6 +145,8 @@ function sendMessage() {
     socket.emit('message_chat', user, messageL, window.sessionStorage.getItem("roomid"), userid);
     window.scrollTo(0, chatDiv.scrollHeight);
 }
+
+setInterval(BTMLog, 3000)
 
 function renderChat(messages, roomid) {
     let newline = "<br>";
