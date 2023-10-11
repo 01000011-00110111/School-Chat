@@ -42,7 +42,6 @@ import chat
 import cmds
 # import database
 import filtering
-import games
 import rooms
 import accounting
 import log
@@ -149,23 +148,6 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
     # later we can set this up to get the specific room (with permssions)
     # print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
-
-
-@app.route('/game')
-@login_required
-def games_sel() -> ResponseReturnValue:
-    """Serve the game page."""
-    return flask.render_template('games/game.html')
-
-
-@app.route('/game/<game_name>')
-@login_required
-def game_wanted(game_name) -> ResponseReturnValue:
-    """Serve the game page."""
-    #later we wil make the game change every day or 2 days
-    # or let them choose what game, like ive done here
-    # and have a random option aswell (that acts like the I'm feeling lucky button)
-    return flask.render_template(f'games/{game_name}.html')
 
 
 @app.route('/logout')
@@ -486,7 +468,7 @@ def handle_connect(username: str, location):
     """Will be used later for online users."""
     socketid = request.sid
     username_list = []
-    icons = {'settings': '⚙️', 'chat': '', 'games': '🎮'}
+    icons = {'settings': '⚙️', 'chat': ''}
     # this is until I pass the displayname to the user instead of the username
     if username != 'pass':
         user = dbm.Accounts.find_one({'username': username})
@@ -630,38 +612,6 @@ def connect(roomid):
     del room['_id']
 
     emit("room_data", room, to=socketid, namespace='/')
-
-
-################################# GAME STUFF #################################
-@socketio.on('update_score')
-def update_score(score, userid, game):
-    user = dbm.Accounts.find_one({'userId': userid})
-    display = user['displayName']
-    dbm.Games.find_one_and_update({'game': game},
-                                  {'$push': {
-                                      'score': f'{display}: {score}'
-                                  }},
-                                  upsert=True)
-    scores_raw = dbm.Games.find_one({'game': game})['score']
-    scores = games.leaderboard(scores_raw)
-    emit('score_updated', scores, broadcast=True)
-
-
-# @socketio.on('update_top_scores')
-# def update_top_scores(score,):
-#     # print(top_scores)
-#     top_scores = dbm.Games.find_one({'game': game})
-#     emit('top_scores_updated', top_scores['score'])
-
-
-@socketio.on('connect_game')
-def connect_game(game):
-    scores_raw = dbm.Games.find_one({'game': game})['score']
-    scores = games.leaderboard(scores_raw)
-    emit('score_updated', scores)
-
-
-################################# GAME STUFF #################################
 
 
 @scheduler.task('interval',

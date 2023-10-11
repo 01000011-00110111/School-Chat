@@ -44,10 +44,6 @@
       "description": "Quick access to the settings page"
     },
     {
-      "name": "Games",
-      "url": "/game"
-    },
-    {
       "name": "Github",
       "url": "https://github.com/01000011-00110111/School-Chat"
     }

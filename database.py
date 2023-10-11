@@ -11,6 +11,3 @@ user = client.Accounts.Accounts
 messages = client.Rooms.Messages
 rooms = client.Rooms.Rooms
 access = client.Rooms.Permission
-
-#other
-games = client.Chat.Games
