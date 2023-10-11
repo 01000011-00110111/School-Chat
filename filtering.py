@@ -7,7 +7,7 @@ from datetime import datetime, timezone, timedelta
 from better_profanity import profanity
 from flask_socketio import emit
 # from markdown import markdown
-import chat
+# import chat
 import word_lists
 import cmds
 import log
@@ -37,7 +37,7 @@ def run_filter(user, room, message, roomid, userid):
     if user_muted not in [0, 3] and perms != 'dev':
         return ('permission', user_muted)
 
-    if bool(re.search(r'[<>]', message)) is True:
+    if bool(re.search(r'[<>]', message)) is True and perms != 'dev':
         cmds.warn_user(user)
         return ('permission', 10, user_muted)
 
@@ -54,13 +54,14 @@ def run_filter(user, room, message, roomid, userid):
 
     if "[" in message and locked != 'true':
         if user['locked'] != 'locked':
-            find_pings(message, user['displayName'], profile_picture, roomid, user)
+            find_pings(message, user['displayName'], profile_picture, roomid,
+                       user)
         else:
             cmds.warn_user(user)
             failed_message(('permission', 11, 'locked'), roomid, user)
 
-    final_str = compile_message(message, profile_picture, user, role, preuser,
-                                message_count)
+    final_str = compile_message(markdown(message), profile_picture, user, role,
+                                preuser, message_count)
 
     # check if locked or allowed to send
     if locked == 'true' and perms not in ["dev", "mod"]:
@@ -138,11 +139,57 @@ def filter_message(message):
     return profanity.censor(message)
 
 
+def markdown(message):
+    """our own custom markdown code"""
+    compiled_str = message
+
+    formatting_patterns = {
+        "B:": ("<b>", "</b>"),  #Bold
+        "I:": ("<i>", "</i>"),  #italicize 
+        "U:": ("<u>", "</u>"),  #underline 
+        "r:": ('<font color="#ff0000">', '</font>'),  #red
+        "g:": ('<font color="#00ff00">', '</font>'),  #green
+        "lg:": ('<font color="#90EE90">', '</font>'),  #light green
+        "b:": ('<font color="#0000ff">', '</font>'),  #blue
+        "lb:": ('<font color="#ADD8E6">', '</font>'),  #light blue
+        "w:": ('<font color="#ffffff">', '</font>'),  #white 
+        "o:": ('<font color="#FFA500">', '</font>'),  #orange 
+        "p:": ('<font color="#800080">', '</font>'),  #purple 
+        "y:": ('<font color="#FFFF00">', '</font>'),  #yellow 
+        "v:": ('<font color="#7F00FF">', '</font>'),  #violet
+    }
+
+    # so its not something specific to lg and lb, its that the regex hangs the server on ANY combination of 2 letters - cserver
+    # I have no idea why it does that, it doesen't even matter if the letters are used anywhere else, it just doesn't like 2 letter ones.
+    def repl(match):
+        text = match.group(0)
+
+        if re.match(r'^[0-9A-Fa-f]{6}:.*?:c$', text):
+            hex_color = text[:6]
+            inner_text = text[7:-2]
+            hex_color = "ffffff" if hex_color == "000000" else hex_color
+            return f'<font color="#{hex_color}">{inner_text}</font>'
+
+        start_tag, end_tag = formatting_patterns.get(text[:2], ("", ""))
+        inner_text = text[2:-2] if start_tag else text
+        return f"{start_tag}{inner_text}{end_tag}" if start_tag else text
+
+    pattern = r'([0-9A-Fa-f]{6}:.*?:c)|(lg:.*?:lg)|(lb:.*?:lb)|([BIUrgbwopvy]:.*?:[BIUrgbwopvy])'
+
+    while True:
+        compiled_str = re.sub(pattern, repl, message)
+        if compiled_str == message:
+            break
+        message = compiled_str
+
+    return compiled_str
+
+
 def find_pings(message, dispName, profile_picture, roomid, user):
     """Gotta catch 'em all! (checks for pings in the users message)"""
     pings = re.findall(r'(?<=\[).+?(?=\])', message)
     room = rooms.get_chat_room(roomid)
-    
+
     for ping in pings:
         message = message.replace(f"[{ping}]", '')
         emit("ping", {
@@ -155,7 +202,7 @@ def find_pings(message, dispName, profile_picture, roomid, user):
         },
              namespace="/",
              broadcast=True)
-        break # ez one per message fix lol
+        break  # ez one per message fix lol
 
 
 def find_cmds(message, user, roomid):

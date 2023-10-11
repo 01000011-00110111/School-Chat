@@ -18,13 +18,12 @@
 import os
 import logging
 import hashlib
-import keys
-import re
-import flask
-import pymongo
 import uuid
 import time
-import threading
+from datetime import datetime, timedelta
+import keys
+import flask
+import pymongo
 from flask import request
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
@@ -33,15 +32,17 @@ from flask_login import LoginManager
 from flask_login import current_user, login_user, logout_user, login_required
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
-from datetime import datetime, timedelta
 
 client = pymongo.MongoClient(os.environ["mongo_key"])
 dbm = client.Chat
 scheduler = APScheduler()
 
+import addons
 import chat
 import cmds
+# import database
 import filtering
+import games
 import rooms
 import accounting
 import log
@@ -76,40 +77,56 @@ dbm.Online.delete_many({})
 
 
 class User:
+    """Represents a logged in user."""
 
     def __init__(self, username):
+        """Initialize the user."""
         self.username = username
 
     @staticmethod
     def is_authenticated():
+        """Check if the user is authenitcated."""
+        # this would only be used if we needed to check 2fa or something like that.
         return True
 
     @staticmethod
     def is_active():
+        """Check if the user's session is recent."""
+        # we could implement some kind of token expire here I think
         return True
 
     @staticmethod
     def is_anonymous():
+        """Check if the user is anonymous (never will be)."""
+        # We disabled anonymous users a while ago
         return False
 
     def get_id(self):
+        """Return the user's username."""
+        # whenever we get arround to it, maybe switch this to userid?
         return self.username
 
     @staticmethod
     def check_password(password_hash, password):
+        """Check the user's password against the one entered in the login field."""
         return hashlib.sha384(bytes(password,
                                     'utf-8')).hexdigest() == password_hash
 
     @staticmethod
     def check_username(username, db_username):
+        """Check the username against the one entered in the login field."""
         return username == db_username
 
+    # pylint: disable=E0213
     @login_manager.user_loader
     def load_user(username):
+        """Load the user into flask-login."""
         u = dbm.Accounts.find_one({"username": username})
         if not u:
             return None
         return User(username=u['username'])
+
+    # pylint: enable=E0213
 
 
 # license stuff
@@ -132,6 +149,23 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
     # later we can set this up to get the specific room (with permssions)
     # print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
+
+
+@app.route('/game')
+@login_required
+def games_sel() -> ResponseReturnValue:
+    """Serve the game page."""
+    return flask.render_template('games/game.html')
+
+
+@app.route('/game/<game_name>')
+@login_required
+def game_wanted(game_name) -> ResponseReturnValue:
+    """Serve the game page."""
+    #later we wil make the game change every day or 2 days
+    # or let them choose what game, like ive done here
+    # and have a random option aswell (that acts like the I'm feeling lucky button)
+    return flask.render_template(f'games/{game_name}.html')
 
 
 @app.route('/logout')
@@ -421,7 +455,13 @@ def customize_accounts() -> ResponseReturnValue:
                 "email": email
             }
         })
+        resp = flask.make_response(flask.redirect(flask.url_for('chat_page')))
+        resp.set_cookie('Username', user['username'])
+        resp.set_cookie('Theme', theme)
+        resp.set_cookie('Profile', profile)
+        resp.set_cookie('Userid', user['userId'])
         error = "Updated account!"
+        return resp
     else:
         if user['email'] == email:
             return flask.render_template(
@@ -446,7 +486,7 @@ def handle_connect(username: str, location):
     """Will be used later for online users."""
     socketid = request.sid
     username_list = []
-    icons = {'settings': '⚙️', 'chat': ''}
+    icons = {'settings': '⚙️', 'chat': '', 'games': '🎮'}
     # this is until I pass the displayname to the user instead of the username
     if username != 'pass':
         user = dbm.Accounts.find_one({'username': username})
@@ -494,9 +534,9 @@ def handle_online(username: str):
 
 
 @socketio.on("get_rooms")
-def get_rooms(username):
+def get_rooms(userid):
     """Grabs the chat rooms."""
-    user_name = dbm.Accounts.find_one({"username": username})
+    user_name = dbm.Accounts.find_one({"userId": userid})
     user = user_name["displayName"]
     room_access = rooms.get_chat_rooms()
     permission = user_name["locked"].split(' ')
@@ -547,7 +587,6 @@ def get_rooms(username):
              to=request.sid)
 
 
-# pylint: disable=C0103
 @socketio.on('message_chat')
 def handle_message(user_name, message, roomid, userid):
     """New New chat message handling pipeline."""
@@ -562,6 +601,7 @@ def handle_message(user_name, message, roomid, userid):
         if dbm.rooms.find_one({"roomid": roomid}) is not None:
             chat.add_message(result[1], roomid, room)
             emit("message_chat", (result[1], roomid), broadcast=True)
+            addons.message_addons(message, user, roomid, room)
             if "$sudo" in message and result[2] != 3:
                 filtering.find_cmds(message, user, roomid)
             elif '$sudo' in message and result[2] == 3:
@@ -570,9 +610,6 @@ def handle_message(user_name, message, roomid, userid):
             filtering.failed_message("return", roomid, user)
     else:
         filtering.failed_message(result, roomid, user)
-
-
-# pylint: enable=C0103
 
 
 @socketio.on('pingtest')
@@ -593,6 +630,38 @@ def connect(roomid):
     del room['_id']
 
     emit("room_data", room, to=socketid, namespace='/')
+
+
+################################# GAME STUFF #################################
+@socketio.on('update_score')
+def update_score(score, userid, game):
+    user = dbm.Accounts.find_one({'userId': userid})
+    display = user['displayName']
+    dbm.Games.find_one_and_update({'game': game},
+                                  {'$push': {
+                                      'score': f'{display}: {score}'
+                                  }},
+                                  upsert=True)
+    scores_raw = dbm.Games.find_one({'game': game})['score']
+    scores = games.leaderboard(scores_raw)
+    emit('score_updated', scores, broadcast=True)
+
+
+# @socketio.on('update_top_scores')
+# def update_top_scores(score,):
+#     # print(top_scores)
+#     top_scores = dbm.Games.find_one({'game': game})
+#     emit('top_scores_updated', top_scores['score'])
+
+
+@socketio.on('connect_game')
+def connect_game(game):
+    scores_raw = dbm.Games.find_one({'game': game})['score']
+    scores = games.leaderboard(scores_raw)
+    emit('score_updated', scores)
+
+
+################################# GAME STUFF #################################
 
 
 @scheduler.task('interval',
@@ -654,12 +723,11 @@ def online_refresh():
         dbm.Online.delete_many({})
         socketio.emit("force_username", ("", None))
         print('e')
-        time.sleep(10)# this is using a socketio refresh
-
+        time.sleep(10)  # this is using a socketio refresh
 
 
 if __name__ == "__main__":
     # socketio.start_background_task(online_refresh)
     # o = threading.Thread(target=online_refresh)
     # o.start()
-    socketio.run(app, host="0.0.0.0", port=8080)
+    socketio.run(app, host="0.0.0.0", port=5000)

@@ -21,3 +21,4 @@ node_modules/*
 replit.nix
 .replit
 keys.py
+addons.py

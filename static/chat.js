@@ -24,14 +24,15 @@ socket.on("force_username", (_statement, ignore_user) => {
 });
 
 socket.on("force_room_update", (_statement) => {
-    socket.emit("get_rooms", user);
+    userid = getCookie("Userid")
+    socket.emit("get_rooms", userid);
 });
 
 socket.on("ping", ({ who, from, pfp, message, name, roomid}) => {
     let user_name = getCookie("Username");
-    room = window.sessionStorage.getItem("roomid");
+    // room = window.sessionStorage.getItem("roomid");
     console.log(who, from, message);
-    if (user_name === who && roomid === room) {
+    if (user_name === who) {
         new Notification("You where pinged by:", { body: from + ` in ${name}: ` + message, icon: '/static/favicon.ico'});
     } else if (who === "everyone") {// add a check to see if the user has access and if so then ping them    
         new Notification("You where pinged by:", { body: from + ` in ${name}: ` + message, icon: '/static/favicon.ico'});
@@ -54,12 +55,12 @@ socket.on("reset_chat", (who, roomid) => {
   
 
 function runStartup() {
-    setDarkStyle();
     window.sessionStorage.setItem("roomid", 'ilQvQwgOhm9kNAOrRqbr');
     username = getCookie("Username");
+    userid = getCookie("Userid")
     socket.emit("username", username, 'chat');
-    socket.emit("get_rooms", username);
-    whichEvent(getCookie('Theme'))
+    socket.emit("get_rooms", userid);
+    setTheme(getCookie('Theme'))
     // changeRoom('ilQvQwgOhm9kNAOrRqbr')
 }
 
@@ -117,6 +118,17 @@ function toHyperlink(str) {
     return str3;
 }
 
+function BTMLog() {
+  if (Math.floor(window.scrollY) === window.scrollMaxY) {
+    console.log("cheese");
+    setTimeout(ToBtm, 10000)
+  } 
+}
+
+function ToBtm() {
+  window.scrollTo(0, chatDiv.scrollHeight);
+}
+
 function sendMessage() {
     let messageElement = document.getElementById("message");
     let user = getCookie('Username')
@@ -133,6 +145,8 @@ function sendMessage() {
     socket.emit('message_chat', user, messageL, window.sessionStorage.getItem("roomid"), userid);
     window.scrollTo(0, chatDiv.scrollHeight);
 }
+
+setInterval(BTMLog, 3000)
 
 function renderChat(messages, roomid) {
     let newline = "<br>";
