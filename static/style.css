@@ -369,13 +369,14 @@ html {
 .AccControls {
   display: block;
   position: absolute;
-  background-color: #3d3846;
+  background-color: black;
   min-width: 60px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   top: 55px;
-  border-radius: 10px;
-  margin: 6px -24px;
+  border-radius: 15px;
+  margin: 2px -24px;
+  border: 1px #939393 solid;
 }
 
 .AccountPopup {
@@ -386,10 +387,16 @@ html {
 }
 
 .AccountPopup a {
-  color: black;
+  color: white;
   padding: 12px 16px;
   text-decoration: none;
   display: block;
+}
+
+.AccountPopup a:hover {
+  border-radius: 10px;
+  background: #2d2d2d;
+  border: #c72b07e5 0.5px solid;
 }
 
 .ChatinfoLP {
