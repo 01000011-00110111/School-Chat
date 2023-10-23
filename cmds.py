@@ -27,6 +27,7 @@ def find_command(**kwargs):
     """Send whatever sudo command is issued to its respective function."""
     response_strings = {
         'E': E,
+        'spooky': spooky,
         'help': help_command,
         'hello': reload_users,
         'chat': chat_room_edit,
@@ -67,6 +68,14 @@ def find_command(**kwargs):
 
 def E(**kwargs):
     """Test function"""
+    roomid = kwargs['roomid']
+    emit("troll", (
+        "[SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font> <img src='static/troll-face.jpeg'>",
+        roomid),
+         broadcast=True)
+
+def spooky(**kwargs):
+    """this is a spooky function"""
     roomid = kwargs['roomid']
     emit("troll", (
         "[SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font> <img src='static/troll-face.jpeg'>",

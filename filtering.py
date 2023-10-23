@@ -31,7 +31,7 @@ def run_filter(user, room, message, roomid, userid):
 
     # we must check if the current user is acutally them, good idea for this to be first
     if userid != user['userId']:
-        # don't add a warn_user here, we can't trust the user value the client sent because this went off
+        # idea lock account if they fail 3 times useing the normal lock or a lock version that doesnt let you login at all without dev help of email fix
         return ('permission', 12, user_muted)
 
     if user_muted not in [0, 3] and perms != 'dev':

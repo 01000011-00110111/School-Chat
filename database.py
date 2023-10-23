@@ -3,11 +3,11 @@ import pymongo
 
 client = pymongo.MongoClient(os.environ["mongo_key"])
 #accounts/user data
-permission = client.Accounts.Permission
-customization = client.Accounts.Customization
-user = client.Accounts.Accounts
+Permission = client.Accounts.Permission
+Customization = client.Accounts.Customization
+ID = client.Accounts.Accounts
 
 #chat room data
-messages = client.Rooms.Messages
-rooms = client.Rooms.Rooms
-access = client.Rooms.Permission
+Rooms = client.Rooms.Rooms
+Access = client.Rooms.Permission
+Messages = client.Rooms.Messages
