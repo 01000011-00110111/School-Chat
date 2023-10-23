@@ -5,13 +5,14 @@ function setStyles(
     chatboxColor,
     sidesColor,
     sidebarColor,
+    sidebarborderColor,
+    sidebarTextColor,
     topleftColor,
     topleftTextColor,
     sendBgColor,
     sendTextColor,
     sidenavColor,
     snavLinkColor
-// need to add Online list text, activenavLineColor, and "message:" to all change colors for the theme
 ) {
     const body = document.getElementsByTagName("body")[0];
     const chat = document.getElementById("chat");
@@ -21,6 +22,7 @@ function setStyles(
     const topleft = document.getElementById("topleft");
     const send = document.getElementById("send");
     const sidebar = document.getElementById("activenav");
+    const online = document.getElementById("online_users");
     const sidenav = document.getElementsByClassName("sidenav")[0];
     const snavText = sidenav.getElementsByTagName("a");
 
@@ -30,6 +32,8 @@ function setStyles(
     chatbox.style.backgroundColor = chatboxColor;
     sides.style.backgroundColor = sidesColor;
     sidebar.style.backgroundColor = sidebarColor;
+    sidebar.style.borderLeft = `4px solid ${sidebarborderColor}`;
+    online.style.color = sidebarTextColor;
     topleft.style.backgroundColor = topleftColor;
     topleft.style.color = topleftTextColor;
     send.style.backgroundColor = sendBgColor;
@@ -61,7 +65,9 @@ const darkTheme = [
     "#181616",
     "#121212",
     "#171717",
-    "#f5f2f2",
+    "#f5f2f2",   // Sidebar Background Color
+    "#3b3b3b",   // Sidebar Border Color
+    "#c73228",   // Sidebar Text Color
     "#192080",
     "#192080",
     "#ffffff",
@@ -75,7 +81,9 @@ const lightTheme = [
     "#000000",   // Message Color
     "#deddda",   // Chatbox Color
     "#c0bfbc",   // Sides Color
-    "#000000",   // Sidebar Color
+    "#000000",   // Sidebar Background Color
+    "#3b3b3b",   // Sidebar Border Color
+    "#ffffff",   // Sidebar Text Color
     "#5A5A5A",   // Topleft Background Color
     "#1b0670",   // Topleft Text Color
     "#3daec4",   // Send Button Background Color
@@ -90,7 +98,9 @@ const ogDevTheme = [
     "#000000",  // Message Color
     "#181616",  // Chatbox Color
     "#121212",  // Sides Color
-    "#171717",  // Sidebar Color
+    "#171717",  // Sidebar Background Color
+    "#3b3b3b",  // Sidebar Border Color
+    "#ffffff",  // Sidebar Text Color
     "#121212",  // Topleft Background Color
     "#696969",  // Topleft Text Color
     "#192080",  // Send Button Background Color
@@ -106,7 +116,9 @@ const devTheme = [
     "#0d0d0d",
     "#080808",
     "#080808",
-    "#0d0d0d",
+    "#0d0d0d",   // Sidebar Background Color
+    "#3b3b3b",   // Sidebar Border Color
+    "#ffffff",   // Sidebar Text Color
     "#ffffff",
     "#006600",
     "#ffffff",
@@ -115,19 +127,21 @@ const devTheme = [
 ];
 
 const halloweenTheme = [
-    "#000000",
-    "#d64304",
-    "#a64903",
-    "#d65e13",
-    "#121212",
-    "#d65e13",
-    "#f5f2f2",
-    "#a64903",
-    "#000000",
-    "#ffffff",
+    "#000000", // Background Color
+    "#d64304", // Chat Color
+    "#a64903", // Message Color
+    "#000", // Chatbox Color
+    "#121212", // Sides Color
+    "#d65e13", // Sidebar Backgroud Color
+    "#bf4a06", // Sidebar Line Color
+    "#3b3b3b", // Sidebar Border Color
+    "#bf4a06", // Sidebar Text Color
+    "#d64304", // Topleft Background Color
+    "#d64304", // 
+    "#000", 
     "#111",
     "#d64304",
-];
+]; 
 
 const winterTheme = [
     "#AED9FF",
@@ -136,7 +150,9 @@ const winterTheme = [
     "#FF9933",
     "#121212",
     "#FF9933",
-    "#f5f2f2",
+    "#f5f2f2",   // Sidebar Background Color
+    "#3b3b3b",   // Sidebar Border Color
+    "#ffffff",   // Sidebar Text Color
     "#FF9933",
     "#d64304",
     "#ffffff",

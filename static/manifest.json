@@ -3,7 +3,7 @@
   "short_name": "School Chat",
   "start_url": "/../.",
   "display": "standalone",
-  "background_color": "#212121",
+  "background_color": "#212121",    
   "description": "A chat app, what else did you think this is?",
   "icons": [
     {
