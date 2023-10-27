@@ -80,7 +80,7 @@ function moveTouch(e) {
     // sliding horizontally
     if (diffX > 0) {
       // swiped left
-      ActiveNav.style.display = "block";
+      ActiveNav.style.marginLeft = "61%";
     } else {
       // swiped right
       console.log("swiped right");

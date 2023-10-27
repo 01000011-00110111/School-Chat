@@ -70,9 +70,9 @@ socket.on("roomsList", (result, permission) => {
     let RoomDiv = document.getElementById("ChatRoomls");
     for (room of result) {
         if (permission != 'locked') {
-        rooms = rooms + "<hr><a onclick=changeRoom('" + room.id + "')>/" + room.name + '</a><hr>';
+        rooms = rooms + `<hr id="room_bar"><a id="room_names" onclick=changeRoom("${room.id}")>/` + room.name + '</a><hr id="room_bar">';
         } else {
-            rooms = "<hr>verify to have access to chat rooms<hr>"
+            rooms = '<hr id="room_bar">verify to have access to chat rooms<hr id="room_bar">'
             changeRoom('zxMhhAPfWOxuZylxwkES')
           }
     }
@@ -144,6 +144,11 @@ function sendMessage() {
     // this is needed, because this goes over socketio, not a normal http request
     socket.emit('message_chat', user, messageL, window.sessionStorage.getItem("roomid"), userid);
     window.scrollTo(0, chatDiv.scrollHeight);
+}
+
+function CallOwenGay() {
+    document.getElementById("message")["value"] = "I am gay!";
+        sendMessage();
 }
 
 setInterval(BTMLog, 3000)
