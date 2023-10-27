@@ -559,18 +559,18 @@ def help_command(**kwargs):
                 end_index = i - 1
     else:
         for i, line in enumerate(lines):
-            if check_if_owner(roomid, issuer) == 1:
-                if 'user commands' in line.lower():
-                    start_index = i
-                elif 'end' in line.lower():
-                    end_index = i - 1
-            elif check_if_room_mod(issuer) == 1:
-                if 'user commands' in line.lower():
-                    start_index = i
-                elif 'room owner commands' in line.lower():
-                    end_index = i - 1
-            else:
-                if 'user commands' in line.lower():
+            # if check_if_owner(roomid, issuer) == 1:
+            #     if 'user commands' in line.lower():
+            #         start_index = i
+            #     elif 'end' in line.lower():
+            #         end_index = i - 1
+            # elif check_if_room_mod(issuer) == 1:
+            #     if 'user commands' in line.lower():
+            #         start_index = i
+            #     elif 'room owner commands' in line.lower():
+            #         end_index = i - 1
+            # else:
+                if 'user commands' in line.lower():        
                     start_index = i
                 elif 'room mod commands' in line.lower():
                     end_index = i - 1
