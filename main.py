@@ -323,10 +323,7 @@ def verify(userid, verification_code):
     if user_id is not None:
         user_code = accounting.create_verification_code(user_id)
         if user_code == verification_code:
-            dbm.Accounts.update_one({"userId": userid},
-                                    {"$set": {
-                                        "locked": 'false'
-                                    }})
+            database.update_account('id', 'userId', user_id["userId"], "locked", "false")
             user = user_id["username"]
             log.log_accounts(
                 f'The account {user} has been verified and may now chat in any chat room'
@@ -347,7 +344,7 @@ def get_logs_page() -> ResponseReturnValue:
 @login_required
 def settings_page() -> ResponseReturnValue:
     """Serve the settings page for the user."""
-    user = dbm.Accounts.find_one({"username": request.cookies.get('Username')})
+    user = database.find_account("username", request.cookies.get('Username'))
     if request.cookies.get('Userid') != user['userId']:
         # someone is trying something funny
         return flask.Response(
@@ -380,7 +377,7 @@ def customize_accounts() -> ResponseReturnValue:
     email = request.form.get("email")
     profile = request.form.get("profile")
     theme = request.form.get("theme")
-    user = dbm.Accounts.find_one({"username": userid})
+    user = database.find_account("username", userid)
     return_list = {
         "user": userid,
         "passwd": 'we are not adding password editing just yet',
@@ -403,37 +400,37 @@ def customize_accounts() -> ResponseReturnValue:
                                      error=error,
                                      **return_list)
 
-    if (dbm.Accounts.find_one({"displayName": displayname}) is not None
+    if (database.find_account("displayName", displayname) is not None
             and user["displayName"]
             != displayname) and displayname in word_lists.banned_usernames:
         return flask.render_template(
             "settings.html",
             error='That Display name is already taken!',
             **return_list)
-    if (dbm.Accounts.find_one({"email": email}) is None
+    if (database.find_account("email", email) is None
             and user["email"] != email):
         verification_code = accounting.create_verification_code(user)
         accounting.email_var_account(user["username"], email,
                                      verification_code, user['userid'])
-    elif (dbm.Accounts.find_one({"email": email}) is not None
+    elif (database.find_account("email", email) is not None
           and user["email"] != email):
         return flask.render_template("settings.html",
                                      error='that email is taken',
                                      **return_list)
 
     if user['locked'] != 'locked':
-        dbm.Accounts.update_one({"username": userid}, {
-            "$set": {
-                "messageColor": messageC,
-                "roleColor": roleC,
-                "userColor": userC,
-                "displayName": displayname,
-                "role": role,
-                "profile": profile,
-                "theme": theme,
-                "email": email
-            }
-        })
+        # database.Accounts.update_one({"username": userid}, {
+        #     "$set": {
+        #         "messageColor": messageC,
+        #         "roleColor": roleC,
+        #         "userColor": userC,
+        #         "displayName": displayname,
+        #         "role": role,
+        #         "profile": profile,
+        #         "theme": theme,
+        #         "email": email
+        #     }
+        # }) again update
         resp = flask.make_response(flask.redirect(flask.url_for('chat_page')))
         resp.set_cookie('Username', user['username'])
         resp.set_cookie('Theme', theme)
@@ -448,10 +445,7 @@ def customize_accounts() -> ResponseReturnValue:
                 error=
                 'You must verify your account before you can change settings',
                 **return_list)
-        dbm.Accounts.update_one({"username": userid},
-                                {"$set": {
-                                    "email": email
-                                }})
+        database.update_account_set('id', "username", userid, "email", email)
         error = 'Updated email!'
     log.log_accounts(
         f'The account {user} has updated some settings (one day ill add what they updated)'
@@ -468,14 +462,14 @@ def handle_connect(username: str, location):
     icons = {'settings': '⚙️', 'chat': ''}
     # this is until I pass the displayname to the user instead of the username
     if username != 'pass':
-        user = dbm.Accounts.find_one({'username': username})
-        dbm.Online.insert_one({
-            "username": user['displayName'],
-            "socketid": socketid,
-            "location": location
-        })
+        user = database.find_account('username', username) 
+        # dbm.Online.insert_one({
+        #     "username": user['displayName'],
+        #     "socketid": socketid,
+        #     "location": location
+        # })
 
-    for key in dbm.Online.find():
+    for key in database.find_online():
         if username == 'pass': continue
         user_info = key["username"]
         icon = icons.get(key.get("location"))
@@ -492,7 +486,7 @@ def handle_disconnect():
     try:
         dbm.Online.delete_one({"socketid": socketid})
         username_list = []
-        for key in dbm.Online.find():
+        for key in database.find_online():
             username_list.append(key["username"])
         emit("online", username_list, broadcast=True)
     except TypeError:
@@ -507,7 +501,7 @@ def handle_online(username: str):
                               "username": username
                           }})
     username_list = []
-    for key in dbm.Online.find():
+    for key in database.find_online():
         username_list.append(key["username"])
     emit("online", username_list, broadcast=True)
 
@@ -515,7 +509,7 @@ def handle_online(username: str):
 @socketio.on("get_rooms")
 def get_rooms(userid):
     """Grabs the chat rooms."""
-    user_name = dbm.Accounts.find_one({"userId": userid})
+    user_name = database.find_account("userId", userid)
     user = user_name["displayName"]
     room_access = rooms.get_chat_rooms()
     permission = user_name["locked"].split(' ')
@@ -570,14 +564,14 @@ def get_rooms(userid):
 def handle_message(user_name, message, roomid, userid):
     """New New chat message handling pipeline."""
     # later I will check the if the username is the same as the one for the session somehow
-    room = dbm.rooms.find_one({"roomid": roomid})
-    user = dbm.Accounts.find_one({"username": user_name})
-    if dbm.rooms.find_one({"roomid": roomid}) is None:
+    room = database.find_room(roomid)
+    user = database.find_account("username", user_name)
+    if room is None:
         result = ("Permission", 6)
     else:
         result = filtering.run_filter(user, room, message, roomid, userid)
     if result[0] == 'msg':
-        if dbm.rooms.find_one({"roomid": roomid}) is not None:
+        if room is not None:
             chat.add_message(result[1], roomid, room)
             emit("message_chat", (result[1], roomid), broadcast=True)
             addons.message_addons(message, user, roomid, room)
@@ -602,7 +596,7 @@ def connect(roomid):
     """Switch rooms for the user"""
     socketid = request.sid
     try:
-        room = dbm.rooms.find_one({"roomid": roomid})
+        room = database.find_room(roomid)
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
     # don't need to let the client know the mongodb id

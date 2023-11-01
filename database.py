@@ -19,11 +19,25 @@ def clear_online():
     """Clears the online list"""
     dbm.Online.delete_many({})
 
+#online code
+def find_online():
+    user_list = Customization.find()
+    for user in user_list:
+        if user["status"] == 'offline':
+            user_list.remove(user)
+    return user_list
 
 # accounting 
 
 def find_account(search_type, input):
     return ID.find_one({search_type: input})
+
+def find_all_accounts():
+    return ID.find()
+
+def update_account_set(location, user_search, user_input, search_type, input):
+    if location == 'id':
+        return ID.update_one({user_search: user_input}, {'$set': {search_type: input})
 
 def add_accounts(add_list):
     """Adds accounts to the database"""
