@@ -23,7 +23,6 @@ import time
 from datetime import datetime, timedelta
 import keys
 import flask
-import pymongo
 from flask import request
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
@@ -33,14 +32,12 @@ from flask_login import current_user, login_user, logout_user, login_required
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
 
-client = pymongo.MongoClient(os.environ["mongo_key"])
-dbm = client.Chat
 scheduler = APScheduler()
 
 import addons
 import chat
 import cmds
-# import database
+import database
 import filtering
 import rooms
 import accounting
@@ -72,7 +69,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login_page'
 
 # clear db, so that old users don't stay
-dbm.Online.delete_many({})
+database.clear_online()
 
 
 class User:
@@ -120,7 +117,7 @@ class User:
     @login_manager.user_loader
     def load_user(username):
         """Load the user into flask-login."""
-        u = dbm.Accounts.find_one({"username": username})
+        u = database.find_account('username', username)
         if not u:
             return None
         return User(username=u['username'])
@@ -171,7 +168,7 @@ def login_page() -> ResponseReturnValue:
         password = request.form.get("password")
         TOSagree = request.form.get("TOSagree")
         next_page = request.args.get("next")
-        user = dbm.Accounts.find_one({"username": username})
+        user = database.find_account('username', username)
         if user is None:
             return flask.render_template('login.html',
                                          error="That account does not exist!")
@@ -246,15 +243,15 @@ def signup_post() -> ResponseReturnValue:
                                      SUsername=SUsername,
                                      SRole=SRole,
                                      SDisplayname=SDisplayname)
-    possible_user = dbm.Accounts.find_one({"username": SUsername})
-    possible_dispuser = dbm.Accounts.find_one({"displayName": SDisplayname})
+    possible_user = database.find_account('username', SUsername)
+    possible_dispuser = database.find_account('displayName', SDisplayname)
     # print("again")
     if possible_user is not None or possible_dispuser is not None or SUsername in word_lists.banned_usernames or SDisplayname in word_lists.banned_usernames:
         return flask.render_template(
             "signup-index.html",
             error='That Username/Display name is already taken!',
             SRole=SRole)
-    possible_email = dbm.Accounts.find_one({"email": SEmail})
+    possible_email = database.find_account("email", SEmail)
     if possible_email is not None:
         return flask.render_template("signup-index.html",
                                      error='That Email is allready used!',
@@ -266,38 +263,38 @@ def signup_post() -> ResponseReturnValue:
     current_time = datetime.now()
     time = current_time + timedelta(hours=10)
     formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
-    dbm.Accounts.insert_one({
-        "username":
-        SUsername,
-        "password":
-        hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
-        "userId":
-        userid,
-        "email":
-        SEmail,
-        "role":
-        SRole,
-        "profile":
-        "",
-        "theme":
-        "dark",
-        "displayName":
-        SDisplayname,
-        "messageColor":
-        "#ffffff",
-        "roleColor":
-        "#ffffff",
-        "userColor":
-        "#ffffff",
-        "permission":
-        'true',
-        'locked':
-        f"locked {formatted_time}",
-        "warned":
-        '0',
-        "SPermission":
-        ""
-    })
+    # database.add_accounts({
+    #     "username":
+    #     SUsername,
+    #     "password":
+    #     hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
+    #     "userId":
+    #     userid,
+    #     "email":
+    #     SEmail,
+    #     "role":
+    #     SRole,
+    #     "profile":
+    #     "",
+    #     "theme":
+    #     "dark",
+    #     "displayName":
+    #     SDisplayname,
+    #     "messageColor":
+    #     "#ffffff",
+    #     "roleColor":
+    #     "#ffffff",
+    #     "userColor":
+    #     "#ffffff",
+    #     "permission":
+    #     'true',
+    #     'locked':
+    #     f"locked {formatted_time}",
+    #     "warned":
+    #     '0',
+    #     "SPermission":
+    #     ""
+    #     }) reworking needed
     # I have to make the dict manually, else it's a wasted db call
     accounting.email_var_account(
         SUsername, SEmail,
@@ -322,7 +319,7 @@ def signup_get() -> ResponseReturnValue:
 @app.route('/verify/<userid>/<verification_code>')
 def verify(userid, verification_code):
     """Verify a user."""
-    user_id = dbm.Accounts.find_one({"userId": userid})
+    user_id = database.find_account("userId", userid)
     if user_id is not None:
         user_code = accounting.create_verification_code(user_id)
         if user_code == verification_code:
