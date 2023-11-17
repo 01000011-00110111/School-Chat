@@ -1,6 +1,6 @@
 * {
   font-family: sans-serif;
-  scrollbar-width: none;
+  scrollbar-color: orange black;
 }
 
 body {
@@ -106,6 +106,7 @@ html {
     display: flex;
     height: 9%;
     margin: 0px -7.7px;
+    background: black;
 }
 
 #activenav {
@@ -146,6 +147,7 @@ html {
     width: 50px;
     height: 100%;
     padding-left: 5px;
+    background: transparent !important;
 }
 
 /* Nav Menu left */
@@ -159,6 +161,8 @@ html {
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 57px;
+    background: black;
+    scrollbar-width: thin;
 }
 
 .sidenav a {
