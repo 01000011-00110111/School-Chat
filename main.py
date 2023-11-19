@@ -263,38 +263,15 @@ def signup_post() -> ResponseReturnValue:
     current_time = datetime.now()
     time = current_time + timedelta(hours=10)
     formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
-    # database.add_accounts({
-    #     "username":
-    #     SUsername,
-    #     "password":
-    #     hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
-    #     "userId":
-    #     userid,
-    #     "email":
-    #     SEmail,
-    #     "role":
-    #     SRole,
-    #     "profile":
-    #     "",
-    #     "theme":
-    #     "dark",
-    #     "displayName":
-    #     SDisplayname,
-    #     "messageColor":
-    #     "#ffffff",
-    #     "roleColor":
-    #     "#ffffff",
-    #     "userColor":
-    #     "#ffffff",
-    #     "permission":
-    #     'true',
-    #     'locked':
-    #     f"locked {formatted_time}",
-    #     "warned":
-    #     '0',
-    #     "SPermission":
-    #     ""
-    #     }) reworking needed
+    database.add_accounts({
+        SUsername,
+        hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
+        userid,
+        SEmail,
+        SRole,
+        SDisplayname,
+        f"locked {formatted_time}",
+        })# reworking needed
     # I have to make the dict manually, else it's a wasted db call
     accounting.email_var_account(
         SUsername, SEmail,
@@ -323,7 +300,7 @@ def verify(userid, verification_code):
     if user_id is not None:
         user_code = accounting.create_verification_code(user_id)
         if user_code == verification_code:
-            database.update_account('id', 'userId', user_id["userId"], "locked", "false")
+            database.update_account_set('perm', 'userId', user_id["userId"], "locked", "false")
             user = user_id["username"]
             log.log_accounts(
                 f'The account {user} has been verified and may now chat in any chat room'
@@ -419,18 +396,7 @@ def customize_accounts() -> ResponseReturnValue:
                                      **return_list)
 
     if user['locked'] != 'locked':
-        # database.Accounts.update_one({"username": userid}, {
-        #     "$set": {
-        #         "messageColor": messageC,
-        #         "roleColor": roleC,
-        #         "userColor": userC,
-        #         "displayName": displayname,
-        #         "role": role,
-        #         "profile": profile,
-        #         "theme": theme,
-        #         "email": email
-        #     }
-        # }) again update
+        database.update_one(user["userId"], messageC, roleC, userC, displayname, role, profile, theme, email)
         resp = flask.make_response(flask.redirect(flask.url_for('chat_page')))
         resp.set_cookie('Username', user['username'])
         resp.set_cookie('Theme', theme)
@@ -463,11 +429,7 @@ def handle_connect(username: str, location):
     # this is until I pass the displayname to the user instead of the username
     if username != 'pass':
         user = database.find_account('username', username) 
-        # .Online.insert_one({
-        #     "username": user['displayName'],
-        #     "socketid": socketid,
-        #     "location": location
-        # })
+        database.add_user(user['displayName'], socketid, location)
 
     for key in database.find_online():
         if username == 'pass': continue
@@ -617,12 +579,12 @@ def update_permission():
 
         if filtering.is_user_expired(permission):
             print(f"{username} is no longer muted.")
-            database.update_account('id', 'userId', user_id["userId"], "permission", "true")
+            database.update_account_set('perm', 'userId', user_id["userId"], "permission", "true")
             log.log_mutes(f"{username} is no longer muted.")
 
         elif filtering.is_warned_expired(permission):
             print(f"{username} warnings have been reset.")
-            database.update_account('id', 'userId', user_id["userId"], "warned", "0")
+            database.update_account_set('perm', 'userId', user_id["userId"], "warned", "0")
             log.log_mutes(f"{username} warnings have been reset.")
         elif accounting.is_account_expired(permission):
             log.log_accounts(
