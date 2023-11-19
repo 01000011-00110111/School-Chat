@@ -47,6 +47,15 @@ def find_online():
 
 # accounting 
 
+def find_data(data, location):
+    if location == 'id':
+        return ID.find(data)
+    if location == 'perm':
+        return Permission.find(data)
+    if location == 'costom':
+        return Customization.find(data)
+    
+
 def find_account(data, location):
     if location == 'id':
         return ID.find_one(data)
@@ -160,6 +169,14 @@ def send_message_all(message_text: str):
 def find_room(data, location):
     if location == 'id':
         return Rooms.find_one(data)
+    if location == 'acc':
+        return Access.find_one(data)
+    
+def find_rooms(data, location):
+    if location == 'id':
+        return Rooms.find(data)
+    if location == 'acc':
+        return Access.find(data)
 
 def distinct_roomids():
     return Rooms.distinct('roomid')

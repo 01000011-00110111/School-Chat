@@ -8,6 +8,7 @@ import log
 import rooms
 import time
 from time import sleep
+import database
 # below is needed for systemd restart, do not remove
 try:
     import dbus
@@ -101,14 +102,12 @@ def check_if_mod(user):
 
 def check_if_owner(roomid, user):
     """Return if a user is a mod or not."""
-    return 1 if dbm.rooms.find_one(
-        {'roomid': roomid})["generatedBy"] == user['username'] else 0
+    return 1 if database.find_room({'roomid': roomid}, 'id')["generatedBy"] == user['username'] else 0
 
 
 def check_if_room_mod(roomid, user):
     """Return if a user is a mod or not."""
-    return 1 if dbm.rooms.find_one({'roomid': roomid
-                                    })["mods"] == user['username'] else 0
+    return 1 if database.find_room({'roomid': roomid}, 'id')["mods"] == user['username'] else 0
 
 
 def reset_chat_user(**kwargs):
@@ -134,11 +133,11 @@ def ban_user(**kwargs):
         respond_command(("reason", 2, "not_dev"), roomid, None)
         return
 
-    user_dbm = dbm.Accounts.find_one({"displayName": username})
+    user_dbm = database.find_account({"displayName": username}, 'costom')
     if user_dbm['permission'] == 'banned':
         return
 
-    dbm.Accounts.update_one({"displayName": username},
+    database.update_account_set('perm', {"displayName": username},
                             {"$set": {
                                 "permission": "banned"
                             }})
@@ -166,7 +165,8 @@ def mute_user(**kwargs):
     reason = ' '.join(list(kwargs['commands'].values())[3:])
     issuer = kwargs['user']
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
-        user_dbm = dbm.Accounts.find_one({"displayName": username})
+        user_db = database.find_account({"displayName": username}, 'costom')
+        user_dbm = database.find_account({"userID": user_db["userID"]}, 'perm')
         if user_dbm["SPermission"] in ['Debugpass', 'modpass']:
             print('add a message you can not ban or mute a dev or mod')
             return
@@ -198,7 +198,7 @@ def mute_user(**kwargs):
                     "%Y-%m-%d %H:%M:%S")
                 permission_str = f"muted {expiration_time_str}"
 
-            dbm.Accounts.update_one({"displayName": username},
+            database.update_account_set('perm', {"userId": user_db["userId"]},
                                     {"$set": {
                                         "permission": permission_str
                                     }})
@@ -232,11 +232,12 @@ def unmute_user(**kwargs):
     issuer = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
-        user = dbm.Accounts.find_one({"displayName": username})
+        user_db = database.find_account({"displayName": username}, 'costom')
+        user = database.find_account({"userID": user_db["userID"]}, 'perm')
         if user['permission'] in ('banned', 'true'):
             return
 
-        dbm.Accounts.update_one({"displayName": username},
+        database.update_account_set({"userId": user["userId"]},
                                 {"$set": {
                                     "permission": "true"
                                 }})
@@ -249,14 +250,14 @@ def unmute_user(**kwargs):
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
 
-def send_perms(**kwargs):
-    """Return the list of people banned, and currently muted."""
+"""def send_perms(**kwargs):
+    ""Return the list of people banned, and currently muted.""
     issuer = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
         room = dbm.rooms.find_one({"roomid": roomid})
-        banned = dbm.Accounts.find({"permission": "banned"})
-        muted = dbm.Accounts.find({"permission": "muted"})
+        banned = database.find_account({"permission": "banned"}, 'perm')
+        muted = database.find_account({"permission": "muted"}, 'perm')
         msg_str = "Currently Banned/Muted Users:<br>Banned:<br>"
         for user in banned:
             msg_str = msg_str + f"{user['displayName']}<br>"
@@ -270,7 +271,7 @@ def send_perms(**kwargs):
         chat.add_message(final_msg, roomid, room)
         emit("message_chat", (final_msg, roomid), broadcast=True)
     else:
-        respond_command(("reason", 2, "not_mod"), roomid, None)
+        respond_command(("reason", 2, "not_mod"), roomid, None)"""
 
 
 def open_git():
@@ -285,9 +286,9 @@ def list_rooms(**kwargs):
     origin_room = kwargs['origin_room']
 
     if check_if_dev(issuer) == 1 and origin_room == 'jN7Ht3giH9EDBvpvnqRB':
-        ids = [room["roomid"] for room in dbm.rooms.find({}, {"roomid": 1})]
+        ids = [room["roomid"] for room in database.find_rooms({}, {"roomid": 1}, 'id')]
         names = [
-            room["roomName"] for room in dbm.rooms.find({}, {"roomName": 1})
+            room["roomName"] for room in database.find_rooms({}, {"roomName": 1}, 'id')
         ]
         msg_str = '<br>'.join([
             f"Room's name: ({name}) Room's id: ({id})"
@@ -308,8 +309,8 @@ def list_rooms(**kwargs):
             respond_command(("reason", 1, "wrong_room"), roomid, None)
 
 
-def send_song(**kwargs):
-    """Sends as song."""
+"""def send_song(**kwargs):
+    ""Sends as song.""
     # this works as long as owen is a mod
     user = kwargs['user']
     roomid = kwargs['roomid']
@@ -321,11 +322,11 @@ def send_song(**kwargs):
         chat.add_message(final_msg, roomid, room)
         emit("message_chat", (final_msg, roomid), broadcast=True)
     else:
-        respond_command(("reason", 2, "not_mod"), roomid, None)
+        respond_command(("reason", 2, "not_mod"), roomid, None)"""
 
 
-def send_system(**kwargs):
-    """Sends as the server for specal dev messages."""
+"""def send_system(**kwargs):
+    ""="Sends as the server for specal dev messages.""
     user = kwargs['user']
     roomid = kwargs['roomid']
     commands = kwargs['commands']
@@ -336,7 +337,7 @@ def send_system(**kwargs):
     room = dbm.rooms.find_one({"roomid": roomid})
     final_msg = f"[SYSTEM]: <font color='#ff7f00'>{message}</font>"
     chat.add_message(final_msg, roomid, room)
-    emit("message_chat", (final_msg, roomid), broadcast=True)
+    emit("message_chat", (final_msg, roomid), broadcast=True)"""
 
 
 def run_shutdown(**kwargs):
@@ -390,7 +391,7 @@ def run_restart(**kwargs):
 def reload_users(**kwargs):
     """Reload the online list manually."""
     # print('test')
-    dbm.Online.delete_many({})
+    database.clear_online()
     emit("force_username", ("", None), broadcast=True)
 
 
@@ -398,7 +399,7 @@ def appear_offline(**kwargs):
     """Make the user who ran the command appear offline"""
     user = kwargs['user']
     # dbm.Online.delete_one({'userId': user['userId']})
-    dbm.Online.delete_many({})
+    database.clear_online({})
     emit("force_username", ("", user['userId']), broadcast=True)
 
 
@@ -455,14 +456,15 @@ def send_room_logs(**kwargs):
 
 def respond_command(result, roomid, name):
     """Tell the client that can't run this command for what reason."""
-    room = dbm.rooms.find_one({"roomName": name})
+    room = database.find_room({"roomName": name}, 'id')
+    roomA = database.find_room({"roomid": room["roomid"]}, 'acc')
     generated_by = room["generatedBy"] if room is not None else ""
     generated_at = room["generatedAt"] if room is not None else ""
-    locked = room["locked"] if room is not None else ""
-    users_w = room["whitelisted"] if room is not None else ""
+    locked = roomA["locked"] if room is not None else ""
+    users_w = roomA["whitelisted"] if room is not None else ""
     if users_w == 'devonly': users_w = 'devs'
     elif users_w == 'modonly': users_w = 'devs and mods'
-    users_b = room["blacklisted"] if room is not None else ""
+    users_b = roomA["blacklisted"] if room is not None else ""
 
     response_strings = {
         (1, None):
