@@ -463,7 +463,7 @@ def handle_connect(username: str, location):
     # this is until I pass the displayname to the user instead of the username
     if username != 'pass':
         user = database.find_account('username', username) 
-        # dbm.Online.insert_one({
+        # .Online.insert_one({
         #     "username": user['displayName'],
         #     "socketid": socketid,
         #     "location": location
@@ -484,7 +484,7 @@ def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
     socketid = request.sid
     try:
-        dbm.Online.delete_one({"socketid": socketid})
+        database.remove_user.remove_user({"socketid": socketid})
         username_list = []
         for key in database.find_online():
             username_list.append(key["username"])
@@ -496,10 +496,7 @@ def handle_disconnect():
 @socketio.on('username_msg')
 def handle_online(username: str):
     """Add username to currently online people list."""
-    dbm.Online.update_one({"socketid": request.sid},
-                          {"$set": {
-                              "username": username
-                          }})
+    database.add_user(username, request.sid)
     username_list = []
     for key in database.find_online():
         username_list.append(key["username"])
@@ -611,7 +608,7 @@ def connect(roomid):
                 misfire_grace_time=500)
 def update_permission():
     """Background task to see if user should be unmuted."""
-    users = dbm.Accounts.find()
+    users = database.find_all_accounts()
     # filtering.reload_users(e = '1')
     for user_info in users:
         user = user_info['username']
@@ -637,7 +634,7 @@ def update_permission():
             log.log_accounts(
                 f'The account {user} has been deleted because it was not verified'
             )
-            dbm.Accounts.delete_one({'username': user})
+            database.delete_account(user)
 
 
 # start background tasks should we move this down to 533?
@@ -661,7 +658,7 @@ def emit_on_startup():
 def online_refresh():
     """Background task for online list"""
     while True:
-        dbm.Online.delete_many({})
+        database.clear_online()
         socketio.emit("force_username", ("", None))
         print('e')
         time.sleep(10)  # this is using a socketio refresh

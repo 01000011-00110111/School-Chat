@@ -11,13 +11,24 @@ ID = client.Accounts.Accounts
 Rooms = client.Rooms.Rooms
 Access = client.Rooms.Permission
 Messages = client.Rooms.Messages
+Private = client.Rooms.Private
 
 #extra
-dbm = client.Chat.Chat
+dbm = client.Chat.Online
 
 def clear_online():
     """Clears the online list"""
     dbm.Online.delete_many({})
+    
+def remove_user():
+    """Clears the online list"""
+    dbm.Online.delete_one({})
+    
+def add_user():
+    dbm.Online.update_one({"socketid": request.sid},
+                        {"$set": {
+                            "username": username
+                        }})
 
 #online code
 def find_online():
@@ -37,11 +48,17 @@ def find_all_accounts():
 
 def update_account_set(location, user_search, user_input, search_type, input):
     if location == 'id':
-        return ID.update_one({user_search: user_input}, {'$set': {search_type: input})
+        return ID.update_one({user_search: user_input}, {'$set': {search_type: input}})
 
 def add_accounts(add_list):
     """Adds accounts to the database"""
     pass#needs lots of work
+
+def delete_account(user):
+    Permission.delete_one({'userId': user["userId"]})
+    Customization.delete_one({'userId': user["userId"]})
+    ID.delete_one({'userId': user["userId"]})
+    
 
 # room database data
 def clear_chat_room(roomid, message):
