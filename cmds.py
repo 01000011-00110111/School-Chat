@@ -3,7 +3,7 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import chat
-from main import dbm, scheduler
+from main import scheduler
 import log
 import rooms
 import time

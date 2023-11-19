@@ -126,5 +126,79 @@ def send_message_single(message_text: str, roomid):
 def send_message_all(message_text: str):
     Messages.rooms.update_many({}, {'$push': {'messages': message_text}})
 
-def find_room(roomid):
-    return Rooms.find_one({"roomid": roomid})
+def find_room(data, location):
+    if location == 'id':
+        return Rooms.find_one(data)
+
+def distinct_roomids():
+    return Rooms.distinct('roomid')
+
+def get_rooms():
+    """Return all available rooms."""
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "Permission",  # Target collection
+                "localField": "roomid",  # Field in the 'Rooms' collection
+                "foreignField": "roomid",  # Field in the 'Permission' collection
+                "as": "access"  # Alias for the joined data
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "name": "$roomName",
+                "id": "$roomid",
+                "generatedBy": "$generatedBy",
+                "mods": "$mods",
+                "whitelisted": "$access.whitelisted",  # Access collection field
+                "blacklisted": "$access.blacklisted"  # Access collection field
+            }
+        }
+    ]
+
+    rooms = list(Rooms.aggregate(pipeline))
+    return rooms
+
+def update_whitelist(id, message):  #combine whitelist and blacklist
+    """Adds the whitelisted users to the database"""
+    dbm.rooms.update_one({"id": room_name},
+                         {"$set": {
+                             "whitelisted": message
+                         }})
+
+
+def update_blacklist(id, message):
+    """Adds the blacklisted users to the database"""
+    dbm.rooms.update_one({"id": room_name},
+                         {"$set": {
+                             "blacklisted": message
+                         }})
+    
+def delete_room(data):
+    Rooms.find_one_and_delete(data)
+    Access.find_one_and_delete(data)
+    Messages.find_one_and_delete(data)
+    
+def add_account(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked):
+    """Adds a single account to the database"""
+    room_data = {
+        "roomid": code,
+        "generatedBy": username,
+        "mods": '',
+        "generatedAt": generated_at,
+        "roomName": name,
+        "locked": 'false',
+    }
+    access_data = {
+        "canSend": 'everyone',
+        "whitelisted": "everyone",
+        "blacklisted": "empty",
+    }
+    message = { "messages": [
+            f"[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>{username}</b> at {generated_at}.</font>"
+        ]}
+    
+    Rooms.insert_one(room_data)
+    Access.insert_one(access_data)
+    Messages.insert_one(message)
