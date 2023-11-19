@@ -617,18 +617,12 @@ def update_permission():
 
         if filtering.is_user_expired(permission):
             print(f"{username} is no longer muted.")
-            dbm.Accounts.update_one({'username': user},
-                                    {'$set': {
-                                        'permission': 'true'
-                                    }})
+            database.update_account('id', 'userId', user_id["userId"], "permission", "true")
             log.log_mutes(f"{username} is no longer muted.")
 
         elif filtering.is_warned_expired(permission):
             print(f"{username} warnings have been reset.")
-            dbm.Accounts.update_one({'username': user},
-                                    {'$set': {
-                                        'warned': '0'
-                                    }})
+            database.update_account('id', 'userId', user_id["userId"], "warned", "0")
             log.log_mutes(f"{username} warnings have been reset.")
         elif accounting.is_account_expired(permission):
             log.log_accounts(
