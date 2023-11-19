@@ -117,7 +117,7 @@ class User:
     @login_manager.user_loader
     def load_user(username):
         """Load the user into flask-login."""
-        u = database.find_account('username', username)
+        u = database.find_account({'username': username}, 'id')
         if not u:
             return None
         return User(username=u['username'])
@@ -168,7 +168,8 @@ def login_page() -> ResponseReturnValue:
         password = request.form.get("password")
         TOSagree = request.form.get("TOSagree")
         next_page = request.args.get("next")
-        user = database.find_account('username', username)
+        userids = database.find_account({'username': username}, 'id')
+        userC = database.find_account({'userId': userids["userId"]}, 'costom')
         if user is None:
             return flask.render_template('login.html',
                                          error="That account does not exist!")
@@ -188,9 +189,9 @@ def login_page() -> ResponseReturnValue:
                     'chat_page')
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie('Username', user['username'])
-            resp.set_cookie('Theme', user['theme'])
-            resp.set_cookie('Profile', user['profile'])
-            resp.set_cookie('Userid', user['userId'])
+            resp.set_cookie('Theme', userC['theme'])
+            resp.set_cookie('Profile', userC['profile'])
+            resp.set_cookie('Userid', userC['userId'])
             return resp
         else:
             return flask.render_template(
@@ -243,15 +244,15 @@ def signup_post() -> ResponseReturnValue:
                                      SUsername=SUsername,
                                      SRole=SRole,
                                      SDisplayname=SDisplayname)
-    possible_user = database.find_account('username', SUsername)
-    possible_dispuser = database.find_account('displayName', SDisplayname)
+    possible_user = database.find_account({'username': SUsername}, 'id')
+    possible_dispuser = database.find_account({'displayName': SDisplayname}, 'costom')
     # print("again")
     if possible_user is not None or possible_dispuser is not None or SUsername in word_lists.banned_usernames or SDisplayname in word_lists.banned_usernames:
         return flask.render_template(
             "signup-index.html",
             error='That Username/Display name is already taken!',
             SRole=SRole)
-    possible_email = database.find_account("email", SEmail)
+    possible_email = database.find_account({"email": SEmail}, 'id')
     if possible_email is not None:
         return flask.render_template("signup-index.html",
                                      error='That Email is allready used!',
@@ -296,11 +297,11 @@ def signup_get() -> ResponseReturnValue:
 @app.route('/verify/<userid>/<verification_code>')
 def verify(userid, verification_code):
     """Verify a user."""
-    user_id = database.find_account("userId", userid)
+    user_id = database.find_account({"userId": userid}, 'id')
     if user_id is not None:
         user_code = accounting.create_verification_code(user_id)
         if user_code == verification_code:
-            database.update_account_set('perm', 'userId', user_id["userId"], "locked", "false")
+            database.update_account_set('perm', {"userId": user_id["userId"]}, {'$set': {"locked": "false"}})
             user = user_id["username"]
             log.log_accounts(
                 f'The account {user} has been verified and may now chat in any chat room'
@@ -321,7 +322,8 @@ def get_logs_page() -> ResponseReturnValue:
 @login_required
 def settings_page() -> ResponseReturnValue:
     """Serve the settings page for the user."""
-    user = database.find_account("username", request.cookies.get('Username'))
+    user = database.find_account({"userId": request.cookies.get('Userid')}, 'id')
+    userC = database.find_account({"userId": request.cookies.get('Userid')}, 'costom')
     if request.cookies.get('Userid') != user['userId']:
         # someone is trying something funny
         return flask.Response(
@@ -332,13 +334,13 @@ def settings_page() -> ResponseReturnValue:
         user=user['username'],
         passwd='we are not adding password editing just yet',
         email=user["email"],
-        displayName=user["displayName"],
-        role=user["role"],
-        user_color=user["userColor"],
-        role_color=user["roleColor"],
-        message_color=user["messageColor"],
-        profile=user["profile"],
-        theme=user["theme"])
+        displayName=userC["displayName"],
+        role=userC["role"],
+        user_color=userC["userColor"],
+        role_color=userC["roleColor"],
+        message_color=userC["messageColor"],
+        profile=userC["profile"],
+        theme=userC["theme"])
 
 
 @app.route('/settings', methods=['POST'])
@@ -354,7 +356,7 @@ def customize_accounts() -> ResponseReturnValue:
     email = request.form.get("email")
     profile = request.form.get("profile")
     theme = request.form.get("theme")
-    user = database.find_account("username", userid)
+    user = database.find_account({"username": userid}, 'id')
     return_list = {
         "user": userid,
         "passwd": 'we are not adding password editing just yet',
@@ -377,19 +379,20 @@ def customize_accounts() -> ResponseReturnValue:
                                      error=error,
                                      **return_list)
 
-    if (database.find_account("displayName", displayname) is not None
+    if (database.find_account({"displayName": displayname}, 'costom') is not None
             and user["displayName"]
             != displayname) and displayname in word_lists.banned_usernames:
         return flask.render_template(
             "settings.html",
             error='That Display name is already taken!',
             **return_list)
-    if (database.find_account("email", email) is None
+    email_check = database.find_account({"email": email}, 'id')
+    if (email_check is None
             and user["email"] != email):
         verification_code = accounting.create_verification_code(user)
         accounting.email_var_account(user["username"], email,
                                      verification_code, user['userid'])
-    elif (database.find_account("email", email) is not None
+    elif (email_check is not None
           and user["email"] != email):
         return flask.render_template("settings.html",
                                      error='that email is taken',
@@ -411,7 +414,7 @@ def customize_accounts() -> ResponseReturnValue:
                 error=
                 'You must verify your account before you can change settings',
                 **return_list)
-        database.update_account_set('id', "username", userid, "email", email)
+        database.update_account_set('id', {"username": userid}, {'$set': {"email": "email"}})
         error = 'Updated email!'
     log.log_accounts(
         f'The account {user} has updated some settings (one day ill add what they updated)'
@@ -428,7 +431,7 @@ def handle_connect(username: str, location):
     icons = {'settings': '⚙️', 'chat': ''}
     # this is until I pass the displayname to the user instead of the username
     if username != 'pass':
-        user = database.find_account('username', username) 
+        user = database.find_account({'username': username}, 'id') 
         database.add_user(user['displayName'], socketid, location)
 
     for key in database.find_online():
@@ -468,8 +471,8 @@ def handle_online(username: str):
 @socketio.on("get_rooms")
 def get_rooms(userid):
     """Grabs the chat rooms."""
-    user_name = database.find_account("userId", userid)
-    user = user_name["displayName"]
+    user_name = database.find_account({"userId", userid}, 'perm')
+    user = database.find_account({"userId", userid}, 'costom')["displayName"]
     room_access = rooms.get_chat_rooms()
     permission = user_name["locked"].split(' ')
     if user_name["SPermission"] == "Debugpass":
@@ -524,7 +527,7 @@ def handle_message(user_name, message, roomid, userid):
     """New New chat message handling pipeline."""
     # later I will check the if the username is the same as the one for the session somehow
     room = database.find_room(roomid)
-    user = database.find_account("username", user_name)
+    user = database.find_all_account({"userId": userid})
     if room is None:
         result = ("Permission", 6)
     else:
@@ -570,7 +573,7 @@ def connect(roomid):
                 misfire_grace_time=500)
 def update_permission():
     """Background task to see if user should be unmuted."""
-    users = database.find_all_accounts()
+    users = database.find_all_account()
     # filtering.reload_users(e = '1')
     for user_info in users:
         user = user_info['username']
@@ -579,12 +582,12 @@ def update_permission():
 
         if filtering.is_user_expired(permission):
             print(f"{username} is no longer muted.")
-            database.update_account_set('perm', 'userId', user_id["userId"], "permission", "true")
+            database.update_account_set('perm', {"userId": user_info["userId"]}, {'$set': {"permission": "true"}})
             log.log_mutes(f"{username} is no longer muted.")
 
         elif filtering.is_warned_expired(permission):
             print(f"{username} warnings have been reset.")
-            database.update_account_set('perm', 'userId', user_id["userId"], "warned", "0")
+            database.update_account_set('perm', {"userId": user_info["userId"]}, {'$set': {"warned": "0"}})
             log.log_mutes(f"{username} warnings have been reset.")
         elif accounting.is_account_expired(permission):
             log.log_accounts(

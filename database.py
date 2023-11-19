@@ -47,19 +47,50 @@ def find_online():
 
 # accounting 
 
-def find_account(search_type, input):
-    return ID.find_one({search_type: input})
+def find_account(data, location):
+    if location == 'id':
+        return ID.find_one(data)
+    if location == 'perm':
+        return Permission.find_one(data)
+    if location == 'costom':
+        return Customization.find_one(data)
+    
+        
+def find_all_account(data):
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "Permission",  # Target collection
+                "localField": "userId",  # Field in the current collection
+                "foreignField": "userId",  # Field in the 'Permission' collection
+                "as": "permissions"  # Alias for the joined data
+            }
+        },
+        {
+            "$lookup": {
+                "from": "Customization",  # Target collection
+                "localField": "userId",  # Field in the current collection
+                "foreignField": "userId",  # Field in the 'Customization' collection
+                "as": "customizations"  # Alias for the joined data
+            }
+        }
+    ]
 
+    pipeline.insert(0, {"$match": data})
+
+    result = ID.aggregate(pipeline)
+    return list(result)
+    
 def find_all_accounts():
     return ID.find()
 
-def update_account_set(location, user_search, user_input, search_type, input):
+def update_account_set(location, data):
     if location == 'id':
-        return ID.update_one({user_search: user_input}, {'$set': {search_type: input}})
+        return ID.update_one(data)
     if location == 'perm':
-        return Permission.update_one({user_search: user_input}, {'$set': {search_type: input}})
+        return Permission.update_one(data)
     if location == 'costom':
-        return Customization.update_one({user_search: user_input}, {'$set': {search_type: input}})
+        return Customization.update_one(data)
 
 def add_account(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked):
     """Adds a single account to the database"""
@@ -162,7 +193,7 @@ def get_rooms():
 
 def update_whitelist(id, message):  #combine whitelist and blacklist
     """Adds the whitelisted users to the database"""
-    dbm.rooms.update_one({"id": room_name},
+    Access.update_one({"id": id},
                          {"$set": {
                              "whitelisted": message
                          }})
@@ -170,7 +201,7 @@ def update_whitelist(id, message):  #combine whitelist and blacklist
 
 def update_blacklist(id, message):
     """Adds the blacklisted users to the database"""
-    dbm.rooms.update_one({"id": room_name},
+    Access.update_one({"id": id},
                          {"$set": {
                              "blacklisted": message
                          }})
