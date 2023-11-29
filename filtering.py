@@ -295,32 +295,35 @@ def do_dev_easter_egg(role, user):
 
 
 def failed_message(result, roomid):
-    """Tell the client that your message could not be sent for whatever the reason was."""
+    """Find the response the client needs for why their message can't be sent."""
+    # maybe later we can move these to a file?
+    # also why do we use a tuple here for these entries?
+    # they could just be ints and it work still
     fail_strings = {
         (1):
-        "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you are muted.</font>",
+        "You can't send messages here because you are muted.",
         (2):
-        "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you have been banned.</font>",
+        "You can't send messages here because you have been banned.",
         (3):
-        "[SYSTEM]: <font color='#ff7f00'>You can't send messages because this chat room has been locked.</font>",
+        "You can't send messages here because this chat room has been locked.",
         (4):
-        "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you have been banned from this chat room.</font>",
+        "You can't send messages here because you have been banned from this chat room",
         (5):
-        "[SYSTEM]: <font color='#ff7f00'>You can't send messages because you do not have enough permission to use this chat room.</font>",
+        "You can't send messages here due to lack of permissions for this chat room.",
         (6):
-        "[SYSTEM]: <font color='#ff7f00'>You can't send messages in this chat room because this chat room no longer exists,  select a chat room that does exist.</font>",
+        "This chat room no longer exists, select a chat room that does exist.",
         (7):
-        "[SYSTEM]: <font color='#ff7f00'>this chat room id does not exist.</font>",
+        "This chat room id does not exist.",
         (8):
-        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send more than 15 messages in a row. (You have been warned)</font>",
+        "You are not allowed to send more than 15 messages in a row. (Warning)",
         (9):
-        "[SYSTEM]: <font color='#ff7f00'>You must verify your account before you can use commands.</font>",
+        "You must verify your account before you can use this command.",
         (10):
-        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send code in the chat. (You have been warned)</font>",
+        "You are not allowed to send code in the chat. (Warning)",
         (11):
-        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to send pings. (You have been warned)</font>",
+        "You are not allowed to ping other users. (Warning)",
         (12):
-        "[SYSTEM]: <font color='#ff7f00'>Are you trying to do some funny business? (You failed lol)</font>",
+        "Are you trying to do some funny business? (You failed lol)",
     }
     # if result[0] == "dev/mod":
     #     if result[1] == 6: fail_str = fail_strings.get((result[1]), "")
@@ -329,7 +332,9 @@ def failed_message(result, roomid):
     # ^^^^ what is this?
 
     fail_str = fail_strings.get((result[1]), "")  # result[2]), "")
-    emit("message_chat", (fail_str, roomid), namespace="/")
+    # I love fstrings
+    final_str = f"[SYSTEM]: <font color='#ff7f00'>{fail_str}</font>"
+    emit("message_chat", (final_str, roomid), namespace="/")
 
 
 def is_user_expired(permission_str):
