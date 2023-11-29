@@ -587,11 +587,11 @@ def handle_message(user_name, message, roomid, userid):
             if "$sudo" in message and result[2] != 3:
                 filtering.find_cmds(message, user, roomid)
             elif '$sudo' in message and result[2] == 3:
-                filtering.failed_message(('permission', 9), roomid, user)
+                filtering.failed_message(('permission', 9), roomid)
         else:
-            filtering.failed_message("return", roomid, user)
+            filtering.failed_message("return", roomid)
     else:
-        filtering.failed_message(result, roomid, user)
+        filtering.failed_message(result, roomid)
 
 
 @socketio.on('pingtest')

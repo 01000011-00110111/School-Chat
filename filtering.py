@@ -3,15 +3,19 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import re
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
+
 from better_profanity import profanity
 from flask_socketio import emit
-# from markdown import markdown
-# import chat
-import word_lists
+
 import cmds
 import log
 import rooms
+import word_lists
+
+# old imports, do we still need the markdown package due to us having our own markdown
+# from markdown import markdown
+# import chat
 
 # get our custom whitelist words (that shouldnot be banned in the first place)
 profanity.load_censor_words(whitelist_words=word_lists.whitelist_words)
@@ -26,12 +30,14 @@ def run_filter(user, room, message, roomid, userid):
     global message_count
     locked = check_lock(room)
     perms = check_perms(user)
-    can_send = check_allowed_sending(user, room)
+    can_send = check_allowed_sending(room)
     user_muted = check_mute(user)
 
     # we must check if the current user is acutally them, good idea for this to be first
     if userid != user['userId']:
-        # idea lock account if they fail 3 times useing the normal lock or a lock version that doesnt let you login at all without dev help of email fix
+        # idea lock account if they fail 3 times useing the normal lock
+        # or a lock version that doesnt let you login at all 
+        # without dev help of email fix
         return ('permission', 12, user_muted)
 
     if user_muted not in [0, 3] and perms != 'dev':
@@ -54,14 +60,12 @@ def run_filter(user, room, message, roomid, userid):
 
     if "[" in message and locked != 'true':
         if user['locked'] != 'locked':
-            find_pings(message, user['displayName'], profile_picture, roomid,
-                       user)
+            find_pings(message, user['displayName'], profile_picture, roomid)
         else:
             cmds.warn_user(user)
-            failed_message(('permission', 11, 'locked'), roomid, user)
+            failed_message(('permission', 11, 'locked'), roomid)
 
-    final_str = compile_message(markdown(message), profile_picture, user, role,
-                                preuser, message_count)
+    final_str = compile_message(markdown(message), profile_picture, user, role)
 
     # check if locked or allowed to send
     if locked == 'true' and perms not in ["dev", "mod"]:
@@ -95,7 +99,7 @@ def run_filter(user, room, message, roomid, userid):
 
 
 def check_mute(user):
-    """checks if the user is muted or banned."""
+    """Checks if the user is muted or banned."""
     permission = user["permission"].split(' ')
     if permission[0] == "muted":
         return 1
@@ -107,17 +111,17 @@ def check_mute(user):
 
 
 def check_lock(room):
-    """For now, its just as simple as this, but when rooms come it will be more complicated."""
+    """Check if room is locked."""
     return (room["locked"])
 
 
-def check_allowed_sending(user, room):
-    """this is a check to se if the database allowes you to send"""
+def check_allowed_sending(room):
+    """This is a check to se if the database allowes you to send"""
     return (room["canSend"])
 
 
 def check_perms(user):
-    """checks if the user has specal perms else return as a user"""
+    """Checks if the user has specal perms else return as a user"""
     if user['SPermission'] == 'Debugpass':
         perms = 'dev'
     elif user['SPermission'] == 'modpass':
@@ -129,9 +133,9 @@ def check_perms(user):
 
 def to_hyperlink(text):
     """Taken from the js file, we don't need to have the client process it really."""
-    mails = re.findall(r"mailto:([^\?]*)", text)
-    links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text)
-    #print(f"{mails}\n\n\n{links2}")
+    # mails = re.findall(r"mailto:([^\?]*)", text)
+    # links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text)
+    # print(f"{mails}\n\n\n{links2}")
 
 
 def filter_message(message):
@@ -159,8 +163,10 @@ def markdown(message):
         "v:": ('<font color="#7F00FF">', '</font>'),  #violet
     }
 
-    # so its not something specific to lg and lb, its that the regex hangs the server on ANY combination of 2 letters - cserver
-    # I have no idea why it does that, it doesen't even matter if the letters are used anywhere else, it just doesn't like 2 letter ones.
+    # so its not something specific to lg and lb,
+    # its that the regex hangs the server on ANY combination of 2 letters - cserver
+    # I have no idea why it does that, it doesen't even matter if the letters are used
+    # anywhere else, it just doesn't like 2 letter ones.
     def repl(match):
         text = match.group(0)
 
@@ -185,7 +191,7 @@ def markdown(message):
     return compiled_str
 
 
-def find_pings(message, dispName, profile_picture, roomid, user):
+def find_pings(message, dispName, profile_picture, roomid):
     """Gotta catch 'em all! (checks for pings in the users message)"""
     pings = re.findall(r'(?<=\[).+?(?=\])', message)
     room = rooms.get_chat_room(roomid)
@@ -206,7 +212,10 @@ def find_pings(message, dispName, profile_picture, roomid, user):
 
 
 def find_cmds(message, user, roomid):
-    """$sudo commands, will push every cmd found to cmds.py along with the user, so we can check if they can do said command."""
+    """ $sudo commands, 
+        will push every cmd found to cmds.py along with the user,
+        so we can check if they can do said command.
+    """
     command_split = message.split("$sudo")
     command_split.pop(0)
     command_string = command_split[0]
@@ -219,15 +228,17 @@ def find_cmds(message, user, roomid):
         find_roomid = re.sub(r"\([^()]+\)", "", command_string).strip()
         room_check = rooms.check_roomids(find_roomid)
         if room_check is False:
-            failed_message(('permission', 7), roomid, user)
+            failed_message(('permission', 7), roomid)
             return
         if len(match) == 2:
             origin_room = roomid
             roomid = find_roomid
             command_split = [match_msg[0]]
 
-    if origin_room is None: origin_room = roomid
-    # this check is needed, because the finding of commands is after chat lock check in run_filter
+    if origin_room is None: 
+        origin_room = roomid
+    # this check is needed, due to the finding of commands
+    # being after chat lock check in run_filter
     # leading to users being able to send comamnds, even when chat is locked
     # we should be the only ones that can do that (devs)
     for cmd in command_split:
@@ -239,9 +250,9 @@ def find_cmds(message, user, roomid):
         command = cmd.split()
         commands = {}
 
-        for index, command in enumerate(command):
+        for index, comm in enumerate(command):
             var_name = "v%d" % index
-            commands[var_name] = command
+            commands[var_name] = comm
         if 'v0' in commands:
             cmds.find_command(commands=commands,
                               user=user,
@@ -250,8 +261,7 @@ def find_cmds(message, user, roomid):
             break  # that will work ez one per message fix lol
 
 
-def compile_message(message, profile_picture, user, role, preuser,
-                    message_count):
+def compile_message(message, profile_picture, user, role):
     """Taken from old methold of making messages"""
     to_hyperlink(message)
     profile = f"<img class='pfp' src='{profile_picture}'></img>"
@@ -265,7 +275,10 @@ def compile_message(message, profile_picture, user, role, preuser,
     # if user["username"] == preuser:
     #     message = message_string
     # else:
-    message = date_str + profile + " " + user_string + " (" + role_string + ")" + " - " + message_string
+    message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string}"
+    # convert to fstring is above
+    # message = date_str + profile + " " + user_string + " (" + role_string + ")" + 
+    # " - " + message_string  # split onto 2 lines, combine later if you need it
     return message
 
 
@@ -281,7 +294,7 @@ def do_dev_easter_egg(role, user):
     return role_string
 
 
-def failed_message(result, roomid, user):
+def failed_message(result, roomid):
     """Tell the client that your message could not be sent for whatever the reason was."""
     fail_strings = {
         (1):
@@ -312,14 +325,15 @@ def failed_message(result, roomid, user):
     # if result[0] == "dev/mod":
     #     if result[1] == 6: fail_str = fail_strings.get((result[1]), "")
     #     else: return
-    # if result[0] == "return": emit("message_chat", ('', roomid), namespace="/") what is this
+    # if result[0] == "return": emit("message_chat", ('', roomid), namespace="/") 
+    # ^^^^ what is this?
 
     fail_str = fail_strings.get((result[1]), "")  # result[2]), "")
     emit("message_chat", (fail_str, roomid), namespace="/")
 
 
 def is_user_expired(permission_str):
-    """checks if the user's time maches the time (idk you explain it better to me please)"""
+    """Checks if the time of a user being muted has expired."""
     parts = permission_str.split(' ')
     if len(parts) == 3 and parts[0] == 'muted':
         expiration_time_str = ' '.join(parts[1:])
@@ -330,7 +344,7 @@ def is_user_expired(permission_str):
 
 
 def is_warned_expired(warned_str):
-    """checks if the user's time maches the time (idk you explain it better to me please)"""
+    """Check if the time a user has been warned has expired."""
     parts = warned_str.split(' ')
     if len(parts) == 2:
         expiration_time_str = ''.join(parts[1:])
