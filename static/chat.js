@@ -17,19 +17,22 @@ socket.on("pingTime", (time, roomid) => {
 });
 
 
-socket.on("force_username", (_statement) => {
-    socket.emit("username", getCookie("Username"), 'chat');
+socket.on("force_username", (_statement, ignore_user) => {
+    if (getCookie('Userid') != ignore_user){
+        socket.emit("username", getCookie("Username"), 'chat');
+    } else {socket.emit("username", 'pass', 'chat');}
 });
 
 socket.on("force_room_update", (_statement) => {
-    socket.emit("get_rooms", user);
+    userid = getCookie("Userid")
+    socket.emit("get_rooms", userid);
 });
 
 socket.on("ping", ({ who, from, pfp, message, name, roomid}) => {
     let user_name = getCookie("Username");
-    room = window.sessionStorage.getItem("roomid");
+    // room = window.sessionStorage.getItem("roomid");
     console.log(who, from, message);
-    if (user_name === who && roomid === room) {
+    if (user_name === who) {
         new Notification("You where pinged by:", { body: from + ` in ${name}: ` + message, icon: '/static/favicon.ico'});
     } else if (who === "everyone") {// add a check to see if the user has access and if so then ping them    
         new Notification("You where pinged by:", { body: from + ` in ${name}: ` + message, icon: '/static/favicon.ico'});
@@ -52,12 +55,12 @@ socket.on("reset_chat", (who, roomid) => {
   
 
 function runStartup() {
-    setDarkStyle();
     window.sessionStorage.setItem("roomid", 'ilQvQwgOhm9kNAOrRqbr');
     username = getCookie("Username");
+    userid = getCookie("Userid")
     socket.emit("username", username, 'chat');
-    socket.emit("get_rooms", username);
-    whichEvent(getCookie('Theme'))
+    socket.emit("get_rooms", userid);
+    setTheme(getCookie('Theme'))
     // changeRoom('ilQvQwgOhm9kNAOrRqbr')
 }
 
@@ -67,9 +70,9 @@ socket.on("roomsList", (result, permission) => {
     let RoomDiv = document.getElementById("ChatRoomls");
     for (room of result) {
         if (permission != 'locked') {
-        rooms = rooms + "<hr><a onclick=changeRoom('" + room.id + "')>/" + room.name + '</a><hr>';
+        rooms = rooms + `<hr id="room_bar"><a id="room_names" onclick=changeRoom("${room.id}")>/` + room.name + '</a><hr id="room_bar">';
         } else {
-            rooms = "<hr>verify to have access to chat rooms<hr>"
+            rooms = '<hr id="room_bar">verify to have access to chat rooms<hr id="room_bar">'
             changeRoom('zxMhhAPfWOxuZylxwkES')
           }
     }
@@ -117,6 +120,17 @@ function toHyperlink(str) {
     return str3;
 }
 
+function BTMLog() {
+  if (Math.floor(window.scrollY) === window.scrollMaxY) {
+    console.log("cheese");
+    setTimeout(ToBtm, 10000)
+  } 
+}
+
+function ToBtm() {
+  window.scrollTo(0, chatDiv.scrollHeight);
+}
+
 function sendMessage() {
     let messageElement = document.getElementById("message");
     let user = getCookie('Username')
@@ -133,6 +147,13 @@ function sendMessage() {
     socket.emit('message_chat', user, messageL, window.sessionStorage.getItem("roomid"), userid);
     window.scrollTo(0, chatDiv.scrollHeight);
 }
+
+function CallOwenGay() {
+    document.getElementById("message")["value"] = "I am gay!";
+        sendMessage();
+}
+
+setInterval(BTMLog, 3000)
 
 function renderChat(messages, roomid) {
     let newline = "<br>";

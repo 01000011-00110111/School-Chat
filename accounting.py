@@ -74,7 +74,8 @@ def email_var_account(username, email, verification_code, userid):
 
     message_body = message_body.replace("[Recipient's Name]", username)
     message_body = message_body.replace(
-        "[Verification Link]", f'https://{URL}/verify/{userid}/{verification_code}')
+        "[Verification Link]",
+        f'https://{URL}/verify/{userid}/{verification_code}')
 
     msg = MIMEMultipart()
     msg['From'] = sender_email
@@ -181,6 +182,7 @@ def check_if_disposable_email(email):
     else:
         return 0
 
+
 def create_verification_code(user):
     """Creates the user's verification code."""
 
@@ -188,8 +190,11 @@ def create_verification_code(user):
     # along with a secret we add in an env var
     # we can't use the secret flask uses because it gets regnerated on server restart
     # to generate the verification code added on to the end of the url
-    username_hash = hashlib.sha224(bytes(user['username'], 'utf-8')).hexdigest()
+    username_hash = hashlib.sha224(bytes(user['username'],
+                                         'utf-8')).hexdigest()
     email_hash = hashlib.sha224(bytes(user['email'], 'utf-8')).hexdigest()
-    combined_hashes = username_hash + email_hash + user['password'] + os.environ['secret_key']
-    verification_code = hashlib.sha224(bytes(combined_hashes, 'utf-8')).hexdigest()
+    combined_hashes = username_hash + email_hash + user[
+        'password'] + os.environ['secret_key']
+    verification_code = hashlib.sha224(bytes(combined_hashes,
+                                             'utf-8')).hexdigest()
     return verification_code

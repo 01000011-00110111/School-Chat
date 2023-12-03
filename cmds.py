@@ -27,7 +27,9 @@ def find_command(**kwargs):
     """Send whatever sudo command is issued to its respective function."""
     response_strings = {
         'E': E,
+        'spooky': spooky,
         'help': help_command,
+        'hello': reload_users,
         'chat': chat_room_edit,
         'mute': mute_user,
         'unmute': unmute_user,
@@ -36,6 +38,7 @@ def find_command(**kwargs):
         'status': send_stats,
         'lock': lock,
         'globalock': globalock,
+        'goodbye': appear_offline,
         'unlock': unlock,
         'ronline': reload_users,
         'ro': reload_users,
@@ -65,6 +68,14 @@ def find_command(**kwargs):
 
 def E(**kwargs):
     """Test function"""
+    roomid = kwargs['roomid']
+    emit("troll", (
+        "[SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font> <img src='static/troll-face.jpeg'>",
+        roomid),
+         broadcast=True)
+
+def spooky(**kwargs):
+    """this is a spooky function"""
     roomid = kwargs['roomid']
     emit("troll", (
         "[SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font> <img src='static/troll-face.jpeg'>",
@@ -380,7 +391,15 @@ def reload_users(**kwargs):
     """Reload the online list manually."""
     # print('test')
     dbm.Online.delete_many({})
-    emit("force_username", "", broadcast=True)
+    emit("force_username", ("", None), broadcast=True)
+
+
+def appear_offline(**kwargs):
+    """Make the user who ran the command appear offline"""
+    user = kwargs['user']
+    # dbm.Online.delete_one({'userId': user['userId']})
+    dbm.Online.delete_many({})
+    emit("force_username", ("", user['userId']), broadcast=True)
 
 
 def ping(**kwargs):
@@ -540,18 +559,18 @@ def help_command(**kwargs):
                 end_index = i - 1
     else:
         for i, line in enumerate(lines):
-            if check_if_owner(roomid, issuer) == 1:
-                if 'user commands' in line.lower():
-                    start_index = i
-                elif 'end' in line.lower():
-                    end_index = i - 1
-            elif check_if_room_mod(issuer) == 1:
-                if 'user commands' in line.lower():
-                    start_index = i
-                elif 'room owner commands' in line.lower():
-                    end_index = i - 1
-            else:
-                if 'user commands' in line.lower():
+            # if check_if_owner(roomid, issuer) == 1:
+            #     if 'user commands' in line.lower():
+            #         start_index = i
+            #     elif 'end' in line.lower():
+            #         end_index = i - 1
+            # elif check_if_room_mod(issuer) == 1:
+            #     if 'user commands' in line.lower():
+            #         start_index = i
+            #     elif 'room owner commands' in line.lower():
+            #         end_index = i - 1
+            # else:
+                if 'user commands' in line.lower():        
                     start_index = i
                 elif 'room mod commands' in line.lower():
                     end_index = i - 1

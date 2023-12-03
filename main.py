@@ -18,11 +18,12 @@
 import os
 import logging
 import hashlib
+import uuid
+import time
+from datetime import datetime, timedelta
 import keys
-import re
 import flask
 import pymongo
-import uuid
 from flask import request
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
@@ -31,14 +32,15 @@ from flask_login import LoginManager
 from flask_login import current_user, login_user, logout_user, login_required
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
-from datetime import datetime, timedelta
 
 client = pymongo.MongoClient(os.environ["mongo_key"])
 dbm = client.Chat
 scheduler = APScheduler()
 
+import addons
 import chat
 import cmds
+# import database
 import filtering
 import rooms
 import accounting
@@ -74,40 +76,56 @@ dbm.Online.delete_many({})
 
 
 class User:
+    """Represents a logged in user."""
 
     def __init__(self, username):
+        """Initialize the user."""
         self.username = username
 
     @staticmethod
     def is_authenticated():
+        """Check if the user is authenitcated."""
+        # this would only be used if we needed to check 2fa or something like that.
         return True
 
     @staticmethod
     def is_active():
+        """Check if the user's session is recent."""
+        # we could implement some kind of token expire here I think
         return True
 
     @staticmethod
     def is_anonymous():
+        """Check if the user is anonymous (never will be)."""
+        # We disabled anonymous users a while ago
         return False
 
     def get_id(self):
+        """Return the user's username."""
+        # whenever we get arround to it, maybe switch this to userid?
         return self.username
 
     @staticmethod
     def check_password(password_hash, password):
+        """Check the user's password against the one entered in the login field."""
         return hashlib.sha384(bytes(password,
                                     'utf-8')).hexdigest() == password_hash
 
     @staticmethod
     def check_username(username, db_username):
+        """Check the username against the one entered in the login field."""
         return username == db_username
 
+    # pylint: disable=E0213
     @login_manager.user_loader
     def load_user(username):
+        """Load the user into flask-login."""
         u = dbm.Accounts.find_one({"username": username})
         if not u:
             return None
         return User(username=u['username'])
+
+    # pylint: enable=E0213
 
 
 # license stuff
@@ -128,8 +146,8 @@ def chat_page() -> ResponseReturnValue:
 def specific_chat_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
-    # print(room_name)  commit what you've changed here, and then i can
-    return flask.redirect(flask.url_for("chat_page")) #
+    # print(room_name)
+    return flask.redirect(flask.url_for("chat_page"))
 
 
 @app.route('/logout')
@@ -382,23 +400,18 @@ def customize_accounts() -> ResponseReturnValue:
         return flask.render_template("settings.html",
                                      error='Pick a theme before updating!',
                                      **return_list)
+    result, error = accounting.run_regex_signup(userid, role, displayname)
+    if result is not False:
+        return flask.render_template("settings.html",
+                                     error=error,
+                                     **return_list)
+
     if (dbm.Accounts.find_one({"displayName": displayname}) is not None
             and user["displayName"]
             != displayname) and displayname in word_lists.banned_usernames:
         return flask.render_template(
             "settings.html",
             error='That Display name is already taken!',
-            **return_list)
-    # move these into accounting.py after this branch gets merged into main
-    if bool(re.search(r'[\s\[,"\'<>{\]]', displayname)) is True:
-        return flask.render_template(
-            "settings.html",
-            error='The display name contains a space or a special character.',
-            **return_list)
-    elif bool(re.search(r'[\s[,"\'<>{\]]', role)) is True:
-        return flask.render_template(
-            "settings.html",
-            error='The Role contains a space or a special character.',
             **return_list)
     if (dbm.Accounts.find_one({"email": email}) is None
             and user["email"] != email):
@@ -409,12 +422,6 @@ def customize_accounts() -> ResponseReturnValue:
           and user["email"] != email):
         return flask.render_template("settings.html",
                                      error='that email is taken',
-                                     **return_list)
-    check = r'^[A-Za-z]{3,12}$'
-    desplayname_allowed = re.match(check, displayname)
-    if desplayname_allowed == 'false':
-        return flask.render_template("settings.html",
-                                     error='That Display name is not allowed!',
                                      **return_list)
 
     if user['locked'] != 'locked':
@@ -430,24 +437,29 @@ def customize_accounts() -> ResponseReturnValue:
                 "email": email
             }
         })
+        resp = flask.make_response(flask.redirect(flask.url_for('chat_page')))
+        resp.set_cookie('Username', user['username'])
+        resp.set_cookie('Theme', theme)
+        resp.set_cookie('Profile', profile)
+        resp.set_cookie('Userid', user['userId'])
         error = "Updated account!"
+        return resp
     else:
         if user['email'] == email:
-            return flask.render_template('settings.html',
-                             error='You must verify your account before you can change settings',
-                             **return_list)
-        dbm.Accounts.update_one({"username": userid}, {
-            "$set": {
-                "email": email
-            }
-        })
+            return flask.render_template(
+                'settings.html',
+                error=
+                'You must verify your account before you can change settings',
+                **return_list)
+        dbm.Accounts.update_one({"username": userid},
+                                {"$set": {
+                                    "email": email
+                                }})
         error = 'Updated email!'
     log.log_accounts(
         f'The account {user} has updated some settings (one day ill add what they updated)'
     )
-    return flask.render_template('settings.html',
-                                 error=error,
-                                 **return_list)
+    return flask.render_template('settings.html', error=error, **return_list)
 
 
 # socketio stuff
@@ -458,14 +470,16 @@ def handle_connect(username: str, location):
     username_list = []
     icons = {'settings': '⚙️', 'chat': ''}
     # this is until I pass the displayname to the user instead of the username
-    user = dbm.Accounts.find_one({'username': username})
-    dbm.Online.insert_one({
-        "username": user['displayName'],
-        "socketid": socketid,
-        "location": location
-    })
+    if username != 'pass':
+        user = dbm.Accounts.find_one({'username': username})
+        dbm.Online.insert_one({
+            "username": user['displayName'],
+            "socketid": socketid,
+            "location": location
+        })
 
     for key in dbm.Online.find():
+        if username == 'pass': continue
         user_info = key["username"]
         icon = icons.get(key.get("location"))
         user_info = f"{icon}{user_info}"
@@ -502,9 +516,9 @@ def handle_online(username: str):
 
 
 @socketio.on("get_rooms")
-def get_rooms(username):
+def get_rooms(userid):
     """Grabs the chat rooms."""
-    user_name = dbm.Accounts.find_one({"username": username})
+    user_name = dbm.Accounts.find_one({"userId": userid})
     user = user_name["displayName"]
     room_access = rooms.get_chat_rooms()
     permission = user_name["locked"].split(' ')
@@ -528,30 +542,33 @@ def get_rooms(username):
              namespace='/',
              to=request.sid)
     else:
-        accessible_rooms = [{
-            'id': r['id'],
-            'name': r['name']
-        } for r in room_access if (
-            (r['blacklisted'] == 'empty' and r['whitelisted'] == 'everyone') or
-            (r['whitelisted'] != 'everyone' and 'users:' in r['whitelisted']
-             and user in [
-                 u.strip()
-                 for u in r['whitelisted'].split("users:")[1].split(",")
-             ]) or (r['blacklisted'] != 'empty'
-                    and 'users:' in r['blacklisted'] and user not in [
-                        u.strip()
-                        for u in r['blacklisted'].split("users:")[1].split(",")
-                    ] and r['whitelisted'] == 'everyone')) and (
-                        # user_name['username'] == r['generatedBy']
-                        # or user_name['displayName'] == r['mods']) and (
-                            r['whitelisted'] != 'devonly' or r['whitelisted']
-                            != 'modonly' or r['whitelisted'] != 'lockedonly')]
+        accessible_rooms = [
+            {
+                'id': r['id'],
+                'name': r['name']
+            } for r in room_access if
+            ((r['blacklisted'] == 'empty' and r['whitelisted'] == 'everyone')
+             or (r['whitelisted'] != 'everyone'
+                 and 'users:' in r['whitelisted'] and user in [
+                     u.strip()
+                     for u in r['whitelisted'].split("users:")[1].split(",")
+                 ]) or
+             (r['blacklisted'] != 'empty' and 'users:' in r['blacklisted']
+              and user not in [
+                  u.strip()
+                  for u in r['blacklisted'].split("users:")[1].split(",")
+              ] and r['whitelisted'] == 'everyone')) and
+            (
+                # user_name['username'] == r['generatedBy']
+                # or user_name['displayName'] == r['mods']) and (
+                r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly'
+                or r['whitelisted'] != 'lockedonly')
+        ]
         emit('roomsList', (accessible_rooms, user_name['locked']),
              namespace='/',
              to=request.sid)
 
 
-# pylint: disable=C0103
 @socketio.on('message_chat')
 def handle_message(user_name, message, roomid, userid):
     """New New chat message handling pipeline."""
@@ -566,6 +583,7 @@ def handle_message(user_name, message, roomid, userid):
         if dbm.rooms.find_one({"roomid": roomid}) is not None:
             chat.add_message(result[1], roomid, room)
             emit("message_chat", (result[1], roomid), broadcast=True)
+            addons.message_addons(message, user, roomid, room)
             if "$sudo" in message and result[2] != 3:
                 filtering.find_cmds(message, user, roomid)
             elif '$sudo' in message and result[2] == 3:
@@ -574,9 +592,6 @@ def handle_message(user_name, message, roomid, userid):
             filtering.failed_message("return", roomid, user)
     else:
         filtering.failed_message(result, roomid, user)
-
-
-# pylint: enable=C0103
 
 
 @socketio.on('pingtest')
@@ -651,5 +666,18 @@ def emit_on_startup():
         startup_msg = False
 
 
+@socketio.on('online_refresh')
+def online_refresh():
+    """Background task for online list"""
+    while True:
+        dbm.Online.delete_many({})
+        socketio.emit("force_username", ("", None))
+        print('e')
+        time.sleep(10)  # this is using a socketio refresh
+
+
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=8080)
+    # socketio.start_background_task(online_refresh)
+    # o = threading.Thread(target=online_refresh)
+    # o.start()
+    socketio.run(app, host="0.0.0.0", port=5000)
