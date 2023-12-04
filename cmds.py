@@ -475,80 +475,83 @@ def respond_command(result, roomid, name):
     generated_at = room["generatedAt"] if room is not None else ""
     locked = room["locked"] if room is not None else ""
     users_w = room["whitelisted"] if room is not None else ""
-    if users_w == 'devonly': users_w = 'devs'
-    elif users_w == 'modonly': users_w = 'devs and mods'
+    if users_w == 'devonly': 
+        users_w = 'devs'
+    elif users_w == 'modonly': 
+        users_w = 'devs and mods'
     users_b = room["blacklisted"] if room is not None else ""
 
     response_strings = {
         (1, None):
-        "[SYSTEM]: <font color='#ff7f00'>Command not found. Use \"$sudo help\" to see all commands.</font>",
+        "Command not found. Use \"$sudo help\" to see all commands.",
         (0, 'delete'):
-        "[SYSTEM]: <font color='#ff7f00'>Chat room deleted.</font>",
+        "Chat room deleted.",
         (1, 'delete'):
-        f"[SYSTEM]: <font color='#ff7f00'>You are not allowed to delete the chat room named {name}.</font>",
+        f"You are not allowed to delete the chat room named {name}.",
         (2, 'delete'):
-        "[SYSTEM]: <font color='#ff7f00'>Just because you are a dev doesn't mean you can delete the main chat.</font>",
+        "Just because you are a dev doesn't mean you can delete the main chat.",
         (3, 'delete'):
-        "[SYSTEM]: <font color='#ff7f00'>Nice try, but we were prepared.</font>",
+        "Nice try, but we were prepared.",
         (0, 'create'):
-        f"[SYSTEM]: <font color='#ff7f00'>Created chat room named {name}.</font>",
+        f"Created chat room named {name}.",
         (1, 'create'):
-        f"[SYSTEM]: <font color='#ff7f00'>Your chat name ({name}) is too long. It must be 10 letters or less.</font>",
+        f"Your chat name ({name}) is too long. It must be 10 letters or less.",
         (2, 'create'):
-        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to create more chat rooms.</font>",
+        "You are not allowed to create more chat rooms.",
         (3, 'create'):
-        "[SYSTEM]: <font color='#ff7f00'>Your chat room must have a name at least 1 letter long.</font>",
+        "Your chat room must have a name at least 1 letter long.",
         (4, 'create'):
-        f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
+        f"The name {name} has been taken. Pick another name besides {name}.",
         (0, 'W'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to only whitelist the users {users_w}.</font>",
+        f"You have edited the chat room named {name} to only whitelist the users {users_w}.",
         (1, 'W'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to whitelist everyone.</font>",
+        f"You have edited the chat room named {name} to whitelist everyone.",
         (2, 'W'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to whitelist it only for {users_w}.</font>",
+        f"You have edited the chat room named {name} to whitelist it only for {users_w}.",
         (3, 'W'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to add the users {users_w} to the whitelist.</font>",
+        f"You have edited the chat room named {name} to add the users {users_w} to the whitelist.",
         (4, 'W'):
-        "[SYSTEM]: <font color='#ff7f00'>A user you tried to whitelist is in the blacklist.</font>",
+        "A user you tried to whitelist is in the blacklist.",
         (5, 'W'):
-        f"[SYSTEM]: <font color='#ff7f00'>A user you tried to add is allready whitelisted. The list: {users_w}.</font>",
+        f"A user you tried to add is allready whitelisted. The list: {users_w}.",
         (0, 'edit'):
-        f"[SYSTEM]: <font color='#ff7f00'>You are not allowed to edit the chat room named {name}.</font>",
+        f"You are not allowed to edit the chat room named {name}.",
         (0, 'B'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to only blacklist the users {users_b}.</font>",
+        f"You have edited the chat room named {name} to only blacklist the users {users_b}.",
         (1, 'B'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to blacklist no one.</font>",
+        f"You have edited the chat room named {name} to blacklist no one.",
         (2, 'B'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to add the users {users_b} to the blacklist.</font>",
+        f"You have edited the chat room named {name} to add the users {users_b} to the blacklist.",
         (3, 'B'):
-        "[SYSTEM]: <font color='#ff7f00'>A user you tried to blacklist is in the whitelist.</font>",
+        "A user you tried to blacklist is in the whitelist.",
         (4, 'B'):
-        f"[SYSTEM]: <font color='#ff7f00'>A user you tried to add is allready blacklisted. The list: {users_b}.</font>",
+        f"A user you tried to add is allready blacklisted. The list: {users_b}.",
         (5, 'B'):
-        "[SYSTEM]: <font color='#ff7f00'>You can not blacklist the room owner.</font>",
+        "You can not blacklist the room owner.",
         (0, 'info'):
-        f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} was made by {generated_by} at {generated_at} and the chat room status is currently set to locked = {locked}.</font>",
+        f"The chat room {name} was made by {generated_by} at {generated_at} and the chat room status is currently set to locked = {locked}.",
         (0, 'rooms'):
-        f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} does not exist. Please enter a chat room that does exist.</font>",
+        f"The chat room {name} does not exist. Enter a chat room that does exist.",
         (2, 'not_dev'):
-        "[SYSTEM]: <font color='#ff7f00'>Who do you think you are, a Developer?</font>",
+        "Who do you think you are, a Developer?",
         (2, 'not_mod'):
-        "[SYSTEM]: <font color='#ff7f00'>Who do you think you are, a Moderator?</font>",
+        "Who do you think you are, a Moderator?",
         (1, 'no_time'):
-        "[SYSTEM]: <font color='#ff7f00'>You forgot the time!</font>",
+        "You forgot the time!",
         (1, 'wrong_room'):
-        "[SYSTEM]: <font color='#ff7f00'>You can only run this command in the dev chat room</font>",
+        "You can only run this command in the dev chat room",
         (3, "not_confirmed"):
-        "[SYSTEM]: <font color='#ff7f00'>Are you sure you want to run this?</font>",
+        "Are you sure you want to run this?",
         (10, "systemd_disabled"):
-        "[SYSTEM]: <font color='#ff7f00'>SystemD is currently disabled on this server. $sudo shutdown and $sudo restart are disabled.</font>",
+        "SystemD is disabled on this server. $sudo shutdown and $sudo restart are disabled.",
     }
     response_str = response_strings.get((result[1], result[2]))
+    resp_final = f"[SYSTEM]: <font color='#ff7f00'>{response_str}</font>"
     if result[1] in [0, 2, 3] and result[2] in ['create', 'delete', 'edit']:
-        chat.add_message(response_str, roomid, 'true')
-        emit("message_chat", (response_str, roomid), namespace="/")
+        chat.add_message(resp_final, roomid, 'true')
+        emit("message_chat", (resp_final, roomid), namespace="/")
     else:
-        emit("message_chat", (response_str, roomid), namespace="/")
+        emit("message_chat", (resp_final, roomid), namespace="/")
 
 
 def help_command(**kwargs):
