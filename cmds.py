@@ -472,7 +472,7 @@ def respond_command(result, roomid, name):
     room = dbm.rooms.find_one({"roomName": name})
     generated_by = room["generatedBy"] if room is not None else ""
     generated_at = room["generatedAt"] if room is not None else ""
-    locked = room["locked"] if room is not None else ""
+    lock = room["locked"] if room is not None else "unlocked"
     users_w = room["whitelisted"] if room is not None else ""
     if users_w == 'devonly': 
         users_w = 'devs'
@@ -502,13 +502,13 @@ def respond_command(result, roomid, name):
         (4, 'create'):
         f"The name {name} has been taken. Pick another name besides {name}.",
         (0, 'W'):
-        f"You have edited the chat room named {name} to only whitelist the users {users_w}.",
+        f"You have only whitelisted {users_w} for {name}.",
         (1, 'W'):
         f"You have edited the chat room named {name} to whitelist everyone.",
         (2, 'W'):
-        f"You have edited the chat room named {name} to whitelist it only for {users_w}.",
+        f"You have whilelisted {users_w} for {name}.",
         (3, 'W'):
-        f"You have edited the chat room named {name} to add the users {users_w} to the whitelist.",
+        f"You have added {users_w} to the whitelist for {name}.",
         (4, 'W'):
         "A user you tried to whitelist is in the blacklist.",
         (5, 'W'):
@@ -516,11 +516,11 @@ def respond_command(result, roomid, name):
         (0, 'edit'):
         f"You are not allowed to edit the chat room named {name}.",
         (0, 'B'):
-        f"You have edited the chat room named {name} to only blacklist the users {users_b}.",
+        f"You have blocked {users_b} from {name}.",
         (1, 'B'):
-        f"You have edited the chat room named {name} to blacklist no one.",
+        f"You have unblocked everyone from {name}.",
         (2, 'B'):
-        f"You have edited the chat room named {name} to add the users {users_b} to the blacklist.",
+        f"You have added {users_b} to the blocklist for {name}.",
         (3, 'B'):
         "A user you tried to blacklist is in the whitelist.",
         (4, 'B'):
@@ -528,7 +528,7 @@ def respond_command(result, roomid, name):
         (5, 'B'):
         "You can not blacklist the room owner.",
         (0, 'info'):
-        f"The chat room {name} was made by {generated_by} at {generated_at} and the chat room status is currently set to locked = {locked}.",
+        f"{name} was made by {generated_by} at {generated_at} and is currently {lock}.",
         (0, 'rooms'):
         f"The chat room {name} does not exist. Enter a chat room that does exist.",
         (2, 'not_dev'):
@@ -542,7 +542,7 @@ def respond_command(result, roomid, name):
         (3, "not_confirmed"):
         "Are you sure you want to run this?",
         (10, "systemd_disabled"):
-        "SystemD is disabled on this server. $sudo shutdown and $sudo restart are disabled.",
+        "SystemD is disabled on this server. Server management commands are disabled.",
     }
     response_str = response_strings.get((result[1], result[2]))
     resp_final = format_system_msg(response_str)
