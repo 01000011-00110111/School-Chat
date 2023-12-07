@@ -92,8 +92,9 @@ socket.on("room_data", (data) => {
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
     window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['roomName']}`);
+    roomname = document.getElementById("RoomDisplay").innerHTML = '/'+data['roomName'];
     document.title = `/${data['roomName']} - Chat`
-    let chat = ""; 
+    let chat = "";  
     for (let messageObj of data['messages']) {
         chat = chat + messageObj + newline;
     }
@@ -104,6 +105,7 @@ socket.on("room_data", (data) => {
 
 function changeRoom(room) {
     window.sessionStorage.setItem("roomid", room);
+    closeNav();
     socket.emit('room_connect', room)
 }
 
