@@ -35,6 +35,10 @@ troll_str = """
                 <img src='static/troll-face.jpeg'>
             """
 
+def format_system_msg(msg):
+    """Format a message [SYSTEM] would send."""
+    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
+
 
 def find_command(**kwargs):
     """Send whatever sudo command is issued to its respective function."""
@@ -156,10 +160,8 @@ def ban_user(**kwargs):
         message = f'{username} has been banned. Reason: {reason}.'
         log.log_mutes(
             f"{username} is banned because {reason} by a mod or admin.")
-
-    msg_formatted = f'[SYSTEM]: <font color="#ff7f00">{message}</font>'
-    chat.add_message(msg_formatted, roomid, 'true')
-    emit("message_chat", (msg_formatted, roomid), broadcast=True)
+    chat.add_message(format_system_msg(message), roomid, 'true')
+    emit("message_chat", (format_system_msg(message), roomid), broadcast=True)
 
 
 def mute_user(**kwargs):
@@ -228,10 +230,8 @@ def mute_user(**kwargs):
                 f"{username} is muted because {reason} for {time_f} by a mod or admin."
             )
 
-            msg_formatted = f'[SYSTEM]: <font color="#ff7f00">{message}</font>'
-
-            chat.add_message(msg_formatted, roomid, 'true')
-            emit("message_chat", (msg_formatted, roomid), broadcast=True)
+            chat.add_message(format_system_msg(message), roomid, 'true')
+            emit("message_chat", (format_system_msg(message), roomid), broadcast=True)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
@@ -250,11 +250,11 @@ def unmute_user(**kwargs):
                                 {"$set": {
                                     "permission": "true"
                                 }})
-        message = f'[SYSTEM]: <font color="#ff7f00">{username} has been unmuted.</font>'
+        message = f'[{username} has been unmuted.'
 
         log.log_mutes(f"{username} is unmuted by a mod or admin.")
-        chat.add_message(message, roomid, 'true')
-        emit("message_chat", (message, roomid), broadcast=True)
+        chat.add_message(format_system_msg(message), roomid, 'true')
+        emit("message_chat", (format_system_msg(message), roomid), broadcast=True)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
@@ -277,7 +277,7 @@ def send_perms(**kwargs):
         # trying something new here, wonder if it will work
         # if it does, we need to redo a lot of these statements like this 
         # to make them look cleaner
-        final_msg = f"[SYSTEM]: <font color='#ff7f00'>{msg_str}</font>"
+        final_msg = format_system_msg(msg_str)
         chat.add_message(final_msg, roomid, room)
         emit("message_chat", (final_msg, roomid), broadcast=True)
     else:
@@ -306,10 +306,10 @@ def list_rooms(**kwargs):
             for id, name in zip(ids, names)
         ])
         chat.add_message(
-            f"[SYSTEM]: <font color='#ff7f00'><br>{msg_str}</font>",
+            format_system_msg(msg_str),
             'jN7Ht3giH9EDBvpvnqRB', 'true')
         emit("message_chat",
-             (f"[SYSTEM]: <font color='#ff7f00'><br>{msg_str}</font>",
+             (format_system_msg(msg_str),
               'jN7Ht3giH9EDBvpvnqRB'),
              namespace="/")
     else:
@@ -337,7 +337,7 @@ def send_song(**kwargs):
 
 
 def send_system(**kwargs):
-    """Sends as the server for specal dev messages."""
+    """Sends as the server for special dev messages."""
     user = kwargs['user']
     roomid = kwargs['roomid']
     commands = kwargs['commands']
@@ -346,7 +346,7 @@ def send_system(**kwargs):
         return
     message = ' '.join(list(commands.values())[1:])
     room = dbm.rooms.find_one({"roomid": roomid})
-    final_msg = f"[SYSTEM]: <font color='#ff7f00'>{message}</font>"
+    final_msg = format_system_msg(message)
     chat.add_message(final_msg, roomid, room)
     emit("message_chat", (final_msg, roomid), broadcast=True)
 
@@ -362,7 +362,7 @@ def run_shutdown(**kwargs):
         return
     if check_if_dev(user) == 1:
         emit("message_chat", (
-            "[SYSTEM]: <font color='#ff7f00'>Server shutting down... (no ETA on restart)</font>",
+            format_system_msg("Server shutting down... (no ETA on restart)"),
             roomid),
              broadcast=True,
              namespace='/')
@@ -387,7 +387,7 @@ def run_restart(**kwargs):
         # server is going down, not just the one that the cmd is sent in...
         # could make it modular (for anouncments? maybe idk)
         emit("message_chat", (
-            "[SYSTEM]: <font color='#ff7f00'>Server restarting... (~30sec ETA on restart)</font>",
+            format_system_msg("Server restarting... (~30sec ETA on restart)"),
             roomid),
              broadcast=True,
              namespace='/')
@@ -428,8 +428,7 @@ def end_ping(start, roomid):
     """The end of the ping comamnd."""
     end = time.time() * 1000.0
     difference = end - start
-    msg = '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + str(
-        int(difference)) + 'ms RTT</font>'
+    msg = format_system_msg(f'Ping Time: {str(int(difference))}ms RTT')
     chat.add_message(msg, roomid, dbm)
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
@@ -439,7 +438,7 @@ def send_lines(**kwargs):
     # to rework this so it uses add_message
     roomid = kwargs['roomid']
     lines = chat.get_line_count("main", roomid)
-    msg = f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n"
+    msg = format_system_msg(f"Line count is {lines}")
     chat.add_message(msg, roomid, dbm)
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
@@ -546,7 +545,7 @@ def respond_command(result, roomid, name):
         "SystemD is disabled on this server. $sudo shutdown and $sudo restart are disabled.",
     }
     response_str = response_strings.get((result[1], result[2]))
-    resp_final = f"[SYSTEM]: <font color='#ff7f00'>{response_str}</font>"
+    resp_final = format_system_msg(response_str)
     if result[1] in [0, 2, 3] and result[2] in ['create', 'delete', 'edit']:
         chat.add_message(resp_final, roomid, 'true')
         emit("message_chat", (resp_final, roomid), namespace="/")
@@ -593,8 +592,8 @@ def help_command(**kwargs):
                 elif 'room mod commands' in line.lower():
                     end_index = i - 1
 
-    command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(
-        line.strip() for line in lines[start_index:end_index + 1]) + "</font>"
+    command_line = format_system_msg("<br>" + ' '.join(
+        line.strip() for line in lines[start_index:end_index + 1]))
     emit("message_chat", (command_line, roomid), namespace="/")
 
 
@@ -615,7 +614,7 @@ def globalock(**kwargs):
     if confirm != "yes":
         respond_command(("reason", 3, "not_confirmed"), roomid, None)
     else:
-        message = "[SYSTEM]: <font color='#ff7f00'>All Chatrooms locked by Admin.</font>"
+        message = format_system_msg("All Chatrooms locked by Admin.")
         chat.add_message(message, "all", dbm)
         emit("message_chat", (message, "all"), broadcast=True)
         dbm.rooms.update_many({}, {'$set': {"locked": 'true'}})
@@ -626,12 +625,12 @@ def lock(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1:
-        message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>"
+        message = format_system_msg("Chat Locked by Admin.")
         chat.add_message(message, roomid, dbm)
         emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
     elif check_if_mod(user) == 1:
-        message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Moderator.</font>"
+        message = format_system_msg("Chat Locked by Moderator.")
         chat.add_message(message, roomid, dbm)
         emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
@@ -644,12 +643,12 @@ def unlock(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1:
-        message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>"
+        message = format_system_msg("Chat Unlocked by Admin.")
         chat.add_message(message, roomid, dbm)
         emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
     elif check_if_mod(user) == 1:
-        message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Moderator.</font>"
+        message = format_system_msg("Chat Unlocked by Moderator.")
         chat.add_message(message, roomid, dbm)
         emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
