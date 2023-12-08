@@ -2,15 +2,17 @@
     Copyright (C) 2023  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
+import hashlib
 import os
 import re
 import smtplib
 import uuid
-import hashlib
 from datetime import datetime
-from better_profanity import profanity
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+from better_profanity import profanity
+
 import word_lists
 
 # get our custom whitelist words (that should not be banned in the first place)
@@ -29,8 +31,9 @@ def email_var_account(username, email, verification_code, userid):
     subject = f'Verification of {username}!'
 
     # Create the email content
-    for i in range(1):  # Send 1 emails (you can adjust the number as needed)
+    for _ in range(1):  # Send 1 emails (you can adjust the number as needed)
         verification_code_list = {username: verification_code}
+        # the message body should be moved to a file imo
         message_body = """
         <!DOCTYPE html>
         <html>
@@ -96,16 +99,14 @@ def email_var_account(username, email, verification_code, userid):
         # Send the email
         server.sendmail(sender_email, receiver_email, msg.as_string())
 
-    except Exception as e:
-        print('An error occurred:', e)
-
     finally:
         server.quit()
-        return verification_code_list
+
+    return verification_code_list
 
 
 def is_account_expired(permission_str):
-    """checks if the user's time matches the time (idk you explain it better to me please)"""
+    """Checks if the account has ran out of time before being deleted."""
     parts = permission_str.split(' ')
     if len(parts) == 3 and parts[0] == 'locked':
         expiration_time_str = ' '.join(parts[1:])
@@ -133,11 +134,11 @@ def run_regex_signup(SUsername, SRole, SDisplayname):
     desplayname_allowed = re.match(check, SDisplayname)
     if re.match(r'^[A-Za-z]{3,18}$', SRole) is True:
         flagged = True
-        error = 'That Role name is too long. It must be at least 1 letter long or under 18.'
+        error = 'That Role name is too long. Must be between 1-18 letters.'
 
     if user_allowed == 'false' or desplayname_allowed == 'false':
         flagged = True
-        error = 'That Username/Display name is too long. It must be at least 1 letter long or 12 and under'
+        error = 'That Username/Display name is too long. Must be between 1-12 letters.'
 
     # check for profanity
     if profanity.contains_profanity(SUsername):
