@@ -152,7 +152,7 @@ def chat_page() -> ResponseReturnValue:
 def specific_chat_page(_) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
-    # print(room_name)
+    print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
 
 
@@ -200,6 +200,7 @@ def login_page() -> ResponseReturnValue:
             resp.set_cookie('Theme', user['theme'])
             resp.set_cookie('Profile', user['profile'])
             resp.set_cookie('Userid', user['userId'])
+            resp.set_cookie('DisplayName', user["displayName"])
             return resp
         else:
             return flask.render_template(
