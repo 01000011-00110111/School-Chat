@@ -590,4 +590,5 @@ html {
   display: flex;
   box-shadow: 0px -1px 44px 15px #191919;
   z-index: 1;
+  margin-bottom: 100%;
 }
