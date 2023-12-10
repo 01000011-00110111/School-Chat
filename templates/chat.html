@@ -4,39 +4,45 @@
 <script src="static/styles.js"></script>
 {% endblock %}
 {% block content %}
-<div id="mySidenav" class="sidenav">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-    <hr style="border: 5px solid grey;">
-    <div>
-        <p>change the chat room you are in</p>
-        <div class="ChatRoomS">
-            <div id="ChatRoomls"></div>
+<div id="topbar">
+        
+    <span id="topleft" style="font-size: 40px; cursor: pointer;  color: rgb(25, 32, 128);" onclick="openNav()">☰</span>
+    <h2 id="RoomDisplay" style="margin: 14.5px 0;">/e</h2>
+    <div class="AccountPopup">
+    <input type="image" id="pfpmenu" class="PictureBTN" onclick="OpenAC();" name="pfpmenu" src="static/favicon.ico">
+    <div id="AccControls" class="AccControls" style="display: none;">
+            <a href="/logout">Logout</a>
+            <a href="/settings">Settings</a>
+            <a href="/#">Soon</a>
         </div>
+    </div></div>
+    <div id="mySidenav" class="sidenav" style="background-color: rgb(17, 17, 17); width: 0px;">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="color: rgb(129, 129, 129);">×</a>
+        <hr style="border: 5px solid grey;">
+        <div>
+            <p>change the chat room you are in</p>
+            <div class="ChatRoomS">
+                <div id="ChatRoomls"><hr></div>
+            </div>
+        </div>
+            <div id="extratext">
+                <h6><a href="/changelog" style="color: rgb(129, 129, 129);">Update log</a></h6>
+                <h6><a href="#TELL-THE-OWNERS-TO-GET-YOUR-OWN-CONTACT-FOR-YOU-AND-LET-THEM-CONTACT-US" style="color: rgb(129, 129, 129);">Contact us</a></h6>
+                <h6><a href="https://github.com/01000011-00110111/School-Chat" style="color: rgb(129, 129, 129);">Source Code</a></h6>
+            </div>
+            <br>
+            <br>
     </div>
-        <div id="extratext">
-            <h6><a href="/changelog">Update log</a></h6>
-            <h6><a href="#TELL-THE-OWNERS-TO-GET-YOUR-OWN-CONTACT-FOR-YOU-AND-LET-THEM-CONTACT-US">Contact us</a></h6>
-            <h6><a href="https://github.com/01000011-00110111/School-Chat">Source Code</a></h6>
-        </div>
-</div>
-<span id="topleft" style="font-size:40px;cursor:pointer" onclick="openNav()">&#9776;</span>
-<div id="chat" onload="Prepare();"></div>
+<div id="chat"></div>
+
 <div id="sides">
-    <div id="chatbox">      
-        <p id="msg-title">Message: </p>  
+    <div id="chatbox">       
         <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250"></input><br/>
         <button onClick="sendMessage();" id="send">Send</button>
     </div>
 </div><br>
-<div class="activenav" id="activenav">
-    <div class="AccountPopup">
-        <input type="image" id="pfpmenu" src="static/favicon.ico" class="PictureBTN" onclick="OpenAC();"/>
-        <div id="AccControls" class='AccControls'>
-            <a href="/#">Soon</a>
-            <a href="/settings">Settings</a>
-            <a href="/logout">Logout</a>
-        </div>
-    </div>
+
+<div class="activenav" id="activenav" style="background-color: rgb(12, 12, 12);">
     <!-- <hr id="online_border"> -->
     <div id="online_users"></div>
 </div>
