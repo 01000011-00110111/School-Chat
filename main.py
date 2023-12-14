@@ -33,7 +33,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
 
-client = pymongo.MongoClient(os.environ["mongo_key"])
+client = pymongo.MongoClient(os.environ["MONGO_KEY"])
 dbm = client.Chat
 scheduler = APScheduler()
 

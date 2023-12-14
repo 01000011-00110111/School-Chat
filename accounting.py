@@ -25,8 +25,8 @@ def email_var_account(username, email, verification_code, userid):
     URL = os.environ['URL']
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
-    sender_email = os.environ['email']
-    sender_password = os.environ['password']
+    sender_email = os.environ['EMAIL']
+    sender_password = os.environ['PASSWORD']
     receiver_email = email
     subject = f'Verification of {username}!'
 
@@ -195,7 +195,7 @@ def create_verification_code(user):
                                          'utf-8')).hexdigest()
     email_hash = hashlib.sha224(bytes(user['email'], 'utf-8')).hexdigest()
     combined_hashes = username_hash + email_hash + user[
-        'password'] + os.environ['secret_key']
+        'password'] + os.environ['SECRET_KEY']
     verification_code = hashlib.sha224(bytes(combined_hashes,
                                              'utf-8')).hexdigest()
     return verification_code

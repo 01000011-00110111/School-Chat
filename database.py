@@ -1,7 +1,7 @@
 import os
 import pymongo
 
-client = pymongo.MongoClient(os.environ["mongo_key"])
+client = pymongo.MongoClient(os.environ["MONGO_KEY"])
 #accounts/user data
 Permission = client.Accounts.Permission
 Customization = client.Accounts.Customization
