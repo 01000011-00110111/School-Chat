@@ -90,8 +90,8 @@ def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
     room = dbm.rooms.find_one({"roomid": roomid})
     lines = len(room["messages"]) if roomid != "all" else 1
-    if (((lines >= 500 and roomid != "ilQvQwgOhm9kNAOrRqbr") 
-        or (roomid == "ilQvQwgOhm9kNAOrRqbr" and lines >= 1000)) 
+    if (((lines >= 500 and roomid != "ilQvQwgOhm9kNAOrRqbr")
+        or (roomid == "ilQvQwgOhm9kNAOrRqbr" and lines >= 1000))
         and permission != 'true'):
         reset_chat(message_text, False, roomid)
     else:

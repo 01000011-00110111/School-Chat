@@ -36,7 +36,7 @@ def run_filter(user, room, message, roomid, userid):
     # we must check if the current user is acutally them, good idea for this to be first
     if userid != user['userId']:
         # idea lock account if they fail 3 times useing the normal lock
-        # or a lock version that doesnt let you login at all 
+        # or a lock version that doesnt let you login at all
         # without dev help of email fix
         return ('permission', 12, user_muted)
 
@@ -112,12 +112,12 @@ def check_mute(user):
 
 def check_lock(room):
     """Check if room is locked."""
-    return (room["locked"])
+    return room["locked"]
 
 
 def check_allowed_sending(room):
     """This is a check to se if the database allowes you to send"""
-    return (room["canSend"])
+    return room["canSend"]
 
 
 def check_perms(user):
@@ -235,7 +235,7 @@ def find_cmds(message, user, roomid):
             roomid = find_roomid
             command_split = [match_msg[0]]
 
-    if origin_room is None: 
+    if origin_room is None:
         origin_room = roomid
     # this check is needed, due to the finding of commands
     # being after chat lock check in run_filter
@@ -277,7 +277,7 @@ def compile_message(message, profile_picture, user, role):
     # else:
     message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string}"
     # convert to fstring is above
-    # message = date_str + profile + " " + user_string + " (" + role_string + ")" + 
+    # message = date_str + profile + " " + user_string + " (" + role_string + ")" +
     # " - " + message_string  # split onto 2 lines, combine later if you need it
     return message
 
@@ -328,7 +328,7 @@ def failed_message(result, roomid):
     # if result[0] == "dev/mod":
     #     if result[1] == 6: fail_str = fail_strings.get((result[1]), "")
     #     else: return
-    # if result[0] == "return": emit("message_chat", ('', roomid), namespace="/") 
+    # if result[0] == "return": emit("message_chat", ('', roomid), namespace="/")
     # ^^^^ what is this?
 
     fail_str = fail_strings.get((result[1]), "")  # result[2]), "")

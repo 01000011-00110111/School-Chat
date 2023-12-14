@@ -257,9 +257,9 @@ def signup_post() -> ResponseReturnValue:
     possible_user = dbm.Accounts.find_one({"username": SUsername})
     possible_dispuser = dbm.Accounts.find_one({"displayName": SDisplayname})
     # print("again")
-    if (possible_user is not None or 
-        possible_dispuser is not None or 
-        SUsername in word_lists.banned_usernames or 
+    if (possible_user is not None or
+        possible_dispuser is not None or
+        SUsername in word_lists.banned_usernames or
         SDisplayname in word_lists.banned_usernames):
         return flask.render_template(
             "signup-index.html",
@@ -490,7 +490,7 @@ def handle_connect(username: str, location):
         })
 
     for key in dbm.Online.find():
-        if username == 'pass': 
+        if username == 'pass':
             continue
         user_info = key["username"]
         icon = icons.get(key.get("location"))
@@ -539,7 +539,7 @@ def get_rooms(userid):
     elif user_name['SPermission'] == "modpass":
         rooms_to_remove = []
         for r in room_access:
-            if (r['whitelisted'] == 'devonly'):
+            if r['whitelisted'] == 'devonly':
                 # this could be simplfied into one for loop you know
                 rooms_to_remove.append(r)
 
@@ -584,7 +584,7 @@ def get_rooms(userid):
 @socketio.on('message_chat')
 def handle_message(user_name, message, roomid, userid):
     """New New chat message handling pipeline."""
-    # later I will check the if the username is the same as the one for the session 
+    # later I will check the if the username is the same as the one for the session
     # somehow...
     room = dbm.rooms.find_one({"roomid": roomid})
     user = dbm.Accounts.find_one({"username": user_name})

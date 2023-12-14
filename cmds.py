@@ -275,7 +275,7 @@ def send_perms(**kwargs):
             msg_str = msg_str + f"{user['displayName']}<br>"
 
         # trying something new here, wonder if it will work
-        # if it does, we need to redo a lot of these statements like this 
+        # if it does, we need to redo a lot of these statements like this
         # to make them look cleaner
         final_msg = format_system_msg(msg_str)
         chat.add_message(final_msg, roomid, room)
@@ -383,7 +383,7 @@ def run_restart(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1:
-        # later, implement this so it sends it to EVERY room that the 
+        # later, implement this so it sends it to EVERY room that the
         # server is going down, not just the one that the cmd is sent in...
         # could make it modular (for anouncments? maybe idk)
         emit("message_chat", (
@@ -476,7 +476,7 @@ def respond_command(result, roomid, name):
     users_w = room["whitelisted"] if room is not None else ""
     if users_w == 'devonly': 
         users_w = 'devs'
-    elif users_w == 'modonly': 
+    elif users_w == 'modonly':
         users_w = 'devs and mods'
     users_b = room["blacklisted"] if room is not None else ""
 
@@ -587,10 +587,10 @@ def help_command(**kwargs):
             #     elif 'room owner commands' in line.lower():
             #         end_index = i - 1
             # else:
-                if 'user commands' in line.lower():        
-                    start_index = i
-                elif 'room mod commands' in line.lower():
-                    end_index = i - 1
+            if 'user commands' in line.lower():
+                start_index = i
+            elif 'room mod commands' in line.lower():
+                end_index = i - 1
 
     command_line = format_system_msg("<br>" + ' '.join(
         line.strip() for line in lines[start_index:end_index + 1]))
