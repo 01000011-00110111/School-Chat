@@ -33,47 +33,9 @@ def email_var_account(username, email, verification_code, userid):
     # Create the email content
     for _ in range(1):  # Send 1 emails (you can adjust the number as needed)
         verification_code_list = {username: verification_code}
-        # the message body should be moved to a file imo
-        message_body = """
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                }
-                .container {
-                    max-width: 600px;
-                    margin: 0 auto;
-                    padding: 20px;
-                    border: 1px solid #ccc;
-                    border-radius: 5px;
-                    background-color: #f8f8f8;
-                }
-                .button {
-                    display: inline-block;
-                    padding: 10px 20px;
-                    background-color: #007bff;
-                    color: #ffffff;
-                    text-decoration: none;
-                    border-radius: 5px;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h2>Account Verification</h2>
-                <p>Dear [Recipient's Name],</p>
-                <p>To complete the verification process and gain access to all chat rooms, please click the button below:</p>
-                <p><a class="button" href="[Verification Link]">Verify My Account</a></p>
-                <p>If you did not request this verification, please ignore this email.</p>
-                <p>Thank you for choosing our service!</p>
-                <p>Sincerely,</p>
-                <p>The BTG Team</p>
-            </div>
-        </body>
-        </html>
-        """
+        with open('templates/email_temp.html', "r", encoding="UTF-8") as f:
+            message_body = f.read()
+            print(message_body)
 
     message_body = message_body.replace("[Recipient's Name]", username)
     message_body = message_body.replace(
