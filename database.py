@@ -1,4 +1,9 @@
+"""Database.py - functions for writing/reading from MongoDB
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 import os
+
 import pymongo
 
 client = pymongo.MongoClient(os.environ["MONGO_KEY"])
@@ -37,7 +42,7 @@ def find_all_accounts():
 
 def update_account_set(location, user_search, user_input, search_type, input):
     if location == 'id':
-        return ID.update_one({user_search: user_input}, {'$set': {search_type: input})
+        return ID.update_one({user_search: user_input}, {'$set': {search_type: input}})
 
 def add_accounts(add_list):
     """Adds accounts to the database"""
