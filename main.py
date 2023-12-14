@@ -15,21 +15,32 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-import os
-import logging
 import hashlib
-import uuid
+import logging
+import os
 import time
+import uuid
 from datetime import datetime, timedelta
-import keys
+
 import flask
 import pymongo
 from flask import request
 from flask.typing import ResponseReturnValue
-from flask_socketio import SocketIO, emit
 from flask_apscheduler import APScheduler
-from flask_login import LoginManager
-from flask_login import current_user, login_user, logout_user, login_required
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
+from flask_socketio import SocketIO, emit
+
+# these are the files that do not import dbm
+import accounting
+import filtering
+import word_lists
+
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
 
@@ -37,17 +48,12 @@ client = pymongo.MongoClient(os.environ["MONGO_KEY"])
 dbm = client.Chat
 scheduler = APScheduler()
 
-import addons
+# whereas these files do import dbm, we need to not do this
+# import addons  # addons may, this really should be commented out as it is optional
 import chat
 import cmds
-# import database
-import filtering
-import rooms
-import accounting
 import log
-import word_lists
-
-LOGFILE = "backend/chat.txt"
+import rooms
 
 app = flask.Flask(__name__)
 app.secret_key = os.urandom(9001)  #ITS OVER 9000!!!!!!
@@ -143,7 +149,7 @@ def chat_page() -> ResponseReturnValue:
 
 @app.route('/chat/<room_name>')
 @login_required
-def specific_chat_page(room_name) -> ResponseReturnValue:
+def specific_chat_page(_) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # print(room_name)
@@ -187,8 +193,8 @@ def login_page() -> ResponseReturnValue:
             if next_page is None:
                 next_page = flask.url_for('chat_page')
             else:
-                next_page = next_page if next_page in word_lists.approved_links else flask.url_for(
-                    'chat_page')
+                if next_page not in word_lists.approved_links:
+                    next_page = flask.url_for('chat_page')
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie('Username', user['username'])
             resp.set_cookie('Theme', user['theme'])
@@ -204,9 +210,11 @@ def login_page() -> ResponseReturnValue:
 
 # @app.route('/changelog')
 # def changelog_page() -> ResponseReturnValue:
-#     """Serve the changelog, so old links don't break (after making the main page be the changelog)."""
+#     """Serve the changelog, so old links don't break."""
 #     html_file = flask.render_template('update-log.html')
 #     return html_file
+
+# we should retire the above link
 
 # custom error message for signup, instead of generic 429 error
 #def signup_ratelimit_error_responder(request_limit: RequestLimit):
@@ -249,7 +257,10 @@ def signup_post() -> ResponseReturnValue:
     possible_user = dbm.Accounts.find_one({"username": SUsername})
     possible_dispuser = dbm.Accounts.find_one({"displayName": SDisplayname})
     # print("again")
-    if possible_user is not None or possible_dispuser is not None or SUsername in word_lists.banned_usernames or SDisplayname in word_lists.banned_usernames:
+    if (possible_user is not None or 
+        possible_dispuser is not None or 
+        SUsername in word_lists.banned_usernames or 
+        SDisplayname in word_lists.banned_usernames):
         return flask.render_template(
             "signup-index.html",
             error='That Username/Display name is already taken!',
@@ -332,9 +343,9 @@ def verify(userid, verification_code):
                                     }})
             user = user_id["username"]
             log.log_accounts(
-                f'The account {user} has been verified and may now chat in any chat room'
+                f'The account {user} is now verified and may now chat in any chat room.'
             )
-            return f"User: {user} has been verified You may now chat in any chat room you like."
+            return f"{user} has been verified. You may now chat in other chat rooms."
     return "Invalid verification code."
 
 
@@ -457,7 +468,7 @@ def customize_accounts() -> ResponseReturnValue:
                                 }})
         error = 'Updated email!'
     log.log_accounts(
-        f'The account {user} has updated some settings (one day ill add what they updated)'
+        f'The account {user} has updated some setting(s)'
     )
     return flask.render_template('settings.html', error=error, **return_list)
 
@@ -479,7 +490,8 @@ def handle_connect(username: str, location):
         })
 
     for key in dbm.Online.find():
-        if username == 'pass': continue
+        if username == 'pass': 
+            continue
         user_info = key["username"]
         icon = icons.get(key.get("location"))
         user_info = f"{icon}{user_info}"
@@ -572,7 +584,8 @@ def get_rooms(userid):
 @socketio.on('message_chat')
 def handle_message(user_name, message, roomid, userid):
     """New New chat message handling pipeline."""
-    # later I will check the if the username is the same as the one for the session somehow
+    # later I will check the if the username is the same as the one for the session 
+    # somehow...
     room = dbm.rooms.find_one({"roomid": roomid})
     user = dbm.Accounts.find_one({"username": user_name})
     if dbm.rooms.find_one({"roomid": roomid}) is None:
@@ -583,7 +596,8 @@ def handle_message(user_name, message, roomid, userid):
         if dbm.rooms.find_one({"roomid": roomid}) is not None:
             chat.add_message(result[1], roomid, room)
             emit("message_chat", (result[1], roomid), broadcast=True)
-            addons.message_addons(message, user, roomid, room)
+            # addons.message_addons(message, user, roomid, room)
+            # above is not offical again, so commented out
             if "$sudo" in message and result[2] != 3:
                 filtering.find_cmds(message, user, roomid)
             elif '$sudo' in message and result[2] == 3:
