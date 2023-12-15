@@ -198,7 +198,7 @@ def login_page() -> ResponseReturnValue:
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie('Username', user['username'])
             resp.set_cookie('Theme', user['theme'])
-            resp.set_cookie('Profile', user['profile'])
+            resp.set_cookie('Profile', user['profile'] if user["profile"] != "" else '/static/favicon.ico')
             resp.set_cookie('Userid', user['userId'])
             resp.set_cookie('DisplayName', user["displayName"])
             return resp
