@@ -63,7 +63,7 @@ function setTheme(themeName) {
         ogdev: ogDevTheme,
         dev: devTheme,
         halloween: halloweenTheme,
-        winter: winterTheme,
+        // winter: winterTheme,
     };
 
     setStyles(...themes[themeName]);

@@ -58,6 +58,7 @@ function runStartup() {
     window.sessionStorage.setItem("roomid", 'ilQvQwgOhm9kNAOrRqbr');
     username = getCookie("Username");
     userid = getCookie("Userid")
+    document.getElementById("pfpmenu").src = getCookie("Profile");
     socket.emit("username", username, 'chat');
     socket.emit("get_rooms", userid);
     setTheme(getCookie('Theme'))
