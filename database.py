@@ -1,5 +1,6 @@
 import os
 import pymongo
+import hashlib
 
 client = pymongo.MongoClient(os.environ["mongo_key"])
 #accounts/user data
@@ -64,7 +65,7 @@ def find_account(data, location):
     if location == 'costom':
         return Customization.find_one(data)
     
-        
+"""
 def find_all_account(data):
     pipeline = [
         {
@@ -89,7 +90,7 @@ def find_all_account(data):
 
     result = ID.aggregate(pipeline)
     return list(result)
-    
+    """
 def find_all_accounts():
     return ID.find()
 
@@ -101,11 +102,11 @@ def update_account_set(location, data):
     if location == 'costom':
         return Customization.update_one(data)
 
-def add_account(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked):
+def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked):
     """Adds a single account to the database"""
     id_data = {
         "username": SUsername,
-        "password": hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
+        "password": SPassword,
         "userId": userid,
         "email": SEmail
     }
@@ -227,9 +228,9 @@ def delete_room(data):
     Rooms.find_one_and_delete(data)
     Access.find_one_and_delete(data)
     Messages.find_one_and_delete(data)
-    
-def add_account(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked):
-    """Adds a single account to the database"""
+"""      
+def add_rooms(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked):
+    adds a single account to the database
     room_data = {
         "roomid": code,
         "generatedBy": username,
@@ -250,3 +251,5 @@ def add_account(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locke
     Rooms.insert_one(room_data)
     Access.insert_one(access_data)
     Messages.insert_one(message)
+    """
+    

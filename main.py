@@ -170,7 +170,7 @@ def login_page() -> ResponseReturnValue:
         next_page = request.args.get("next")
         userids = database.find_account({'username': username}, 'id')
         userC = database.find_account({'userId': userids["userId"]}, 'costom')
-        if user is None:
+        if userids is None:
             return flask.render_template('login.html',
                                          error="That account does not exist!")
         if TOSagree != "on":
@@ -178,9 +178,9 @@ def login_page() -> ResponseReturnValue:
                                          error='You did not agree to the TOS!')
 
         if User.check_username(username,
-                               user["username"]) and User.check_password(
-                                   user['password'], password):
-            user_obj = User(username=user['username'])
+                               userids["username"]) and User.check_password(
+          userids['password'], password):
+            user_obj = User(username=userids['username'])
             login_user(user_obj)
             if next_page is None:
                 next_page = flask.url_for('chat_page')
@@ -188,10 +188,10 @@ def login_page() -> ResponseReturnValue:
                 next_page = next_page if next_page in word_lists.approved_links else flask.url_for(
                     'chat_page')
             resp = flask.make_response(flask.redirect(next_page))
-            resp.set_cookie('Username', user['username'])
+            resp.set_cookie('Username', userids['username'])
             resp.set_cookie('Theme', userC['theme'])
             resp.set_cookie('Profile', userC['profile'])
-            resp.set_cookie('Userid', userC['userId'])
+            resp.set_cookie('Userid', userids['userId'])
             return resp
         else:
             return flask.render_template(
@@ -264,7 +264,7 @@ def signup_post() -> ResponseReturnValue:
     current_time = datetime.now()
     time = current_time + timedelta(hours=10)
     formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
-    database.add_accounts({
+    database.add_accounts(
         SUsername,
         hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
         userid,
@@ -272,7 +272,7 @@ def signup_post() -> ResponseReturnValue:
         SRole,
         SDisplayname,
         f"locked {formatted_time}",
-        })# reworking needed
+        )# reworking needed
     # I have to make the dict manually, else it's a wasted db call
     accounting.email_var_account(
         SUsername, SEmail,
@@ -449,7 +449,7 @@ def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
     socketid = request.sid
     try:
-        database.remove_user.remove_user({"socketid": socketid})
+        database.remove_user({"socketid": socketid})
         username_list = []
         for key in database.find_online():
             username_list.append(key["username"])
@@ -566,13 +566,13 @@ def connect(roomid):
 
     emit("room_data", room, to=socketid, namespace='/')
 
-
+"""
 @scheduler.task('interval',
                 id='permission_gc',
                 seconds=60,
                 misfire_grace_time=500)
 def update_permission():
-    """Background task to see if user should be unmuted."""
+    Background task to see if user should be unmuted.
     users = database.find_all_account()
     # filtering.reload_users(e = '1')
     for user_info in users:
@@ -594,7 +594,7 @@ def update_permission():
                 f'The account {user} has been deleted because it was not verified'
             )
             database.delete_account(user)
-
+"""
 
 # start background tasks should we move this down to 533?
 scheduler.start()
