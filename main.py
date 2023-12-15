@@ -175,7 +175,7 @@ def login_page() -> ResponseReturnValue:
                                          error="That account does not exist!")
         userid = userids["userId"]
         print(userids["userId"])
-        userC = database.find_account({'userId': userid}, 'costom')
+        userC = database.find_account({'userId': userid}, 'customization')
         print(userC)
         if TOSagree != "on":
             return flask.render_template('login.html',
@@ -249,7 +249,7 @@ def signup_post() -> ResponseReturnValue:
                                      SRole=SRole,
                                      SDisplayname=SDisplayname)
     possible_user = database.find_account({'username': SUsername}, 'id')
-    possible_dispuser = database.find_account({'displayName': SDisplayname}, 'costom')
+    possible_dispuser = database.find_account({'displayName': SDisplayname}, 'customization')
     # print("again")
     if possible_user is not None or possible_dispuser is not None or SUsername in word_lists.banned_usernames or SDisplayname in word_lists.banned_usernames:
         return flask.render_template(
@@ -327,7 +327,7 @@ def get_logs_page() -> ResponseReturnValue:
 def settings_page() -> ResponseReturnValue:
     """Serve the settings page for the user."""
     user = database.find_account({"userId": request.cookies.get('Userid')}, 'id')
-    userC = database.find_account({"userId": request.cookies.get('Userid')}, 'costom')
+    userC = database.find_account({"userId": request.cookies.get('Userid')}, 'customization')
     if request.cookies.get('Userid') != user['userId']:
         # someone is trying something funny
         return flask.Response(
@@ -383,7 +383,7 @@ def customize_accounts() -> ResponseReturnValue:
                                      error=error,
                                      **return_list)
 
-    if (database.find_account({"displayName": displayname}, 'costom') is not None
+    if (database.find_account({"displayName": displayname}, 'customization') is not None
             and user["displayName"]
             != displayname) and displayname in word_lists.banned_usernames:
         return flask.render_template(
@@ -435,7 +435,8 @@ def handle_connect(username: str, location):
     icons = {'settings': '⚙️', 'chat': ''}
     # this is until I pass the displayname to the user instead of the username
     if username != 'pass':
-        user = database.find_account({'username': username}, 'id') 
+        userid = database.find_account({'username': username}, 'id')
+        user = database.find_account({'userId': userid["userId"]}, 'customization') 
         database.add_user(user['displayName'], socketid, location)
 
     for key in database.find_online():
@@ -475,8 +476,8 @@ def handle_online(username: str):
 @socketio.on("get_rooms")
 def get_rooms(userid):
     """Grabs the chat rooms."""
-    user_name = database.find_account({"userId", userid}, 'perm')
-    user = database.find_account({"userId", userid}, 'costom')["displayName"]
+    user_name = database.find_account({"userId": userid}, 'perm')
+    user = database.find_account({"userId": userid}, 'customization')["displayName"]
     room_access = rooms.get_chat_rooms()
     permission = user_name["locked"].split(' ')
     if user_name["SPermission"] == "Debugpass":
@@ -530,10 +531,10 @@ def get_rooms(userid):
 def handle_message(user_name, message, roomid, userid):
     """New New chat message handling pipeline."""
     # later I will check the if the username is the same as the one for the session somehow
-    room = database.find_room(roomid)
-    user = database.find_all_account({"userId": userid})
+    room = database.find_room(roomid, 'id')
+    user = database.find_account({"userId": userid}, 'id')
     if room is None:
-        result = ("Permission", 6)
+        result = ("Permission", 6) # well hello hi
     else:
         result = filtering.run_filter(user, room, message, roomid, userid)
     if result[0] == 'msg':
@@ -562,7 +563,8 @@ def connect(roomid):
     """Switch rooms for the user"""
     socketid = request.sid
     try:
-        room = database.find_room(roomid)
+        room = database.find_room({'roomid': roomid}, 'msg')# WHY ERROR YOU WORK NOW WORK
+        # ah yes the best kind of error
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
     # don't need to let the client know the mongodb id
@@ -631,4 +633,4 @@ if __name__ == "__main__":
     # socketio.start_background_task(online_refresh)
     # o = threading.Thread(target=online_refresh)
     # o.start()
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)

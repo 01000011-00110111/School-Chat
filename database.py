@@ -42,10 +42,10 @@ def add_user(username, socketid, location):
 
 # new online code
 def find_online():
-    user_list = Customization.find()
-    for user in user_list:
-        if user["status"] == 'offline':
-            user_list.remove(user)
+    user_list = ID.find()
+    # for user in user_list:
+        # if user["status"] == 'offline':
+            # user_list.remove(user)
     return user_list
 
 
@@ -57,7 +57,7 @@ def find_data(data, location):
         return ID.find(data)
     if location == 'perm':
         return Permission.find(data)
-    if location == 'costom':
+    if location == 'customization':
         return Customization.find(data)
 
 
@@ -65,8 +65,9 @@ def find_account(data, location):
     if location == 'id':
         return ID.find_one(data)
     if location == 'perm':
+        print(data)
         return Permission.find_one(data)
-    if location == 'costom':
+    if location == 'customization':
         return Customization.find_one(data)
 
 
@@ -107,7 +108,7 @@ def update_account_set(location, data):
         return ID.update_one(data)
     if location == 'perm':
         return Permission.update_one(data)
-    if location == 'costom':
+    if location == 'customization':
         return Customization.update_one(data)
 
 
@@ -115,12 +116,13 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
                  locked):
     """Adds a single account to the database"""
     id_data = {
+        "userId": userid,
         "username": SUsername,
         "password": SPassword,
-        "userId": userid,
         "email": SEmail
     }
     customization_data = {
+        "userId": userid,
         "role": SRole,
         "userId": userid,
         "profile": "",
@@ -131,6 +133,7 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
         "userColor": "#ffffff",
     }
     permission_data = {
+        "userId": userid,
         "permission": 'true',
         'locked': locked,
         "warned": '0',
@@ -192,6 +195,8 @@ def find_rooms(data, location):
         return Rooms.find(data)
     if location == 'acc':
         return Access.find(data)
+    if location == 'msg':
+        return Messages.find(data)
 
 
 def distinct_roomids():

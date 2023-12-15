@@ -133,7 +133,7 @@ def ban_user(**kwargs):
         respond_command(("reason", 2, "not_dev"), roomid, None)
         return
 
-    user_dbm = database.find_account({"displayName": username}, 'costom')
+    user_dbm = database.find_account({"displayName": username}, 'customization')
     if user_dbm['permission'] == 'banned':
         return
 
@@ -165,7 +165,7 @@ def mute_user(**kwargs):
     reason = ' '.join(list(kwargs['commands'].values())[3:])
     issuer = kwargs['user']
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
-        user_db = database.find_account({"displayName": username}, 'costom')
+        user_db = database.find_account({"displayName": username}, 'customization')
         user_dbm = database.find_account({"userID": user_db["userID"]}, 'perm')
         if user_dbm["SPermission"] in ['Debugpass', 'modpass']:
             print('add a message you can not ban or mute a dev or mod')
@@ -232,7 +232,7 @@ def unmute_user(**kwargs):
     issuer = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_dev(issuer) == 1 or check_if_mod(issuer) == 1:
-        user_db = database.find_account({"displayName": username}, 'costom')
+        user_db = database.find_account({"displayName": username}, 'customization')
         user = database.find_account({"userID": user_db["userID"]}, 'perm')
         if user['permission'] in ('banned', 'true'):
             return
