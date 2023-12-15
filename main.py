@@ -169,10 +169,14 @@ def login_page() -> ResponseReturnValue:
         TOSagree = request.form.get("TOSagree")
         next_page = request.args.get("next")
         userids = database.find_account({'username': username}, 'id')
-        userC = database.find_account({'userId': userids["userId"]}, 'costom')
+        # print(userids)
         if userids is None:
             return flask.render_template('login.html',
                                          error="That account does not exist!")
+        userid = userids["userId"]
+        print(userids["userId"])
+        userC = database.find_account({'userId': userid}, 'costom')
+        print(userC)
         if TOSagree != "on":
             return flask.render_template('login.html',
                                          error='You did not agree to the TOS!')

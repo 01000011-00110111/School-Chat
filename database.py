@@ -17,26 +17,28 @@ Private = client.Rooms.Private
 #extra
 db = client.Extra
 
+
 def clear_online():
     """Clears the online list"""
     db.Online.delete_many({})
-    
+
+
 def remove_user():
     """Clears the online list"""
     db.Online.delete_one({})
-    
+
+
 def update_user(username, id):
-    db.Online.update_one({"socketid": id},
-                        {"$set": {
-                            "username": username
-                        }})
-    
+    db.Online.update_one({"socketid": id}, {"$set": {"username": username}})
+
+
 def add_user(username, socketid, location):
     db.Online.insert_one({
-            "username": username,
-            "socketid": socketid,
-            "location": location
+        "username": username,
+        "socketid": socketid,
+        "location": location
     })
+
 
 # new online code
 def find_online():
@@ -46,7 +48,9 @@ def find_online():
             user_list.remove(user)
     return user_list
 
-# accounting 
+
+# accounting
+
 
 def find_data(data, location):
     if location == 'id':
@@ -55,7 +59,7 @@ def find_data(data, location):
         return Permission.find(data)
     if location == 'costom':
         return Customization.find(data)
-    
+
 
 def find_account(data, location):
     if location == 'id':
@@ -64,7 +68,8 @@ def find_account(data, location):
         return Permission.find_one(data)
     if location == 'costom':
         return Customization.find_one(data)
-    
+
+
 """
 def find_all_account(data):
     pipeline = [
@@ -91,8 +96,11 @@ def find_all_account(data):
     result = ID.aggregate(pipeline)
     return list(result)
     """
+
+
 def find_all_accounts():
     return ID.find()
+
 
 def update_account_set(location, data):
     if location == 'id':
@@ -102,7 +110,9 @@ def update_account_set(location, data):
     if location == 'costom':
         return Customization.update_one(data)
 
-def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked):
+
+def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
+                 locked):
     """Adds a single account to the database"""
     id_data = {
         "username": SUsername,
@@ -112,6 +122,7 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, lock
     }
     customization_data = {
         "role": SRole,
+        "userId": userid,
         "profile": "",
         "theme": "dark",
         "displayName": SDisplayname,
@@ -125,12 +136,14 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, lock
         "warned": '0',
         "SPermission": ""
     }
-    
+
     ID.insert_one(id_data)
     Customization.insert_one(customization_data)
     Permission.insert_one(permission_data)
-    
-def update_account(userid, messageC, roleC, userC, displayname, role, profile, theme, email):
+
+
+def update_account(userid, messageC, roleC, userC, displayname, role, profile,
+                   theme, email):
     customization_data = {
         "messageColor": messageC,
         "roleColor": roleC,
@@ -149,38 +162,41 @@ def delete_account(user):
     Permission.delete_one({'userId': user["userId"]})
     Customization.delete_one({'userId': user["userId"]})
     ID.delete_one({'userId': user["userId"]})
-    
+
 
 #### room db edits ####
 def clear_chat_room(roomid, message):
-    Messages.update_one({"roomid": roomid},
-     {'$set': {
-         "messages": [message]
-     }})
+    Messages.update_one({"roomid": roomid}, {'$set': {"messages": [message]}})
+
 
 def send_message_single(message_text: str, roomid):
     Messages.update_one({"roomid": roomid},
-     {'$push': {
-         "messages": message_text
-     }})
+                        {'$push': {
+                            "messages": message_text
+                        }})
+
 
 def send_message_all(message_text: str):
     Messages.rooms.update_many({}, {'$push': {'messages': message_text}})
+
 
 def find_room(data, location):
     if location == 'id':
         return Rooms.find_one(data)
     if location == 'acc':
         return Access.find_one(data)
-    
+
+
 def find_rooms(data, location):
     if location == 'id':
         return Rooms.find(data)
     if location == 'acc':
         return Access.find(data)
 
+
 def distinct_roomids():
     return Rooms.distinct('roomid')
+
 
 def get_rooms():
     """Return all available rooms."""
@@ -189,7 +205,8 @@ def get_rooms():
             "$lookup": {
                 "from": "Permission",  # Target collection
                 "localField": "roomid",  # Field in the 'Rooms' collection
-                "foreignField": "roomid",  # Field in the 'Permission' collection
+                "foreignField":
+                "roomid",  # Field in the 'Permission' collection
                 "as": "access"  # Alias for the joined data
             }
         },
@@ -200,7 +217,8 @@ def get_rooms():
                 "id": "$roomid",
                 "generatedBy": "$generatedBy",
                 "mods": "$mods",
-                "whitelisted": "$access.whitelisted",  # Access collection field
+                "whitelisted":
+                "$access.whitelisted",  # Access collection field
                 "blacklisted": "$access.blacklisted"  # Access collection field
             }
         }
@@ -209,25 +227,23 @@ def get_rooms():
     rooms = list(Rooms.aggregate(pipeline))
     return rooms
 
+
 def update_whitelist(id, message):  #combine whitelist and blacklist
     """Adds the whitelisted users to the database"""
-    Access.update_one({"id": id},
-                         {"$set": {
-                             "whitelisted": message
-                         }})
+    Access.update_one({"id": id}, {"$set": {"whitelisted": message}})
 
 
 def update_blacklist(id, message):
     """Adds the blacklisted users to the database"""
-    Access.update_one({"id": id},
-                         {"$set": {
-                             "blacklisted": message
-                         }})
-    
+    Access.update_one({"id": id}, {"$set": {"blacklisted": message}})
+
+
 def delete_room(data):
     Rooms.find_one_and_delete(data)
     Access.find_one_and_delete(data)
     Messages.find_one_and_delete(data)
+
+
 """      
 def add_rooms(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked):
     adds a single account to the database
@@ -252,4 +268,3 @@ def add_rooms(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked)
     Access.insert_one(access_data)
     Messages.insert_one(message)
     """
-    
