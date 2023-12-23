@@ -225,8 +225,8 @@ def login_page() -> ResponseReturnValue:
 # @limiter.limit("1 per day")
 def signup_post() -> ResponseReturnValue:
     """The creating of an account."""
-    global verification_code_list
-    global verification_code
+    # global verification_code_list
+    # global verification_code
     SUsername = request.form.get("SUsername")
     SPassword = request.form.get("SPassword")
     SPassword2 = request.form.get("SPassword2")
@@ -409,7 +409,9 @@ def customize_accounts() -> ResponseReturnValue:
                                      **return_list)
 
     if user['locked'] != 'locked':
-        database.update_one(user["userId"], messageC, roleC, userC, displayname, role, profile, theme, email)
+        database.update_one(user["userId"], messageC, roleC, userC, displayname, role, \
+            profile, theme, email)
+        
         resp = flask.make_response(flask.redirect(flask.url_for('chat_page')))
         resp.set_cookie('Username', user['username'])
         resp.set_cookie('Theme', theme)
@@ -434,21 +436,18 @@ def customize_accounts() -> ResponseReturnValue:
 
 # socketio stuff
 @socketio.on('username')
-def handle_connect(username: str, location):
+def handle_connect(userid: str, location):
     """Will be used later for online users."""
-    socketid = request.sid
+    # socketid = request.sid
     username_list = []
     icons = {'settings': '⚙️', 'chat': ''}
-    # this is until I pass the displayname to the user instead of the username
-    if username != 'pass':
-        userid = database.find_account({'username': username}, 'id')
-        user = database.find_account({'userId': userid["userId"]}, 'customization') 
-        database.add_user(user['displayName'], socketid, location)
+    
+    users = database.get_all_online()
+    database.set_online(userid)
 
-    for key in dbm.Online.find():
-        if username == 'pass': continue
-        user_info = key["username"]
-        icon = icons.get(key.get("location"))
+    for key in users:
+        user_info = key["displayName"]
+        icon = icons.get(location)
         user_info = f"{icon}{user_info}"
         username_list.append(user_info)
 
@@ -546,7 +545,7 @@ def handle_message(user_name, message, roomid, userid):
     # later I will check the if the username is the same as the one for the session somehow
     room = database.get_room_data(roomid)
     # print(room)
-    user = database.find_account_permission(userid)
+    user = database.find_account_data(userid)
     if room is None:
         result = ("Permission", 6) # well hello hi
     else:
@@ -583,7 +582,7 @@ def connect(roomid):
         emit('room_data', "failed", namespace='/', to=socketid)
     # don't need to let the client know the mongodb id
     # del room['_id']
-    print(room)
+    # print(room)
 
     emit("room_data", room, to=socketid, namespace='/')
 
@@ -640,7 +639,7 @@ def online_refresh():
     while True:
         database.clear_online()
         socketio.emit("force_username", ("", None))
-        print('e')
+        print('e how am i running')
         time.sleep(10)  # this is using a socketio refresh
 
 

@@ -32,7 +32,7 @@ def update_user(username, id):
     db.Online.update_one({"socketid": id}, {"$set": {"username": username}})
 
 
-def add_user(userid):
+def set_online(userid):
     # db.Online.insert_one({
     #     "username": username,
     #     "socketid": socketid,
@@ -70,10 +70,38 @@ def find_account(data, location):
         return Permission.find_one(data)
     if location == 'customization':
         return Customization.find_one(data)
+    
+
+def get_all_online():
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "Customization",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "customization"
+            }
+        },
+            {
+        "$match": {
+            "status": { "$ne": "offline" } # Exclude documents where status is "offline"
+        }
+    },
+        {
+            "$project": {
+                "_id": 0,
+                "username": "$username",
+                "status": "$status",
+                "profile": { "$arrayElemAt": ["$customization.profile", 0] },
+                "displayName": { "$arrayElemAt": ["$customization.displayName", 0] },
+            }
+        }
+    ]
+
+    return list(ID.aggregate(pipeline))
 
 
-
-def find_account_permission(userid):
+def find_account_data(userid):
     pipeline = [
         {
             "$match": {
