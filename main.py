@@ -536,8 +536,10 @@ def get_rooms(userid):
 @socketio.on('message_chat')
 def handle_message(user_name, message, roomid, userid):
     """New New chat message handling pipeline."""
+    print(roomid)
     # later I will check the if the username is the same as the one for the session somehow
-    room = database.find_room(roomid, 'id')
+    room = database.get_room_data(roomid)
+    print(room)
     user = database.find_account({"userId": userid}, 'id')
     if room is None:
         result = ("Permission", 6) # well hello hi
@@ -569,7 +571,7 @@ def connect(roomid):
     """Switch rooms for the user"""
     socketid = request.sid
     try:
-        room = database.get_room_data(roomid)# WHY ERROR YOU WORK NOW WORK
+        room = database.get_room_msg_data(roomid)# WHY ERROR YOU WORK NOW WORK
         # ah yes the best kind of error
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
@@ -577,7 +579,7 @@ def connect(roomid):
     # del room['_id']
     print(room)
 
-    emit("room_data", room[0], to=socketid, namespace='/')
+    emit("room_data", room, to=socketid, namespace='/')
 
 """
 @scheduler.task('interval',

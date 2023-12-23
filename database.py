@@ -71,9 +71,14 @@ def find_account(data, location):
         return Customization.find_one(data)
 
 
-"""
-def find_all_account(data):
+
+def find_account_permission(userid):
     pipeline = [
+        {
+            "$match": {
+                "userId": userid
+                }    
+        },
         {
             "$lookup": {
                 "from": "Permission",  # Target collection
@@ -83,20 +88,17 @@ def find_all_account(data):
             }
         },
         {
-            "$lookup": {
-                "from": "Customization",  # Target collection
-                "localField": "userId",  # Field in the current collection
-                "foreignField": "userId",  # Field in the 'Customization' collection
-                "as": "customizations"  # Alias for the joined data
+             "$project": {
+                "_id": 0,
+                "roomName": "$roomName",
+                "canSend": { "$arrayElemAt": ["$access.canSend", 0] },
+                "locked": { "$arrayElemAt": ["$access.locked", 0] }
             }
         }
     ]
 
-    pipeline.insert(0, {"$match": data})
-
-    result = ID.aggregate(pipeline)
-    return list(result)
-    """
+    return ID.aggregate(pipeline)
+    
 
 
 def find_all_accounts():
@@ -235,13 +237,46 @@ def get_rooms():
         }
     ]
 
-    rooms = list(Rooms.aggregate(pipeline))
-    return rooms
+    return list(Rooms.aggregate(pipeline))
 
 
 def get_room_data(roomid):
-    """Return all available rooms."""
+    """Returns all available permission data in that room."""
     pipeline = [
+        {
+            "$match": {
+                "roomid": roomid
+            }
+        },
+        {
+            "$lookup": {
+                "from": "Permission",  # Target collection
+                "localField": "roomid",  # Field in the 'Rooms' collection
+                "foreignField": "roomid",  # Field in the 'Permission' collection
+                "as": "access"  # Alias for the joined data
+            }
+        },
+        {
+             "$project": {
+                "_id": 0,
+                "roomName": "$roomName",
+                "canSend": { "$arrayElemAt": ["$access.canSend", 0] },
+                "locked": { "$arrayElemAt": ["$access.locked", 0] }
+            }
+        }
+    ]
+
+    return Rooms.aggregate(pipeline)
+
+
+def get_room_msg_data(roomid):
+    """Returns all available message data in that room."""
+    pipeline = [
+        {
+            "$match": {
+                "roomid": roomid
+            }
+        },
         {
             "$lookup": {
                 "from": "Messages",  # Target collection
@@ -257,16 +292,10 @@ def get_room_data(roomid):
                 "name": "$roomName",
                 "msg": { "$arrayElemAt": ["$access.messages", 0] }
             }
-        },
-        {
-            "$match": {
-                "roomid": roomid
-            }
         }
     ]
 
-    rooms = list(Rooms.aggregate(pipeline))
-    return rooms
+    return Rooms.aggregate(pipeline)
 
 
 def update_whitelist(id, message):  #combine whitelist and blacklist
