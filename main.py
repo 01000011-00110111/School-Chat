@@ -138,7 +138,10 @@ if __name__ == "__main__":
 @login_required
 def chat_page() -> ResponseReturnValue:
     """Serve the main chat window."""
-    return flask.render_template('chat.html')
+    user_agent = request.user_agent.string
+
+    return flask.render_template('mobile/chat.html' if 'Mobile' in user_agent \
+        else 'desktop/chat.html')
 
 
 @app.route('/chat/<room_name>')
@@ -162,9 +165,12 @@ def logout():
 @app.route('/', methods=['GET', 'POST'])
 def login_page() -> ResponseReturnValue:
     """Show the login page."""
+    user_agent = request.user_agent.string
+    direction = 'mobile/' if "Mobile" in user_agent else 'desktop/'
+    
     if current_user.is_authenticated:
         return flask.redirect(flask.url_for('chat_page'))
-
+    
     if request.method == "POST":
         # redo client side checks here on server side, like signup
         username = request.form.get("username")
@@ -173,10 +179,10 @@ def login_page() -> ResponseReturnValue:
         next_page = request.args.get("next")
         user = dbm.Accounts.find_one({"username": username})
         if user is None:
-            return flask.render_template('login.html',
+            return flask.render_template(f'{direction}login.html',
                                          error="That account does not exist!")
         if TOSagree != "on":
-            return flask.render_template('login.html',
+            return flask.render_template(f'{direction}login.html',
                                          error='You did not agree to the TOS!')
 
         if User.check_username(username,
@@ -198,9 +204,9 @@ def login_page() -> ResponseReturnValue:
             return resp
         else:
             return flask.render_template(
-                'login.html', error="That username or password is incorrect!")
+                f'{direction}login.html', error="That username or password is incorrect!")
     else:
-        return flask.render_template('login.html')
+        return flask.render_template(f'{direction}login.html')
 
 
 # @app.route('/changelog')
@@ -668,7 +674,7 @@ def emit_on_startup():
 
 
 @socketio.on('online_refresh')
-def online_refresh():
+def online_refresh():   
     """Background task for online list"""
     while True:
         dbm.Online.delete_many({})
@@ -681,4 +687,4 @@ if __name__ == "__main__":
     # socketio.start_background_task(online_refresh)
     # o = threading.Thread(target=online_refresh)
     # o.start()
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)

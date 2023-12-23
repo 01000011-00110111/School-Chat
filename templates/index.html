@@ -13,7 +13,21 @@
         <script src="/static/html-stuff.js"></script>
         {% block header %}
         {% endblock %}
-        <link rel="stylesheet" href="/static/style.css"> 
+        <script>
+            if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                // Load mobile stylesheet
+                var mobileStylesheet = document.createElement('link');
+                mobileStylesheet.rel = 'stylesheet';
+                mobileStylesheet.href = '/static/mobile/style.css';
+                document.head.appendChild(mobileStylesheet);
+            } else {
+                // Load desktop stylesheet
+                var desktopStylesheet = document.createElement('link');
+                desktopStylesheet.rel = 'stylesheet';
+                desktopStylesheet.href = '/static/style.css';
+                document.head.appendChild(desktopStylesheet);
+            }
+        </script>
         <meta charset="utf-8">
         <meta name="description" content="A chat app, what else did you think this is?">
         <meta name="author" content="cseven, cserver">
