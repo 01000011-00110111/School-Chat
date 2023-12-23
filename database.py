@@ -204,6 +204,12 @@ def find_rooms(location):
 def distinct_roomids():
     return Rooms.distinct('roomid')
 
+def distinct_names():
+    return Rooms.distinct('roomName')
+
+def distinct_name(roomid):
+    return Rooms.find_one({'roomid': roomid})["roomName"]
+
 
 def get_rooms():
     """Return all available rooms."""
@@ -225,6 +231,31 @@ def get_rooms():
                 "mods": "$mods",
                 "whitelisted": { "$arrayElemAt": ["$access.whitelisted", 0] },
                 "blacklisted": { "$arrayElemAt": ["$access.blacklisted", 0] }
+            }
+        }
+    ]
+
+    rooms = list(Rooms.aggregate(pipeline))
+    return rooms
+
+
+def get_room_data():
+    """Return all available rooms."""
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "Messages",  # Target collection
+                "localField": "roomid",  # Field in the 'Rooms' collection
+                "foreignField": "roomid",  # Field in the 'Permission' collection
+                "as": "access"  # Alias for the joined data
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "roomid": "$roomid",
+                "name": "$roomName",
+                "msg": { "$arrayElemAt": ["$access.messages", 0] }
             }
         }
     ]

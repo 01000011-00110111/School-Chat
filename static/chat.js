@@ -61,7 +61,7 @@ function runStartup() {
     socket.emit("username", username, 'chat');
     socket.emit("get_rooms", userid);
     setTheme(getCookie('Theme'))
-    // changeRoom('ilQvQwgOhm9kNAOrRqbr')
+    changeRoom('ilQvQwgOhm9kNAOrRqbr')
 }
 
 socket.on("roomsList", (result, permission) => {
@@ -87,14 +87,15 @@ function CheckIfExist(_params) {
 }
 
 socket.on("room_data", (data) => {
+    console.log(data)
     window.sessionStorage.setItem("roomid", data['roomid']);
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
-    window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['roomName']}`);
-    document.title = `/${data['roomName']} - Chat`
+    window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['name']}`);
+    document.title = `/${data['name']} - Chat`
     let chat = ""; 
-    for (let messageObj of data['messages']) {
+    for (let messageObj of data['msg']) {
         chat = chat + messageObj + newline;
     }
 

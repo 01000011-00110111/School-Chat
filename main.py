@@ -480,7 +480,7 @@ def get_rooms(userid):
     user = database.find_account({"userId": userid}, 'customization')["displayName"]
     room_access = database.get_rooms()# rooms.get_chat_rooms()
     permission = user_name["locked"].split(' ')
-    print(room_access)
+    # print(room_access)
     
     
     if user_name["SPermission"] == "Debugpass":
@@ -526,7 +526,7 @@ def get_rooms(userid):
                 or r['whitelisted'] != 'lockedonly')
         ]
         
-        print(accessible_rooms)
+        # print(accessible_rooms)
         
         emit('roomsList', (accessible_rooms, user_name['locked']),
              namespace='/',
@@ -565,17 +565,17 @@ def handle_ping_tests(start, roomid):
 
 
 @socketio.on("room_connect")
-def connect(roomid):
+def connect(_):
     """Switch rooms for the user"""
     socketid = request.sid
     try:
-        room = database.find_room({'roomid': roomid}, 'msg')# WHY ERROR YOU WORK NOW WORK
+        room = database.get_room_data()# WHY ERROR YOU WORK NOW WORK
         # ah yes the best kind of error
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
     # don't need to let the client know the mongodb id
-    del room['_id']
-    # print(room)
+    # del room['_id']
+    print(room)
 
     emit("room_data", room, to=socketid, namespace='/')
 
