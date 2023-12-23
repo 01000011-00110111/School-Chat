@@ -29,7 +29,7 @@ socket.on("force_room_update", (_statement) => {
 });
 
 socket.on("ping", ({ who, from, pfp, message, name, roomid}) => {
-    let user_name = getCookie("Username");
+    let user_name = getCookie("DisplayName");
     // room = window.sessionStorage.getItem("roomid");
     console.log(who, from, message);
     if (user_name === who) {
@@ -58,6 +58,7 @@ function runStartup() {
     window.sessionStorage.setItem("roomid", 'ilQvQwgOhm9kNAOrRqbr');
     username = getCookie("Username");
     userid = getCookie("Userid")
+    document.getElementById("pfpmenu").src = getCookie("Profile");
     socket.emit("username", username, 'chat');
     socket.emit("get_rooms", userid);
     setTheme(getCookie('Theme'))
@@ -93,6 +94,7 @@ socket.on("room_data", (data) => {
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
     window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['name']}`);
+    roomname = document.getElementById("RoomDisplay").innerHTML = '/'+data['name'];
     document.title = `/${data['name']} - Chat`
     let chat = ""; 
     for (let messageObj of data['msg']) {
@@ -105,6 +107,7 @@ socket.on("room_data", (data) => {
 
 function changeRoom(room) {
     window.sessionStorage.setItem("roomid", room);
+    closeNav();
     socket.emit('room_connect', room)
 }
 

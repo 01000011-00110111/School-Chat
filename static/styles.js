@@ -14,7 +14,8 @@ function setStyles(
     sidenavColor,
     snavLinkColor,
     roomTextColor,
-    roomBarColor
+    roomBarColor,
+    topbarColor
 ) {
     const body = document.getElementsByTagName("body")[0];
     const chat = document.getElementById("chat");
@@ -29,6 +30,7 @@ function setStyles(
     const snavText = sidenav.getElementsByTagName("a");
     const roomText = document.getElementById("room_text");
     const roomBar = document.getElementById("room_bar");
+    const topbar = document.getElementById("topbar");
     // const hrElement = document.querySelector("hr");
 
     body.style.backgroundColor = backgroundColor;
@@ -46,6 +48,7 @@ function setStyles(
     sidenav.style.backgroundColor = sidenavColor;
     roomText.style.color = roomTextColor;
     roomBar.style.borderColor = roomBarColor;
+    topbarColor.style.backgroundColor = topbarColor;
     // hrElement.sytle.bordeColor = sidebarborderColor;
 
     for (let i = 0; i < snavText.length; i++) {
@@ -60,11 +63,31 @@ function setTheme(themeName) {
         ogdev: ogDevTheme,
         dev: devTheme,
         halloween: halloweenTheme,
-        winter: winterTheme,
+        // winter: winterTheme,
     };
 
     setStyles(...themes[themeName]);
 }
+
+// Note the the code for the themes are arraganged in this order, so if you want the background to be the color black you change the first value of the thme to #000000 or black.
+
+// Background Color
+// Chat Color
+// Message Color
+// Chatbox Color
+// Sides Color
+// Sidebar Background Color
+// Sidebar Border Color
+// Sidebar Text Color
+// Topleft Background Color
+// Topleft Text Color
+// Send Button Background Color
+// Send Button Text Color
+// Sidenav Color
+// Sidenav Link Color
+// Room Text color
+// Room Line color
+// Topbar Background Color
 
 const darkTheme = [
     "#000000",
@@ -73,52 +96,57 @@ const darkTheme = [
     "#181616",
     "#121212",
     "#171717",
-    "#f5f2f2",   // Sidebar Background Color
-    "#3b3b3b",   // Sidebar Border Color
-    "#c73228",   // Sidebar Text Color
+    "#f5f2f2",
+    "#ffffff",
+    "#c73228",
     "#192080",
     "#192080",
     "#ffffff",
-    "#111",
+    "#111111",
     "#818181",
+    "#000000",
+    "#000000",
+    "#ffffff"
 ];
 
 const lightTheme = [
-    "#c0bfbc",   // Background Color
-    "#000000",   // Chat Color
-    "#000000",   // Message Color
-    "#deddda",   // Chatbox Color
-    "#c0bfbc",   // Sides Color
-    "#000000",   // Sidebar Background Color
-    "#3b3b3b",   // Sidebar Border Color
-    "#ffffff",   // Sidebar Text Color
-    "#5A5A5A",   // Topleft Background Color
-    "#1b0670",   // Topleft Text Color
-    "#3daec4",   // Send Button Background Color
-    "#33575e",   // Send Button Text Color
-    "#b9c6c9",   // Sidenav Color
-    "#192080",   // Sidenav Link Color
-    "#000000",     // Room Text color
-    "#000000"      // Room Line color
+    "#c0bfbc",
+    "#000000",
+    "#000000",
+    "#deddda",
+    "#c0bfbc",
+    "#000000",
+    "#3b3b3b",
+    "#ffffff",
+    "#5A5A5A",
+    "#1b0670",
+    "#3daec4",
+    "#33575e",
+    "#b9c6c9",
+    "#192080",
+    "#000000",
+    "#000000",
+    "#ffffff"
 ];
 
 const ogDevTheme = [
-    "#000000",  // Background Color
-    "#228e3d",  // Chat Color
-    "#000000",  // Message Color
-    "#181616",  // Chatbox Color
-    "#121212",  // Sides Color
-    "#171717",  // Sidebar Background Color
-    "#3b3b3b",  // Sidebar Border Color
-    "#ffffff",  // Sidebar Text Color
-    "#121212",  // Topleft Background Color
-    "#696969",  // Topleft Text Color
-    "#192080",  // Send Button Background Color
-    "#ffffff",  // Send Button Text Color
-    "#111",     // Sidenav Color   
-    "#818181",  // Sidenav Link Color
-    "#000000",     // Room Text color
-    "#000000"      // Room Line color
+    "#000000",
+    "#228e3d",
+    "#000000",
+    "#181616",
+    "#121212",
+    "#171717",
+    "#3b3b3b",
+    "#ffffff",
+    "#121212",
+    "#696969",
+    "#192080",
+    "#ffffff",
+    "#111111",
+    "#818181",
+    "#000000",
+    "#000000",
+    "ffffff"
 ];
 
 const devTheme = [
@@ -128,52 +156,34 @@ const devTheme = [
     "#0d0d0d",
     "#080808",
     "#080808",
-    "#0d0d0d",   // Sidebar Background Color
-    "#3b3b3b",   // Sidebar Border Color
-    "#ffffff",   // Sidebar Text Color
+    "#0d0d0d",
+    "#ffffff",
+    "#ffffff",
     "#ffffff",
     "#006600",
     "#ffffff",
     "#0f0f0f",
     "#8a4e11",
-    "#000000",     // Room Text color
-    "#000000"      // Room Line color
+    "#000000",
+    "#000000"
 ];
 
 const halloweenTheme = [
-    "#000000",     // Background Color
-    "#d64304",     // Chat Color
-    "#a64903",     // Message Color
-    "#000111",     // Chatbox Color
-    "#000000",     // Sides Color
-    "#d65e13",     // Sidebar Background Color
-    "#bf4a06",     // Sidebar Line Color
-    "#000000",     // Sidebar Text Color
-    "#000000",     // Topleft Background Color
-    "#d64304",     // Topleft Text Color
-    "#d65e13",     // Send Button Background Color
-    "#111111",     // Send Button Text Color
-    "#000000",     // Sidenav Color
-    "#d65e13",     // Sidenav Link Color
-    "#d65e13",     // Room Text color
-    "#111111"      // Room Line color
-];
-
-const winterTheme = [
-    "#AED9FF",
-    "#d64304",
     "#000000",
-    "#FF9933",
-    "#121212",
-    "#FF9933",
-    "#f5f2f2",   // Sidebar Background Color
-    "#3b3b3b",   // Sidebar Border Color
-    "#ffffff",   // Sidebar Text Color
-    "#FF9933",
     "#d64304",
-    "#ffffff",
-    "#111",
-    "#d64304", 
-    "#000000",     // Room Text color
-    "#000000"      // Room Line color
+    "#a64903",
+    "#000111",
+    "#000000",
+    "#d65e13",
+    "#bf4a06",
+    "#000000",
+    "#000000",
+    "#d64304",
+    "#d65e13",
+    "#111111",
+    "#000000",
+    "#d65e13",
+    "#d65e13",
+    "#111111",
+    "ffffff"
 ];

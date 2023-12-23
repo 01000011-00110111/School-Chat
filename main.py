@@ -23,6 +23,7 @@ import time
 from datetime import datetime, timedelta
 import keys
 import flask
+import pymongo
 from flask import request
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
@@ -32,6 +33,8 @@ from flask_login import current_user, login_user, logout_user, login_required
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
 
+client = pymongo.MongoClient(os.environ["mongo_key"])
+dbm = client.Chat
 scheduler = APScheduler()
 
 import addons
@@ -69,7 +72,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login_page'
 
 # clear db, so that old users don't stay
-database.clear_online()
+dbm.Online.delete_many({})
 
 
 class User:
@@ -143,7 +146,7 @@ def chat_page() -> ResponseReturnValue:
 def specific_chat_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
-    # print(room_name)
+    print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
 
 
@@ -194,8 +197,10 @@ def login_page() -> ResponseReturnValue:
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie('Username', userids['username'])
             resp.set_cookie('Theme', userC['theme'])
-            resp.set_cookie('Profile', userC['profile'])
+            resp.set_cookie('Profile', userC['profile'] if userC["profile"] != "" else \
+                '/static/favicon.ico')
             resp.set_cookie('Userid', userids['userId'])
+            resp.set_cookie('DisplayName', userC["displayName"])
             return resp
         else:
             return flask.render_template(
@@ -251,7 +256,8 @@ def signup_post() -> ResponseReturnValue:
     possible_user = database.find_account({'username': SUsername}, 'id')
     possible_dispuser = database.find_account({'displayName': SDisplayname}, 'customization')
     # print("again")
-    if possible_user is not None or possible_dispuser is not None or SUsername in word_lists.banned_usernames or SDisplayname in word_lists.banned_usernames:
+    if possible_user is not None or possible_dispuser is not None or SUsername in \
+        word_lists.banned_usernames or SDisplayname in word_lists.banned_usernames:
         return flask.render_template(
             "signup-index.html",
             error='That Username/Display name is already taken!',
@@ -439,7 +445,7 @@ def handle_connect(username: str, location):
         user = database.find_account({'userId': userid["userId"]}, 'customization') 
         database.add_user(user['displayName'], socketid, location)
 
-    for key in database.find_online():
+    for key in dbm.Online.find():
         if username == 'pass': continue
         user_info = key["username"]
         icon = icons.get(key.get("location"))
@@ -456,7 +462,7 @@ def handle_disconnect():
     try:
         database.remove_user({"socketid": socketid})
         username_list = []
-        for key in database.find_online():
+        for key in dbm.Online.find():
             username_list.append(key["username"])
         emit("online", username_list, broadcast=True)
     except TypeError:
@@ -468,7 +474,7 @@ def handle_online(username: str):
     """Add username to currently online people list."""
     # database.add_user(username, .sid)
     username_list = []
-    for key in database.find_online():
+    for key in dbm.Online.find():
         username_list.append(key["username"])
     emit("online", username_list, broadcast=True)
 
@@ -546,7 +552,7 @@ def handle_message(user_name, message, roomid, userid):
     else:
         result = filtering.run_filter(user, room, message, roomid, userid)
     if result[0] == 'msg':
-        if room is not None:
+        if dbm.rooms.find_one({"roomid": roomid}) is not None:
             chat.add_message(result[1], roomid, room)
             emit("message_chat", (result[1], roomid), broadcast=True)
             addons.message_addons(message, user, roomid, room)

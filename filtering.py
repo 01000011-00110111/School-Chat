@@ -233,7 +233,7 @@ def find_cmds(message, user, roomid):
     # we should be the only ones that can do that (devs)
     for cmd in command_split:
         date_str = datetime.now(timezone(
-            timedelta(hours=-4))).strftime("[%a %H:%M] ")
+            timedelta(hours=-5))).strftime("[%a %H:%M] ")
         Lmessage = date_str + user['username'] + ":" + cmd
         log.log_commands(Lmessage)
 
@@ -260,7 +260,7 @@ def compile_message(message, profile_picture, user, role, preuser,
     message_string = f"<font color='{user['messageColor']}'>{message}</font>"
     role_string = do_dev_easter_egg(role, user)
     date_str = datetime.now(timezone(
-        timedelta(hours=-4))).strftime("[%a %I:%M %p] ")
+        timedelta(hours=-5))).strftime("[%a %I:%M %p] ")
 
     # should we change it to a f string
     # if user["username"] == preuser:
