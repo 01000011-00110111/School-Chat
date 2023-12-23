@@ -146,7 +146,7 @@ def chat_page() -> ResponseReturnValue:
 def specific_chat_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
-    print(room_name)
+    # print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
 
 
@@ -442,10 +442,9 @@ def handle_connect(userid: str, location):
     username_list = []
     icons = {'settings': '⚙️', 'chat': ''}
     
-    users = database.get_all_online()
     database.set_online(userid)
 
-    for key in users:
+    for key in database.get_all_online():
         user_info = key["displayName"]
         icon = icons.get(location)
         user_info = f"{icon}{user_info}"
@@ -458,18 +457,19 @@ def handle_connect(userid: str, location):
 def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
     try:
-        database.remove_user(request.cookies.get('userid'))
+        database.remove_user(request.cookies.get('Userid'))
         emit("force_username", broadcast=True)
     except TypeError:
         pass
 
 
 @socketio.on('username_msg')
-def handle_online(username: str):
+def handle_online(userid: str):
     """Add username to currently online people list."""
     # database.add_user(username, .sid)
+    database.set_online(userid)
     username_list = []
-    for key in dbm.Online.find():
+    for key in database.get_all_online():
         username_list.append(key["username"])
     emit("online", username_list, broadcast=True)
 
