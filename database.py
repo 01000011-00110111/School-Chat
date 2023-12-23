@@ -77,27 +77,43 @@ def find_account_permission(userid):
         {
             "$match": {
                 "userId": userid
-                }    
-        },
-        {
-            "$lookup": {
-                "from": "Permission",  # Target collection
-                "localField": "userId",  # Field in the current collection
-                "foreignField": "userId",  # Field in the 'Permission' collection
-                "as": "permissions"  # Alias for the joined data
             }
         },
         {
-             "$project": {
+            "$lookup": {
+                "from": "Permission",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "permissions"
+            }
+        },
+        {
+            "$lookup": {
+                "from": "Customization",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "customization"
+            }
+        },
+        {
+            "$project": {
                 "_id": 0,
-                "roomName": "$roomName",
-                "canSend": { "$arrayElemAt": ["$access.canSend", 0] },
-                "locked": { "$arrayElemAt": ["$access.locked", 0] }
+                "username": "$username",
+                "role": { "$arrayElemAt": ["$customization.role", 0] },
+                "profile": { "$arrayElemAt": ["$customization.profile", 0] },
+                "displayName": { "$arrayElemAt": ["$customization.displayName", 0] },
+                "messageColor": { "$arrayElemAt": ["$customization.messageColor", 0] },
+                "roleColor": { "$arrayElemAt": ["$customization.roleColor", 0] },
+                "userColor": { "$arrayElemAt": ["$customization.userColor", 0] },
+                "permission": { "$arrayElemAt": ["$permissions.permission", 0] },
+                "locked": { "$arrayElemAt": ["$permissions.locked", 0] },
+                "warned": { "$arrayElemAt": ["$permissions.warned", 0] },
+                "SPermission": { "$arrayElemAt": ["$permissions.SPermission", 0] }
             }
         }
     ]
 
-    return ID.aggregate(pipeline)
+    return list(ID.aggregate(pipeline))[0]
     
 
 
@@ -295,7 +311,7 @@ def get_room_msg_data(roomid):
         }
     ]
 
-    return Rooms.aggregate(pipeline)
+    return list(Rooms.aggregate(pipeline))[0]
 
 
 def update_whitelist(id, message):  #combine whitelist and blacklist
