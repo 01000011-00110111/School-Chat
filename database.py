@@ -65,7 +65,7 @@ def find_account(data, location):
     if location == 'id':
         return ID.find_one(data)
     if location == 'perm':
-        print(data)
+        # print(data)
         return Permission.find_one(data)
     if location == 'customization':
         return Customization.find_one(data)
@@ -188,15 +188,17 @@ def find_room(data, location):
         return Rooms.find_one(data)
     if location == 'acc':
         return Access.find_one(data)
-
-
-def find_rooms(data, location):
-    if location == 'id':
-        return Rooms.find(data)
-    if location == 'acc':
-        return Access.find(data)
     if location == 'msg':
-        return Messages.find(data)
+        return Messages.find_one(data)
+
+
+def find_rooms(location):
+    if location == 'id':
+        return Rooms.find()
+    if location == 'acc':
+        return Access.find()
+    if location == 'msg':
+        return Messages.find()
 
 
 def distinct_roomids():
@@ -210,8 +212,7 @@ def get_rooms():
             "$lookup": {
                 "from": "Permission",  # Target collection
                 "localField": "roomid",  # Field in the 'Rooms' collection
-                "foreignField":
-                "roomid",  # Field in the 'Permission' collection
+                "foreignField": "roomid",  # Field in the 'Permission' collection
                 "as": "access"  # Alias for the joined data
             }
         },
@@ -222,9 +223,8 @@ def get_rooms():
                 "id": "$roomid",
                 "generatedBy": "$generatedBy",
                 "mods": "$mods",
-                "whitelisted":
-                "$access.whitelisted",  # Access collection field
-                "blacklisted": "$access.blacklisted"  # Access collection field
+                "whitelisted": { "$arrayElemAt": ["$access.whitelisted", 0] },
+                "blacklisted": { "$arrayElemAt": ["$access.blacklisted", 0] }
             }
         }
     ]

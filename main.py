@@ -174,9 +174,9 @@ def login_page() -> ResponseReturnValue:
             return flask.render_template('login.html',
                                          error="That account does not exist!")
         userid = userids["userId"]
-        print(userids["userId"])
+        # print(userids["userId"])
         userC = database.find_account({'userId': userid}, 'customization')
-        print(userC)
+        # print(userC)
         if TOSagree != "on":
             return flask.render_template('login.html',
                                          error='You did not agree to the TOS!')
@@ -478,8 +478,11 @@ def get_rooms(userid):
     """Grabs the chat rooms."""
     user_name = database.find_account({"userId": userid}, 'perm')
     user = database.find_account({"userId": userid}, 'customization')["displayName"]
-    room_access = rooms.get_chat_rooms()
+    room_access = database.get_rooms()# rooms.get_chat_rooms()
     permission = user_name["locked"].split(' ')
+    print(room_access)
+    
+    
     if user_name["SPermission"] == "Debugpass":
         emit('roomsList', (room_access, 'dev'), namespace='/', to=request.sid)
     elif user_name['SPermission'] == "modpass":
@@ -522,6 +525,9 @@ def get_rooms(userid):
                 r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly'
                 or r['whitelisted'] != 'lockedonly')
         ]
+        
+        print(accessible_rooms)
+        
         emit('roomsList', (accessible_rooms, user_name['locked']),
              namespace='/',
              to=request.sid)
@@ -569,6 +575,7 @@ def connect(roomid):
         emit('room_data', "failed", namespace='/', to=socketid)
     # don't need to let the client know the mongodb id
     del room['_id']
+    # print(room)
 
     emit("room_data", room, to=socketid, namespace='/')
 

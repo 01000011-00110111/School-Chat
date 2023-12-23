@@ -146,10 +146,6 @@ function sendMessage() {
     window.scrollTo(0, chatDiv.scrollHeight);
 }
 
-function CallOwenGay() {
-    document.getElementById("message")["value"] = "I am gay!";
-        sendMessage();
-}
 
 setInterval(BTMLog, 3000)
 
