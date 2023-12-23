@@ -17,10 +17,8 @@ socket.on("pingTime", (time, roomid) => {
 });
 
 
-socket.on("force_username", (_statement, ignore_user) => {
-    if (getCookie('Userid') != ignore_user){
-        socket.emit("username", getCookie("Username"), 'chat');
-    } else {socket.emit("username", 'pass', 'chat');}
+socket.on("force_username", () => {
+    socket.emit("username", getCookie("userid"), 'chat');
 });
 
 socket.on("force_room_update", (_statement) => {
@@ -56,12 +54,12 @@ socket.on("reset_chat", (who, roomid) => {
 
 function runStartup() {
     window.sessionStorage.setItem("roomid", 'ilQvQwgOhm9kNAOrRqbr');
+    changeRoom('ilQvQwgOhm9kNAOrRqbr')
     userid = getCookie("Userid")
     document.getElementById("pfpmenu").src = getCookie("Profile");
     socket.emit("username", userid, 'chat');
     socket.emit("get_rooms", userid);
     setTheme(getCookie('Theme'))
-    changeRoom('ilQvQwgOhm9kNAOrRqbr')
 }
 
 socket.on("roomsList", (result, permission) => {

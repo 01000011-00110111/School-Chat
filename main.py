@@ -457,13 +457,9 @@ def handle_connect(userid: str, location):
 @socketio.on('disconnect')
 def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
-    socketid = request.sid
     try:
-        database.remove_user({"socketid": socketid})
-        username_list = []
-        for key in dbm.Online.find():
-            username_list.append(key["username"])
-        emit("online", username_list, broadcast=True)
+        database.remove_user(request.cookies.get('userid'))
+        emit("force_username", broadcast=True)
     except TypeError:
         pass
 

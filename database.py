@@ -25,7 +25,7 @@ def clear_online():
 
 def remove_user(userid):
     """Removes a user from the online list"""
-    ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
+    ID.update_one({"userId": userid}, {'$set': {"status": 'offline'}})
 
 
 def update_user(username, id):
