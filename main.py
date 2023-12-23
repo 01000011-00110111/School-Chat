@@ -577,7 +577,7 @@ def connect(_):
     # del room['_id']
     print(room)
 
-    emit("room_data", room, to=socketid, namespace='/')
+    emit("room_data", room[0], to=socketid, namespace='/')
 
 """
 @scheduler.task('interval',
