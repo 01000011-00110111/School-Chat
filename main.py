@@ -565,11 +565,11 @@ def handle_ping_tests(start, roomid):
 
 
 @socketio.on("room_connect")
-def connect(_):
+def connect(roomid):
     """Switch rooms for the user"""
     socketid = request.sid
     try:
-        room = database.get_room_data()# WHY ERROR YOU WORK NOW WORK
+        room = database.get_room_data(roomid)# WHY ERROR YOU WORK NOW WORK
         # ah yes the best kind of error
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)

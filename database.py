@@ -239,7 +239,7 @@ def get_rooms():
     return rooms
 
 
-def get_room_data():
+def get_room_data(roomid):
     """Return all available rooms."""
     pipeline = [
         {
@@ -256,6 +256,11 @@ def get_room_data():
                 "roomid": "$roomid",
                 "name": "$roomName",
                 "msg": { "$arrayElemAt": ["$access.messages", 0] }
+            }
+        },
+        {
+            "$match": {
+                "roomid": roomid
             }
         }
     ]
