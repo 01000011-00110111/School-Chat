@@ -29,7 +29,7 @@ socket.on("force_room_update", (_statement) => {
 });
 
 socket.on("ping", ({ who, from, pfp, message, name, roomid}) => {
-    let user_name = getCookie("Username");
+    let user_name = getCookie("DisplayName");
     // room = window.sessionStorage.getItem("roomid");
     console.log(who, from, message);
     if (user_name === who) {
@@ -58,6 +58,7 @@ function runStartup() {
     window.sessionStorage.setItem("roomid", 'ilQvQwgOhm9kNAOrRqbr');
     username = getCookie("Username");
     userid = getCookie("Userid")
+    document.getElementById("pfpmenu").src = getCookie("Profile");
     socket.emit("username", username, 'chat');
     socket.emit("get_rooms", userid);
     setTheme(getCookie('Theme'))

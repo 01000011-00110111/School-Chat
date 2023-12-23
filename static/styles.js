@@ -63,7 +63,7 @@ function setTheme(themeName) {
         ogdev: ogDevTheme,
         dev: devTheme,
         halloween: halloweenTheme,
-        winter: winterTheme,
+        // winter: winterTheme,
     };
 
     setStyles(...themes[themeName]);
@@ -97,7 +97,7 @@ const darkTheme = [
     "#121212",
     "#171717",
     "#f5f2f2",
-    "#3b3b3b",
+    "#ffffff",
     "#c73228",
     "#192080",
     "#192080",
@@ -157,7 +157,7 @@ const devTheme = [
     "#080808",
     "#080808",
     "#0d0d0d",
-    "#3b3b3b",
+    "#ffffff",
     "#ffffff",
     "#ffffff",
     "#006600",
@@ -186,117 +186,4 @@ const halloweenTheme = [
     "#d65e13",
     "#111111",
     "ffffff"
-];
-
-=======
-const darkTheme = [
-    "#000000",
-    "#ffffff",
-    "#000000",
-    "#181616",
-    "#121212",
-    "#171717",
-    "#f5f2f2",   // Sidebar Background Color
-    "#3b3b3b",   // Sidebar Border Color
-    "#c73228",   // Sidebar Text Color
-    "#192080",
-    "#192080",
-    "#ffffff",
-    "#111",
-    "#818181",
-];
-
-const lightTheme = [
-    "#c0bfbc",   // Background Color
-    "#000000",   // Chat Color
-    "#000000",   // Message Color
-    "#deddda",   // Chatbox Color
-    "#c0bfbc",   // Sides Color
-    "#000000",   // Sidebar Background Color
-    "#3b3b3b",   // Sidebar Border Color
-    "#ffffff",   // Sidebar Text Color
-    "#5A5A5A",   // Topleft Background Color
-    "#1b0670",   // Topleft Text Color
-    "#3daec4",   // Send Button Background Color
-    "#33575e",   // Send Button Text Color
-    "#b9c6c9",   // Sidenav Color
-    "#192080",   // Sidenav Link Color
-    "#000000",     // Room Text color
-    "#000000"      // Room Line color
-];
-
-const ogDevTheme = [
-    "#000000",  // Background Color
-    "#228e3d",  // Chat Color
-    "#000000",  // Message Color
-    "#181616",  // Chatbox Color
-    "#121212",  // Sides Color
-    "#171717",  // Sidebar Background Color
-    "#3b3b3b",  // Sidebar Border Color
-    "#ffffff",  // Sidebar Text Color
-    "#121212",  // Topleft Background Color
-    "#696969",  // Topleft Text Color
-    "#192080",  // Send Button Background Color
-    "#ffffff",  // Send Button Text Color
-    "#111",     // Sidenav Color   
-    "#818181",  // Sidenav Link Color
-    "#000000",     // Room Text color
-    "#000000"      // Room Line color
-];
-
-const devTheme = [
-    "#000000",
-    "#18691f",
-    "#000000",
-    "#0d0d0d",
-    "#080808",
-    "#080808",
-    "#0d0d0d",   // Sidebar Background Color
-    "#3b3b3b",   // Sidebar Border Color
-    "#ffffff",   // Sidebar Text Color
-    "#ffffff",
-    "#006600",
-    "#ffffff",
-    "#0f0f0f",
-    "#8a4e11",
-    "#000000",     // Room Text color
-    "#000000"      // Room Line color
-];
-
-const halloweenTheme = [
-    "#000000",     // Background Color
-    "#d64304",     // Chat Color
-    "#a64903",     // Message Color
-    "#000111",     // Chatbox Color
-    "#000000",     // Sides Color
-    "#d65e13",     // Sidebar Background Color
-    "#bf4a06",     // Sidebar Line Color
-    "#000000",     // Sidebar Text Color
-    "#000000",     // Topleft Background Color
-    "#d64304",     // Topleft Text Color
-    "#d65e13",     // Send Button Background Color
-    "#111111",     // Send Button Text Color
-    "#000000",     // Sidenav Color
-    "#d65e13",     // Sidenav Link Color
-    "#d65e13",     // Room Text color
-    "#111111"      // Room Line color
-];
-
-const winterTheme = [
-    "#AED9FF",
-    "#d64304",
-    "#000000",
-    "#FF9933",
-    "#121212",
-    "#FF9933",
-    "#f5f2f2",
-    "#3b3b3b",
-    "#ffffff",
-    "#FF9933",
-    "#d64304",
-    "#ffffff",
-    "#111111",
-    "#d64304", 
-    "#000000",
-    "#000000"
 ];
