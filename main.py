@@ -466,7 +466,7 @@ def handle_disconnect():
 @socketio.on('username_msg')
 def handle_online(username: str):
     """Add username to currently online people list."""
-    database.add_user(username, request.sid)
+    # database.add_user(username, .sid)
     username_list = []
     for key in database.find_online():
         username_list.append(key["username"])
@@ -536,11 +536,11 @@ def get_rooms(userid):
 @socketio.on('message_chat')
 def handle_message(user_name, message, roomid, userid):
     """New New chat message handling pipeline."""
-    print(roomid)
+    # print(roomid)
     # later I will check the if the username is the same as the one for the session somehow
     room = database.get_room_data(roomid)
-    print(room)
-    user = database.find_account({"userId": userid}, 'id')
+    # print(room)
+    user = database.find_account_permission(userid)
     if room is None:
         result = ("Permission", 6) # well hello hi
     else:

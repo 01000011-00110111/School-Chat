@@ -23,29 +23,30 @@ def clear_online():
     db.Online.delete_many({})
 
 
-def remove_user():
-    """Clears the online list"""
-    db.Online.delete_one({})
+def remove_user(userid):
+    """Removes a user from the online list"""
+    ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
 
 
 def update_user(username, id):
     db.Online.update_one({"socketid": id}, {"$set": {"username": username}})
 
 
-def add_user(username, socketid, location):
-    db.Online.insert_one({
-        "username": username,
-        "socketid": socketid,
-        "location": location
-    })
+def add_user(userid):
+    # db.Online.insert_one({
+    #     "username": username,
+    #     "socketid": socketid,
+    #     "location": location
+    # })
+    ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
 
 
 # new online code
 def find_online():
     user_list = ID.find()
-    # for user in user_list:
-        # if user["status"] == 'offline':
-            # user_list.remove(user)
+    for user in user_list:
+        if user["status"] == 'offline':
+            user_list.remove(user)
     return user_list
 
 
@@ -98,6 +99,7 @@ def find_account_permission(userid):
         {
             "$project": {
                 "_id": 0,
+                "userId": "$userId",
                 "username": "$username",
                 "role": { "$arrayElemAt": ["$customization.role", 0] },
                 "profile": { "$arrayElemAt": ["$customization.profile", 0] },
@@ -137,7 +139,8 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
         "userId": userid,
         "username": SUsername,
         "password": SPassword,
-        "email": SEmail
+        "email": SEmail,
+        'status': 'offline'
     }
     customization_data = {
         "userId": userid,
@@ -282,7 +285,7 @@ def get_room_data(roomid):
         }
     ]
 
-    return Rooms.aggregate(pipeline)
+    return list(Rooms.aggregate(pipeline))[0]
 
 
 def get_room_msg_data(roomid):

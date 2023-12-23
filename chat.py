@@ -29,7 +29,7 @@ def get_chat(file: str) -> List:
 def get_line_count(file, roomid) -> List:
     """Return the line count in the logfile."""
     if file == "main":
-        room = database.find_room(roomid)
+        room = database.find_room({'roomid': roomid}, 'msg')
         lines = len(room["messages"])
         return lines
     elif file == "backup":
@@ -80,7 +80,7 @@ def get_stats(roomid) -> str:
 
 def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
-    room = database.find_room(roomid)
+    room = database.find_room({'roomid': roomid}, 'msg')
     lines = len(room["messages"]) if roomid != "all" else 1
     if lines >= 500 and permission != 'true' and roomid != "ilQvQwgOhm9kNAOrRqbr":
         reset_chat(message_text, False, roomid)

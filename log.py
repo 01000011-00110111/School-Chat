@@ -4,6 +4,7 @@
 """
 from collections import deque
 from datetime import datetime
+import database
 
 def log_accounts(message):
     """Log when something happens to an account."""
