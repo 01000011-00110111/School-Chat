@@ -23,7 +23,6 @@ import time
 from datetime import datetime, timedelta
 import keys
 import flask
-import pymongo
 from flask import request
 from flask.typing import ResponseReturnValue
 from flask_socketio import SocketIO, emit
@@ -33,8 +32,6 @@ from flask_login import current_user, login_user, logout_user, login_required
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
 
-client = pymongo.MongoClient(os.environ["mongo_key"])
-dbm = client.Chat
 scheduler = APScheduler()
 
 import addons
@@ -70,9 +67,6 @@ scheduler.init_app(app)
 scheduler.api_enabled = True
 login_manager.init_app(app)
 login_manager.login_view = 'login_page'
-
-# clear db, so that old users don't stay
-dbm.Online.delete_many({})
 
 
 class User:
@@ -535,19 +529,19 @@ def get_rooms(userid):
 
 
 @socketio.on('message_chat')
-def handle_message(user_name, message, roomid, userid):
+def handle_message(_, message, roomid, userid):
     """New New chat message handling pipeline."""
     # print(roomid)
     # later I will check the if the username is the same as the one for the session somehow
     room = database.get_room_data(roomid)
     # print(room)
-    user = database.find_account_data(userid)
+    user = database.find_account_permission(userid)
     if room is None:
         result = ("Permission", 6) # well hello hi
     else:
         result = filtering.run_filter(user, room, message, roomid, userid)
     if result[0] == 'msg':
-        if dbm.rooms.find_one({"roomid": roomid}) is not None:
+        if room is not None:
             chat.add_message(result[1], roomid, room)
             emit("message_chat", (result[1], roomid), broadcast=True)
             addons.message_addons(message, user, roomid, room)
