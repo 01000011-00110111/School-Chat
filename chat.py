@@ -2,9 +2,12 @@
     Copyright (C) 2023  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
+from datetime import timedelta
 from time import time
 from typing import List
 import psutil
+import sys
+import platform
 from flask_socketio import emit
 import cmds
 import log
@@ -53,29 +56,79 @@ def line_blanks(**kwargs) -> None:
         cmds.respond_command(("reason", 2, "not_dev"), roomid, None)
 
 
-def get_stats(roomid) -> str:
-    """Return full stats list to chat."""
-    lines = get_line_count('main', roomid)
-    lines_b = get_line_count('backup', roomid)
-    # other stats on the repl
+def get_stats(roomid, version) -> str:
+    """Return extended stats list to chat."""
+    lines_main = get_line_count('main', roomid)
+    lines_backup = get_line_count('backup', roomid)
+
+    # System stats
     p_in = psutil.Process()
     with p_in.oneshot():
-        uptime = timedelta(seconds=time() - p_in.create_time())
-        hours, remainder = divmod(int(uptime.total_seconds()), 3600)
-        minutes, seconds = divmod(remainder, 60)
-        days, hours = divmod(hours, 24)
-        thread_count = p_in.num_threads()
-        # mem_virt = p_in.virtual_memory()[3]/1000000000
-        # mem = p_in.memory_full_info()
+        uptime_seconds = time() - p_in.create_time()
+        days, seconds = divmod(int(uptime_seconds), 86400)
+        hours, minutes = divmod(seconds, 3600)
+        minutes, seconds = divmod(seconds, 60)
+        # thread_count = p_in.num_threads()
+        mem_info = p_in.memory_full_info()
+        mem_virt = mem_info.vms / (1024 ** 3)
+        mem_res = mem_info.rss / (1024 ** 3)
+        
+    
+    # CPU stats
+    cpu_percent = psutil.cpu_percent(interval=1)
+    cpu_cores = psutil.cpu_count(logical=False)  # physical cores
+    cpu_threads = psutil.cpu_count(logical=True) # logical cores (including hyperthreading)
 
-    begin_f = "[SYSTEM]: <font color='#ff7f00'>Server Stats:</font>"
-    lines_f = f"Temp logfile: {lines} lines.\nBackup logfile: {lines_b} lines."
-    uptime_f = f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds."
-    system_s = f"Threads: {thread_count}"
-    # <br>Memory in use (webserver): {mem_virt}
-    longstats = f"{begin_f}<br>{lines_f}<br>{uptime_f}<br>{system_s}<br>"
-    add_message(longstats, roomid, 'true')
-    return longstats
+    # Python version
+    python_version = sys.version
+
+    # disk usage
+    disk_usage = psutil.disk_usage('/')
+    
+    # nework usage
+    net_io = psutil.net_io_counters()
+
+
+    # Formatting stats for display
+    full_stats_text = (
+        "[SYSTEM]: <font color='#ff7f00'>Server Stats:</font><br>"
+        f"Temp logfile: {lines_main} lines.<br>"
+        f"Backup logfile: {lines_backup} lines.<br>"
+        f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s),\
+            {seconds} seconds.<br>"
+        f"CPU Usage: {cpu_percent}%<br>"
+        f"CPU Cores: {cpu_cores} (Physical), {cpu_threads} (Logical)<br>"
+        # f"Threads: {thread_count}<br>"
+        f"Disk Usage: Total: {disk_usage.total / (1024 ** 3):.2f} GB, Used:\
+            {disk_usage.used / (1024 ** 3):.2f} GB<br>"
+        f"Virtual Memory: {mem_virt:.2f} GB<br>"
+        f"Resident Memory: {mem_res:.2f} GB<br>"
+        f"Network Usage: Sent: {net_io.bytes_sent / (1024 ** 2):.2f} MB, Received:\
+            {net_io.bytes_recv / (1024 ** 2):.2f} MB<br>"
+        f"Operating System: {platform.system()} {platform.version()}, Platform: \
+            {platform.platform()}<br>"
+        f"Python Version: {python_version}"
+    )
+    
+    partial_stats_text = (
+        "[SYSTEM]: <font color='#ff7f00'>Partial Server Stats:</font><br>"
+        f"Temp logfile: {lines_main} lines.<br>"
+        f"Backup logfile: {lines_backup} lines.<br>"
+        f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s),\
+            {seconds} seconds.<br>"
+        f"CPU Usage: {cpu_percent}%<br>"
+        f"CPU Cores: {cpu_cores} (Physical), {cpu_threads} (Logical)<br>"
+        f"Virtual Memory: {mem_virt:.2f} GB<br>"
+        f"Resident Memory: {mem_res:.2f} GB<br>"
+    )
+
+    # Displaying formatted stats
+    add_message( \
+        partial_stats_text if version == 'partial' else full_stats_text, roomid, 'true')
+    return partial_stats_text if version == 'partial' else full_stats_text
+
+
+
 
 
 def add_message(message_text: str, roomid, permission) -> None:

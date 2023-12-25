@@ -436,7 +436,7 @@ def handle_connect(userid: str, location):
     username_list = []
     icons = {'settings': '⚙️', 'chat': ''}
     
-    database.set_online(userid)
+    database.set_online(userid, False)
 
     for key in database.get_all_online():
         user_info = key["displayName"]
@@ -451,7 +451,7 @@ def handle_connect(userid: str, location):
 def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
     try:
-        database.remove_user(request.cookies.get('Userid'))
+        database.set_offline(request.cookies.get('Userid'))
         emit("force_username", broadcast=True)
     except TypeError:
         pass
@@ -461,7 +461,7 @@ def handle_disconnect():
 def handle_online(userid: str):
     """Add username to currently online people list."""
     # database.add_user(username, .sid)
-    database.set_online(userid)
+    database.set_online(userid, False)
     username_list = []
     for key in database.get_all_online():
         username_list.append(key["username"])
@@ -535,7 +535,7 @@ def handle_message(_, message, roomid, userid):
     # later I will check the if the username is the same as the one for the session somehow
     room = database.get_room_data(roomid)
     # print(room)
-    user = database.find_account_permission(userid)
+    user = database.find_account_data(userid)
     if room is None:
         result = ("Permission", 6) # well hello hi
     else:
@@ -544,7 +544,7 @@ def handle_message(_, message, roomid, userid):
         if room is not None:
             chat.add_message(result[1], roomid, room)
             emit("message_chat", (result[1], roomid), broadcast=True)
-            addons.message_addons(message, user, roomid, room)
+            # addons.message_addons(message, user, roomid, room)
             if "$sudo" in message and result[2] != 3:
                 filtering.find_cmds(message, user, roomid)
             elif '$sudo' in message and result[2] == 3:

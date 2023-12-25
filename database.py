@@ -23,29 +23,37 @@ def clear_online():
     db.Online.delete_many({})
 
 
-def remove_user(userid):
+def set_offline(userid):
     """Removes a user from the online list"""
     ID.update_one({"userId": userid}, {'$set': {"status": 'offline'}})
+    
+    
+def force_set_offline(userid):
+    """Removes a user from the online list"""
+    ID.update_one({"userId": userid}, {'$set': {"status": 'offline locked'}})
 
 
-def update_user(username, id):
-    db.Online.update_one({"socketid": id}, {"$set": {"username": username}})
+# def update_user(username, id):
+#     db.Online.update_one({"socketid": id}, {"$set": {"username": username}})
 
 
-def set_online(userid):
+def set_online(userid, force):
     # db.Online.insert_one({
     #     "username": username,
     #     "socketid": socketid,
     #     "location": location
     # })
-    ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
+    if not force and ID.find_one({'userId': userid})['status'] != 'offline locked':
+        ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
+    if force:
+        ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
 
 
 # new online code
 def find_online():
     user_list = ID.find()
     for user in user_list:
-        if user["status"] == 'offline':
+        if 'offline' in user["status"]:
             user_list.remove(user)
     return user_list
 
