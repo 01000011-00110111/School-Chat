@@ -249,7 +249,6 @@ def signup_post() -> ResponseReturnValue:
                                      SDisplayname=SDisplayname)
     possible_user = dbm.Accounts.find_one({"username": SUsername})
     possible_dispuser = dbm.Accounts.find_one({"displayName": SDisplayname})
-    # print("again")
     if possible_user is not None or possible_dispuser is not None or SUsername in word_lists.banned_usernames or SDisplayname in word_lists.banned_usernames:
         return flask.render_template(
             "signup-index.html",
@@ -263,53 +262,9 @@ def signup_post() -> ResponseReturnValue:
                                      SUsername=SUsername,
                                      SDisplayname=SDisplayname,
                                      SRole=SRole)
-    userid = str(uuid.uuid4())
-    current_time = datetime.now()
-    time = current_time + timedelta(hours=10)
-    formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
-    dbm.Accounts.insert_one({
-        "username":
-        SUsername,
-        "password":
-        hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
-        "userId":
-        userid,
-        "email":
-        SEmail,
-        "role":
-        SRole,
-        "profile":
-        "",
-        "theme":
-        "dark",
-        "displayName":
-        SDisplayname,
-        "messageColor":
-        "#ffffff",
-        "roleColor":
-        "#ffffff",
-        "userColor":
-        "#ffffff",
-        "permission":
-        'true',
-        'locked':
-        f"locked {formatted_time}",
-        "warned":
-        '0',
-        "SPermission":
-        ""
-    })
+    # the dbm bit is just for now, later i'll revamp this to work with new db system
+    accounting.create_user(SUsername, SPassword, SEmail, SRole, SDisplayname, dbm)
     # I have to make the dict manually, else it's a wasted db call
-    accounting.email_var_account(
-        SUsername, SEmail,
-        accounting.create_verification_code({
-            "username":
-            SUsername,
-            "password":
-            hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
-            "email":
-            SEmail,
-        }), userid)
     log.log_accounts(f'A user has made a account named {SUsername}')
     return flask.redirect(flask.url_for('login_page'))
 
