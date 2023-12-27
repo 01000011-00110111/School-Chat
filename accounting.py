@@ -7,7 +7,7 @@ import re
 import smtplib
 import uuid
 import hashlib
-from datetime import datetime
+from datetime import datetime, timedelta
 from better_profanity import profanity
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -198,3 +198,44 @@ def create_verification_code(user):
     verification_code = hashlib.sha224(bytes(combined_hashes,
                                              'utf-8')).hexdigest()
     return verification_code
+
+
+def create_user(SUsername: str, SPassword: str, SEmail: str, SRole: str,
+                SDisplayname: str, dbm):
+    """Create a user for the chat in the database."""
+    userid = str(uuid.uuid4())
+    current_time = datetime.now()
+    time = current_time + timedelta(hours=10)
+    formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
+    dbm.Accounts.insert_one({
+        "username":
+        SUsername,
+        "password":
+        hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
+        "userId":
+        userid,
+        "email":
+        SEmail,
+        "role":
+        SRole,
+        "profile":
+        "",
+        "theme":
+        "dark",
+        "displayName":
+        SDisplayname,
+        "messageColor":
+        "#ffffff",
+        "roleColor":
+        "#ffffff",
+        "userColor":
+        "#ffffff",
+        "permission":
+        'true',
+        'locked':
+        f"locked {formatted_time}",
+        "warned":
+        '0',
+        "SPermission":
+        ""
+    })

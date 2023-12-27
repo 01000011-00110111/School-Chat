@@ -278,7 +278,6 @@ def signup_post() -> ResponseReturnValue:
         SDisplayname,
         f"locked {formatted_time}",
     )  # reworking needed
-    # I have to make the dict manually, else it's a wasted db call
     accounting.email_var_account(
         SUsername, SEmail,
         accounting.create_verification_code({
