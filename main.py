@@ -152,7 +152,7 @@ def chat_page() -> ResponseReturnValue:
 def specific_chat_page(_) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
-    print(room_name)
+    # print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
 
 
@@ -198,7 +198,9 @@ def login_page() -> ResponseReturnValue:
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie('Username', user['username'])
             resp.set_cookie('Theme', user['theme'])
-            resp.set_cookie('Profile', user['profile'] if user["profile"] != "" else '/static/favicon.ico')
+            resp.set_cookie(
+                'Profile', user['profile']
+                if user["profile"] != "" else '/static/favicon.ico')
             resp.set_cookie('Userid', user['userId'])
             resp.set_cookie('DisplayName', user["displayName"])
             return resp
@@ -258,10 +260,9 @@ def signup_post() -> ResponseReturnValue:
     possible_user = dbm.Accounts.find_one({"username": SUsername})
     possible_dispuser = dbm.Accounts.find_one({"displayName": SDisplayname})
     # print("again")
-    if (possible_user is not None or
-        possible_dispuser is not None or
-        SUsername in word_lists.banned_usernames or
-        SDisplayname in word_lists.banned_usernames):
+    if (possible_user is not None or possible_dispuser is not None
+            or SUsername in word_lists.banned_usernames
+            or SDisplayname in word_lists.banned_usernames):
         return flask.render_template(
             "signup-index.html",
             error='That Username/Display name is already taken!',
@@ -468,9 +469,7 @@ def customize_accounts() -> ResponseReturnValue:
                                     "email": email
                                 }})
         error = 'Updated email!'
-    log.log_accounts(
-        f'The account {user} has updated some setting(s)'
-    )
+    log.log_accounts(f'The account {user} has updated some setting(s)')
     return flask.render_template('settings.html', error=error, **return_list)
 
 
