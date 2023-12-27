@@ -265,29 +265,7 @@ def signup_post() -> ResponseReturnValue:
                                      SUsername=SUsername,
                                      SDisplayname=SDisplayname,
                                      SRole=SRole)
-    userid = str(uuid.uuid4())
-    current_time = datetime.now()
-    time = current_time + timedelta(hours=10)
-    formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
-    database.add_accounts(
-        SUsername,
-        hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
-        userid,
-        SEmail,
-        SRole,
-        SDisplayname,
-        f"locked {formatted_time}",
-    )  # reworking needed
-    accounting.email_var_account(
-        SUsername, SEmail,
-        accounting.create_verification_code({
-            "username":
-            SUsername,
-            "password":
-            hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
-            "email":
-            SEmail,
-        }), userid)
+    accounting.create_user(SUsername, SPassword, SEmail, SRole, SDisplayname)
     log.log_accounts(f'A user has made a account named {SUsername}')
     return flask.redirect(flask.url_for('login_page'))
 

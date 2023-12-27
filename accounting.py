@@ -12,6 +12,7 @@ from better_profanity import profanity
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import word_lists
+import database
 
 # get our custom whitelist words (that should not be banned in the first place)
 profanity.load_censor_words(whitelist_words=word_lists.whitelist_words)
@@ -207,35 +208,22 @@ def create_user(SUsername: str, SPassword: str, SEmail: str, SRole: str,
     current_time = datetime.now()
     time = current_time + timedelta(hours=10)
     formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
-    dbm.Accounts.insert_one({
-        "username":
+    database.add_accounts(
         SUsername,
-        "password":
         hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
-        "userId":
         userid,
-        "email":
         SEmail,
-        "role":
         SRole,
-        "profile":
-        "",
-        "theme":
-        "dark",
-        "displayName":
         SDisplayname,
-        "messageColor":
-        "#ffffff",
-        "roleColor":
-        "#ffffff",
-        "userColor":
-        "#ffffff",
-        "permission":
-        'true',
-        'locked':
         f"locked {formatted_time}",
-        "warned":
-        '0',
-        "SPermission":
-        ""
-    })
+    )  # reworking needed
+    email_var_account(
+        SUsername, SEmail,
+        create_verification_code({
+            "username":
+            SUsername,
+            "password":
+            hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
+            "email":
+            SEmail,
+        }), userid)
