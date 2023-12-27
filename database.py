@@ -216,57 +216,18 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
 
 def update_account(userid, messageC, roleC, userC, displayname, role, profile,
                    theme, email):
-    pipeline = [{
-        "$match": {
-            "userId": userid
-        }
-    }, {
-        "$set": {
-            "messageColor": {
-                "$cond": [{
-                    "$exists": True
-                }, messageC, None]
-            },
-            "roleColor": {
-                "$cond": [{
-                    "$exists": True
-                }, roleC, None]
-            },
-            "userColor": {
-                "$cond": [{
-                    "$exists": True
-                }, userC, None]
-            },
-            "displayName": {
-                "$cond": [{
-                    "$exists": True
-                }, displayname, None]
-            },
-            "role": {
-                "$cond": [{
-                    "$exists": True
-                }, role, None]
-            },
-            "profile": {
-                "$cond": [{
-                    "$exists": True
-                }, profile, None]
-            },
-            "theme": {
-                "$cond": [{
-                    "$exists": True
-                }, theme, None]
-            },
-            "email": {
-                "$cond": [{
-                    "$exists": True
-                }, email, None]
-            },
-        }
-    }]
+    customization_data = {
+        "messageColor": messageC,
+        "roleColor": roleC,
+        "userColor": userC,
+        "displayName": displayname,
+        "role": role,
+        "profile": profile,
+        "theme": theme,
+    }
 
-    Customization.aggregate(pipeline)
-    ID.aggregate(pipeline)
+    Customization.update_one({'userId': userid}, {'$set': customization_data})
+    ID.update_one({'userId': userid}, {'$set': {"email": email}})
 
 
 def delete_account(user):

@@ -408,7 +408,7 @@ def customize_accounts() -> ResponseReturnValue:
                                      **return_list)
 
     if user['locked'] != 'locked':
-        database.update_one(user["userId"], messageC, roleC, userC, displayname, role, \
+        database.update_account(user["userId"], messageC, roleC, userC, displayname, role, \
             profile, theme, email)
 
         resp = flask.make_response(flask.redirect(flask.url_for('chat_page')))
