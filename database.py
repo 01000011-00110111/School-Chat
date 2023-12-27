@@ -70,7 +70,7 @@ def find_account(data, location):
         return Permission.find_one(data)
     if location == 'customization':
         return Customization.find_one(data)
-    
+
 
 def get_all_online():
     pipeline = [
@@ -82,18 +82,24 @@ def get_all_online():
                 "as": "customization"
             }
         },
-            {
-        "$match": {
-            "status": { "$ne": "offline" } # Exclude documents where status is "offline"
-        }
-    },
+        {
+            "$match": {
+                "status": {
+                    "$ne": "offline"
+                }  # Exclude documents where status is "offline"
+            }
+        },
         {
             "$project": {
                 "_id": 0,
                 "username": "$username",
                 "status": "$status",
-                "profile": { "$arrayElemAt": ["$customization.profile", 0] },
-                "displayName": { "$arrayElemAt": ["$customization.displayName", 0] },
+                "profile": {
+                    "$arrayElemAt": ["$customization.profile", 0]
+                },
+                "displayName": {
+                    "$arrayElemAt": ["$customization.displayName", 0]
+                },
             }
         }
     ]
@@ -102,49 +108,63 @@ def get_all_online():
 
 
 def find_account_data(userid):
-    pipeline = [
-        {
-            "$match": {
-                "userId": userid
-            }
-        },
-        {
-            "$lookup": {
-                "from": "Permission",
-                "localField": "userId",
-                "foreignField": "userId",
-                "as": "permissions"
-            }
-        },
-        {
-            "$lookup": {
-                "from": "Customization",
-                "localField": "userId",
-                "foreignField": "userId",
-                "as": "customization"
-            }
-        },
-        {
-            "$project": {
-                "_id": 0,
-                "userId": "$userId",
-                "username": "$username",
-                "role": { "$arrayElemAt": ["$customization.role", 0] },
-                "profile": { "$arrayElemAt": ["$customization.profile", 0] },
-                "displayName": { "$arrayElemAt": ["$customization.displayName", 0] },
-                "messageColor": { "$arrayElemAt": ["$customization.messageColor", 0] },
-                "roleColor": { "$arrayElemAt": ["$customization.roleColor", 0] },
-                "userColor": { "$arrayElemAt": ["$customization.userColor", 0] },
-                "permission": { "$arrayElemAt": ["$permissions.permission", 0] },
-                "locked": { "$arrayElemAt": ["$permissions.locked", 0] },
-                "warned": { "$arrayElemAt": ["$permissions.warned", 0] },
-                "SPermission": { "$arrayElemAt": ["$permissions.SPermission", 0] }
+    pipeline = [{
+        "$match": {
+            "userId": userid
+        }
+    }, {
+        "$lookup": {
+            "from": "Permission",
+            "localField": "userId",
+            "foreignField": "userId",
+            "as": "permissions"
+        }
+    }, {
+        "$lookup": {
+            "from": "Customization",
+            "localField": "userId",
+            "foreignField": "userId",
+            "as": "customization"
+        }
+    }, {
+        "$project": {
+            "_id": 0,
+            "userId": "$userId",
+            "username": "$username",
+            "email": "$email",
+            "role": {
+                "$arrayElemAt": ["$customization.role", 0]
+            },
+            "profile": {
+                "$arrayElemAt": ["$customization.profile", 0]
+            },
+            "displayName": {
+                "$arrayElemAt": ["$customization.displayName", 0]
+            },
+            "messageColor": {
+                "$arrayElemAt": ["$customization.messageColor", 0]
+            },
+            "roleColor": {
+                "$arrayElemAt": ["$customization.roleColor", 0]
+            },
+            "userColor": {
+                "$arrayElemAt": ["$customization.userColor", 0]
+            },
+            "permission": {
+                "$arrayElemAt": ["$permissions.permission", 0]
+            },
+            "locked": {
+                "$arrayElemAt": ["$permissions.locked", 0]
+            },
+            "warned": {
+                "$arrayElemAt": ["$permissions.warned", 0]
+            },
+            "SPermission": {
+                "$arrayElemAt": ["$permissions.SPermission", 0]
             }
         }
-    ]
-
+    }]
     return list(ID.aggregate(pipeline))[0]
-    
 
 
 def find_all_accounts():
@@ -196,18 +216,57 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
 
 def update_account(userid, messageC, roleC, userC, displayname, role, profile,
                    theme, email):
-    customization_data = {
-        "messageColor": messageC,
-        "roleColor": roleC,
-        "userColor": userC,
-        "displayName": displayname,
-        "role": role,
-        "profile": profile,
-        "theme": theme,
-    }
+    pipeline = [{
+        "$match": {
+            "userId": userid
+        }
+    }, {
+        "$set": {
+            "messageColor": {
+                "$cond": [{
+                    "$exists": True
+                }, messageC, None]
+            },
+            "roleColor": {
+                "$cond": [{
+                    "$exists": True
+                }, roleC, None]
+            },
+            "userColor": {
+                "$cond": [{
+                    "$exists": True
+                }, userC, None]
+            },
+            "displayName": {
+                "$cond": [{
+                    "$exists": True
+                }, displayname, None]
+            },
+            "role": {
+                "$cond": [{
+                    "$exists": True
+                }, role, None]
+            },
+            "profile": {
+                "$cond": [{
+                    "$exists": True
+                }, profile, None]
+            },
+            "theme": {
+                "$cond": [{
+                    "$exists": True
+                }, theme, None]
+            },
+            "email": {
+                "$cond": [{
+                    "$exists": True
+                }, email, None]
+            },
+        }
+    }]
 
-    Customization.update_one({'userId': userid}, {'$set': customization_data})
-    ID.update_one({'userId': userid}, {'$set': {"email": email}})
+    Customization.aggregate(pipeline)
+    ID.aggregate(pipeline)
 
 
 def delete_account(user):
@@ -253,8 +312,10 @@ def find_rooms(location):
 def distinct_roomids():
     return Rooms.distinct('roomid')
 
+
 def distinct_names():
     return Rooms.distinct('roomName')
+
 
 def distinct_name(roomid):
     return Rooms.find_one({'roomid': roomid})["roomName"]
@@ -267,7 +328,8 @@ def get_rooms():
             "$lookup": {
                 "from": "Permission",  # Target collection
                 "localField": "roomid",  # Field in the 'Rooms' collection
-                "foreignField": "roomid",  # Field in the 'Permission' collection
+                "foreignField":
+                "roomid",  # Field in the 'Permission' collection
                 "as": "access"  # Alias for the joined data
             }
         },
@@ -278,8 +340,12 @@ def get_rooms():
                 "id": "$roomid",
                 "generatedBy": "$generatedBy",
                 "mods": "$mods",
-                "whitelisted": { "$arrayElemAt": ["$access.whitelisted", 0] },
-                "blacklisted": { "$arrayElemAt": ["$access.blacklisted", 0] }
+                "whitelisted": {
+                    "$arrayElemAt": ["$access.whitelisted", 0]
+                },
+                "blacklisted": {
+                    "$arrayElemAt": ["$access.blacklisted", 0]
+                }
             }
         }
     ]
@@ -299,16 +365,21 @@ def get_room_data(roomid):
             "$lookup": {
                 "from": "Permission",  # Target collection
                 "localField": "roomid",  # Field in the 'Rooms' collection
-                "foreignField": "roomid",  # Field in the 'Permission' collection
+                "foreignField":
+                "roomid",  # Field in the 'Permission' collection
                 "as": "access"  # Alias for the joined data
             }
         },
         {
-             "$project": {
+            "$project": {
                 "_id": 0,
                 "roomName": "$roomName",
-                "canSend": { "$arrayElemAt": ["$access.canSend", 0] },
-                "locked": { "$arrayElemAt": ["$access.locked", 0] }
+                "canSend": {
+                    "$arrayElemAt": ["$access.canSend", 0]
+                },
+                "locked": {
+                    "$arrayElemAt": ["$access.locked", 0]
+                }
             }
         }
     ]
@@ -328,7 +399,8 @@ def get_room_msg_data(roomid):
             "$lookup": {
                 "from": "Messages",  # Target collection
                 "localField": "roomid",  # Field in the 'Rooms' collection
-                "foreignField": "roomid",  # Field in the 'Permission' collection
+                "foreignField":
+                "roomid",  # Field in the 'Permission' collection
                 "as": "access"  # Alias for the joined data
             }
         },
@@ -337,7 +409,9 @@ def get_room_msg_data(roomid):
                 "_id": 0,
                 "roomid": "$roomid",
                 "name": "$roomName",
-                "msg": { "$arrayElemAt": ["$access.messages", 0] }
+                "msg": {
+                    "$arrayElemAt": ["$access.messages", 0]
+                }
             }
         }
     ]

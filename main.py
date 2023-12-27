@@ -357,7 +357,8 @@ def settings_page() -> ResponseReturnValue:
 @login_required
 def customize_accounts() -> ResponseReturnValue:
     """Customize the account."""
-    userid = request.form.get("user")
+    username = request.form.get("user")
+    userid = request.cookies.get('Userid')
     displayname = request.form.get("display")
     role = request.form.get("role")
     messageC = request.form.get("message_color")
@@ -366,9 +367,9 @@ def customize_accounts() -> ResponseReturnValue:
     email = request.form.get("email")
     profile = request.form.get("profile")
     theme = request.form.get("theme")
-    user = database.find_account({"username": userid}, 'id')
+    user = database.find_account_data(userid)
     return_list = {
-        "user": userid,
+        "user": username,
         "passwd": 'we are not adding password editing just yet',
         "displayName": displayname,
         "role": role,
@@ -383,7 +384,7 @@ def customize_accounts() -> ResponseReturnValue:
         return flask.render_template("settings.html",
                                      error='Pick a theme before updating!',
                                      **return_list)
-    result, error = accounting.run_regex_signup(userid, role, displayname)
+    result, error = accounting.run_regex_signup(username, role, displayname)
     if result is not False:
         return flask.render_template("settings.html",
                                      error=error,
@@ -424,7 +425,7 @@ def customize_accounts() -> ResponseReturnValue:
                 error=
                 'You must verify your account before you can change settings',
                 **return_list)
-        database.update_account_set('id', {"username": userid},
+        database.update_account_set('id', {"username": username},
                                     {'$set': {
                                         "email": "email"
                                     }})
