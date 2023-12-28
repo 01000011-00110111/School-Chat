@@ -192,7 +192,9 @@ def login_page() -> ResponseReturnValue:
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie('Username', user['username'])
             resp.set_cookie('Theme', user['theme'])
-            resp.set_cookie('Profile', user['profile'] if user["profile"] != "" else '/static/favicon.ico')
+            resp.set_cookie(
+                'Profile', user['profile']
+                if user["profile"] != "" else '/static/favicon.ico')
             resp.set_cookie('Userid', user['userId'])
             resp.set_cookie('DisplayName', user["displayName"])
             return resp
@@ -263,7 +265,8 @@ def signup_post() -> ResponseReturnValue:
                                      SDisplayname=SDisplayname,
                                      SRole=SRole)
     # the dbm bit is just for now, later i'll revamp this to work with new db system
-    accounting.create_user(SUsername, SPassword, SEmail, SRole, SDisplayname, dbm)
+    accounting.create_user(SUsername, SPassword, SEmail, SRole, SDisplayname,
+                           dbm)
     # I have to make the dict manually, else it's a wasted db call
     log.log_accounts(f'A user has made a account named {SUsername}')
     return flask.redirect(flask.url_for('login_page'))
@@ -425,9 +428,10 @@ def handle_connect(username: str, location):
     socketid = request.sid
     username_list = []
     icons = {'settings': '⚙️', 'chat': ''}
+    icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️"}
     # this is until I pass the displayname to the user instead of the username
     if username != 'pass':
-        user = dbm.Accounts.find_one({'username': username})
+        user = dbm.Accounts.find_one({'displayName': username})
         dbm.Online.insert_one({
             "username": user['displayName'],
             "socketid": socketid,
@@ -438,7 +442,8 @@ def handle_connect(username: str, location):
         if username == 'pass': continue
         user_info = key["username"]
         icon = icons.get(key.get("location"))
-        user_info = f"{icon}{user_info}"
+        user_icon = icon_perm.get(key['SPermission'])
+        user_info = f"{icon} {user_icon}{user_info}"
         username_list.append(user_info)
 
     emit("online", username_list, broadcast=True)
