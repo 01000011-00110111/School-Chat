@@ -26,8 +26,8 @@ def clear_online():
 def set_offline(userid):
     """Removes a user from the online list"""
     ID.update_one({"userId": userid}, {'$set': {"status": 'offline'}})
-    
-    
+
+
 def force_set_offline(userid):
     """Removes a user from the online list"""
     ID.update_one({"userId": userid}, {'$set': {"status": 'offline locked'}})
@@ -43,7 +43,8 @@ def set_online(userid, force):
     #     "socketid": socketid,
     #     "location": location
     # })
-    if not force and ID.find_one({'userId': userid})['status'] != 'offline locked':
+    if not force and ID.find_one({'userId': userid
+                                  })['status'] != 'offline locked':
         ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
     if force:
         ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
@@ -402,6 +403,16 @@ def delete_room(data):
     Rooms.find_one_and_delete(data)
     Access.find_one_and_delete(data)
     Messages.find_one_and_delete(data)
+
+
+def set_lock_status(roomid, locked: str):
+    """Set a room's locked status."""
+    Access.update_one({"roomid": roomid}, {"locked": locked})
+
+
+def set_all_lock_status(locked: str):
+    """Set all rooms' locked status."""
+    Access.update_many({}, {"locked": locked})
 
 
 """      
