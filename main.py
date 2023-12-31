@@ -391,7 +391,8 @@ def customize_accounts() -> ResponseReturnValue:
         resp = flask.make_response(flask.redirect(flask.url_for('chat_page')))
         resp.set_cookie('Username', user['username'])
         resp.set_cookie('Theme', theme)
-        resp.set_cookie('Profile', profile)
+        resp.set_cookie('Profile', profile if profile != "" else \
+                '/static/favicon.ico')
         resp.set_cookie('Userid', user['userId'])
         error = "Updated account!"
         return resp
