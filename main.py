@@ -152,7 +152,7 @@ def chat_page() -> ResponseReturnValue:
 def specific_chat_page(_) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
-    print(room_name)
+    # print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
 
 
@@ -198,7 +198,9 @@ def login_page() -> ResponseReturnValue:
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie('Username', user['username'])
             resp.set_cookie('Theme', user['theme'])
-            resp.set_cookie('Profile', user['profile'] if user["profile"] != "" else '/static/favicon.ico')
+            resp.set_cookie(
+                'Profile', user['profile']
+                if user["profile"] != "" else '/static/favicon.ico')
             resp.set_cookie('Userid', user['userId'])
             resp.set_cookie('DisplayName', user["displayName"])
             return resp
@@ -274,7 +276,8 @@ def signup_post() -> ResponseReturnValue:
                                      SDisplayname=SDisplayname,
                                      SRole=SRole)
     # the dbm bit is just for now, later i'll revamp this to work with new db system
-    accounting.create_user(SUsername, SPassword, SEmail, SRole, SDisplayname, dbm)
+    accounting.create_user(SUsername, SPassword, SEmail, SRole, SDisplayname,
+                           dbm)
     # I have to make the dict manually, else it's a wasted db call
     log.log_accounts(f'A user has made a account named {SUsername}')
     return flask.redirect(flask.url_for('login_page'))
