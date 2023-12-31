@@ -52,6 +52,9 @@ def find_online():
 
 # accounting
 
+def distinct_userids():
+    return ID.distinct('userId')
+
 
 def find_data(data, location):
     if location == 'id':

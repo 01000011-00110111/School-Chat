@@ -204,7 +204,10 @@ def create_verification_code(user):
 def create_user(SUsername: str, SPassword: str, SEmail: str, SRole: str,
                 SDisplayname: str, dbm):
     """Create a user for the chat in the database."""
-    userid = str(uuid.uuid4())
+    while True:
+        userid = str(uuid.uuid4())
+        if userid not in database.distinct_userids()):
+            break
     current_time = datetime.now()
     time = current_time + timedelta(hours=10)
     formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
