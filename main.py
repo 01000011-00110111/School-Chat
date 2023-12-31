@@ -38,7 +38,7 @@ from flask_socketio import SocketIO, emit
 
 # these are the files that do not import dbm
 import accounting
-import filtering
+import keys
 import word_lists
 
 # from flask_limiter import Limiter
@@ -52,6 +52,7 @@ scheduler = APScheduler()
 # import addons  # addons may, this really should be commented out as it is optional
 import chat
 import cmds
+import filtering
 import log
 import rooms
 
