@@ -165,23 +165,20 @@ def login_page() -> ResponseReturnValue:
         password = request.form.get("password")
         TOSagree = request.form.get("TOSagree")
         next_page = request.args.get("next")
-        userids = database.find_account({'username': username}, 'id')
+        user = database.find_login_data(username)
         # print(userids)
-        if userids is None:
+        if user is None:
             return flask.render_template('login.html',
                                          error="That account does not exist!")
-        userid = userids["userId"]
-        # print(userids["userId"])
-        userC = database.find_account({'userId': userid}, 'customization')
-        # print(userC)
+        # userid = user["userId"]
         if TOSagree != "on":
             return flask.render_template('login.html',
                                          error='You did not agree to the TOS!')
 
         if User.check_username(username,
-                               userids["username"]) and User.check_password(
-                                   userids['password'], password):
-            user_obj = User(username=userids['username'])
+                               user["username"]) and User.check_password(
+                                   user['password'], password):
+            user_obj = User(username=user['username'])
             login_user(user_obj)
             if next_page is None:
                 next_page = flask.url_for('chat_page')
@@ -189,12 +186,12 @@ def login_page() -> ResponseReturnValue:
                 next_page = next_page if next_page in word_lists.approved_links else flask.url_for(
                     'chat_page')
             resp = flask.make_response(flask.redirect(next_page))
-            resp.set_cookie('Username', userids['username'])
-            resp.set_cookie('Theme', userC['theme'])
-            resp.set_cookie('Profile', userC['profile'] if userC["profile"] != "" else \
+            resp.set_cookie('Username', user['username'])
+            resp.set_cookie('Theme', user['theme'])
+            resp.set_cookie('Profile', user['profile'] if user["profile"] != "" else \
                 '/static/favicon.ico')
-            resp.set_cookie('Userid', userids['userId'])
-            resp.set_cookie('DisplayName', userC["displayName"])
+            resp.set_cookie('Userid', user['userId'])
+            resp.set_cookie('DisplayName', user["displayName"])
             return resp
         else:
             return flask.render_template(

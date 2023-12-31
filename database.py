@@ -109,6 +109,49 @@ def get_all_online():
 
     return list(ID.aggregate(pipeline))
 
+def find_login_data(username):
+    pipeline = [{
+        "$match": {
+            "username": username
+        }
+    }, {
+        "$lookup": {
+            "from": "Customization",
+            "localField": "userId",
+            "foreignField": "userId",
+            "as": "customization"
+        }
+    }, {
+        "$project": {
+            "_id": 0,
+            "userId": "$userId",
+            "username": "$username",
+            "password": "$password",
+            "email": "$email",
+            "role": {
+                "$arrayElemAt": ["$customization.role", 0]
+            },
+            "profile": {
+                "$arrayElemAt": ["$customization.profile", 0]
+            },
+            "displayName": {
+                "$arrayElemAt": ["$customization.displayName", 0]
+            },
+            "messageColor": {
+                "$arrayElemAt": ["$customization.messageColor", 0]
+            },
+            "roleColor": {
+                "$arrayElemAt": ["$customization.roleColor", 0]
+            },
+            "userColor": {
+                "$arrayElemAt": ["$customization.userColor", 0]
+            },
+            "theme": {
+                "$arrayElemAt": ["$customization.theme", 0]
+            },
+        }
+    }]
+    return list(ID.aggregate(pipeline))[0]
 
 def find_account_data(userid):
     pipeline = [{
