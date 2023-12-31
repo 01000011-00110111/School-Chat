@@ -390,7 +390,6 @@ def run_restart(**kwargs):
 
 def reload_users(**kwargs):
     """Reload the online list manually."""
-    # print('test')
     database.clear_online()
     emit("force_username", ("", None), broadcast=True)
 
@@ -398,7 +397,6 @@ def reload_users(**kwargs):
 def appear_offline(**kwargs):
     """Make the user who ran the command appear offline"""
     user = kwargs['user']
-    # dbm.Online.delete_one({'userId': user['userId']})
     database.clear_online({})
     emit("force_username", ("", user['userId']), broadcast=True)
 
@@ -416,7 +414,7 @@ def end_ping(start, roomid):
     difference = end - start
     msg = '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + str(
         int(difference)) + 'ms RTT</font>'
-    chat.add_message(msg, roomid, dbm)
+    chat.add_message(msg, roomid)
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
@@ -426,7 +424,7 @@ def send_lines(**kwargs):
     roomid = kwargs['roomid']
     lines = chat.get_line_count("main", roomid)
     msg = f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n"
-    chat.add_message(msg, roomid, dbm)
+    chat.add_message(msg, roomid)
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
@@ -436,7 +434,7 @@ def send_cmd_logs(**kwargs):
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1:
         msg = log.get_cmd_logs()
-        chat.add_message(msg, roomid, dbm)
+        chat.add_message(msg, roomid)
         emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
     else:
         respond_command(("reason", 2, "not_dev"), roomid, None)
@@ -448,7 +446,7 @@ def send_room_logs(**kwargs):
     roomid = kwargs['roomid']
     if check_if_mod(user) == 1 or check_if_dev(user) == 1:
         msg = log.get_room_logs()
-        chat.add_message(msg, roomid, dbm)
+        chat.add_message(msg, roomid)
         emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
@@ -600,9 +598,9 @@ def globalock(**kwargs):
         respond_command(("reason", 3, "not_confirmed"), roomid, None)
     else:
         message = "[SYSTEM]: <font color='#ff7f00'>All Chatrooms locked by Admin.</font>"
-        chat.add_message(message, "all", dbm)
+        chat.add_message(message, "all")
         emit("message_chat", (message, "all"), broadcast=True)
-        dbm.rooms.update_many({}, {'$set': {"locked": 'true'}})
+        # dbm.rooms.update_many({}, {'$set': {"locked": 'true'}})
 
 
 def lock(**kwargs):
@@ -611,14 +609,14 @@ def lock(**kwargs):
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>"
-        chat.add_message(message, roomid, dbm)
+        chat.add_message(message, roomid)
         emit("message_chat", (message, roomid), broadcast=True)
-        dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
+        # dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
     elif check_if_mod(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Moderator.</font>"
-        chat.add_message(message, roomid, dbm)
+        chat.add_message(message, roomid)
         emit("message_chat", (message, roomid), broadcast=True)
-        dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
+        # dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
@@ -629,14 +627,14 @@ def unlock(**kwargs):
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>"
-        chat.add_message(message, roomid, dbm)
+        chat.add_message(message, roomid)
         emit("message_chat", (message, roomid), broadcast=True)
-        dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
+        # dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
     elif check_if_mod(user) == 1:
         message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Moderator.</font>"
-        chat.add_message(message, roomid, dbm)
+        chat.add_message(message, roomid)
         emit("message_chat", (message, roomid), broadcast=True)
-        dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
+        # dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
