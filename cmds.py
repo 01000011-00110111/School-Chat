@@ -10,7 +10,7 @@ import time
 from time import sleep
 import database
 
-from commands import debug, online
+from commands import debug, online, moderation
 # below is needed for systemd restart, do not remove
 try:
     import dbus
@@ -33,7 +33,10 @@ def find_command(**kwargs):
         ('pstats', 'dev'): debug.pstats,
         ('lines', 'dev'): debug.line_count,
         ('appear_offline', 'dev'): online.appear_offline,
-        ('appear_online', 'dev'): online.appear_online
+        ('appear_online', 'dev'): online.appear_online,
+        ('globalock', 'dev'): moderation.globalock,
+        ('lock', 'admin'): moderation.lock,
+        ('unlock', 'admin'): moderation.unlock
     }
     try:
         response_strings[(kwargs['commands']['v0'], permission(kwargs['user']))] \
