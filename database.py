@@ -109,12 +109,8 @@ def get_all_online():
 
     return list(ID.aggregate(pipeline))
 
-def find_login_data(username):
+def find_login_data(value, login):
     pipeline = [{
-        "$match": {
-            "username": username
-        }
-    }, {
         "$lookup": {
             "from": "Customization",
             "localField": "userId",
@@ -151,7 +147,10 @@ def find_login_data(username):
             },
         }
     }]
-    return list(ID.aggregate(pipeline))[0]
+    match = [{"$match": {"username": value}}] if not login else \
+        [{"$match": {"userId": value}}]
+    return list(ID.aggregate(match + pipeline))[0]
+
 
 def find_account_data(userid):
     pipeline = [{

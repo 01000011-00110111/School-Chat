@@ -165,7 +165,7 @@ def login_page() -> ResponseReturnValue:
         password = request.form.get("password")
         TOSagree = request.form.get("TOSagree")
         next_page = request.args.get("next")
-        user = database.find_login_data(username)
+        user = database.find_login_data(username, False)
         # print(userids)
         if user is None:
             return flask.render_template('login.html',
@@ -304,10 +304,7 @@ def get_logs_page() -> ResponseReturnValue:
 @login_required
 def settings_page() -> ResponseReturnValue:
     """Serve the settings page for the user."""
-    user = database.find_account({"userId": request.cookies.get('Userid')},
-                                 'id')
-    userC = database.find_account({"userId": request.cookies.get('Userid')},
-                                  'customization')
+    user = database.find_login_data(request.cookies.get('Userid'), True)
     if request.cookies.get('Userid') != user['userId']:
         # someone is trying something funny
         return flask.Response(
@@ -318,13 +315,13 @@ def settings_page() -> ResponseReturnValue:
         user=user['username'],
         passwd='we are not adding password editing just yet',
         email=user["email"],
-        displayName=userC["displayName"],
-        role=userC["role"],
-        user_color=userC["userColor"],
-        role_color=userC["roleColor"],
-        message_color=userC["messageColor"],
-        profile=userC["profile"],
-        theme=userC["theme"])
+        displayName=user["displayName"],
+        role=user["role"],
+        user_color=user["userColor"],
+        role_color=user["roleColor"],
+        message_color=user["messageColor"],
+        profile=user["profile"],
+        theme=user["theme"])
 
 
 @app.route('/settings', methods=['POST'])
