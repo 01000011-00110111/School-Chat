@@ -527,7 +527,7 @@ def handle_message(_, message, roomid, userid):
     if room is None:
         result = ("Permission", 6)  # well hello hi
     else:
-        result = filtering.run_filter(user, room, message, roomid, userid)
+        result = filtering.run_filter_chat(user, room, message, roomid, userid)
     if result[0] == 'msg':
         if room is not None:
             chat.add_message(result[1], roomid, room)
@@ -543,6 +543,21 @@ def handle_message(_, message, roomid, userid):
     else:
         filtering.failed_message(result, roomid)
 
+@socketio.on('message_private_chat')
+def handle_private_message(_, message, userlist, userid):
+    """New New chat message handling pipeline."""
+    user = database.find_account_data(userid)
+    result = filtering.run_filter_private(user, message, userid)
+    if result[0] == 'msg':
+        chat.add_private_message(result[1], userlist)
+        emit("message_chat", (result[1], roomid), broadcast=True) #this part will be hard
+        
+        # if "$sudo" in message and result[2] != 3:
+        #     filtering.find_cmds(message, user, roomid)
+        # elif '$sudo' in message and result[2] == 3:
+        #     filtering.failed_message(('permission', 9), roomid)
+    # else:
+    #     filtering.failed_message(result, roomid)
 
 @socketio.on('pingtest')
 def handle_ping_tests(start, roomid):
@@ -571,12 +586,12 @@ def connect(roomid):
 def private_connect(sender, receiver):
     """Switch rooms for the user"""
     socketid = request.sid
-    receiver = database.find_userid(receiver)
+    receiverid = database.find_userid(receiver)
     if sender == receiver:
         print('make fix later')
-    chat = private.get_messages(sender, receiver)
+    chat = private.get_messages(sender, receiverid)
     # print(sender, receiver)
-    emit("private_data", {'message': chat}, to=socketid, namespace='/')
+    emit("private_data", {'message': chat, 'userlist': [sender, receiver]}, to=socketid, namespace='/')
 
 
 """

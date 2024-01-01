@@ -492,6 +492,12 @@ def find_private_messages(userlist):
     """find the chat with 2 users"""
     return Private.find_one({"userIds": userlist})["messages"]
 
+def send_private_message(message, userlist):
+    """sends the message to the private chat room"""
+    Private.update_one({"userIds": userlist},
+                {'$push': {
+                    "messages": message
+                }})
 
 def create_private_chat(userlist):
     """creates a private chat with 2 users"""

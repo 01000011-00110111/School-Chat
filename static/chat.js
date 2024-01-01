@@ -87,6 +87,7 @@ function CheckIfExist(_params) {
 socket.on("room_data", (data) => {
     console.log(data)
     window.sessionStorage.setItem("roomid", data['roomid']);
+    window.sessionStorage.setItem("private", '')
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
@@ -104,7 +105,8 @@ socket.on("room_data", (data) => {
 
 socket.on("private_data", (data) => {
     console.log(data)
-    // window.sessionStorage.setItem("roomid", data['roomid']);
+    window.sessionStorage.setItem("roomid", '')
+    window.sessionStorage.setItem("private", data['userlist']);
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
@@ -165,7 +167,12 @@ function sendMessage() {
     messageL = toHyperlink(message);
     messageElement["value"] = "";
     // this is needed, because this goes over socketio, not a normal http request
-    socket.emit('message_chat', user, messageL, window.sessionStorage.getItem("roomid"), userid);
+    if (window.sessionStorage.getItem("roomid") != '') {
+        socket.emit('message_chat', user, messageL, window.sessionStorage.getItem("roomid"), userid);
+    }
+    if (window.sessionStorage.getItem("private") != '') {
+        socket.emit('message_private_chat', user, messageL, window.sessionStorage.getItem("private"), userid);
+    }
     window.scrollTo(0, chatDiv.scrollHeight);
 }
 
