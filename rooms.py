@@ -7,13 +7,9 @@ from datetime import datetime
 from string import ascii_uppercase
 
 from flask_socketio import emit
-
-from main import dbm
-
-
-def format_system_msg(msg):
-    """Format a message [SYSTEM] would send."""
-    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
+import database
+#import main
+#forgot about bool for a sec
 
 def chat_room_log(message):
     """logs all deletes, creations, and edits done to chat rooms"""
@@ -23,7 +19,7 @@ def chat_room_log(message):
 
 def generate_unique_code(length):
     """Make a room code that doesen't exist yet."""
-    rooms = dbm.rooms.distinct('roomid')
+    rooms = database.distinct_roomids()
     # ^^ I have no idea if this will work well or not (it does!)
     while True:
         code = ""
@@ -39,24 +35,7 @@ def generate_unique_code(length):
 
 def get_chat_rooms():
     """Return all available rooms."""
-    room = dbm.rooms.find()
-    rooms = []
-    for r in room:
-        rooms.append({
-            'name': r['roomName'],
-            'id': r['roomid'],
-            'generatedBy': r['generatedBy'],
-            'mods': r['mods'],
-            'whitelisted': r['whitelisted'],
-            'blacklisted': r['blacklisted']
-        })
-    return rooms
-
-
-def get_chat_room(roomid):
-    """grabs a chat room"""
-    return dbm.rooms.find_one({'roomid': roomid})
-
+    return database.get_rooms()
 
 def create_rooms(name, user, username):
     """Someone wants to make a chat room."""
@@ -74,7 +53,7 @@ def create_rooms(name, user, username):
 def create_chat_room(username, name, userinfo):
     """Make a chat room, register in the db."""
     user = userinfo["username"]
-    possible_room = dbm.rooms.find_one({"generatedBy": user})
+    possible_room = database.find_room({"generatedBy": user}, 'id')
     generated_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     if possible_room is not None and userinfo["SPermission"] != "Debugpass":
         log = f"Failed: Another Room Exists ({username} room creation) {generated_at}"
@@ -82,8 +61,8 @@ def create_chat_room(username, name, userinfo):
     elif name == '':
         log = f"Failed: Name was empty. ({username} room creation) {generated_at}"
         response = ('reason', 3, "create")
-    elif dbm.rooms.find_one({"roomName": name}) is not None:
-        log = f"Failed: Room Already Exists ({username}) {generated_at}"
+    elif database.find_room({'roomName': name}, 'id') is not None:
+        logmessage = f"{username} failed to make a room named {name} at {generated_at} because the name was taken."
         response = ('reason', 4, "create")
     else:
         code = generate_unique_code(5)
@@ -96,48 +75,24 @@ def create_chat_room(username, name, userinfo):
 
 def insert_room(code, generated_at, name, username):
     """Create a room in the db."""
-    dbm.rooms.insert_one({
-        "roomid":
-        code,
-        "generatedBy":
-        username,
-        "mods":
-        '',
-        "generatedAt":
-        generated_at,
-        "roomName":
-        name,
-        "canSend":
-        'everyone',
-        "whitelisted":
-        "everyone",
-        "blacklisted":
-        "empty",
-        "locked":
-        'false',
-        "messages": [
-            format_system_msg(
-                f"<b>{name}</b> created by <b>{username}</b> at {generated_at}."
-            )
-        ]
-    })
+    database.add_account(code, username, generated_at, name,)
 
 
 def delete_chat_room(room_name, user):
     """Deletes the chat room the chat room owner or dev selected"""
-    rooms = dbm.rooms.find_one({"roomName": room_name})
+    rooms = database.find_room({"roomName": room_name}, 'id')
     made_by = rooms["generatedBy"]
     username = user["displayName"]
     date_str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     if made_by == user["username"]:
         if len(rooms["roomid"]) == 20:
             return ("reason", 3, "delete")
-        response = delete_room(room_name)
+        response = delete_room(rooms["roomid"])
         logmessage = f"{username} deleted {room_name} at {date_str}"
     elif user["SPermission"] == "Debugpass":
         if len(rooms["roomid"]) == 20:
             return ("reason", 2, "delete")
-        response = delete_room(room_name)
+        response = delete_room(rooms["roomid"])
         logmessage = f"{username} deleted {room_name} owned by {made_by} at {date_str}"
     else:
         logmessage = f"{username} tried to delete {room_name} at {date_str}"
@@ -150,15 +105,15 @@ def delete_chat_room(room_name, user):
     return response
 
 
-def delete_room(room_name):
+def delete_room(roomid):
     """Deletes the chat room off the database"""
-    dbm.rooms.find_one_and_delete({"roomName": room_name})
+    database.delete_room({"roomid": roomid})
     return ("reason", 0, "delete")
 
 
 def chat_room_edit(request, function, room_name, user, users):
-    """Checks and edits a chatroom."""
-    room = dbm.rooms.find_one({"roomName": room_name})
+    """checks if the user can edit the chat room and calls the different chat room edits the user can run"""
+    room = database.find_room({"roomName": room_name}, 'id')
     username = user["displayName"]
     if request == "whitelist":
         if room["generatedBy"] == user["username"]:
@@ -192,7 +147,7 @@ def chat_room_edit(request, function, room_name, user, users):
 
 def whitelist(room_name, set_type, user, users, username):
     """Whitelist user a dev or the owner picks"""
-    pre_user_list = dbm.rooms.find_one({'roomName': room_name})
+    pre_user_list = database.find_room({'roomName': room_name}, 'id')
     users_to_add = users.split(',')
     blacklisted_users = pre_user_list["blacklisted"].replace("users:",
                                                              "").split(',')
@@ -233,8 +188,8 @@ def whitelist(room_name, set_type, user, users, username):
     #turn the addusers list into a string
     add_users.split(',')  #split the list into a string
     add_users = ','.join(add_users)  #join the list into a string
-    update_blacklist(room_name, add_users)
-    update_whitelist(room_name, add_users)
+    update_blacklist(room["roomid"], add_users)
+    update_whitelist(room["roomid"], add_users)
     emit("force_room_update", broadcast=True)
     if set_type == 'add':
         log = f"The user {username} added {users} to {room_name}."
@@ -246,7 +201,7 @@ def whitelist(room_name, set_type, user, users, username):
 
 def blacklist(room_name, set_type, user, users, username):
     """Blacklist user a dev or the owner picks"""
-    pre_user_list = dbm.rooms.find_one({'roomName': room_name})
+    pre_user_list = database.find_room({'roomName': room_name}, 'id')
     users_to_add = users.split(',')
     blacklisted_users = pre_user_list["blacklisted"].replace("users:",
                                                              "").split(',')
@@ -289,8 +244,8 @@ def blacklist(room_name, set_type, user, users, username):
     #turn the addusers list into a string
     add_users.split(',')  #split the list into a string
     add_users = ','.join(add_users)  #join the list into a string
-    update_blacklist(room_name, add_users)
-    update_blacklist(room_name, add_users)
+    update_blacklist(room["roomid"], add_users)
+    update_blacklist(room["roomid"], add_users)
     emit("force_room_update", broadcast=True)
     if set_type == 'add':
         log = f"{username} added {users} to the blacklist in chat room {room_name}."
@@ -300,23 +255,10 @@ def blacklist(room_name, set_type, user, users, username):
     return response
 
 
-def update_whitelist(room_name, message):  #combine whitelist and blacklist
-    """Adds the whitelisted users to the database"""
-    dbm.rooms.update_one({"roomName": room_name},
-                         {"$set": {
-                             "whitelisted": message
-                         }})
-
-
-def update_blacklist(room_name, message):
-    """Adds the blacklisted users to the database"""
-    dbm.rooms.update_one({"roomName": room_name},
-                         {"$set": {
-                             "blacklisted": message
-                         }})
-
-
 def check_roomids(roomid):
     """checks if the roomid you have is a real roomid"""
-    roomid_check = dbm.rooms.find_one({"roomid": roomid})
-    return roomid_check is not None
+    roomid_check = database.find_room({"roomid": roomid}, 'id')
+    if roomid_check is not None:
+        return True
+    else:
+        return False
