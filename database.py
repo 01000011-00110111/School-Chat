@@ -96,6 +96,14 @@ def get_all_online():
             }
         },
         {
+            "$lookup": {
+                "from": "Permission",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "permission"
+            }
+        },
+        {
             "$match": {
                 "status": {
                     "$ne": "offline"
@@ -112,6 +120,9 @@ def get_all_online():
                 },
                 "displayName": {
                     "$arrayElemAt": ["$customization.displayName", 0]
+                },
+                "SPermission": {
+                    "$arrayElemAt": ["$permission.displayName", 0]
                 },
             }
         }
