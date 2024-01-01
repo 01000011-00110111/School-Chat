@@ -3,6 +3,8 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import os
+import secrets
+import datetime
 
 import pymongo
 import hashlib
@@ -477,3 +479,43 @@ def add_rooms(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked)
     Access.insert_one(access_data)
     Messages.insert_one(message)
     """
+
+# setup code
+
+def check_system_rooms():
+    """checks if the system chat rooms are there"""
+    result = Rooms.find({"roomName": {"$in": [{"$eq": "[SYSTEM]"}] * 3}})
+    print(result)
+    return 5 if result < 5 else 0
+
+
+def setup_chatrooms():
+    """sets up the starter chat rooms"""
+    Run = False
+    if check_system_rooms() is False:
+        Run = True
+        
+    name = 'Main'
+    while Run > 0:
+        room_data = {
+            "roomid": secrets.token_hex(10) if name != 'main' else "ilQvQwgOhm9kNAOrRqbr",
+            "generatedBy": ["SYSTEM"],
+            "mods": '',
+            "generatedAt": datetime.now(),
+            "roomName": name,
+            "locked": 'false',
+        }
+        
+        access_data = {
+            "canSend": 'everyone',
+            "whitelisted": "everyone",
+            "blacklisted": "empty",
+        }
+        message = { 
+                "messages": [
+                #f"[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by \b>{username}</b> at {generated_at}.</font>"
+        ]}
+
+        Rooms.insert_one(room_data)
+        Access.insert_one(access_data)
+        Messages.insert_one(message)
