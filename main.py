@@ -36,7 +36,6 @@ from flask_socketio import SocketIO, emit
 
 # these are the files that do not import dbm
 import accounting
-import keys
 import word_lists
 
 # from flask_limiter import Limiter

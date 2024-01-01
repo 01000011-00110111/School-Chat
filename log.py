@@ -6,8 +6,6 @@ from collections import deque
 from datetime import datetime
 import database
 
-from main import dbm
-
 
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
