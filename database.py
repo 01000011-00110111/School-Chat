@@ -12,6 +12,7 @@ config.read('config/keys.conf')
 mongo_pass = config["mongodb"]["passwd"]
 client = pymongo.MongoClient(mongo_pass)
 #accounts/user data
+Accounts = client.Accounts
 Permission = client.Accounts.Permission
 Customization = client.Accounts.Customization
 ID = client.Accounts.Accounts
@@ -71,6 +72,13 @@ def find_data(data, location):
         return Permission.find(data)
     if location == 'customization':
         return Customization.find(data)
+
+
+def find_userid(user):
+    userid = ID.find_one({'username': user})
+    if userid is None:
+        userid = Customization.find_one({'displayName': user})
+    return None if userid is None else userid["userId"]
 
 
 def find_account(data, location):
@@ -477,3 +485,18 @@ def add_rooms(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked)
     Access.insert_one(access_data)
     Messages.insert_one(message)
     """
+
+# private chats
+
+def find_private_messages(userlist):
+    """find the chat with 2 users"""
+    return Private.find_one({"userIds": userlist})["messages"]
+
+
+def create_private_chat(userlist):
+    """creates a private chat with 2 users"""
+    data = {
+        "userIds": userlist,
+        "messages": ['add a better welcome or not']
+    }
+    Private.insert_one(data)

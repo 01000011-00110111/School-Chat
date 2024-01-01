@@ -51,6 +51,7 @@ import database
 import filtering
 import log
 import rooms
+import private
 
 app = flask.Flask(__name__)
 app.secret_key = os.urandom(9001)  #ITS OVER 9000!!!!!!
@@ -143,10 +144,11 @@ def chat_page() -> ResponseReturnValue:
 
 @app.route('/chat/<room_name>')
 @login_required
-def specific_chat_page(_) -> ResponseReturnValue:
+def specific_chat_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
-    # print(room_name)
+    # request.cookies.get('Userid')
+    print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
 
 
@@ -563,6 +565,18 @@ def connect(roomid):
     # print(room)
 
     emit("room_data", room, to=socketid, namespace='/')
+    
+
+@socketio.on("private_connect")
+def private_connect(sender, receiver):
+    """Switch rooms for the user"""
+    socketid = request.sid
+    receiver = database.find_userid(receiver)
+    if sender == receiver:
+        print('make fix later')
+    chat = private.get_messages(sender, receiver)
+    # print(sender, receiver)
+    emit("private_data", {'message': chat}, to=socketid, namespace='/')
 
 
 """
@@ -626,4 +640,4 @@ if __name__ == "__main__":
     # socketio.start_background_task(online_refresh)
     # o = threading.Thread(target=online_refresh)
     # o.start()
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)

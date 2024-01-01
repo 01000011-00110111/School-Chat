@@ -102,10 +102,32 @@ socket.on("room_data", (data) => {
     window.scrollTo(0, chatDiv.scrollHeight);
 });
 
+socket.on("private_data", (data) => {
+    console.log(data)
+    // window.sessionStorage.setItem("roomid", data['roomid']);
+    let newline = "<br>";
+    let chatDiv = document.getElementById("chat");
+    // update the url when the room is changed.
+    // window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['name']}`);
+    // roomname = document.getElementById("RoomDisplay").innerHTML = '/'+data['name'];
+    // document.title = `/${data['name']} - Chat`
+    let chat = ""; 
+    for (let messageObj of data['message']) {
+        chat = chat + messageObj + newline;
+    }
+
+    chatDiv["innerHTML"] = chat;
+    window.scrollTo(0, chatDiv.scrollHeight);
+});
+
 function changeRoom(room) {
     window.sessionStorage.setItem("roomid", room);
     closeNav();
     socket.emit('room_connect', room)
+}
+
+function openuserinfo(user) {
+    socket.emit('private_connect', getCookie('Userid'), user)
 }
 
 function toHyperlink(str) {
