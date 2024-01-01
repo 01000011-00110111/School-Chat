@@ -13,6 +13,9 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import word_lists
 import database
+import configparser
+config = configparser.ConfigParser()
+config.read('config/keys.conf')
 
 # get our custom whitelist words (that should not be banned in the first place)
 profanity.load_censor_words(whitelist_words=word_lists.whitelist_words)
@@ -21,11 +24,11 @@ profanity.add_censor_words(word_lists.censored)
 
 def email_var_account(username, email, verification_code, userid):
     # Email configuration
-    URL = os.environ['URL']
+    URL = config["backend"]['URL']
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
-    sender_email = os.environ['email']
-    sender_password = os.environ['password']
+    sender_email = config["backend"]['email']
+    sender_password = config["backend"]['password']
     receiver_email = email
     subject = f'Verification of {username}!'
 
@@ -195,14 +198,14 @@ def create_verification_code(user):
                                          'utf-8')).hexdigest()
     email_hash = hashlib.sha224(bytes(user['email'], 'utf-8')).hexdigest()
     combined_hashes = username_hash + email_hash + user[
-        'password'] + os.environ['secret_key']
+        'password'] + config["backend"]['secret_key']
     verification_code = hashlib.sha224(bytes(combined_hashes,
                                              'utf-8')).hexdigest()
     return verification_code
 
 
 def create_user(SUsername: str, SPassword: str, SEmail: str, SRole: str,
-                SDisplayname: str, dbm):
+                SDisplayname: str):
     """Create a user for the chat in the database."""
     while True:
         userid = str(uuid.uuid4())

@@ -1,8 +1,11 @@
 import os
 import pymongo
 import hashlib
-
-client = pymongo.MongoClient(os.environ["mongo_key"])
+import configparser
+config = configparser.ConfigParser()
+config.read('config/keys.conf')
+mongo_pass = config["mongodb"]["passwd"]
+client = pymongo.MongoClient(mongo_pass)
 #accounts/user data
 Permission = client.Accounts.Permission
 Customization = client.Accounts.Customization
@@ -149,7 +152,11 @@ def find_login_data(value, login):
     }]
     match = [{"$match": {"username": value}}] if not login else \
         [{"$match": {"userId": value}}]
-    return list(ID.aggregate(match + pipeline))[0]
+    try:
+        result = list(ID.aggregate(match + pipeline))[0]
+        return result
+    except IndexError:
+        return None
 
 
 def find_account_data(userid):
