@@ -4,8 +4,8 @@
 """
 
 # import os
-# os.environ['mongo_key'] = your mongo key
-# os.environ['email'] = your chat email
-# os.environ['password'] = email's app password
+# os.environ['MONGO_KEY'] = your mongo key
+# os.environ['EMAIL'] = your chat email
+# os.environ['PASSWORD'] = email's app password
 # os.environ['URL'] = your domain
-# os.environ['secret_key'] = set this to something secret (and long)
+# os.environ['SECRET_KEY'] = set this to something secret (and long)

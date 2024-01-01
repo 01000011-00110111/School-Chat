@@ -2,25 +2,42 @@
     Copyright (C) 2023  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
+import re
+import time
+from datetime import datetime, timedelta
+from inspect import cleandoc
+from time import sleep
+
+from flask_socketio import emit
+
 import chat
-from main import dbm, scheduler
 import log
 import rooms
-import time
-from time import sleep
+from main import dbm, scheduler
+
 # below is needed for systemd restart, do not remove
 try:
     import dbus
 except ModuleNotFoundError:
     print(
-        'DBus python library not installed or found, support for $sudo shutdown or $sudo restart is disabled.'
+        '''
+        \rDBus python library not installed or found. 
+        \rSupport for $sudo shutdown or $sudo restart is disabled.
+        '''
     )
     systemd_available = False
 else:
     systemd_available = True
-import re
-from datetime import datetime, timedelta
-from flask_socketio import emit
+
+# consts
+troll_str = """
+                [SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font>
+                <img src='static/troll-face.jpeg'>
+            """
+
+def format_system_msg(msg):
+    """Format a message [SYSTEM] would send."""
+    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
 
 
 def find_command(**kwargs):
@@ -69,18 +86,12 @@ def find_command(**kwargs):
 def E(**kwargs):
     """Test function"""
     roomid = kwargs['roomid']
-    emit("troll", (
-        "[SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font> <img src='static/troll-face.jpeg'>",
-        roomid),
-         broadcast=True)
+    emit("troll", (cleandoc(troll_str), roomid), broadcast=True)
 
 def spooky(**kwargs):
     """this is a spooky function"""
     roomid = kwargs['roomid']
-    emit("troll", (
-        "[SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font> <img src='static/troll-face.jpeg'>",
-        roomid),
-         broadcast=True)
+    emit("troll", (cleandoc(troll_str), roomid), broadcast=True)
 
 
 def send_stats(**kwargs):
@@ -143,15 +154,14 @@ def ban_user(**kwargs):
                                 "permission": "banned"
                             }})
     if reason == '':
-        message = f'[SYSTEM]: <font color="#ff7f00">{username} has been banned.</font>'
+        message = f'{username} has been banned.'
         log.log_mutes(f"{username} is banned by a mod or admin.")
     else:
-        message = f'[SYSTEM]: <font color="#ff7f00"> {username} has been banned. Reason: {reason}.</font>'
+        message = f'{username} has been banned. Reason: {reason}.'
         log.log_mutes(
             f"{username} is banned because {reason} by a mod or admin.")
-
-    chat.add_message(message, roomid, 'true')
-    emit("message_chat", (message, roomid), broadcast=True)
+    chat.add_message(format_system_msg(message), roomid, 'true')
+    emit("message_chat", (format_system_msg(message), roomid), broadcast=True)
 
 
 def mute_user(**kwargs):
@@ -176,22 +186,22 @@ def mute_user(**kwargs):
         time_match = re.match(r'^(\d+)([dhm])$', time_str)
         if time_match:
             permission_str = "muted"
-            time_final = None
+            time_f = None
             time_number = int(time_match.group(1))
             time_letter = time_match.group(2)
             current_time = datetime.now()
 
             if time_letter == 'd':
-                time_final = f"{time_number} days"
+                time_f = f"{time_number} days"
                 expiration_time = current_time + timedelta(days=time_number)
             elif time_letter == 'h':
-                time_final = f"{time_number} hours"
+                time_f = f"{time_number} hours"
                 expiration_time = current_time + timedelta(hours=time_number)
             elif time_letter == 'm':
-                time_final = f"{time_number} minutes"
+                time_f = f"{time_number} minutes"
                 expiration_time = current_time + timedelta(minutes=time_number)
             elif time_letter == 'f':
-                time_final = None
+                time_f = None
 
             if time_letter != 'f':
                 expiration_time_str = expiration_time.strftime(
@@ -203,25 +213,25 @@ def mute_user(**kwargs):
                                         "permission": permission_str
                                     }})
 
-        if reason == '' and time_final is None:
-            message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time.</font>'
+        if reason == '' and time_f is None:
+            message = f'{username} is muted for an undefined period of time.'
             log.log_mutes(f"{username} is muted by a mod or admin.")
-        elif time_final is None:
-            message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for an undefined period of time. Reason: {reason}.</font>'
+        elif time_f is None:
+            message = f'{username} is muted indefinitely. Reason: {reason}.'
             log.log_mutes(
                 f"{username} is muted because {reason} by a mod or admin.")
         elif reason == '':
-            message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for {time_final}.</font>'
+            message = f'{username} is muted for {time_f}.'
             log.log_mutes(
-                f"{username} is muted for {time_final} by a mod or admin.")
+                f"{username} is muted for {time_f} by a mod or admin.")
         else:
-            message = f'[SYSTEM]: <font color="#ff7f00">{username} is muted for {time_final}. Reason: {reason}.</font>'
+            message = f'{username} is muted for {time_f}. Reason: {reason}.'
             log.log_mutes(
-                f"{username} is muted because {reason} for {time_final} by a mod or admin."
+                f"{username} is muted because {reason} for {time_f} by a mod or admin."
             )
 
-            chat.add_message(message, roomid, 'true')
-            emit("message_chat", (message, roomid), broadcast=True)
+            chat.add_message(format_system_msg(message), roomid, 'true')
+            emit("message_chat", (format_system_msg(message), roomid), broadcast=True)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
@@ -240,11 +250,11 @@ def unmute_user(**kwargs):
                                 {"$set": {
                                     "permission": "true"
                                 }})
-        message = f'[SYSTEM]: <font color="#ff7f00">{username} has been unmuted.</font>'
+        message = f'[{username} has been unmuted.'
 
         log.log_mutes(f"{username} is unmuted by a mod or admin.")
-        chat.add_message(message, roomid, 'true')
-        emit("message_chat", (message, roomid), broadcast=True)
+        chat.add_message(format_system_msg(message), roomid, 'true')
+        emit("message_chat", (format_system_msg(message), roomid), broadcast=True)
     else:
         respond_command(("reason", 2, "not_mod"), roomid, None)
 
@@ -265,8 +275,9 @@ def send_perms(**kwargs):
             msg_str = msg_str + f"{user['displayName']}<br>"
 
         # trying something new here, wonder if it will work
-        # if it does, we need to redo a lot of these statements like this (make it clean)
-        final_msg = f"[SYSTEM]: <font color='#ff7f00'>{msg_str}</font>"
+        # if it does, we need to redo a lot of these statements like this
+        # to make them look cleaner
+        final_msg = format_system_msg(msg_str)
         chat.add_message(final_msg, roomid, room)
         emit("message_chat", (final_msg, roomid), broadcast=True)
     else:
@@ -275,6 +286,7 @@ def send_perms(**kwargs):
 
 def open_git():
     """makes a link to the github page eather git notes or issues page"""
+    # is this needed really?
     print('make url')
 
 
@@ -294,10 +306,10 @@ def list_rooms(**kwargs):
             for id, name in zip(ids, names)
         ])
         chat.add_message(
-            f"[SYSTEM]: <font color='#ff7f00'><br>{msg_str}</font>",
+            format_system_msg(msg_str),
             'jN7Ht3giH9EDBvpvnqRB', 'true')
         emit("message_chat",
-             (f"[SYSTEM]: <font color='#ff7f00'><br>{msg_str}</font>",
+             (format_system_msg(msg_str),
               'jN7Ht3giH9EDBvpvnqRB'),
              namespace="/")
     else:
@@ -314,7 +326,7 @@ def send_song(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     commands = kwargs['commands']
-    if check_if_dev(user) == True or check_if_mod(user) == True:
+    if check_if_dev(user) is True or check_if_mod(user) is True:
         message = ' '.join(list(commands.values())[1:])
         room = dbm.rooms.find_one({"roomid": roomid})
         final_msg = f"<font color='#08bd71'>[SONG]: {message}</font>"
@@ -325,30 +337,32 @@ def send_song(**kwargs):
 
 
 def send_system(**kwargs):
-    """Sends as the server for specal dev messages."""
+    """Sends as the server for special dev messages."""
     user = kwargs['user']
     roomid = kwargs['roomid']
     commands = kwargs['commands']
-    if check_if_dev(user) != True:
+    if check_if_dev(user) is not True:
         respond_command(("reason", 2, "not_dev"), roomid, None)
         return
     message = ' '.join(list(commands.values())[1:])
     room = dbm.rooms.find_one({"roomid": roomid})
-    final_msg = f"[SYSTEM]: <font color='#ff7f00'>{message}</font>"
+    final_msg = format_system_msg(message)
     chat.add_message(final_msg, roomid, room)
     emit("message_chat", (final_msg, roomid), broadcast=True)
 
 
 def run_shutdown(**kwargs):
     """Stop the server, but also tell everyone that the server is going down."""
+    # I might just scrap this, the user is already going to need to be in the terminal
+    # to update, which means they can restart it via SystemD that way
     user = kwargs['user']
     roomid = kwargs['roomid']
-    if systemd_available == False:
+    if systemd_available is False:
         respond_command(("reason", 10, "systemd_disabled"), roomid, None)
         return
     if check_if_dev(user) == 1:
         emit("message_chat", (
-            "[SYSTEM]: <font color='#ff7f00'>Server shutting down... (unknown ETA on restart)</font>",
+            format_system_msg("Server shutting down... (no ETA on restart)"),
             roomid),
              broadcast=True,
              namespace='/')
@@ -359,7 +373,7 @@ def run_shutdown(**kwargs):
         systemd1 = sysbus.get_object('org.freedesktop.systemd1',
                                      '/org/freedesktop/systemd1')
         manager = dbus.Interface(systemd1, 'org.freedesktop.systemd1.Manager')
-        job = manager.StopUnit('chatserverd.service', 'fail')
+        manager.StopUnit('chatserverd.service', 'fail')
     else:
         respond_command(("reason", 2, "not_dev"), roomid, None)
 
@@ -369,10 +383,11 @@ def run_restart(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1:
-        # later, implement this so it sends it to EVERY room that the server is going down, not just the one that the cmd is sent in...
+        # later, implement this so it sends it to EVERY room that the
+        # server is going down, not just the one that the cmd is sent in...
         # could make it modular (for anouncments? maybe idk)
         emit("message_chat", (
-            "[SYSTEM]: <font color='#ff7f00'>Server restarting... (~30sec ETA on restart)</font>",
+            format_system_msg("Server restarting... (~30sec ETA on restart)"),
             roomid),
              broadcast=True,
              namespace='/')
@@ -382,12 +397,12 @@ def run_restart(**kwargs):
         systemd1 = sysbus.get_object('org.freedesktop.systemd1',
                                      '/org/freedesktop/systemd1')
         manager = dbus.Interface(systemd1, 'org.freedesktop.systemd1.Manager')
-        job = manager.RestartUnit('chatserverd.service', 'fail')
+        manager.RestartUnit('chatserverd.service', 'fail')
     else:
         respond_command(("reason", 2, "not_dev"), roomid, None)
 
 
-def reload_users(**kwargs):
+def reload_users(**_):
     """Reload the online list manually."""
     # print('test')
     dbm.Online.delete_many({})
@@ -413,8 +428,7 @@ def end_ping(start, roomid):
     """The end of the ping comamnd."""
     end = time.time() * 1000.0
     difference = end - start
-    msg = '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + str(
-        int(difference)) + 'ms RTT</font>'
+    msg = format_system_msg(f'Ping Time: {str(int(difference))}ms RTT')
     chat.add_message(msg, roomid, dbm)
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
@@ -424,7 +438,7 @@ def send_lines(**kwargs):
     # to rework this so it uses add_message
     roomid = kwargs['roomid']
     lines = chat.get_line_count("main", roomid)
-    msg = f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n"
+    msg = format_system_msg(f"Line count is {lines}")
     chat.add_message(msg, roomid, dbm)
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
@@ -458,82 +472,85 @@ def respond_command(result, roomid, name):
     room = dbm.rooms.find_one({"roomName": name})
     generated_by = room["generatedBy"] if room is not None else ""
     generated_at = room["generatedAt"] if room is not None else ""
-    locked = room["locked"] if room is not None else ""
+    lock = room["locked"] if room is not None else "unlocked"
     users_w = room["whitelisted"] if room is not None else ""
-    if users_w == 'devonly': users_w = 'devs'
-    elif users_w == 'modonly': users_w = 'devs and mods'
+    if users_w == 'devonly': 
+        users_w = 'devs'
+    elif users_w == 'modonly':
+        users_w = 'devs and mods'
     users_b = room["blacklisted"] if room is not None else ""
 
     response_strings = {
         (1, None):
-        "[SYSTEM]: <font color='#ff7f00'>Command not found. Use \"$sudo help\" to see all commands.</font>",
+        "Command not found. Use \"$sudo help\" to see all commands.",
         (0, 'delete'):
-        "[SYSTEM]: <font color='#ff7f00'>Chat room deleted.</font>",
+        "Chat room deleted.",
         (1, 'delete'):
-        f"[SYSTEM]: <font color='#ff7f00'>You are not allowed to delete the chat room named {name}.</font>",
+        f"You are not allowed to delete the chat room named {name}.",
         (2, 'delete'):
-        "[SYSTEM]: <font color='#ff7f00'>Just because you are a dev doesn't mean you can delete the main chat.</font>",
+        "Just because you are a dev doesn't mean you can delete the main chat.",
         (3, 'delete'):
-        "[SYSTEM]: <font color='#ff7f00'>Nice try, but we were prepared.</font>",
+        "Nice try, but we were prepared.",
         (0, 'create'):
-        f"[SYSTEM]: <font color='#ff7f00'>Created chat room named {name}.</font>",
+        f"Created chat room named {name}.",
         (1, 'create'):
-        f"[SYSTEM]: <font color='#ff7f00'>Your chat name ({name}) is too long. It must be 10 letters or less.</font>",
+        f"Your chat name ({name}) is too long. It must be 10 letters or less.",
         (2, 'create'):
-        "[SYSTEM]: <font color='#ff7f00'>You are not allowed to create more chat rooms.</font>",
+        "You are not allowed to create more chat rooms.",
         (3, 'create'):
-        "[SYSTEM]: <font color='#ff7f00'>Your chat room must have a name at least 1 letter long.</font>",
+        "Your chat room must have a name at least 1 letter long.",
         (4, 'create'):
-        f"[SYSTEM]: <font color='#ff7f00'>The name {name} has been taken. Pick another name besides {name}.</font>",
+        f"The name {name} has been taken. Pick another name besides {name}.",
         (0, 'W'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to only whitelist the users {users_w}.</font>",
+        f"You have only whitelisted {users_w} for {name}.",
         (1, 'W'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to whitelist everyone.</font>",
+        f"You have edited the chat room named {name} to whitelist everyone.",
         (2, 'W'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to whitelist it only for {users_w}.</font>",
+        f"You have whilelisted {users_w} for {name}.",
         (3, 'W'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to add the users {users_w} to the whitelist.</font>",
+        f"You have added {users_w} to the whitelist for {name}.",
         (4, 'W'):
-        "[SYSTEM]: <font color='#ff7f00'>A user you tried to whitelist is in the blacklist.</font>",
+        "A user you tried to whitelist is in the blacklist.",
         (5, 'W'):
-        f"[SYSTEM]: <font color='#ff7f00'>A user you tried to add is allready whitelisted. The list: {users_w}.</font>",
+        f"A user you tried to add is allready whitelisted. The list: {users_w}.",
         (0, 'edit'):
-        f"[SYSTEM]: <font color='#ff7f00'>You are not allowed to edit the chat room named {name}.</font>",
+        f"You are not allowed to edit the chat room named {name}.",
         (0, 'B'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to only blacklist the users {users_b}.</font>",
+        f"You have blocked {users_b} from {name}.",
         (1, 'B'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to blacklist no one.</font>",
+        f"You have unblocked everyone from {name}.",
         (2, 'B'):
-        f"[SYSTEM]: <font color='#ff7f00'>You have edited the chat room named {name} to add the users {users_b} to the blacklist.</font>",
+        f"You have added {users_b} to the blocklist for {name}.",
         (3, 'B'):
-        "[SYSTEM]: <font color='#ff7f00'>A user you tried to blacklist is in the whitelist.</font>",
+        "A user you tried to blacklist is in the whitelist.",
         (4, 'B'):
-        f"[SYSTEM]: <font color='#ff7f00'>A user you tried to add is allready blacklisted. The list: {users_b}.</font>",
+        f"A user you tried to add is allready blacklisted. The list: {users_b}.",
         (5, 'B'):
-        "[SYSTEM]: <font color='#ff7f00'>You can not blacklist the room owner.</font>",
+        "You can not blacklist the room owner.",
         (0, 'info'):
-        f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} was made by {generated_by} at {generated_at} and the chat room status is currently set to locked = {locked}.</font>",
+        f"{name} was made by {generated_by} at {generated_at} and is currently {lock}.",
         (0, 'rooms'):
-        f"[SYSTEM]: <font color='#ff7f00'>The chat room {name} does not exist. Please enter a chat room that does exist.</font>",
+        f"The chat room {name} does not exist. Enter a chat room that does exist.",
         (2, 'not_dev'):
-        "[SYSTEM]: <font color='#ff7f00'>Who do you think you are, a Developer?</font>",
+        "Who do you think you are, a Developer?",
         (2, 'not_mod'):
-        "[SYSTEM]: <font color='#ff7f00'>Who do you think you are, a Moderator?</font>",
+        "Who do you think you are, a Moderator?",
         (1, 'no_time'):
-        "[SYSTEM]: <font color='#ff7f00'>You forgot the time!</font>",
+        "You forgot the time!",
         (1, 'wrong_room'):
-        "[SYSTEM]: <font color='#ff7f00'>You can only run this command in the dev chat room</font>",
+        "You can only run this command in the dev chat room",
         (3, "not_confirmed"):
-        "[SYSTEM]: <font color='#ff7f00'>Are you sure you want to run this?</font>",
+        "Are you sure you want to run this?",
         (10, "systemd_disabled"):
-        "[SYSTEM]: <font color='#ff7f00'>SystemD is currently disabled on this server. $sudo shutdown and $sudo restart are disabled.</font>",
+        "SystemD is disabled on this server. Server management commands are disabled.",
     }
     response_str = response_strings.get((result[1], result[2]))
+    resp_final = format_system_msg(response_str)
     if result[1] in [0, 2, 3] and result[2] in ['create', 'delete', 'edit']:
-        chat.add_message(response_str, roomid, 'true')
-        emit("message_chat", (response_str, roomid), namespace="/")
+        chat.add_message(resp_final, roomid, 'true')
+        emit("message_chat", (resp_final, roomid), namespace="/")
     else:
-        emit("message_chat", (response_str, roomid), namespace="/")
+        emit("message_chat", (resp_final, roomid), namespace="/")
 
 
 def help_command(**kwargs):
@@ -570,13 +587,13 @@ def help_command(**kwargs):
             #     elif 'room owner commands' in line.lower():
             #         end_index = i - 1
             # else:
-                if 'user commands' in line.lower():        
-                    start_index = i
-                elif 'room mod commands' in line.lower():
-                    end_index = i - 1
+            if 'user commands' in line.lower():
+                start_index = i
+            elif 'room mod commands' in line.lower():
+                end_index = i - 1
 
-    command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(
-        line.strip() for line in lines[start_index:end_index + 1]) + "</font>"
+    command_line = format_system_msg("<br>" + ' '.join(
+        line.strip() for line in lines[start_index:end_index + 1]))
     emit("message_chat", (command_line, roomid), namespace="/")
 
 
@@ -597,7 +614,7 @@ def globalock(**kwargs):
     if confirm != "yes":
         respond_command(("reason", 3, "not_confirmed"), roomid, None)
     else:
-        message = "[SYSTEM]: <font color='#ff7f00'>All Chatrooms locked by Admin.</font>"
+        message = format_system_msg("All Chatrooms locked by Admin.")
         chat.add_message(message, "all", dbm)
         emit("message_chat", (message, "all"), broadcast=True)
         dbm.rooms.update_many({}, {'$set': {"locked": 'true'}})
@@ -608,12 +625,12 @@ def lock(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1:
-        message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Admin.</font>"
+        message = format_system_msg("Chat Locked by Admin.")
         chat.add_message(message, roomid, dbm)
         emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
     elif check_if_mod(user) == 1:
-        message = "[SYSTEM]: <font color='#ff7f00'>Chat Locked by Moderator.</font>"
+        message = format_system_msg("Chat Locked by Moderator.")
         chat.add_message(message, roomid, dbm)
         emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'true'}})
@@ -626,12 +643,12 @@ def unlock(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     if check_if_dev(user) == 1:
-        message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Admin.</font>"
+        message = format_system_msg("Chat Unlocked by Admin.")
         chat.add_message(message, roomid, dbm)
         emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
     elif check_if_mod(user) == 1:
-        message = "[SYSTEM]: <font color='#ff7f00'>Chat Unlocked by Moderator.</font>"
+        message = format_system_msg("Chat Unlocked by Moderator.")
         chat.add_message(message, roomid, dbm)
         emit("message_chat", (message, roomid), broadcast=True)
         dbm.rooms.update_one({"roomid": roomid}, {'$set': {"locked": 'false'}})
