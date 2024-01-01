@@ -8,10 +8,9 @@ from typing import List
 
 import psutil
 from flask_socketio import emit
-
 import cmds
 import log
-from main import dbm
+import database
 
 LOGFILE_B = "backend/Chat-backup.txt"
 
@@ -35,7 +34,7 @@ def get_chat(file: str) -> List:
 def get_line_count(file, roomid) -> List:
     """Return the line count in the logfile."""
     if file == "main":
-        room = dbm.rooms.find_one({"roomid": roomid})
+        room = database.find_room({'roomid': roomid}, 'msg')
         lines = len(room["messages"])
         return lines
     elif file == "backup":
@@ -88,15 +87,15 @@ def get_stats(roomid) -> str:
 
 def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
-    room = dbm.rooms.find_one({"roomid": roomid})
+    room = database.find_room({'roomid': roomid}, 'msg')
     lines = len(room["messages"]) if roomid != "all" else 1
     if (((lines >= 500 and roomid != "ilQvQwgOhm9kNAOrRqbr")
         or (roomid == "ilQvQwgOhm9kNAOrRqbr" and lines >= 1000))
         and permission != 'true'):
         reset_chat(message_text, False, roomid)
     else:
-        (send_message_DB(message_text,
-                         roomid), log.backup_log(message_text, roomid))
+        (database.send_message_single(message_text,
+                         roomid) if roomid != 'all' else database.send_message_all(message_text, roomid), log.backup_log(message_text, roomid))
     return ('room', 1)
 
 
@@ -131,17 +130,6 @@ def system_response(id):
     return system_answer
 
 
-def send_message_DB(message_text: str, roomid) -> None:
-    """addes messages to the chat room in the database"""
-    if roomid == "all":
-        dbm.rooms.update_many({}, {'$push': {'messages': message_text}})
-    else:
-        dbm.rooms.update_one({"roomid": roomid},
-                             {'$push': {
-                                 'messages': message_text
-                             }})
-
-
 def set_message_DB(roomid, is_admin: bool):
     """clears the database"""
     if is_admin is True:
@@ -149,8 +137,5 @@ def set_message_DB(roomid, is_admin: bool):
     elif is_admin is False:
         message_text = system_response(4)
     else:
-        message_text = system_response(2)
-    dbm.rooms.update_one({"roomid": roomid},
-                         {'$set': {
-                             "messages": [message_text]
-                         }})
+        message_text = system_response("message", 2)
+    database.clear_chat_room(roomid, message_text)

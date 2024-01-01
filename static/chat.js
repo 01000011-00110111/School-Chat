@@ -17,10 +17,8 @@ socket.on("pingTime", (time, roomid) => {
 });
 
 
-socket.on("force_username", (_statement, ignore_user) => {
-    if (getCookie('Userid') != ignore_user){
-        socket.emit("username", getCookie("Username"), 'chat');
-    } else {socket.emit("username", 'pass', 'chat');}
+socket.on("force_username", () => {
+    socket.emit("username", getCookie("Userid"), 'chat');
 });
 
 socket.on("force_room_update", (_statement) => {
@@ -56,13 +54,12 @@ socket.on("reset_chat", (who, roomid) => {
 
 function runStartup() {
     window.sessionStorage.setItem("roomid", 'ilQvQwgOhm9kNAOrRqbr');
-    username = getCookie("Username");
+    changeRoom('ilQvQwgOhm9kNAOrRqbr')
     userid = getCookie("Userid")
     document.getElementById("pfpmenu").src = getCookie("Profile");
-    socket.emit("username", username, 'chat');
+    socket.emit("username", userid, 'chat');
     socket.emit("get_rooms", userid);
     setTheme(getCookie('Theme'))
-    // changeRoom('ilQvQwgOhm9kNAOrRqbr')
 }
 
 socket.on("roomsList", (result, permission) => {
@@ -88,15 +85,16 @@ function CheckIfExist(_params) {
 }
 
 socket.on("room_data", (data) => {
+    console.log(data)
     window.sessionStorage.setItem("roomid", data['roomid']);
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
-    window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['roomName']}`);
-    roomname = document.getElementById("RoomDisplay").innerHTML = '/'+data['roomName'];
-    document.title = `/${data['roomName']} - Chat`
-    let chat = "";  
-    for (let messageObj of data['messages']) {
+    window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['name']}`);
+    roomname = document.getElementById("RoomDisplay").innerHTML = '/'+data['name'];
+    document.title = `/${data['name']} - Chat`
+    let chat = ""; 
+    for (let messageObj of data['msg']) {
         chat = chat + messageObj + newline;
     }
 
@@ -121,16 +119,16 @@ function toHyperlink(str) {
     return str3;
 }
 
-function BTMLog() {
-  if (Math.floor(window.scrollY) === window.scrollMaxY) {
-    console.log("cheese");
-    setTimeout(ToBtm, 10000)
-  } 
-}
+// function BTMLog() {
+//   if (Math.floor(window.scrollY) === window.scrollMaxY) {
+//     console.log("cheese");
+//     setTimeout(ToBtm, 10000)
+//   } 
+// }
 
-function ToBtm() {
-  window.scrollTo(0, chatDiv.scrollHeight);
-}
+// function ToBtm() {
+//   window.scrollTo(0, chatDiv.scrollHeight);
+// }
 
 function sendMessage() {
     let messageElement = document.getElementById("message");
@@ -149,10 +147,6 @@ function sendMessage() {
     window.scrollTo(0, chatDiv.scrollHeight);
 }
 
-function CallOwenGay() {
-    document.getElementById("message")["value"] = "I am gay!";
-        sendMessage();
-}
 
 setInterval(BTMLog, 3000)
 
