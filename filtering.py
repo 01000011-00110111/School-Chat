@@ -96,7 +96,9 @@ def run_filter(user, room, message, roomid, userid):
     if perms in ["dev", "mod"]:
         return_str = ('msg', final_str, user_muted)
 
-    return return_str
+    return_str_hyped = to_hyperlink(return_str)
+
+    return return_str_hyped
 
 
 def check_mute(user):
@@ -132,11 +134,20 @@ def check_perms(user):
     return perms
 
 
-def to_hyperlink(text):
-    """Taken from the js file, we don't need to have the client process it really."""
-    # mails = re.findall(r"mailto:([^\?]*)", text)
-    # links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text)
-    # print(f"{mails}\n\n\n{links2}")
+def to_hyperlink(text: str) -> str:
+    """Auto hyperlinks any links we find as common."""
+    mails = re.findall(r"mailto:(.+?)[\s?]", text, flags=re.M)
+    links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text, flags=re.M|re.I)
+    links1 = re.findall(r"(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])", text, flags=re.I)
+    # and now we replace the strings
+    for link in mails:
+        text = text.replace(f'mailto:{link}', f'<a href="mailto:{link}">{link}</a>')
+    for link in links1:
+        text = text.replace(link[0], f'<a href="{link[0]}">{link[0]}</a>')
+    for link in links2:
+        text = text.replace(link[1], f'<a target="_blank" href="{link[1]}">{link[1]}</a>')
+    
+    return text
 
 
 def filter_message(message):
