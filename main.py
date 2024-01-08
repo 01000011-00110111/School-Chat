@@ -367,7 +367,8 @@ def customize_accounts() -> ResponseReturnValue:
     roleC = request.form.get("role_color")
     userC = request.form.get("user_color")
     email = request.form.get("email")
-    file = request.files['profile'] if 'file' in request.files else request.cookies.get('Profile')# retreves the file from the frontend
+    file = request.files['profile'] if request.files["profile"].filename != '' else \
+    request.cookies.get('Profile')# retreves the file from the frontend
     theme = request.form.get("theme")
     user = database.find_account_data(userid)
     return_list = {
@@ -382,8 +383,9 @@ def customize_accounts() -> ResponseReturnValue:
         "theme": theme,
         "email": email
     }
-    
-    profile_location = uploading.upload_file(file)
+    # print(file)
+    profile_location = uploading.upload_file(file) if file.filename != \
+    'static/favicon.ico' else 'static/favicon.ico'
     
     if profile_location == 0:
         return flask.render_template("settings.html",
@@ -428,7 +430,7 @@ def customize_accounts() -> ResponseReturnValue:
         resp = flask.make_response(flask.redirect(flask.url_for('chat_page')))
         resp.set_cookie('Username', user['username'])
         resp.set_cookie('Theme', theme)
-        resp.set_cookie('Profile', profile if profile != "" else \
+        resp.set_cookie('Profile', profile_location if profile_location != "" else \
                 '/static/favicon.ico')
         resp.set_cookie('Userid', user['userId'])
         error = "Updated account!"
@@ -662,4 +664,4 @@ if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
     setup_func()
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)

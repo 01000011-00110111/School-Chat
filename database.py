@@ -435,7 +435,6 @@ def get_room_msg_data(roomid):
             }
         }
     ]
-    print(list(Rooms.aggregate(pipeline))[0])
     return list(Rooms.aggregate(pipeline))[0]
 
 
@@ -516,14 +515,14 @@ def generate_main():
         "mods": '',
         "generatedAt": datetime.now(),
         "roomName": "Main",
-        "locked": 'false',
     }
 
     access_data = {
         "roomid": "ilQvQwgOhm9kNAOrRqbr",
-        "canSend": 'everyone',
         "whitelisted": "everyone",
         "blacklisted": "empty",
+        "canSend": 'everyone',
+        "locked": 'false',
     }
     message = { 
         "roomid": "ilQvQwgOhm9kNAOrRqbr",
@@ -543,14 +542,14 @@ def generate_locked():
         "mods": '',
         "generatedAt": datetime.now(),
         "roomName": "Locked Chat",
-        "locked": 'false',
     }
 
     access_data = {
         "roomid": "zxMhhAPfWOxuZylxwkES",
-        "canSend": 'everyone',
         "whitelisted": "lockedonly",
         "blacklisted": "empty",
+        "canSend": 'everyone',
+        "locked": 'false',
     }
     message = { 
         "roomid": "zxMhhAPfWOxuZylxwkES",
@@ -571,14 +570,14 @@ def generate_other(name):
         "mods": '',
         "generatedAt": datetime.now(),
         "roomName": name,
-        "locked": 'false',
     }
 
     access_data = {
         "roomid": roomid,
-        "canSend": 'everyone',
         "whitelisted": "lockedonly",
         "blacklisted": "empty",
+        "canSend": 'everyone',
+        "locked": 'false',
     }
     message = { 
         "roomid": roomid,

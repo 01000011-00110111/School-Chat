@@ -23,6 +23,7 @@ def scan_for_virus(file_path):
     
 
 def upload_file(file):
+    print(file.filename)
     if not allowed_file(file.filename):
         return 0
 
@@ -38,6 +39,6 @@ def upload_file(file):
         print(virus_scan_result)
         return 1
         # flash(virus_scan_result, 'error')
-        return 'NO VIRUS PLZ'
+        # return virus_scan_result
 
     return file_path
