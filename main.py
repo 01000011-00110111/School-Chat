@@ -66,7 +66,7 @@ def setup_func():
     if not os.path.exists('backend/Chat-backup.txt'):
         with open('backend/webserver.log', 'w'):
             pass
-    # database.setup_chatrooms()
+    database.setup_chatrooms()
 
 # whereas these files do import dbm, we need to not do this
 # import addons  # addons may, this really should be commented out as it is optional
@@ -314,9 +314,7 @@ def verify(userid, verification_code):
         user_code = accounting.create_verification_code(user_id)
         if user_code == verification_code:
             database.update_account_set('perm', {"userId": user_id["userId"]},
-                                        {'$set': {
-                                            "locked": "false"
-                                        }})
+                                        {'$set': {"locked": "false"}})
             user = user_id["username"]
             log.log_accounts(
                 f'The account {user} is now verified and may now chat in any chat room.'
