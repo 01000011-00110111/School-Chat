@@ -4,7 +4,7 @@
 """
 import os
 import secrets
-import datetime
+from datetime import datetime
 
 import pymongo
 import hashlib
@@ -230,13 +230,13 @@ def find_all_accounts():
     return ID.find()
 
 
-def update_account_set(location, data):
+def update_account_set(location, data, data2):
     if location == 'id':
-        return ID.update_one(data)
+        return ID.update_one(data, data2)
     if location == 'perm':
-        return Permission.update_one(data)
+        return Permission.update_one(data, data2)
     if location == 'customization':
-        return Customization.update_one(data)
+        return Customization.update_one(data, data2)
 
 
 def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
@@ -435,7 +435,7 @@ def get_room_msg_data(roomid):
             }
         }
     ]
-
+    print(list(Rooms.aggregate(pipeline))[0])
     return list(Rooms.aggregate(pipeline))[0]
 
 
@@ -482,40 +482,110 @@ def add_rooms(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked)
 
 # setup code
 
-def check_system_rooms():
+def check_system_roomids(roomid):
     """checks if the system chat rooms are there"""
-    result = Rooms.find({"roomName": {"$in": [{"$eq": "[SYSTEM]"}] * 3}})
-    print(result)
-    return 5 if result < 5 else 0
+    result = Rooms.find_one({"roomid": roomid})
+    print(bool(result))
+    return bool(result)
+    
+
+def check_system_roomnames(name):
+    """checks if the system chat rooms are there"""
+    result = Rooms.find_one({"roomName": name})
+    print(bool(result))
+    return bool(result)
 
 
 def setup_chatrooms():
     """sets up the starter chat rooms"""
-    Run = False
-    if check_system_rooms() is False:
-        Run = True
-        
-    name = 'Main'
-    while Run > 0:
-        room_data = {
-            "roomid": secrets.token_hex(10) if name != 'main' else "ilQvQwgOhm9kNAOrRqbr",
-            "generatedBy": ["SYSTEM"],
-            "mods": '',
-            "generatedAt": datetime.now(),
-            "roomName": name,
-            "locked": 'false',
-        }
-        
-        access_data = {
-            "canSend": 'everyone',
-            "whitelisted": "everyone",
-            "blacklisted": "empty",
-        }
-        message = { 
-                "messages": [
-                #f"[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by \b>{username}</b> at {generated_at}.</font>"
-        ]}
+    if not check_system_roomids('ilQvQwgOhm9kNAOrRqbr'):
+        generate_main()
+    if not check_system_roomids('zxMhhAPfWOxuZylxwkES'):
+        generate_locked()
+    if not check_system_roomnames('Dev Chat'):
+        generate_other('Dev Chat')
+    if not check_system_roomnames('Mod Chat'):
+        generate_other('Mod Chat')
+    if not check_system_roomnames('Commands'):
+        generate_other('Commands')
 
-        Rooms.insert_one(room_data)
-        Access.insert_one(access_data)
-        Messages.insert_one(message)
+def generate_main():
+    room_data = {
+        "roomid": "ilQvQwgOhm9kNAOrRqbr", #secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
+        "generatedBy": "[SYSTEM]",
+        "mods": '',
+        "generatedAt": datetime.now(),
+        "roomName": "Main",
+        "locked": 'false',
+    }
+
+    access_data = {
+        "roomid": "ilQvQwgOhm9kNAOrRqbr",
+        "canSend": 'everyone',
+        "whitelisted": "everyone",
+        "blacklisted": "empty",
+    }
+    message = { 
+        "roomid": "ilQvQwgOhm9kNAOrRqbr",
+        "messages": [
+            f"[SYSTEM]: <font color='#ff7f00'><b>Main</b> created by <b>[SYSTEM]</b> at {datetime.now()}.</font>"
+    ]}
+
+    Rooms.insert_one(room_data)
+    Access.insert_one(access_data)
+    Messages.insert_one(message)
+
+
+def generate_locked():
+    room_data = {
+        "roomid": "zxMhhAPfWOxuZylxwkES", #secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
+        "generatedBy": "[SYSTEM]",
+        "mods": '',
+        "generatedAt": datetime.now(),
+        "roomName": "Locked Chat",
+        "locked": 'false',
+    }
+
+    access_data = {
+        "roomid": "zxMhhAPfWOxuZylxwkES",
+        "canSend": 'everyone',
+        "whitelisted": "lockedonly",
+        "blacklisted": "empty",
+    }
+    message = { 
+        "roomid": "zxMhhAPfWOxuZylxwkES",
+        "messages": [
+            f"[SYSTEM]: <font color='#ff7f00'><b>Locked Chat</b> created by <b>[SYSTEM]</b> at {datetime.now()}.</font>"
+    ]}
+
+    Rooms.insert_one(room_data)
+    Access.insert_one(access_data)
+    Messages.insert_one(message)
+
+
+def generate_other(name):
+    roomid = secrets.token_hex(10)
+    room_data = {
+        "roomid": roomid,
+        "generatedBy": "[SYSTEM]",
+        "mods": '',
+        "generatedAt": datetime.now(),
+        "roomName": name,
+        "locked": 'false',
+    }
+
+    access_data = {
+        "roomid": roomid,
+        "canSend": 'everyone',
+        "whitelisted": "lockedonly",
+        "blacklisted": "empty",
+    }
+    message = { 
+        "roomid": roomid,
+        "messages": [
+            f"[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>[SYSTEM]</b> at {datetime.now()}.</font>"
+    ]}
+
+    Rooms.insert_one(room_data)
+    Access.insert_one(access_data)
+    Messages.insert_one(message)
