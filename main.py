@@ -36,6 +36,7 @@ from flask_socketio import SocketIO, emit
 
 # these are the files that do not import dbm
 import accounting
+import database
 import word_lists
 import uploading
 
@@ -72,7 +73,6 @@ def setup_func():
 # import addons  # addons may, this really should be commented out as it is optional
 import chat
 import cmds
-import database
 import filtering
 import log
 import rooms
