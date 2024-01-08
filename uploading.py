@@ -1,6 +1,6 @@
 import os
 import uuid
-import pyclamd
+# import pyclamd
 
 import database
 
