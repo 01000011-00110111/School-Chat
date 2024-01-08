@@ -10,6 +10,7 @@ backend/chat-rooms_log.txt
 backend/permission.txt
 backend/accounts.txt
 config/keys.conf
+static/profiles
 
 # running files
 __pycache__/*

@@ -1,6 +1,6 @@
 import os
 import uuid
-from pyclamd import ClamdUnixSocket
+import pyclamd
 
 import database
 
@@ -10,16 +10,11 @@ allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
+import pyclamd
+
 def scan_for_virus(file_path):
-    try:
-        cd = ClamdUnixSocket()
-        scan_result = cd.scan_file(file_path)
-        if scan_result:
-            return f"Virus detected: {scan_result['stream']}"
-        else:
-            return None
-    except Exception as e:
-        return f"Error during virus scan: {str(e)}"
+    return False
+    # broken
     
 
 def upload_file(file):

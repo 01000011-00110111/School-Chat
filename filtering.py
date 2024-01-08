@@ -265,7 +265,7 @@ def find_cmds(message, user, roomid):
 def compile_message(message, profile_picture, user, role):
     """Taken from old methold of making messages"""
     to_hyperlink(message)
-    profile = f"<img class='pfp' src='{profile_picture}'></img>"
+    profile = f"<img class='pfp' src='/{profile_picture}'></img>"
     user_string = f"<font color='{user['userColor']}'>{user['displayName']}</font>"
     message_string = f"<font color='{user['messageColor']}'>{message}</font>"
     role_string = do_dev_easter_egg(role, user)
