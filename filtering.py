@@ -28,7 +28,7 @@ def run_filter(user, room, message, roomid, userid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
     global preuser
     global message_count
-    print(room)
+    # print(room)
     locked = check_lock(room)
     perms = check_perms(user)
     can_send = check_allowed_sending(room)
@@ -276,7 +276,7 @@ def find_cmds(message, user, roomid):
 def compile_message(message, profile_picture, user, role):
     """Taken from old methold of making messages"""
     to_hyperlink(message)
-    profile = f"<img class='pfp' src='{profile_picture}'></img>"
+    profile = f"<img class='pfp' src='/{profile_picture}'></img>"
     user_string = f"<font color='{user['userColor']}'>{user['displayName']}</font>"
     message_string = f"<font color='{user['messageColor']}'>{message}</font>"
     role_string = do_dev_easter_egg(role, user)
