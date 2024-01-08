@@ -10,11 +10,9 @@ allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
-import pyclamd
-
 def scan_for_virus(file_path):
     return False
-    # broken
+    # broken SAY "PLZ NO VIRUS"
     
 
 def upload_file(file):

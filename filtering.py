@@ -28,7 +28,7 @@ def run_filter(user, room, message, roomid, userid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
     global preuser
     global message_count
-    print(room)
+    # print(room)
     locked = check_lock(room)
     perms = check_perms(user)
     can_send = check_allowed_sending(room)
