@@ -367,7 +367,7 @@ def customize_accounts() -> ResponseReturnValue:
     roleC = request.form.get("role_color")
     userC = request.form.get("user_color")
     email = request.form.get("email")
-    file = request.files['profile'] if request.files["profile"] is None else \
+    file = request.files['profile'] if request.files["profile"] is not None else \
     'no file'
     theme = request.form.get("theme")
     user = database.find_account_data(userid)
@@ -384,8 +384,10 @@ def customize_accounts() -> ResponseReturnValue:
         "email": email
     }
     # print(file)
-    profile_location = uploading.upload_file(file) if file != \
-    'no file' else request.cookies.get('Profile')
+    if file != 'no file':
+        profile_location = uploading.upload_file(file)
+    else:
+        profile_location = request.cookies.get('Profile')
     
     if profile_location == 0:
         return flask.render_template("settings.html",

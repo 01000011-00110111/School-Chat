@@ -22,7 +22,7 @@ def upload_file(file):
 
     file_name = uuid.uuid4() # Creates a uuid for a filename
     new_filename = f"{file_name}.{file.filename.rsplit('.', 1)[1].lower()}" # renames the file and adds back the original extension
-    file_path = os.path.join('/static/profiles', new_filename) # Tells where the file will be put
+    file_path = os.path.join('static/profiles', new_filename) # Tells where the file will be put
     file.save(file_path) # saves the file at the location 
 
     virus_scan_result = scan_for_virus(file_path)
@@ -33,5 +33,6 @@ def upload_file(file):
         return 1
         # flash(virus_scan_result, 'error')
         # return virus_scan_result
-
-    return file_path
+        
+    return_path = f"/{file_path}"
+    return return_path
