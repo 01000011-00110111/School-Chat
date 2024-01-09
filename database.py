@@ -502,11 +502,11 @@ def setup_chatrooms():
     if not check_system_roomids('zxMhhAPfWOxuZylxwkES'):
         generate_locked()
     if not check_system_roomnames('Dev Chat'):
-        generate_other('Dev Chat')
+        generate_other('Dev Chat', 'devonly')
     if not check_system_roomnames('Mod Chat'):
-        generate_other('Mod Chat')
+        generate_other('Mod Chat', 'modonly')
     if not check_system_roomnames('Commands'):
-        generate_other('Commands')
+        generate_other('Commands', 'devonly')
 
 def generate_main():
     room_data = {
@@ -562,7 +562,7 @@ def generate_locked():
     Messages.insert_one(message)
 
 
-def generate_other(name):
+def generate_other(name, permission):
     roomid = secrets.token_hex(10)
     room_data = {
         "roomid": roomid,
@@ -574,7 +574,7 @@ def generate_other(name):
 
     access_data = {
         "roomid": roomid,
-        "whitelisted": "lockedonly",
+        "whitelisted": permission,
         "blacklisted": "empty",
         "canSend": 'everyone',
         "locked": 'false',
