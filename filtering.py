@@ -96,8 +96,6 @@ def run_filter(user, room, message, roomid, userid):
     if perms in ["dev", "mod"]:
         return_str = ('msg', final_str, user_muted)
 
-    # return_str_hyped = to_hyperlink(return_str)
-
     return return_str
 
 
@@ -282,15 +280,9 @@ def compile_message(message, profile_picture, user, role):
     role_string = do_dev_easter_egg(role, user)
     date_str = datetime.now(timezone(
         timedelta(hours=-5))).strftime("[%a %I:%M %p] ")
-
-    # should we change it to a f string
-    # if user["username"] == preuser:
-    #     message = message_string
-    # else:
-    message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string}"
-    # convert to fstring is above
-    # message = date_str + profile + " " + user_string + " (" + role_string + ")" +
-    # " - " + message_string  # split onto 2 lines, combine later if you need it
+    message_string_h = to_hyperlink(message_string)
+  
+    message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string_h}"
     return message
 
 
