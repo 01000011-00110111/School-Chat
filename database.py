@@ -491,10 +491,7 @@ def add_rooms(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked)
 def find_private_messages(userlist):
     """find the chat with 2 users"""
     pm_id = Private.find_one({"userIds": userlist})
-    if pm_id is None:
-        create_private_chat(userlist)
-        pm_id = Private.find_one({"userIds": userlist})
-    return pm_id["messages"]
+    return pm_id
 
 def send_private_message(message, userlist):
     """sends the message to the private chat room"""
@@ -503,10 +500,15 @@ def send_private_message(message, userlist):
                     "messages": message
                 }})
 
-def create_private_chat(userlist):
+def create_private_chat(userlist, code):
     """creates a private chat with 2 users"""
     data = {
         "userIds": userlist,
-        "messages": ['add a better welcome or not']
+        "messages": ['add a better welcome or not'],
+        "pmid": code,
     }
     Private.insert_one(data)
+
+def distinct_pmid():
+    """Find all Private Message IDs"""
+    return Private.distinct('pmid')

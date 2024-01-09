@@ -105,14 +105,14 @@ socket.on("room_data", (data) => {
 
 socket.on("private_data", (data) => {
     console.log(data)
-    window.sessionStorage.setItem("roomid", '')
+    window.sessionStorage.setItem("roomid", data['pmid'])
     window.sessionStorage.setItem("private", data['userlist']);
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
     // window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['name']}`);
     // roomname = document.getElementById("RoomDisplay").innerHTML = '/'+data['name'];
-    // document.title = `/${data['name']} - Chat`
+    document.title = `/${data['name']} - Chat`
     let chat = ""; 
     for (let messageObj of data['message']) {
         chat = chat + messageObj + newline;

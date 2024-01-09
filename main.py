@@ -591,7 +591,7 @@ def private_connect(sender, receiver):
         print('make fix later')
     chat = private.get_messages(sender, receiverid)
     # print(sender, receiver)
-    emit("private_data", {'message': chat, 'userlist': [sender, receiver]}, to=socketid, namespace='/')
+    emit("private_data", {'message': chat['messages'], 'userlist': [sender, receiver], 'pmid': chat['pmid']}, to=socketid, namespace='/')
 
 
 """
