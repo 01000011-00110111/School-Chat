@@ -385,7 +385,7 @@ def customize_accounts() -> ResponseReturnValue:
     }
     # print(file)
     if file != 'no file':
-        profile_location = uploading.upload_file(file)
+        profile_location = uploading.upload_file(file, request.cookies.get('Profile'))
     else:
         profile_location = request.cookies.get('Profile')
     

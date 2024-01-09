@@ -14,9 +14,14 @@ def scan_for_virus(file_path):
     return False
     # broken SAY "PLZ NO VIRUS"
     
+    
+def replace_old_file(old):
+    if old != 'static/favicon.ico':
+        os.remove(old.lstrip("/"))
 
-def upload_file(file):
-    print(file.filename)
+
+def upload_file(file, old_file):
+    # print(file.filename)
     if not allowed_file(file.filename):
         return 0
 
@@ -33,6 +38,7 @@ def upload_file(file):
         return 1
         # flash(virus_scan_result, 'error')
         # return virus_scan_result
-        
+    
+    replace_old_file(old_file)
     return_path = f"/{file_path}"
     return return_path
