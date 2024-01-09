@@ -664,4 +664,4 @@ if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
     setup_func()
-    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000)
