@@ -2,6 +2,14 @@
     Copyright (C) 2023  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
+import re
+import time
+from datetime import datetime, timedelta
+from inspect import cleandoc
+from time import sleep
+
+from flask_socketio import emit
+
 import chat
 from main import scheduler
 import log
@@ -16,14 +24,24 @@ try:
     import dbus
 except ModuleNotFoundError:
     print(
-        'DBus python library not installed or found, support for $sudo shutdown or $sudo restart is disabled.'
+        '''
+        \rDBus python library not installed or found. 
+        \rSupport for $sudo shutdown or $sudo restart is disabled.
+        '''
     )
     systemd_available = False
 else:
     systemd_available = True
-import re
-from datetime import datetime, timedelta
-from flask_socketio import emit
+
+# consts
+troll_str = """
+                [SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font>
+                <img src='static/troll-face.jpeg'>
+            """
+
+def format_system_msg(msg):
+    """Format a message [SYSTEM] would send."""
+    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
 
 
 def find_command(**kwargs):

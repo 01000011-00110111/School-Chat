@@ -1,8 +1,18 @@
+"""Database.py - functions for writing/reading from MongoDB
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 import os
+import secrets
+from datetime import datetime
+
 import pymongo
 import hashlib
-
-client = pymongo.MongoClient(os.environ["mongo_key"])
+import configparser
+config = configparser.ConfigParser()
+config.read('config/keys.conf')
+mongo_pass = config["mongodb"]["passwd"]
+client = pymongo.MongoClient(mongo_pass)
 #accounts/user data
 Permission = client.Accounts.Permission
 Customization = client.Accounts.Customization
@@ -61,6 +71,9 @@ def find_online():
 
 # accounting
 
+def distinct_userids():
+    return ID.distinct('userId')
+
 
 def find_data(data, location):
     if location == 'id':
@@ -114,6 +127,52 @@ def get_all_online():
     ]
 
     return list(ID.aggregate(pipeline))
+
+def find_login_data(value, login):
+    pipeline = [{
+        "$lookup": {
+            "from": "Customization",
+            "localField": "userId",
+            "foreignField": "userId",
+            "as": "customization"
+        }
+    }, {
+        "$project": {
+            "_id": 0,
+            "userId": "$userId",
+            "username": "$username",
+            "password": "$password",
+            "email": "$email",
+            "role": {
+                "$arrayElemAt": ["$customization.role", 0]
+            },
+            "profile": {
+                "$arrayElemAt": ["$customization.profile", 0]
+            },
+            "displayName": {
+                "$arrayElemAt": ["$customization.displayName", 0]
+            },
+            "messageColor": {
+                "$arrayElemAt": ["$customization.messageColor", 0]
+            },
+            "roleColor": {
+                "$arrayElemAt": ["$customization.roleColor", 0]
+            },
+            "userColor": {
+                "$arrayElemAt": ["$customization.userColor", 0]
+            },
+            "theme": {
+                "$arrayElemAt": ["$customization.theme", 0]
+            },
+        }
+    }]
+    match = [{"$match": {"username": value}}] if not login else \
+        [{"$match": {"userId": value}}]
+    try:
+        result = list(ID.aggregate(match + pipeline))[0]
+        return result
+    except IndexError:
+        return None
 
 
 def find_account_data(userid):
@@ -180,13 +239,13 @@ def find_all_accounts():
     return ID.find()
 
 
-def update_account_set(location, data):
+def update_account_set(location, data, data2):
     if location == 'id':
-        return ID.update_one(data)
+        return ID.update_one(data, data2)
     if location == 'perm':
-        return Permission.update_one(data)
+        return Permission.update_one(data, data2)
     if location == 'customization':
-        return Customization.update_one(data)
+        return Customization.update_one(data, data2)
 
 
 def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
@@ -385,7 +444,6 @@ def get_room_msg_data(roomid):
             }
         }
     ]
-
     return list(Rooms.aggregate(pipeline))[0]
 
 
@@ -439,3 +497,113 @@ def add_rooms(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked)
     Access.insert_one(access_data)
     Messages.insert_one(message)
     """
+
+# setup code
+
+def check_system_roomids(roomid):
+    """checks if the system chat rooms are there"""
+    result = Rooms.find_one({"roomid": roomid})
+    print(bool(result))
+    return bool(result)
+    
+
+def check_system_roomnames(name):
+    """checks if the system chat rooms are there"""
+    result = Rooms.find_one({"roomName": name})
+    print(bool(result))
+    return bool(result)
+
+
+def setup_chatrooms():
+    """sets up the starter chat rooms"""
+    if not check_system_roomids('ilQvQwgOhm9kNAOrRqbr'):
+        generate_main()
+    if not check_system_roomids('zxMhhAPfWOxuZylxwkES'):
+        generate_locked()
+    if not check_system_roomnames('Dev Chat'):
+        generate_other('Dev Chat', 'devonly')
+    if not check_system_roomnames('Mod Chat'):
+        generate_other('Mod Chat', 'modonly')
+    if not check_system_roomnames('Commands'):
+        generate_other('Commands', 'devonly')
+
+def generate_main():
+    room_data = {
+        "roomid": "ilQvQwgOhm9kNAOrRqbr", #secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
+        "generatedBy": "[SYSTEM]",
+        "mods": '',
+        "generatedAt": datetime.now(),
+        "roomName": "Main",
+    }
+
+    access_data = {
+        "roomid": "ilQvQwgOhm9kNAOrRqbr",
+        "whitelisted": "everyone",
+        "blacklisted": "empty",
+        "canSend": 'everyone',
+        "locked": 'false',
+    }
+    message = { 
+        "roomid": "ilQvQwgOhm9kNAOrRqbr",
+        "messages": [
+            f"[SYSTEM]: <font color='#ff7f00'><b>Main</b> created by <b>[SYSTEM]</b> at {datetime.now()}.</font>"
+    ]}
+
+    Rooms.insert_one(room_data)
+    Access.insert_one(access_data)
+    Messages.insert_one(message)
+
+
+def generate_locked():
+    room_data = {
+        "roomid": "zxMhhAPfWOxuZylxwkES", #secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
+        "generatedBy": "[SYSTEM]",
+        "mods": '',
+        "generatedAt": datetime.now(),
+        "roomName": "Locked Chat",
+    }
+
+    access_data = {
+        "roomid": "zxMhhAPfWOxuZylxwkES",
+        "whitelisted": "lockedonly",
+        "blacklisted": "empty",
+        "canSend": 'everyone',
+        "locked": 'false',
+    }
+    message = { 
+        "roomid": "zxMhhAPfWOxuZylxwkES",
+        "messages": [
+            f"[SYSTEM]: <font color='#ff7f00'><b>Locked Chat</b> created by <b>[SYSTEM]</b> at {datetime.now()}.</font>"
+    ]}
+
+    Rooms.insert_one(room_data)
+    Access.insert_one(access_data)
+    Messages.insert_one(message)
+
+
+def generate_other(name, permission):
+    roomid = secrets.token_hex(10)
+    room_data = {
+        "roomid": roomid,
+        "generatedBy": "[SYSTEM]",
+        "mods": '',
+        "generatedAt": datetime.now(),
+        "roomName": name,
+    }
+
+    access_data = {
+        "roomid": roomid,
+        "whitelisted": permission,
+        "blacklisted": "empty",
+        "canSend": 'everyone',
+        "locked": 'false',
+    }
+    message = { 
+        "roomid": roomid,
+        "messages": [
+            f"[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>[SYSTEM]</b> at {datetime.now()}.</font>"
+    ]}
+
+    Rooms.insert_one(room_data)
+    Access.insert_one(access_data)
+    Messages.insert_one(message)

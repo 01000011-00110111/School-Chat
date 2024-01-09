@@ -3,11 +3,10 @@
 <script src="static/settings.js" defer></script>
 {% endblock %}
 {% block content %}
-<form method="post" style="display: grid;">
+<form method="post" enctype="multipart/form-data" style="display: grid;">
     <div id="ProfileDisplay">
-      <img id="PfPdisplay" src="{{profile}}">
-      <div style="display: grid; align-content: center; margin-left: 16px;
-}">
+      <img id="PfPdisplay">
+      <div style="display: grid; align-content: center; margin-left: 16px;">
         <h1>{{displayName}}</h1>
         <h6 id="RoleDisplay" style="margin: -20px 0;">{{role}}</h6>
       </div>
@@ -42,7 +41,7 @@
               <p id="user_colorTXT">Message: </p>
               <input type="color" value='{{message_color}}' id="message_color" name="message_color"><br>
               <p id="user_colorTXT">Profile pictures</p>
-              <input type="text" id="profile" name="profile" placeholder="Profile Picture" value='{{profile}}' class='std_box'>
+              <input type="file" id="profile" name="profile">
 
               <div id="example">
           

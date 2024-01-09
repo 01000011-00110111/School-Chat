@@ -15,36 +15,67 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-import os
-import logging
 import hashlib
-import uuid
+import logging
+import os
 import time
+import uuid
 from datetime import datetime, timedelta
-import keys
 import flask
 from flask import request
 from flask.typing import ResponseReturnValue
-from flask_socketio import SocketIO, emit
 from flask_apscheduler import APScheduler
-from flask_login import LoginManager
-from flask_login import current_user, login_user, logout_user, login_required
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
+from flask_socketio import SocketIO, emit
+
+# these are the files that do not import dbm
+import accounting
+import database
+import word_lists
+import uploading
+
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
 
 scheduler = APScheduler()
 
-import addons
+def setup_func():
+    """sets up the server"""
+    if not os.path.exists('static/profiles'):
+        os.makedirs('static/profiles')
+    if not os.path.exists('backend/accounts.txt'):
+        with open('backend/accounts.txt', 'w'):
+            pass
+    if not os.path.exists('backend/Chat-backup.txt'):
+        with open('backend/Chat-backup.txt', 'w'):
+            pass
+    if not os.path.exists('backend/command_log.txt'):
+        with open('backend/command_log.txt', 'w'):
+            pass
+    if not os.path.exists('backend/permission.txt'):
+        with open('backend/permission.txt', 'w'):
+            pass
+    if not os.path.exists('backend/chat-rooms_log.txt'):
+        with open('backend/chat-rooms_log.txt', 'w'):
+            pass
+    if not os.path.exists('backend/Chat-backup.txt'):
+        with open('backend/webserver.log', 'w'):
+            pass
+    database.setup_chatrooms()
+
+# whereas these files do import dbm, we need to not do this
+# import addons  # addons may, this really should be commented out as it is optional
 import chat
 import cmds
-import database
 import filtering
-import rooms
-import accounting
 import log
-import word_lists
-
-LOGFILE = "backend/chat.txt"
+import rooms
 
 app = flask.Flask(__name__)
 app.secret_key = os.urandom(9001)  #ITS OVER 9000!!!!!!
@@ -165,36 +196,33 @@ def login_page() -> ResponseReturnValue:
         password = request.form.get("password")
         TOSagree = request.form.get("TOSagree")
         next_page = request.args.get("next")
-        userids = database.find_account({'username': username}, 'id')
+        user = database.find_login_data(username, False)
         # print(userids)
-        if userids is None:
+        if user is None:
             return flask.render_template('login.html',
                                          error="That account does not exist!")
-        userid = userids["userId"]
-        # print(userids["userId"])
-        userC = database.find_account({'userId': userid}, 'customization')
-        # print(userC)
+        # userid = user["userId"]
         if TOSagree != "on":
             return flask.render_template('login.html',
                                          error='You did not agree to the TOS!')
 
         if User.check_username(username,
-                               userids["username"]) and User.check_password(
-                                   userids['password'], password):
-            user_obj = User(username=userids['username'])
+                               user["username"]) and User.check_password(
+                                   user['password'], password):
+            user_obj = User(username=user['username'])
             login_user(user_obj)
             if next_page is None:
                 next_page = flask.url_for('chat_page')
             else:
-                next_page = next_page if next_page in word_lists.approved_links else flask.url_for(
-                    'chat_page')
+                if next_page not in word_lists.approved_links:
+                    next_page = flask.url_for('chat_page')
             resp = flask.make_response(flask.redirect(next_page))
-            resp.set_cookie('Username', userids['username'])
-            resp.set_cookie('Theme', userC['theme'])
-            resp.set_cookie('Profile', userC['profile'] if userC["profile"] != "" else \
+            resp.set_cookie('Username', user['username'])
+            resp.set_cookie('Theme', user['theme'])
+            resp.set_cookie('Profile', user['profile'] if user["profile"] != "" else \
                 '/static/favicon.ico')
-            resp.set_cookie('Userid', userids['userId'])
-            resp.set_cookie('DisplayName', userC["displayName"])
+            resp.set_cookie('Userid', user['userId'])
+            resp.set_cookie('DisplayName', user["displayName"])
             return resp
         else:
             return flask.render_template(
@@ -205,9 +233,11 @@ def login_page() -> ResponseReturnValue:
 
 # @app.route('/changelog')
 # def changelog_page() -> ResponseReturnValue:
-#     """Serve the changelog, so old links don't break (after making the main page be the changelog)."""
+#     """Serve the changelog, so old links don't break."""
 #     html_file = flask.render_template('update-log.html')
 #     return html_file
+
+# we should retire the above link
 
 # custom error message for signup, instead of generic 429 error
 #def signup_ratelimit_error_responder(request_limit: RequestLimit):
@@ -284,14 +314,12 @@ def verify(userid, verification_code):
         user_code = accounting.create_verification_code(user_id)
         if user_code == verification_code:
             database.update_account_set('perm', {"userId": user_id["userId"]},
-                                        {'$set': {
-                                            "locked": "false"
-                                        }})
+                                        {'$set': {"locked": "false"}})
             user = user_id["username"]
             log.log_accounts(
-                f'The account {user} has been verified and may now chat in any chat room'
+                f'The account {user} is now verified and may now chat in any chat room.'
             )
-            return f"User: {user} has been verified You may now chat in any chat room you like."
+            return f"{user} has been verified. You may now chat in other chat rooms."
     return "Invalid verification code."
 
 
@@ -307,10 +335,7 @@ def get_logs_page() -> ResponseReturnValue:
 @login_required
 def settings_page() -> ResponseReturnValue:
     """Serve the settings page for the user."""
-    user = database.find_account({"userId": request.cookies.get('Userid')},
-                                 'id')
-    userC = database.find_account({"userId": request.cookies.get('Userid')},
-                                  'customization')
+    user = database.find_login_data(request.cookies.get('Userid'), True)
     if request.cookies.get('Userid') != user['userId']:
         # someone is trying something funny
         return flask.Response(
@@ -321,13 +346,13 @@ def settings_page() -> ResponseReturnValue:
         user=user['username'],
         passwd='we are not adding password editing just yet',
         email=user["email"],
-        displayName=userC["displayName"],
-        role=userC["role"],
-        user_color=userC["userColor"],
-        role_color=userC["roleColor"],
-        message_color=userC["messageColor"],
-        profile=userC["profile"],
-        theme=userC["theme"])
+        displayName=user["displayName"],
+        role=user["role"],
+        user_color=user["userColor"],
+        role_color=user["roleColor"],
+        message_color=user["messageColor"],
+        profile=user["profile"],
+        theme=user["theme"])
 
 
 @app.route('/settings', methods=['POST'])
@@ -342,7 +367,8 @@ def customize_accounts() -> ResponseReturnValue:
     roleC = request.form.get("role_color")
     userC = request.form.get("user_color")
     email = request.form.get("email")
-    profile = request.form.get("profile")
+    file = request.files['profile'] if request.files["profile"] is None else \
+    'no file'
     theme = request.form.get("theme")
     user = database.find_account_data(userid)
     return_list = {
@@ -353,10 +379,23 @@ def customize_accounts() -> ResponseReturnValue:
         "user_color": userC,
         "role_color": roleC,
         "message_color": messageC,
-        "profile": profile,
+        "profile": file,
         "theme": theme,
         "email": email
     }
+    # print(file)
+    profile_location = uploading.upload_file(file) if file != \
+    'no file' else request.cookies.get('Profile')
+    
+    if profile_location == 0:
+        return flask.render_template("settings.html",
+                                     error='That file type is not allowed',
+                                     **return_list)
+    if profile_location == 1:
+            return flask.render_template("settings.html",
+                                    error='NO VIRUS PLZ',
+                                    **return_list)
+    
     if theme is None:
         return flask.render_template("settings.html",
                                      error='Pick a theme before updating!',
@@ -386,12 +425,13 @@ def customize_accounts() -> ResponseReturnValue:
 
     if user['locked'] != 'locked':
         database.update_account(user["userId"], messageC, roleC, userC, displayname, role, \
-            profile, theme, email)
+            profile_location, theme, email)
 
         resp = flask.make_response(flask.redirect(flask.url_for('chat_page')))
         resp.set_cookie('Username', user['username'])
         resp.set_cookie('Theme', theme)
-        resp.set_cookie('Profile', profile)
+        resp.set_cookie('Profile', profile_location if profile_location != "" else \
+                '/static/favicon.ico')
         resp.set_cookie('Userid', user['userId'])
         error = "Updated account!"
         return resp
@@ -407,9 +447,7 @@ def customize_accounts() -> ResponseReturnValue:
                                         "email": "email"
                                     }})
         error = 'Updated email!'
-    log.log_accounts(
-        f'The account {user} has updated some settings (one day ill add what they updated)'
-    )
+    log.log_accounts(f'The account {user} has updated some setting(s)')
     return flask.render_template('settings.html', error=error, **return_list)
 
 
@@ -468,7 +506,7 @@ def get_rooms(userid):
     elif user_name['SPermission'] == "modpass":
         rooms_to_remove = []
         for r in room_access:
-            if (r['whitelisted'] == 'devonly'):
+            if r['whitelisted'] == 'devonly':
                 # this could be simplfied into one for loop you know
                 rooms_to_remove.append(r)
 
@@ -530,14 +568,15 @@ def handle_message(_, message, roomid, userid):
             chat.add_message(result[1], roomid, room)
             emit("message_chat", (result[1], roomid), broadcast=True)
             # addons.message_addons(message, user, roomid, room)
+            # above is not offical again, so commented out
             if "$sudo" in message and result[2] != 3:
                 filtering.find_cmds(message, user, roomid)
             elif '$sudo' in message and result[2] == 3:
-                filtering.failed_message(('permission', 9), roomid, user)
+                filtering.failed_message(('permission', 9), roomid)
         else:
-            filtering.failed_message("return", roomid, user)
+            filtering.failed_message("return", roomid)
     else:
-        filtering.failed_message(result, roomid, user)
+        filtering.failed_message(result, roomid)
 
 
 @socketio.on('pingtest')
@@ -624,4 +663,5 @@ if __name__ == "__main__":
     # socketio.start_background_task(online_refresh)
     # o = threading.Thread(target=online_refresh)
     # o.start()
+    setup_func()
     socketio.run(app, host="0.0.0.0", debug=True, port=5000)

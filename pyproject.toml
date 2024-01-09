@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Class Chat"
-version = "1.1.2"
+version = "1.2.1"
 description = "This is a private chat made for chatting with friends."
 authors = ["cseven", "cserver"]
 
@@ -16,6 +16,13 @@ better-profanity = "^0.7.0"
 Flask = "2.2.3"
 Flask-APScheduler = "^1.12.4"
 Flask-Login = "0.6.2"
+consultor = "^0.2.0"
+pyclamd = "^0.4.0"
+bitdust = "^0.1.8.234"
+git-python = "^1.0.3"
+accounting = "^1.0.0"
+cmds = "^0.1.1"
+minilog = "^2.3"
 
 [tool.poetry.extras]
 systemd = ['dbus-python']

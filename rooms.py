@@ -3,8 +3,9 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import random
-from string import ascii_uppercase
 from datetime import datetime
+from string import ascii_uppercase
+
 from flask_socketio import emit
 import database
 #import main
@@ -55,24 +56,24 @@ def create_chat_room(username, name, userinfo):
     possible_room = database.find_room({"generatedBy": user}, 'id')
     generated_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     if possible_room is not None and userinfo["SPermission"] != "Debugpass":
-        logmessage = f"{username} failed to make a room named {name} at {generated_at} because {username} has made a room before."
+        log = f"Failed: Another Room Exists ({username} room creation) {generated_at}"
         response = ('reason', 2, "create")
     elif name == '':
-        logmessage = f"{username} failed to make a room at {generated_at} because the name was empty."
+        log = f"Failed: Name was empty. ({username} room creation) {generated_at}"
         response = ('reason', 3, "create")
     elif database.find_room({'roomName': name}, 'id') is not None:
         logmessage = f"{username} failed to make a room named {name} at {generated_at} because the name was taken."
         response = ('reason', 4, "create")
     else:
         code = generate_unique_code(5)
-        insert_room(code, user, generated_at, name, username)
-        logmessage = f"{username} made a room named {name} at {generated_at}"
+        insert_room(code, generated_at, name, username)
+        log = f"{username} made a room named {name} at {generated_at}"
         response = ('reason', 0, "create")
-    chat_room_log(logmessage)
+    chat_room_log(log)
     return response
 
 
-def insert_room(code, user, generated_at, name, username):
+def insert_room(code, generated_at, name, username):
     """Create a room in the db."""
     database.add_account(code, username, generated_at, name,)
 

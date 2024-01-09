@@ -9,7 +9,8 @@ airhorn_default.wav
 backend/chat-rooms_log.txt
 backend/permission.txt
 backend/accounts.txt
-config/keys.config
+config/keys.conf
+static/profiles
 
 # running files
 __pycache__/*
@@ -22,5 +23,6 @@ node_modules/*
 .pythonlibs/
 replit.nix
 .replit
-keys.py
+.local
 addons.py
+keys.py
