@@ -15,8 +15,8 @@ def scan_for_virus(file_path):
     # broken SAY "PLZ NO VIRUS"
     
     
-def replace_old_file(old):
-    if old != 'static/favicon.ico':
+def replace_old_file(old):# this will grow bigger later
+    if os.path.exists(old.lstrip("/")):
         os.remove(old.lstrip("/"))
 
 
