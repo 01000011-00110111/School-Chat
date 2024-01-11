@@ -461,7 +461,7 @@ def handle_connect(userid: str, location):
     username_list = []
     icons = {'settings': '⚙️', 'chat': ''}
 
-    database.set_online(userid)
+    database.set_online(userid, False)
 
     for key in database.get_all_online():
         user_info = key["displayName"]

@@ -18,17 +18,15 @@ import time
 from time import sleep
 import database
 
-from temp_file import debug, moderation, online, room, other
+from commands import debug, moderation, online, room, other
 # below is needed for systemd restart, do not remove
 try:
     import dbus
 except ModuleNotFoundError:
-    print(
-        '''
+    print('''
         \rDBus python library not installed or found. 
         \rSupport for $sudo shutdown or $sudo restart is disabled.
-        '''
-    )
+        ''')
     systemd_available = False
 else:
     systemd_available = True
@@ -38,6 +36,7 @@ troll_str = """
                 [SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font>
                 <img src='static/troll-face.jpeg'>
             """
+
 
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
@@ -59,7 +58,7 @@ def find_command(**kwargs):
         ('lock', 'admin'): moderation.lock,
         ('unlock', 'admin'): moderation.unlock,
         ('reset', 'dev'): room.reset_chat_user,
-        ('help', None): other.help,
+        # ('help', 'None'): other.help,
     }
     # try:
     #     response_strings[(kwargs['commands']['v0'], permission(kwargs['user']))] \
@@ -71,7 +70,8 @@ def find_command(**kwargs):
         response_strings[key](**kwargs)
     else:
         print("Invalid action or permission level")
-        
+
+
 def permission(user):
     """get the users permission"""
     return 'dev' if user['SPermission'] == 'Debugpass' else 'admin' \
@@ -82,9 +82,8 @@ def permission(user):
 def respond_command(result, roomid):
     """Tell the client that can't run this command for what reason."""
 
-
     response_strings = {
-        (1,None): "eather that is not a command or you have no perms"
+        (1, None): "eather that is not a command or you have no perms"
     }
     response_str = response_strings.get((result[1], result[2]))
     emit("message_chat", (response_str, roomid), namespace="/")
