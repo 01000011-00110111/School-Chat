@@ -2,6 +2,8 @@ from time import time
 from flask_socketio import emit
 from typing import List
 import chat
+import log
+from cmds import respond_command, check_if_dev
 import psutil
 import database
 import sys
@@ -118,3 +120,14 @@ def ping(**kwargs):
     roomid = kwargs['roomid']
     start = time.time() * 1000.0
     emit("pingTime", (start, roomid), namespace="/")
+
+def send_cmd_logs(**kwargs):
+    """Send the last 10 lines in command_log.txt"""
+    user = kwargs['user']
+    roomid = kwargs['roomid']
+    if check_if_dev(user) == 1:
+        msg = log.get_cmd_logs()
+        chat.add_message(msg, roomid)
+        emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+    else:
+        respond_command(("reason", 2, "not_dev"), roomid, None)
