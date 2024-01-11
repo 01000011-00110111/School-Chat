@@ -55,7 +55,8 @@ def find_command(**kwargs):
         ('globalock', 'dev'): moderation.globalock,
         ('lock', 'admin'): moderation.lock,
         ('unlock', 'admin'): moderation.unlock,
-        ('rc', 'dev'): room.reset_chat_user
+        ('rc', 'dev'): room.reset_chat_user,
+        ('ping', 'admin'): debug.ping,
     }
     try:
         response_strings[(kwargs['commands']['v0'], permission(kwargs['user']))] \

@@ -112,3 +112,9 @@ def line_count(**kwargs):
     msg = f"[SYSTEM]: <font color='#ff7f00'>Line count is {lines}</font>\n"
     chat.add_message(msg, roomid, 'true')
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+
+def ping(**kwargs):
+    """EEEEEEEEEEEEEEEE"""
+    roomid = kwargs['roomid']
+    start = time.time() * 1000.0
+    emit("pingTime", (start, roomid), namespace="/")
