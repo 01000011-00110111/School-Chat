@@ -18,7 +18,7 @@ import time
 from time import sleep
 import database
 
-from commands import debug, online, moderation, room
+from commands import debug, moderation, online, room
 # below is needed for systemd restart, do not remove
 try:
     import dbus
@@ -59,11 +59,16 @@ def find_command(**kwargs):
         ('ping', 'admin'): debug.ping,
         ('cmd_logs', 'admin'): debug.send_cmd_logs,
     }
-    try:
-        response_strings[(kwargs['commands']['v0'], permission(kwargs['user']))] \
-            (**kwargs)
-    except KeyError:
-        respond_command(("result", 1, None), kwargs['roomid'])#, None)
+    # try:
+    #     response_strings[(kwargs['commands']['v0'], permission(kwargs['user']))] \
+    #         (**kwargs)
+    # except KeyError:
+    #     respond_command(("result", 1, None), kwargs['roomid'])#, None)
+    key = (kwargs['commands']['v0'], permission(kwargs['user']))
+    if key in response_strings and callable(response_strings[key]):
+        return response_strings[key]()
+    else:
+        print("Invalid action or permission level")
         
 def permission(user):
     """get the users permission"""

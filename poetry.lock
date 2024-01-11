@@ -1171,6 +1171,17 @@ files = [
 ]
 
 [[package]]
+name = "metabasepy"
+version = "1.12.0"
+description = "Python wrapper for Metabase REST API"
+optional = false
+python-versions = "*"
+files = [
+    {file = "metabasepy-1.12.0-py3-none-any.whl", hash = "sha256:6b65f2cb8985d8d8defd7b81d61e55f8863c95b0d08361af996e63e6530cde04"},
+    {file = "metabasepy-1.12.0.tar.gz", hash = "sha256:8228444db60d50620de72f6b88185e01a68ddfed75504a16f78ed92ba5ef55b6"},
+]
+
+[[package]]
 name = "minilog"
 version = "2.3"
 description = "Minimalistic wrapper for Python logging."
@@ -2076,4 +2087,4 @@ systemd = []
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.0,<3.12"
-content-hash = "dd3170e2128ddfdfffc1a952971bf22abb0d0d9e30200976e4bb5529f3ef1202"
+content-hash = "897cdb05eb9076c0893e0659adaeeca62adc1fd07cfa86e80a08d0efb1518184"

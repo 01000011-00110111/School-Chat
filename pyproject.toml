@@ -23,6 +23,7 @@ git-python = "^1.0.3"
 accounting = "^1.0.0"
 cmds = "^0.1.1"
 minilog = "^2.3"
+metabasepy = "^1.12.0"
 
 [tool.poetry.extras]
 systemd = ['dbus-python']
