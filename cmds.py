@@ -18,7 +18,7 @@ import time
 from time import sleep
 import database
 
-from commands import debug, moderation, online, room
+from temp_file import debug, moderation, online, room, other
 # below is needed for systemd restart, do not remove
 try:
     import dbus
@@ -50,14 +50,16 @@ def find_command(**kwargs):
         ('status', 'dev'): debug.status,
         ('pstats', 'dev'): debug.pstats,
         ('lines', 'dev'): debug.line_count,
-        ('appear_offline', 'dev'): online.appear_offline,
-        ('appear_online', 'dev'): online.appear_online,
+        ('ping', 'admin'): debug.ping,
+        ('cmd_logs', 'admin'): debug.send_cmd_logs,
+        ('offline', 'dev'): online.appear_offline,
+        ('online', 'dev'): online.appear_online,
+        ('refresh', 'admin'): online.refresh_online,
         ('globalock', 'dev'): moderation.globalock,
         ('lock', 'admin'): moderation.lock,
         ('unlock', 'admin'): moderation.unlock,
-        ('rc', 'dev'): room.reset_chat_user,
-        ('ping', 'admin'): debug.ping,
-        ('cmd_logs', 'admin'): debug.send_cmd_logs,
+        ('reset', 'dev'): room.reset_chat_user,
+        ('help', None): other.help,
     }
     # try:
     #     response_strings[(kwargs['commands']['v0'], permission(kwargs['user']))] \
@@ -66,7 +68,7 @@ def find_command(**kwargs):
     #     respond_command(("result", 1, None), kwargs['roomid'])#, None)
     key = (kwargs['commands']['v0'], permission(kwargs['user']))
     if key in response_strings and callable(response_strings[key]):
-        return response_strings[key]()
+        response_strings[key](**kwargs)
     else:
         print("Invalid action or permission level")
         

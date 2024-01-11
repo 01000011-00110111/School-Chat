@@ -1,6 +1,6 @@
 from flask_socketio import emit
 import chat
-from cmds import respond_command, check_if_dev, format_system_msg, check_if_mod
+# from cmds import respond_command, check_if_dev, format_system_msg, check_if_mod
 import database
 
 

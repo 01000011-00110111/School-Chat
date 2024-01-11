@@ -3,7 +3,7 @@ from flask_socketio import emit
 from typing import List
 import chat
 import log
-from cmds import respond_command, check_if_dev
+# from cmds import respond_command, check_if_dev
 import psutil
 import database
 import sys
