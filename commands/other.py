@@ -1,4 +1,55 @@
+from flask_socketio import emit
 
 
-def help():
-    pass
+def check_if_dev(user):
+    """Return if a user is a dev or not."""
+    return 1 if user['SPermission'] == 'Debugpass' else 0
+
+
+def check_if_mod(user):
+    """Return if a user is a mod or not."""
+    return 1 if user['SPermission'] == 'modpass' else 0
+
+
+def help(**kwargs):
+    """sends a message with a file full of commands that the user can use."""
+    roomid = kwargs['roomid']
+    issuer = kwargs['user']
+    with open('backend/command_list.txt', 'r', encoding="utf8") as file:
+        lines = file.readlines()
+    start_index = None
+    end_index = None
+
+    if check_if_dev(issuer) == 1:
+        for i, line in enumerate(lines):
+            if 'dev commands' in line.lower():
+                start_index = i
+            elif 'end' in line.lower():
+                end_index = i - 1
+    elif check_if_mod(issuer) == 1:
+        for i, line in enumerate(lines):
+            if 'admin commands' in line.lower():
+                start_index = i
+            elif 'end' in line.lower():
+                end_index = i - 1
+    else:
+        for i, line in enumerate(lines):
+            # if check_if_owner(roomid, issuer) == 1:
+            #     if 'user commands' in line.lower():
+            #         start_index = i
+            #     elif 'end' in line.lower():
+            #         end_index = i - 1
+            # elif check_if_room_mod(issuer) == 1:
+            #     if 'user commands' in line.lower():
+            #         start_index = i
+            #     elif 'room owner commands' in line.lower():
+            #         end_index = i - 1
+            # else:
+                if 'user commands' in line.lower():        
+                    start_index = i
+                elif 'end' in line.lower():
+                    end_index = i - 1
+
+    command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(
+        line.strip() for line in lines[start_index:end_index + 1]) + "</font>"
+    emit("message_chat", (command_line, roomid), namespace="/")

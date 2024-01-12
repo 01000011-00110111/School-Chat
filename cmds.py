@@ -45,31 +45,49 @@ def format_system_msg(msg):
 
 def find_command(**kwargs):
     """Send whatever sudo command is issued to its respective function."""
-    response_strings = {
-        ('status', 'dev'): debug.status,
-        ('pstats', 'dev'): debug.pstats,
-        ('lines', 'dev'): debug.line_count,
-        ('ping', 'admin'): debug.ping,
-        ('cmd_logs', 'admin'): debug.send_cmd_logs,
-        ('offline', 'dev'): online.appear_offline,
-        ('online', 'dev'): online.appear_online,
-        ('refresh', 'admin'): online.refresh_online,
-        ('globalock', 'dev'): moderation.globalock,
-        ('lock', 'admin'): moderation.lock,
-        ('unlock', 'admin'): moderation.unlock,
-        ('reset', 'dev'): room.reset_chat_user,
-        # ('help', 'None'): other.help,
+    dev_commands = {
+        'status': debug.status,
+        'pstats': debug.pstats,
+        'lines': debug.line_count,
+        'rc': room.reset_chat_user,
     }
+    admin_commands = {
+        'cmd_logs': debug.send_cmd_logs,
+        'lock': moderation.lock,
+        'unlock': moderation.unlock,
+        'globalock': moderation.globalock,
+        'reset': room.reset_chat_user,
+        # 'globalunlock': moderation.globalunlock,
+    }
+    # mod_commands = {}
+    basic_commands = {
+        'help': other.help,
+        'refresh': online.refresh_online,
+        'offline': online.appear_offline,
+        'online': online.appear_online,
+        'ping': debug.ping,
+    }
+    command = kwargs['commands']['v0']
+    perm = permission(kwargs['user'])
+    if command in dev_commands and perm in ['dev']:
+        # print('dev')
+        dev_commands[command](**kwargs)
+    if command in admin_commands and perm in ['dev', 'admin']:
+        # print('admin')
+        admin_commands[command](**kwargs)
+    if command in basic_commands:
+        # print('basic')
+        basic_commands[command](**kwargs)
     # try:
     #     response_strings[(kwargs['commands']['v0'], permission(kwargs['user']))] \
     #         (**kwargs)
     # except KeyError:
     #     respond_command(("result", 1, None), kwargs['roomid'])#, None)
-    key = (kwargs['commands']['v0'], permission(kwargs['user']))
-    if key in response_strings and callable(response_strings[key]):
-        response_strings[key](**kwargs)
-    else:
-        print("Invalid action or permission level")
+    # key = (kwargs['commands']['v0'], permission(kwargs['user']))
+    # if key in response_strings and callable(response_strings[key]):
+    #     response_strings[key](**kwargs)
+    # else:
+    #     print("Invalid action or permission level")
 
 
 def permission(user):

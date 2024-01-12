@@ -16,5 +16,5 @@ def appear_offline(**kwargs):
 
 def appear_online(**kwargs):
     """sets the user to appear online"""
-    database.set_online(kwargs["user"]["userId"])
+    database.set_online(kwargs["user"]["userId"], True)
     emit("force_username", ("", None), broadcast=True)
