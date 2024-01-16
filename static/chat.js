@@ -86,7 +86,7 @@ function CheckIfExist(_params) {
 
 socket.on("room_data", (data) => {
     // console.log(data)
-    window.sessionStorage.setItem("ID", data['ID']);
+    window.sessionStorage.setItem("ID", data['roomid']);
     window.sessionStorage.setItem("private", 'false')
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");

@@ -361,10 +361,13 @@ def customize_accounts() -> ResponseReturnValue:
         "theme": theme,
         "email": email
     }
+    print(theme)
     if theme is None:
         return flask.render_template("settings.html",
                                      error='Pick a theme before updating!',
                                      **return_list)
+        
+    theme = user['theme'] if theme == '' else theme
     result, error = accounting.run_regex_signup(username, role, displayname)
     if result is not False:
         return flask.render_template("settings.html",

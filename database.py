@@ -203,6 +203,9 @@ def find_account_data(userid):
             "profile": {
                 "$arrayElemAt": ["$customization.profile", 0]
             },
+            "theme": {
+                "$arrayElemAt": ["$customization.theme", 0]
+            },
             "displayName": {
                 "$arrayElemAt": ["$customization.displayName", 0]
             },
