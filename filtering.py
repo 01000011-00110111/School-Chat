@@ -25,7 +25,7 @@ preuser = 'system'
 message_count = 0
 
 
-def run_filter(user, room, message, roomid, userid):
+def run_filter_chat(user, room, message, roomid, userid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
     global preuser
     global message_count
@@ -99,6 +99,40 @@ def run_filter(user, room, message, roomid, userid):
 
     return return_str
 
+def run_filter_private(user, message, userid):
+    """Its simple now, but when chat rooms come this will be more convoluted."""
+    perms = check_perms(user)
+    user_muted = check_mute(user)
+
+    # we must check if the current user is acutally them, good idea for this to be first
+    if userid != user['userId']:
+        # idea lock account if they fail 3 times useing the normal lock
+        # or a lock version that doesnt let you login at all
+        # without dev help of email fix
+        return ('permission', 12, user_muted)
+
+    if user_muted not in [0, 3] and perms != 'dev':
+        return ('permission', user_muted)
+
+    if bool(re.search(r'[<>]', message)) is True and perms != 'dev':
+        cmds.warn_user(user)
+        return ('permission', 10, user_muted)
+
+    if perms != "dev":
+        message = filter_message(message)
+        role = profanity.censor(user['role'])
+    else:
+        role = user['role']
+
+    if user['profile'] == "":
+        profile_picture = '/static/favicon.ico'
+    else:
+        profile_picture = user['profile']
+
+
+    final_str = ('msg' ,compile_message(markdown(message), profile_picture, user, role))
+
+    return final_str
 
 def check_mute(user):
     """Checks if the user is muted or banned."""

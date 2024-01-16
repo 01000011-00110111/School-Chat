@@ -86,6 +86,17 @@ def add_message(message_text: str, roomid, permission) -> None:
     return ('room', 1)
 
 
+def add_private_message(message_text: str, userlist) -> None:
+    """Handler for messages so they get logged."""
+    # lines = len(room["messages"]) if roomid != "all" else 1
+    # if (lines >= 250):
+    #     reset_chat(message_text, False, roomid)
+    # else:
+    database.send_private_message(message_text,
+                        userlist) #if roomid != 'all' else database.send_message_all(message_text, roomid), log.backup_log(message_text, roomid))
+    return ('room', 1)
+
+
 def reset_chat(_: str, admin: bool, roomid) -> str:
     """Admin function for reseting chat. Also used by the GC."""
     set_message_DB(roomid, admin)

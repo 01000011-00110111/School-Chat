@@ -31,6 +31,12 @@ html {
     margin: 0 auto;
 }
 
+#online_buttons {
+  background: none;
+  border: none;
+  color: white;
+}
+
 #online_users {
     padding-left: 0.7%;
     padding-top: 5%;
