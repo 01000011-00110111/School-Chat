@@ -517,7 +517,12 @@ def get_rooms(userid):
 
 
 @socketio.on('message_chat')
-def handle_message(_, message, roomid, userid):
+def handle_message(_, message, id, userid, private):
+    handle_chat_message(message, id, userid) if private == 'false' else \
+        handle_private_message(message, id, userid)
+    
+    
+def handle_chat_message(message, roomid, userid):
     """New New chat message handling pipeline."""
     # print(roomid)
     # later I will check the if the username is the same as the one for the session somehow
@@ -543,14 +548,14 @@ def handle_message(_, message, roomid, userid):
     else:
         filtering.failed_message(result, roomid)
 
-@socketio.on('message_private_chat')
-def handle_private_message(_, message, userlist, userid):
+
+def handle_private_message(message, pmid, userid):
     """New New chat message handling pipeline."""
     user = database.find_account_data(userid)
     result = filtering.run_filter_private(user, message, userid)
     if result[0] == 'msg':
-        chat.add_private_message(result[1], userlist)
-        emit("message_chat", (result[1], userlist), broadcast=True) #this part will be hard
+        chat.add_private_message(result[1], pmid)
+        emit("message_chat", (result[1], pmid), broadcast=True)
         
         # if "$sudo" in message and result[2] != 3:
         #     filtering.find_cmds(message, user, roomid)

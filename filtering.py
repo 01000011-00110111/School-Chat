@@ -129,7 +129,7 @@ def run_filter_private(user, message, userid):
         profile_picture = user['profile']
 
 
-    final_str = compile_message(markdown(message), profile_picture, user, role)
+    final_str = ('msg' ,compile_message(markdown(message), profile_picture, user, role))
 
     return final_str
 

@@ -493,9 +493,9 @@ def find_private_messages(userlist):
     pm_id = Private.find_one({"userIds": userlist})
     return pm_id
 
-def send_private_message(message, userlist):
+def send_private_message(message, pmid):
     """sends the message to the private chat room"""
-    Private.update_one({"userIds": userlist},
+    Private.update_one({"pmid": pmid},
                 {'$push': {
                     "messages": message
                 }})
