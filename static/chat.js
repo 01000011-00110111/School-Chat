@@ -114,7 +114,7 @@ socket.on("private_data", (data) => {
     // roomname = document.getElementById("RoomDisplay").innerHTML = '/'+data['name'];
     window.history.replaceState({"pageTitle": `Private Chat`}, "", `/chat/${data['name']}`);
     roomname = document.getElementById("RoomDisplay").innerHTML = 'Private Chat';
-    document.title = `/${data['name']} - Private`
+    document.title = `/Private`
     let chat = ""; 
     for (let messageObj of data['message']) {
         chat = chat + messageObj + newline;
