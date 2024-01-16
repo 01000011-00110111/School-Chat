@@ -7,12 +7,9 @@ from commands import other
 
 def globalock(**kwargs):
     """Locks all chatrooms, only used in emergencies."""
-    user = kwargs['user']
+    # user = kwargs['user']
     roomid = kwargs['roomid']
     confirm = kwargs['commands']['v1']
-    if other.check_if_dev(user) != 1:
-        other.respond_command(("reason", 2, "not_dev"), roomid, None)
-        return
 
     if confirm != "yes":
         other.respond_command(("reason", 3, "not_confirmed"), roomid, None)
@@ -37,8 +34,6 @@ def lock(**kwargs):
         chat.add_message(message, roomid, 'none')
         emit("message_chat", (message, roomid), broadcast=True)
         database.set_lock_status(roomid, 'true')
-    else:
-        other.respond_command(("reason", 2, "not_mod"), roomid, None)
 
 
 def unlock(**kwargs):
@@ -55,5 +50,3 @@ def unlock(**kwargs):
         chat.add_message(message, roomid, 'none')
         emit("message_chat", (message, roomid), broadcast=True)
         database.set_lock_status(roomid, 'false')
-    else:
-        other.respond_command(("reason", 2, "not_mod"), roomid, None)

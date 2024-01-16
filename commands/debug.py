@@ -126,11 +126,8 @@ def ping(**kwargs):
 
 def send_cmd_logs(**kwargs):
     """Send the last 10 lines in command_log.txt"""
-    user = kwargs['user']
+    # user = kwargs['user']
     roomid = kwargs['roomid']
-    if other.check_if_dev(user) == 1:
-        msg = log.get_cmd_logs()
-        chat.add_message(msg, roomid)
-        emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
-    else:
-        other.respond_command(("reason", 2, "not_dev"), roomid, None)
+    msg = log.get_cmd_logs()
+    chat.add_message(msg, roomid)
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
