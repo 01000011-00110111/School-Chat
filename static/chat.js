@@ -130,19 +130,9 @@ function changeRoom(room) {
     socket.emit('room_connect', room)
 }
 
+
 function openuserinfo(user) {
     socket.emit('private_connect', getCookie('Userid'), user)
-}
-
-function toHyperlink(str) {
-    var pattern1 = /(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-    var str1 = str.replace(pattern1, "<a href='$1'>$1</a>");
-    var pattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-    var str2 = str1.replace(pattern2, '$1<a target="_blank" href="http://$2">$2</a>');
-    var pattern3 = /mailto:([^\?]*)/gm;
-    var str3 = str2.replace(pattern3, "<a href='mailto:$1'>$1</a>");
-
-    return str3;
 }
 
 // function BTMLog() {
@@ -166,12 +156,12 @@ function sendMessage() {
     }
 
     let chatDiv = document.getElementById("chat");
-    messageL = toHyperlink(message);
     messageElement["value"] = "";
     // this is needed, because this goes over socketio, not a normal http request
     private = window.sessionStorage.getItem('private')
     ID = window.sessionStorage.getItem("ID")
     socket.emit('message_chat', user, messageL, ID, userid, private);
+
     window.scrollTo(0, chatDiv.scrollHeight);
 }
 

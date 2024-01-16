@@ -36,18 +36,43 @@ from flask_socketio import SocketIO, emit
 
 # these are the files that do not import dbm
 import accounting
+import database
 import word_lists
+import uploading
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
 
 scheduler = APScheduler()
 
+def setup_func():
+    """sets up the server"""
+    if not os.path.exists('static/profiles'):
+        os.makedirs('static/profiles')
+    if not os.path.exists('backend/accounts.txt'):
+        with open('backend/accounts.txt', 'w'):
+            pass
+    if not os.path.exists('backend/Chat-backup.txt'):
+        with open('backend/Chat-backup.txt', 'w'):
+            pass
+    if not os.path.exists('backend/command_log.txt'):
+        with open('backend/command_log.txt', 'w'):
+            pass
+    if not os.path.exists('backend/permission.txt'):
+        with open('backend/permission.txt', 'w'):
+            pass
+    if not os.path.exists('backend/chat-rooms_log.txt'):
+        with open('backend/chat-rooms_log.txt', 'w'):
+            pass
+    if not os.path.exists('backend/Chat-backup.txt'):
+        with open('backend/webserver.log', 'w'):
+            pass
+    database.setup_chatrooms()
+
 # whereas these files do import dbm, we need to not do this
 # import addons  # addons may, this really should be commented out as it is optional
 import chat
 import cmds
-import database
 import filtering
 import log
 import rooms
@@ -291,9 +316,7 @@ def verify(userid, verification_code):
         user_code = accounting.create_verification_code(user_id)
         if user_code == verification_code:
             database.update_account_set('perm', {"userId": user_id["userId"]},
-                                        {'$set': {
-                                            "locked": "false"
-                                        }})
+                                        {'$set': {"locked": "false"}})
             user = user_id["username"]
             log.log_accounts(
                 f'The account {user} is now verified and may now chat in any chat room.'
@@ -346,7 +369,8 @@ def customize_accounts() -> ResponseReturnValue:
     roleC = request.form.get("role_color")
     userC = request.form.get("user_color")
     email = request.form.get("email")
-    profile = request.form.get("profile")
+    file = request.files['profile'] if request.files["profile"] is not None else \
+    'no file'
     theme = request.form.get("theme")
     user = database.find_account_data(userid)
     return_list = {
@@ -357,10 +381,25 @@ def customize_accounts() -> ResponseReturnValue:
         "user_color": userC,
         "role_color": roleC,
         "message_color": messageC,
-        "profile": profile,
+        "profile": file,
         "theme": theme,
         "email": email
     }
+    # print(file)
+    if file != 'no file':
+        profile_location = uploading.upload_file(file, request.cookies.get('Profile'))
+    else:
+        profile_location = request.cookies.get('Profile')
+    
+    if profile_location == 0:
+        return flask.render_template("settings.html",
+                                     error='That file type is not allowed',
+                                     **return_list)
+    if profile_location == 1:
+            return flask.render_template("settings.html",
+                                    error='NO VIRUS PLZ',
+                                    **return_list)
+    
     if theme is None:
         return flask.render_template("settings.html",
                                      error='Pick a theme before updating!',
@@ -390,12 +429,12 @@ def customize_accounts() -> ResponseReturnValue:
 
     if user['locked'] != 'locked':
         database.update_account(user["userId"], messageC, roleC, userC, displayname, role, \
-            profile, theme, email)
+            profile_location, theme, email)
 
         resp = flask.make_response(flask.redirect(flask.url_for('chat_page')))
         resp.set_cookie('Username', user['username'])
         resp.set_cookie('Theme', theme)
-        resp.set_cookie('Profile', profile if profile != "" else \
+        resp.set_cookie('Profile', profile_location if profile_location != "" else \
                 '/static/favicon.ico')
         resp.set_cookie('Userid', user['userId'])
         error = "Updated account!"
@@ -660,4 +699,5 @@ if __name__ == "__main__":
     # socketio.start_background_task(online_refresh)
     # o = threading.Thread(target=online_refresh)
     # o.start()
-    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
+    setup_func()
+    socketio.run(app, host="0.0.0.0", port=5000)
