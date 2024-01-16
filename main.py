@@ -177,6 +177,16 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
     return flask.redirect(flask.url_for("chat_page"))
 
 
+@app.route('/Private/<private_chat>')
+@login_required
+def specific_private_page(private_chat) -> ResponseReturnValue:
+    """Get the specific private chat in the uri."""
+    # later we can set this up to get the specific room (with permssions)
+    # request.cookies.get('Userid')
+    print(private_chat)
+    return flask.redirect(flask.url_for("chat_page"))
+
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -623,7 +633,8 @@ def private_connect(sender, receiver):
         print('make fix later')
     chat = private.get_messages(sender, receiverid)
     # print(sender, receiver)
-    emit("private_data", {'message': chat['messages'], 'pmid': chat['pmid']}, to=socketid, namespace='/')
+    emit("private_data", {'message': chat['messages'], 'pmid': chat['pmid'], \
+        'name': receiver}, to=socketid, namespace='/')
 
 
 """

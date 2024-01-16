@@ -112,7 +112,7 @@ socket.on("private_data", (data) => {
     // update the url when the room is changed.
     // window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['name']}`);
     // roomname = document.getElementById("RoomDisplay").innerHTML = '/'+data['name'];
-    window.history.replaceState({"pageTitle": `Private Chat`}, "", `/Private`);
+    window.history.replaceState({"pageTitle": `Private Chat`}, "", `/Private/${data['name']}`);
     roomname = document.getElementById("RoomDisplay").innerHTML = 'Private Chat';
     document.title = `/Private`
     let chat = ""; 
