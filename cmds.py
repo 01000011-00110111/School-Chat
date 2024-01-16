@@ -36,12 +36,7 @@ troll_str = """
                 [SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font>
                 <img src='static/troll-face.jpeg'>
             """
-
-
-def format_system_msg(msg):
-    """Format a message [SYSTEM] would send."""
-    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
-
+            
 
 def find_command(**kwargs):
     """Send whatever sudo command is issued to its respective function."""
@@ -69,20 +64,24 @@ def find_command(**kwargs):
     }
     command = kwargs['commands']['v0']
     perm = permission(kwargs['user'])
-    if command in dev_commands and perm in ['dev']:
+    if command in dev_commands:
         # print('dev')
-        dev_commands[command](**kwargs)
-    if command in admin_commands and perm in ['dev', 'admin']:
+        dev_commands[command](**kwargs) if perm in ['dev'] else \
+            other.respond_command((0, 'dev'), kwargs['roomid'])
+    if command in admin_commands:
         # print('admin')
-        admin_commands[command](**kwargs)
+        admin_commands[command](**kwargs) if perm in ['dev', 'admin'] else \
+            other.respond_command((0, 'admin'), kwargs['roomid'])
     if command in basic_commands:
-        # print('basic')
-        basic_commands[command](**kwargs)
+        try:
+            basic_commands[command](**kwargs)
+        except Exception:
+            other.respond_command((0, None), kwargs['roomid'])
     # try:
     #     response_strings[(kwargs['commands']['v0'], permission(kwargs['user']))] \
     #         (**kwargs)
     # except KeyError:
-    #     respond_command(("result", 1, None), kwargs['roomid'])#, None)
+    #     other.respond_command(("result", 1, None), kwargs['roomid'])#, None)
     # key = (kwargs['commands']['v0'], permission(kwargs['user']))
     # if key in response_strings and callable(response_strings[key]):
     #     response_strings[key](**kwargs)
@@ -95,16 +94,6 @@ def permission(user):
     return 'dev' if user['SPermission'] == 'Debugpass' else 'admin' \
         if user['SPermission'] == 'modpass' else None
     # in the 1.4 update ill add room mods back
-
-
-def respond_command(result, roomid):
-    """Tell the client that can't run this command for what reason."""
-
-    response_strings = {
-        (1, None): "eather that is not a command or you have no perms"
-    }
-    response_str = response_strings.get((result[1], result[2]))
-    emit("message_chat", (response_str, roomid), namespace="/")
 
 
 def warn_user(user):

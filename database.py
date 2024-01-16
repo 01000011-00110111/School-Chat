@@ -31,17 +31,19 @@ db = client.Extra
 def clear_online():
     """Clears the online list"""
     # db.Online.delete_many({})
-    ID.update_many({"status": 'offline'})
+    ID.update_many({"status": "online"}, {"$set": {"status": 'offline'}})
 
 
 def set_offline(userid):
     """Removes a user from the online list"""
-    ID.update_one({"userId": userid}, {'$set': {"status": 'offline'}})
+    if ID.find_one({'userId': userid
+                                  })['status'] != 'offline-locked':
+        ID.update_one({"userId": userid}, {'$set': {"status": 'offline'}})
 
 
 def force_set_offline(userid):
     """Removes a user from the online list"""
-    ID.update_one({"userId": userid}, {'$set': {"status": 'offline locked'}})
+    ID.update_one({"userId": userid}, {'$set': {"status": 'offline-locked'}})
 
 
 # def update_user(username, id):
@@ -55,7 +57,7 @@ def set_online(userid, force):
     #     "location": location
     # })
     if not force and ID.find_one({'userId': userid
-                                  })['status'] != 'offline locked':
+                                  })['status'] != 'offline-locked':
         ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
     if force:
         ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
@@ -63,7 +65,7 @@ def set_online(userid, force):
 
 # new online code
 def find_online():
-    user_list = ID.find()
+    user_list = get_all_online()
     for user in user_list:
         if 'offline' in user["status"]:
             user_list.remove(user)

@@ -53,3 +53,20 @@ def help(**kwargs):
     command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(
         line.strip() for line in lines[start_index:end_index + 1]) + "</font>"
     emit("message_chat", (command_line, roomid), namespace="/")
+    
+
+def format_system_msg(msg):
+    """Format a message [SYSTEM] would send."""
+    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
+    
+
+def respond_command(result, roomid):
+    """Tell the client that can't run this command for what reason."""
+
+    response_strings = {
+        (0, 'dev'): "Hey, you're not a dev!!!",
+        (0, 'admin'): "Hey, acting like an admin I see. Too bad you're not one.",
+        (0, None): "Try '$sudo help' to see what commands are available to you."
+    }
+    response_str = response_strings.get(result)
+    emit("message_chat", (response_str, roomid), namespace="/")

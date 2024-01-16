@@ -98,6 +98,7 @@ scheduler.init_app(app)
 scheduler.api_enabled = True
 login_manager.init_app(app)
 login_manager.login_view = 'login_page'
+database.clear_online()
 
 
 class User:
@@ -463,7 +464,7 @@ def handle_connect(userid: str, location):
 
     database.set_online(userid, False)
 
-    for key in database.get_all_online():
+    for key in database.find_online():
         user_info = key["displayName"]
         icon = icons.get(location)
         user_info = f"{icon}{user_info}"
@@ -649,6 +650,7 @@ def emit_on_startup():
              broadcast=True,
              namespace='/')
         startup_msg = False
+        emit("force_username", ("", None), brodcast=True)
 
 
 @socketio.on('online_refresh')
@@ -657,13 +659,13 @@ def online_refresh():
     while True:
         database.clear_online()
         socketio.emit("force_username", ("", None))
-        print('e how am i running')
         time.sleep(10)  # this is using a socketio refresh
 
 
+
 if __name__ == "__main__":
-    # socketio.start_background_task(online_refresh)
     # o = threading.Thread(target=online_refresh)
     # o.start()
     setup_func()
+    socketio.start_background_task(online_refresh)
     socketio.run(app, host="0.0.0.0", port=5000)
