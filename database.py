@@ -14,6 +14,7 @@ config.read('config/keys.conf')
 mongo_pass = config["mongodb"]["passwd"]
 client = pymongo.MongoClient(mongo_pass)
 #accounts/user data
+Accounts = client.Accounts
 Permission = client.Accounts.Permission
 Customization = client.Accounts.Customization
 ID = client.Accounts.Accounts
@@ -73,6 +74,13 @@ def find_data(data, location):
         return Permission.find(data)
     if location == 'customization':
         return Customization.find(data)
+
+
+def find_userid(user):
+    userid = ID.find_one({'username': user})
+    if userid is None:
+        userid = Customization.find_one({'displayName': user})
+    return None if userid is None else userid["userId"]
 
 
 def find_account(data, location):
@@ -196,6 +204,9 @@ def find_account_data(userid):
             },
             "profile": {
                 "$arrayElemAt": ["$customization.profile", 0]
+            },
+            "theme": {
+                "$arrayElemAt": ["$customization.theme", 0]
             },
             "displayName": {
                 "$arrayElemAt": ["$customization.displayName", 0]
@@ -479,7 +490,30 @@ def add_rooms(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked)
     Messages.insert_one(message)
     """
 
-# setup code
+def find_private_messages(userlist):
+    """find the chat with 2 users"""
+    pm_id = Private.find_one({"userIds": userlist})
+    return pm_id
+
+def send_private_message(message, pmid):
+    """sends the message to the private chat room"""
+    Private.update_one({"pmid": pmid},
+                {'$push': {
+                    "messages": message
+                }})
+
+def create_private_chat(userlist, code):
+    """creates a private chat with 2 users"""
+    data = {
+        "userIds": userlist,
+        "messages": ['add a better welcome or not'],
+        "pmid": code,
+    }
+    Private.insert_one(data)
+
+def distinct_pmid():
+    """Find all Private Message IDs"""
+    return Private.distinct('pmid')
 
 def check_system_roomids(roomid):
     """checks if the system chat rooms are there"""

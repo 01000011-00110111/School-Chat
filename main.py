@@ -76,6 +76,7 @@ import cmds
 import filtering
 import log
 import rooms
+import private
 
 app = flask.Flask(__name__)
 app.secret_key = os.urandom(9001)  #ITS OVER 9000!!!!!!
@@ -171,7 +172,18 @@ def chat_page() -> ResponseReturnValue:
 def specific_chat_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
-    # print(room_name)
+    # request.cookies.get('Userid')
+    print(room_name)
+    return flask.redirect(flask.url_for("chat_page"))
+
+
+@app.route('/Private/<private_chat>')
+@login_required
+def specific_private_page(private_chat) -> ResponseReturnValue:
+    """Get the specific private chat in the uri."""
+    # later we can set this up to get the specific room (with permssions)
+    # request.cookies.get('Userid')
+    print(private_chat)
     return flask.redirect(flask.url_for("chat_page"))
 
 
@@ -383,25 +395,13 @@ def customize_accounts() -> ResponseReturnValue:
         "theme": theme,
         "email": email
     }
-    # print(file)
-    if file != 'no file':
-        profile_location = uploading.upload_file(file, request.cookies.get('Profile'))
-    else:
-        profile_location = request.cookies.get('Profile')
-    
-    if profile_location == 0:
-        return flask.render_template("settings.html",
-                                     error='That file type is not allowed',
-                                     **return_list)
-    if profile_location == 1:
-            return flask.render_template("settings.html",
-                                    error='NO VIRUS PLZ',
-                                    **return_list)
-    
+    # print(theme)
     if theme is None:
         return flask.render_template("settings.html",
                                      error='Pick a theme before updating!',
                                      **return_list)
+        
+    theme = user['theme'] if theme == '' else theme
     result, error = accounting.run_regex_signup(username, role, displayname)
     if result is not False:
         return flask.render_template("settings.html",
@@ -554,7 +554,12 @@ def get_rooms(userid):
 
 
 @socketio.on('message_chat')
-def handle_message(_, message, roomid, userid):
+def handle_message(_, message, id, userid, private):
+    handle_chat_message(message, id, userid) if private == 'false' else \
+        handle_private_message(message, id, userid)
+    
+    
+def handle_chat_message(message, roomid, userid):
     """New New chat message handling pipeline."""
     # print(roomid)
     # later I will check the if the username is the same as the one for the session somehow
@@ -564,7 +569,7 @@ def handle_message(_, message, roomid, userid):
     if room is None:
         result = ("Permission", 6)  # well hello hi
     else:
-        result = filtering.run_filter(user, room, message, roomid, userid)
+        result = filtering.run_filter_chat(user, room, message, roomid, userid)
     if result[0] == 'msg':
         if room is not None:
             chat.add_message(result[1], roomid, room)
@@ -580,6 +585,21 @@ def handle_message(_, message, roomid, userid):
     else:
         filtering.failed_message(result, roomid)
 
+
+def handle_private_message(message, pmid, userid):
+    """New New chat message handling pipeline."""
+    user = database.find_account_data(userid)
+    result = filtering.run_filter_private(user, message, userid)
+    if result[0] == 'msg':
+        chat.add_private_message(result[1], pmid)
+        emit("message_chat", (result[1], pmid), broadcast=True)
+        
+        # if "$sudo" in message and result[2] != 3:
+        #     filtering.find_cmds(message, user, roomid)
+        # elif '$sudo' in message and result[2] == 3:
+        #     filtering.failed_message(('permission', 9), roomid)
+    # else:
+    #     filtering.failed_message(result, roomid)
 
 @socketio.on('pingtest')
 def handle_ping_tests(start, roomid):
@@ -602,6 +622,19 @@ def connect(roomid):
     # print(room)
 
     emit("room_data", room, to=socketid, namespace='/')
+    
+
+@socketio.on("private_connect")
+def private_connect(sender, receiver):
+    """Switch rooms for the user"""
+    socketid = request.sid
+    receiverid = database.find_userid(receiver)
+    if sender == receiver:
+        print('make fix later')
+    chat = private.get_messages(sender, receiverid)
+    # print(sender, receiver)
+    emit("private_data", {'message': chat['messages'], 'pmid': chat['pmid'], \
+        'name': receiver}, to=socketid, namespace='/')
 
 
 """
