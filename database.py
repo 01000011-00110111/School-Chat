@@ -31,7 +31,7 @@ db = client.Extra
 def clear_online():
     """Clears the online list"""
     # db.Online.delete_many({})
-    ID.delete_many({"status": 'offline'})
+    ID.update_many({"status": 'offline'})
 
 
 def set_offline(userid):
