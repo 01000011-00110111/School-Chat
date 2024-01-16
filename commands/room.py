@@ -1,6 +1,7 @@
 """this is where all room commands goes"""
 import chat
 import database
+import rooms
 from commands import other
 
 def reset_chat_user(**kwargs):
@@ -14,3 +15,10 @@ def reset_chat_user(**kwargs):
         chat.reset_chat(False, False, roomid)
     # else:
         # other.respond_command((), roomid, None)
+        
+def create_chat(**kwargs):
+    user = kwargs['user']
+    commands = kwargs['commands']
+    room_name = commands.get('v1', '')
+    response = rooms.create_rooms(room_name, user, user["displayName"])
+    other.respond_command(response, kwargs['roomid'])

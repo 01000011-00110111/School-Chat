@@ -66,7 +66,12 @@ def respond_command(result, roomid):
     response_strings = {
         (0, 'dev'): "Hey, you're not a dev!!!",
         (0, 'admin'): "Hey, acting like an admin I see. Too bad you're not one.",
-        (0, None): "Try '$sudo help' to see what commands are available to you."
+        (0, None): "Try '$sudo help' to see what commands are available to you.",
+        (0, 'chat'): "chat room made(this is temp)",
+        (1, 'chat'): "Your chat name is too long. (less them 10 letters long)(this is temp)",
+        (2, 'chat'): "you can not make another chat room(this is temp)",
+        (3, 'chat'): "you must have a chat name and not ''(this is temp)",
+        (4, 'chat'): "that name was taken(this is temp)",
     }
     response_str = response_strings.get(result)
     emit("message_chat", (response_str, roomid), namespace="/")

@@ -476,41 +476,43 @@ def set_all_lock_status(locked: str):
     Access.update_many({}, {"locked": locked})
 
 
-"""      
-def add_rooms(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked):
-    adds a single account to the database
+def add_rooms(code, username, generated_at, name):
     room_data = {
         "roomid": code,
         "generatedBy": username,
         "mods": '',
         "generatedAt": generated_at,
         "roomName": name,
+    }
+
+    access_data = {
+        "roomid": code,
+        "whitelisted": 'everyone',
+        "blacklisted": "empty",
+        "canSend": 'everyone',
         "locked": 'false',
     }
-    access_data = {
-        "canSend": 'everyone',
-        "whitelisted": "everyone",
-        "blacklisted": "empty",
-    }
-    message = { "messages": [
-            f"[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>{username}</b> at {generated_at}.</font>"
-        ]}
-    
+    message = { 
+        "roomid": code,
+        "messages": [
+            f"""[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>[SYSTEM]</b>
+            at {generated_at}.</font>"""
+    ]}
+
     Rooms.insert_one(room_data)
     Access.insert_one(access_data)
     Messages.insert_one(message)
-    """
 
 # setup code
 
-def check_system_roomids(roomid):
+def check_roomids(roomid):
     """checks if the system chat rooms are there"""
     result = Rooms.find_one({"roomid": roomid})
     print(bool(result))
     return bool(result)
     
 
-def check_system_roomnames(name):
+def check_roomnames(name):
     """checks if the system chat rooms are there"""
     result = Rooms.find_one({"roomName": name})
     print(bool(result))
@@ -519,15 +521,15 @@ def check_system_roomnames(name):
 
 def setup_chatrooms():
     """sets up the starter chat rooms"""
-    if not check_system_roomids('ilQvQwgOhm9kNAOrRqbr'):
+    if not check_roomids('ilQvQwgOhm9kNAOrRqbr'):
         generate_main()
-    if not check_system_roomids('zxMhhAPfWOxuZylxwkES'):
+    if not check_roomids('zxMhhAPfWOxuZylxwkES'):
         generate_locked()
-    if not check_system_roomnames('Dev Chat'):
+    if not check_roomnames('Dev Chat'):
         generate_other('Dev Chat', 'devonly')
-    if not check_system_roomnames('Mod Chat'):
+    if not check_roomnames('Mod Chat'):
         generate_other('Mod Chat', 'modonly')
-    if not check_system_roomnames('Commands'):
+    if not check_roomnames('Commands'):
         generate_other('Commands', 'devonly')
 
 def generate_main():
@@ -535,7 +537,7 @@ def generate_main():
         "roomid": "ilQvQwgOhm9kNAOrRqbr", #secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
         "generatedBy": "[SYSTEM]",
         "mods": '',
-        "generatedAt": datetime.now(),
+        "generatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "roomName": "Main",
     }
 
@@ -549,7 +551,8 @@ def generate_main():
     message = { 
         "roomid": "ilQvQwgOhm9kNAOrRqbr",
         "messages": [
-            f"[SYSTEM]: <font color='#ff7f00'><b>Main</b> created by <b>[SYSTEM]</b> at {datetime.now()}.</font>"
+            f"""[SYSTEM]: <font color='#ff7f00'><b>Main</b> created by <b>[SYSTEM]</b> 
+            at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.</font>"""
     ]}
 
     Rooms.insert_one(room_data)
@@ -562,7 +565,7 @@ def generate_locked():
         "roomid": "zxMhhAPfWOxuZylxwkES", #secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
         "generatedBy": "[SYSTEM]",
         "mods": '',
-        "generatedAt": datetime.now(),
+        "generatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "roomName": "Locked Chat",
     }
 
@@ -576,7 +579,8 @@ def generate_locked():
     message = { 
         "roomid": "zxMhhAPfWOxuZylxwkES",
         "messages": [
-            f"[SYSTEM]: <font color='#ff7f00'><b>Locked Chat</b> created by <b>[SYSTEM]</b> at {datetime.now()}.</font>"
+            f"""[SYSTEM]: <font color='#ff7f00'><b>Locked Chat</b> created by
+            <b>[SYSTEM]</b> at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.</font>"""
     ]}
 
     Rooms.insert_one(room_data)
@@ -590,7 +594,7 @@ def generate_other(name, permission):
         "roomid": roomid,
         "generatedBy": "[SYSTEM]",
         "mods": '',
-        "generatedAt": datetime.now(),
+        "generatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "roomName": name,
     }
 
@@ -604,7 +608,8 @@ def generate_other(name, permission):
     message = { 
         "roomid": roomid,
         "messages": [
-            f"[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>[SYSTEM]</b> at {datetime.now()}.</font>"
+            f"""[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>[SYSTEM]</b>
+            at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.</font>"""
     ]}
 
     Rooms.insert_one(room_data)

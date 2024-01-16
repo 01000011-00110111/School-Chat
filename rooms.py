@@ -40,7 +40,7 @@ def get_chat_rooms():
 def create_rooms(name, user, username):
     """Someone wants to make a chat room."""
     if len(name) > 10:
-        result = ('reason', 1, "create")
+        result = (1, "chat")
         return result
 
     result = create_chat_room(username, name, user)
@@ -52,30 +52,28 @@ def create_rooms(name, user, username):
 
 def create_chat_room(username, name, userinfo):
     """Make a chat room, register in the db."""
-    user = userinfo["username"]
-    possible_room = database.find_room({"generatedBy": user}, 'id')
+    # user = userinfo["username"]
+    possible_room = database.find_room({"generatedBy": username}, 'id')
     generated_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
+    
     if possible_room is not None and userinfo["SPermission"] != "Debugpass":
         log = f"Failed: Another Room Exists ({username} room creation) {generated_at}"
-        response = ('reason', 2, "create")
+        response = (2, "chat")
     elif name == '':
         log = f"Failed: Name was empty. ({username} room creation) {generated_at}"
-        response = ('reason', 3, "create")
+        response = (3, "chat")
     elif database.find_room({'roomName': name}, 'id') is not None:
-        logmessage = f"{username} failed to make a room named {name} at {generated_at} because the name was taken."
-        response = ('reason', 4, "create")
+        log = f"{username} failed to make a room named {name} at {generated_at} because the name was taken."
+        response = (4, "chat")
     else:
         code = generate_unique_code(5)
-        insert_room(code, generated_at, name, username)
+        database.add_account(code, username, generated_at, name)
         log = f"{username} made a room named {name} at {generated_at}"
-        response = ('reason', 0, "create")
+        response = (0, "chat")
     chat_room_log(log)
     return response
 
 
-def insert_room(code, generated_at, name, username):
-    """Create a room in the db."""
-    database.add_account(code, username, generated_at, name,)
 
 
 def delete_chat_room(room_name, user):
