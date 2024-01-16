@@ -8,7 +8,7 @@ import psutil
 import database
 import sys
 import platform
-import other
+from commands import other
 
 
 LOGFILE_B = "backend/Chat-backup.txt"

@@ -368,8 +368,10 @@ def customize_accounts() -> ResponseReturnValue:
     roleC = request.form.get("role_color")
     userC = request.form.get("user_color")
     email = request.form.get("email")
-    file = request.files['profile'] if request.files["profile"] is not None else \
-    'no file'
+    try:
+        file = request.files['profile']
+    except KeyError:
+        file = 'no file'
     theme = request.form.get("theme")
     user = database.find_account_data(userid)
     return_list = {

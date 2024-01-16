@@ -2,7 +2,7 @@ from flask_socketio import emit
 import chat
 # from cmds import  other.respond_command, other.check_if_dev, other.format_system_msg, other.check_if_mod
 import database
-import other
+from commands import other
 
 
 def globalock(**kwargs):

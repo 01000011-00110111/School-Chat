@@ -1,7 +1,7 @@
 """this is where all room commands goes"""
 import chat
 import database
-# import other
+# from commands import other
 
 def check_if_dev(user):
     """Return if a user is a dev or not."""
