@@ -112,7 +112,7 @@ socket.on("private_data", (data) => {
     // update the url when the room is changed.
     // window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['name']}`);
     // roomname = document.getElementById("RoomDisplay").innerHTML = '/'+data['name'];
-    window.history.replaceState({"pageTitle": `Private Chat`}, "", `/chat/${data['name']}`);
+    window.history.replaceState({"pageTitle": `Private Chat`}, "", `/Private`);
     roomname = document.getElementById("RoomDisplay").innerHTML = 'Private Chat';
     document.title = `/Private`
     let chat = ""; 
@@ -160,7 +160,7 @@ function sendMessage() {
     // this is needed, because this goes over socketio, not a normal http request
     private = window.sessionStorage.getItem('private')
     ID = window.sessionStorage.getItem("ID")
-    socket.emit('message_chat', user, messageL, ID, userid, private);
+    socket.emit('message_chat', user, message, ID, userid, private);
 
     window.scrollTo(0, chatDiv.scrollHeight);
 }

@@ -385,7 +385,7 @@ def customize_accounts() -> ResponseReturnValue:
         "theme": theme,
         "email": email
     }
-    print(theme)
+    # print(theme)
     if theme is None:
         return flask.render_template("settings.html",
                                      error='Pick a theme before updating!',
