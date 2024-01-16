@@ -28,7 +28,7 @@ def run_filter_chat(user, room, message, roomid, userid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
     global preuser
     global message_count
-    print(room)
+    # print(room)
     locked = check_lock(room)
     perms = check_perms(user)
     can_send = check_allowed_sending(room)
@@ -166,11 +166,20 @@ def check_perms(user):
     return perms
 
 
-def to_hyperlink(text):
-    """Taken from the js file, we don't need to have the client process it really."""
-    # mails = re.findall(r"mailto:([^\?]*)", text)
-    # links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text)
-    # print(f"{mails}\n\n\n{links2}")
+def to_hyperlink(text: str) -> str:
+    """Auto hyperlinks any links we find as common."""
+    mails = re.findall(r"mailto:(.+?)[\s?]", text, flags=re.M)
+    links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text, flags=re.M | re.I)
+    links1 = re.findall(r"(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])", text, flags=re.I)
+
+    # Iterate over the results and replace the strings
+    for link in mails:
+        text = text.replace(f'mailto:{link}', f'<a href="mailto:{link}">{link}</a>')
+    for link in links1:
+        text = text.replace(link[0], f'<a href="{link[0]}">{link[0]}</a>')
+    for link in links2:
+        text = text.replace(link[1], f'<a target="_blank" href="{link[1]}">{link[1]}</a>')
+    return text
 
 
 def filter_message(message):
@@ -305,15 +314,9 @@ def compile_message(message, profile_picture, user, role):
     role_string = do_dev_easter_egg(role, user)
     date_str = datetime.now(timezone(
         timedelta(hours=-5))).strftime("[%a %I:%M %p] ")
-
-    # should we change it to a f string
-    # if user["username"] == preuser:
-    #     message = message_string
-    # else:
-    message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string}"
-    # convert to fstring is above
-    # message = date_str + profile + " " + user_string + " (" + role_string + ")" +
-    # " - " + message_string  # split onto 2 lines, combine later if you need it
+    message_string_h = to_hyperlink(message_string)
+  
+    message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string_h}"
     return message
 
 
