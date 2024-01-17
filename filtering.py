@@ -9,6 +9,7 @@ from better_profanity import profanity
 from flask_socketio import emit
 
 import cmds
+import database
 import log
 import rooms
 import word_lists
@@ -24,11 +25,11 @@ preuser = 'system'
 message_count = 0
 
 
-def run_filter(user, room, message, roomid, userid):
+def run_filter_chat(user, room, message, roomid, userid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
     global preuser
     global message_count
-    print(room)
+    # print(room)
     locked = check_lock(room)
     perms = check_perms(user)
     can_send = check_allowed_sending(room)
@@ -98,6 +99,40 @@ def run_filter(user, room, message, roomid, userid):
 
     return return_str
 
+def run_filter_private(user, message, userid):
+    """Its simple now, but when chat rooms come this will be more convoluted."""
+    perms = check_perms(user)
+    user_muted = check_mute(user)
+
+    # we must check if the current user is acutally them, good idea for this to be first
+    if userid != user['userId']:
+        # idea lock account if they fail 3 times useing the normal lock
+        # or a lock version that doesnt let you login at all
+        # without dev help of email fix
+        return ('permission', 12, user_muted)
+
+    if user_muted not in [0, 3] and perms != 'dev':
+        return ('permission', user_muted)
+
+    if bool(re.search(r'[<>]', message)) is True and perms != 'dev':
+        cmds.warn_user(user)
+        return ('permission', 10, user_muted)
+
+    if perms != "dev":
+        message = filter_message(message)
+        role = profanity.censor(user['role'])
+    else:
+        role = user['role']
+
+    if user['profile'] == "":
+        profile_picture = '/static/favicon.ico'
+    else:
+        profile_picture = user['profile']
+
+
+    final_str = ('msg' ,compile_message(markdown(message), profile_picture, user, role), user_muted)
+
+    return final_str
 
 def check_mute(user):
     """Checks if the user is muted or banned."""
@@ -132,11 +167,20 @@ def check_perms(user):
     return perms
 
 
-def to_hyperlink(text):
-    """Taken from the js file, we don't need to have the client process it really."""
-    # mails = re.findall(r"mailto:([^\?]*)", text)
-    # links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text)
-    # print(f"{mails}\n\n\n{links2}")
+def to_hyperlink(text: str) -> str:
+    """Auto hyperlinks any links we find as common."""
+    mails = re.findall(r"mailto:(.+?)[\s?]", text, flags=re.M)
+    links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text, flags=re.M | re.I)
+    links1 = re.findall(r"(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])", text, flags=re.I)
+
+    # Iterate over the results and replace the strings
+    for link in mails:
+        text = text.replace(f'mailto:{link}', f'<a href="mailto:{link}">{link}</a>')
+    for link in links1:
+        text = text.replace(link[0], f'<a href="{link[0]}">{link[0]}</a>')
+    for link in links2:
+        text = text.replace(link[1], f'<a target="_blank" href="{link[1]}">{link[1]}</a>')
+    return text
 
 
 def filter_message(message):
@@ -195,7 +239,7 @@ def markdown(message):
 def find_pings(message, dispName, profile_picture, roomid):
     """Gotta catch 'em all! (checks for pings in the users message)"""
     pings = re.findall(r'(?<=\[).+?(?=\])', message)
-    room = rooms.get_chat_room(roomid)
+    room = database.find_room({'roomid': roomid}, 'id')
 
     for ping in pings:
         message = message.replace(f"[{ping}]", '')
@@ -224,17 +268,17 @@ def find_cmds(message, user, roomid):
     origin_room = None
     match = re.findall(r"\(|\)", command_string)
 
-    if perms == 'dev' and roomid == 'jN7Ht3giH9EDBvpvnqRB' and match != []:
-        match_msg = re.findall(r"\((.*?)\)", command_string)
-        find_roomid = re.sub(r"\([^()]+\)", "", command_string).strip()
-        room_check = rooms.check_roomids(find_roomid)
-        if room_check is False:
-            failed_message(('permission', 7), roomid)
-            return
-        if len(match) == 2:
-            origin_room = roomid
-            roomid = find_roomid
-            command_split = [match_msg[0]]
+    # if perms == 'dev' and roomid == 'jN7Ht3giH9EDBvpvnqRB' and match != []:
+    #     match_msg = re.findall(r"\((.*?)\)", command_string)
+    #     find_roomid = re.sub(r"\([^()]+\)", "", command_string).strip()
+    #     room_check = rooms.check_roomids(find_roomid)
+    #     if room_check is False:
+    #         failed_message(('permission', 7), roomid)
+    #         return
+    #     if len(match) == 2:
+    #         origin_room = roomid
+    #         roomid = find_roomid
+    #         command_split = [match_msg[0]]
 
     if origin_room is None:
         origin_room = roomid
@@ -271,15 +315,9 @@ def compile_message(message, profile_picture, user, role):
     role_string = do_dev_easter_egg(role, user)
     date_str = datetime.now(timezone(
         timedelta(hours=-5))).strftime("[%a %I:%M %p] ")
-
-    # should we change it to a f string
-    # if user["username"] == preuser:
-    #     message = message_string
-    # else:
-    message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string}"
-    # convert to fstring is above
-    # message = date_str + profile + " " + user_string + " (" + role_string + ")" +
-    # " - " + message_string  # split onto 2 lines, combine later if you need it
+    message_string_h = to_hyperlink(message_string)
+  
+    message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string_h}"
     return message
 
 
