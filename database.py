@@ -148,7 +148,7 @@ def get_all_online():
                     "$arrayElemAt": ["$customization.displayName", 0]
                 },
                 "SPermission": {
-                    "$arrayElemAt": ["$permission.displayName", 0]
+                    "$arrayElemAt": ["$permission.SPermission", 0]
                 },
             }
         }
