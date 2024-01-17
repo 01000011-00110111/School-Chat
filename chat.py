@@ -49,7 +49,7 @@ def line_blanks(**kwargs) -> None:
 def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
     room = database.find_room({'roomid': roomid}, 'msg')
-    private = True if room is None else False
+    private = room is None
     room = database.find_private(id) if room is None else room
     lines = len(room["messages"]) if roomid != "all" else 1
     if (((lines >= 500 and roomid != "ilQvQwgOhm9kNAOrRqbr")
@@ -63,14 +63,14 @@ def add_message(message_text: str, roomid, permission) -> None:
     return ('room', 1)
 
 
-def add_private_message(message_text: str, userlist) -> None:
+def add_private_message(message_text: str, pmid) -> None:
     """Handler for messages so they get logged."""
     # lines = len(room["messages"]) if roomid != "all" else 1
     # if (lines >= 250):
     #     reset_chat(message_text, False, roomid)
     # else:
     database.send_private_message(message_text,
-                        userlist) #if roomid != 'all' else database.send_message_all(message_text, roomid), log.backup_log(message_text, roomid))
+                        pmid) #if roomid != 'all' else database.send_message_all(message_text, roomid), log.backup_log(message_text, roomid))
     return ('room', 1)
 
 

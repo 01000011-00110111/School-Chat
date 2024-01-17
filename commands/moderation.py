@@ -18,8 +18,8 @@ def globalock(**kwargs):
     else:
         message = other.format_system_msg("All Chatrooms locked by Admin.")
         chat.add_message(message, "all", "none")
-        emit("message_chat", (message, "all"), broadcast=True)
         database.set_all_lock_status("true")
+        emit("message_chat", (message, "all"), broadcast=True)
 
 
 def lock(**kwargs):
@@ -31,13 +31,13 @@ def lock(**kwargs):
     if other.check_if_dev(user) == 1:
         message = other.format_system_msg("Chat Locked by Admin.")
         chat.add_message(message, roomid, 'none')
-        emit("message_chat", (message, roomid), broadcast=True)
         database.set_lock_status(roomid, 'true')
+        emit("message_chat", (message, roomid), broadcast=True)
     elif other.check_if_mod(user) == 1:
         message = other.format_system_msg("Chat Locked by Moderator.")
         chat.add_message(message, roomid, 'none')
-        emit("message_chat", (message, roomid), broadcast=True)
         database.set_lock_status(roomid, 'true')
+        emit("message_chat", (message, roomid), broadcast=True)
 
 
 def unlock(**kwargs):
@@ -49,10 +49,10 @@ def unlock(**kwargs):
     if other.check_if_dev(user) == 1:
         message = other.format_system_msg("Chat Unlocked by Admin.")
         chat.add_message(message, roomid, 'none')
-        emit("message_chat", (message, roomid), broadcast=True)
         database.set_lock_status(roomid, 'false')
+        emit("message_chat", (message, roomid), broadcast=True)
     elif other.check_if_mod(user) == 1:
         message = other.format_system_msg("Chat Unlocked by Moderator.")
         chat.add_message(message, roomid, 'none')
-        emit("message_chat", (message, roomid), broadcast=True)
         database.set_lock_status(roomid, 'false')
+        emit("message_chat", (message, roomid), broadcast=True)

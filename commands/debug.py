@@ -130,5 +130,5 @@ def send_cmd_logs(**kwargs):
     # user = kwargs['user']
     roomid = kwargs['roomid']
     msg = log.get_cmd_logs()
-    chat.add_message(msg, roomid, 'false')
+    chat.add_private_message(msg, roomid) if database.check_private(roomid) else chat.add_message(msg, roomid, 'false')
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
