@@ -90,7 +90,6 @@ def find_command(**kwargs):
     # else:
     #     print("Invalid action or permission level")
 
-
 def permission(user):
     """get the users permission"""
     return 'dev' if user['SPermission'] == 'Debugpass' else 'admin' \

@@ -72,10 +72,9 @@ def setup_func():
 # whereas these files do import dbm, we need to not do this
 # import addons  # addons may, this really should be commented out as it is optional
 import chat
-import cmds
 import filtering
 import log
-import rooms
+from commands.helpers import end_ping
 import private
 
 app = flask.Flask(__name__)
@@ -608,7 +607,7 @@ def handle_private_message(message, pmid, userid):
 @socketio.on('pingtest')
 def handle_ping_tests(start, roomid):
     """Respond with the start time, so ping times can be calculated"""
-    cmds.end_ping(start, roomid)
+    end_ping(start, roomid)
 
 
 @socketio.on("room_connect")

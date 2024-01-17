@@ -120,9 +120,9 @@ def line_count(**kwargs):
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 def ping(**kwargs):
-    """EEEEEEEEEEEEEEEE"""
+    """Send the RTT of a message, used for debugging."""
     roomid = kwargs['roomid']
-    start = time.time() * 1000.0
+    start = time() * 1000.0
     emit("pingTime", (start, roomid), namespace="/")
 
 def send_cmd_logs(**kwargs):
