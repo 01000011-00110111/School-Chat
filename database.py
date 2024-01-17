@@ -2,13 +2,19 @@
     Copyright (C) 2023  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
+import configparser
+import hashlib
 import os
 import secrets
 from datetime import datetime
 
 import pymongo
-import hashlib
-import configparser
+
+
+def format_system_msg(msg):
+    """Format a message [SYSTEM] would send."""
+    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
+
 config = configparser.ConfigParser()
 config.read('config/keys.conf')
 mongo_pass = config["mongodb"]["passwd"]
@@ -506,8 +512,8 @@ def add_rooms(code, username, generated_at, name):
     message = { 
         "roomid": code,
         "messages": [
-            f"""[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>[SYSTEM]</b>
-            at {generated_at}.</font>"""
+            format_system_msg(f"""<b>{name}</b> created by 
+                <b>[SYSTEM]</b>at {generated_at}.""")
     ]}
 
     Rooms.insert_one(room_data)
@@ -601,8 +607,8 @@ def generate_main():
     message = { 
         "roomid": "ilQvQwgOhm9kNAOrRqbr",
         "messages": [
-            f"""[SYSTEM]: <font color='#ff7f00'><b>Main</b> created by <b>[SYSTEM]</b> 
-            at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.</font>"""
+            format_system_msg(f"""<b>Main</b> created by <b>[SYSTEM]</b> 
+            at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.""")
     ]}
 
     Rooms.insert_one(room_data)
@@ -629,8 +635,8 @@ def generate_locked():
     message = { 
         "roomid": "zxMhhAPfWOxuZylxwkES",
         "messages": [
-            f"""[SYSTEM]: <font color='#ff7f00'><b>Locked Chat</b> created by
-            <b>[SYSTEM]</b> at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.</font>"""
+            format_system_msg(f"""<b>Locked Chat</b> created by
+            <b>[SYSTEM]</b> at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.""")
     ]}
 
     Rooms.insert_one(room_data)
@@ -658,8 +664,8 @@ def generate_other(name, permission):
     message = { 
         "roomid": roomid,
         "messages": [
-            f"""[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>[SYSTEM]</b>
-            at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.</font>"""
+            format_system_msg(f"""<b>{name}</b> created by <b>[SYSTEM]</b>
+            at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.""")
     ]}
 
     Rooms.insert_one(room_data)

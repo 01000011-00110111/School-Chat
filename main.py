@@ -74,7 +74,7 @@ def setup_func():
 import chat
 import filtering
 import log
-from commands.other import end_ping
+from commands.other import end_ping, format_system_msg
 import private
 
 app = flask.Flask(__name__)
@@ -680,7 +680,7 @@ def emit_on_startup():
     global startup_msg
     if startup_msg:
         emit("message_chat",
-             ("[SYSTEM]: <font color='#ff7f00'>Server is back online!</font>",
+             (format_system_msg("Server is back online!"),
               'ilQvQwgOhm9kNAOrRqbr'),
              broadcast=True,
              namespace='/')
