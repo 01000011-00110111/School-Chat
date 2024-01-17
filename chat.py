@@ -30,21 +30,6 @@ def get_chat(file: str) -> List:
             ret_val.append(rec)
     return ret_val
 
-# this seriously needs to be moved to cmds.py
-# or just remove in general
-def line_blanks(**kwargs) -> None:
-    """Send 100 blank lines in chat for testing purposes."""
-    user = kwargs['user']
-    roomid = kwargs['roomid']
-    if cmds.check_if_dev(user) == 1:
-        message_text = system_response(("message", 3), roomid)
-        add_message(message_text, roomid, 'true')
-        emit("message_chat", (
-            format_system_msg('nothing to see here <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>nothing to see here'),
-            roomid))
-    else:
-        cmds.respond_command(("reason", 2, "not_dev"), roomid, None)
-
 
 def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
@@ -70,7 +55,8 @@ def add_private_message(message_text: str, pmid) -> None:
     #     reset_chat(message_text, False, roomid)
     # else:
     database.send_private_message(message_text,
-                        pmid) #if roomid != 'all' else database.send_message_all(message_text, roomid), log.backup_log(message_text, roomid))
+                        pmid) 
+    #if roomid != 'all' else database.send_message_all(message_text, roomid), log.backup_log(message_text, roomid))
     return ('room', 1)
 
 
@@ -103,8 +89,6 @@ def system_response(id):
         "Chat reset by an admin.",
         2:
         "Chat reset by automatic wipe system.",
-        3:
-        'nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here',
         4:
         "Chat reset by this chat rooms Owner or Mod.",
         5:
