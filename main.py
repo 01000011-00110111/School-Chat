@@ -72,10 +72,9 @@ def setup_func():
 # whereas these files do import dbm, we need to not do this
 # import addons  # addons may, this really should be commented out as it is optional
 import chat
-import cmds
 import filtering
 import log
-import rooms
+from commands.other import end_ping, format_system_msg
 import private
 
 app = flask.Flask(__name__)
@@ -99,6 +98,7 @@ scheduler.init_app(app)
 scheduler.api_enabled = True
 login_manager.init_app(app)
 login_manager.login_view = 'login_page'
+database.clear_online()
 
 
 class User:
@@ -379,8 +379,10 @@ def customize_accounts() -> ResponseReturnValue:
     roleC = request.form.get("role_color")
     userC = request.form.get("user_color")
     email = request.form.get("email")
-    file = request.files['profile'] if request.files["profile"] is not None else \
-    'no file'
+    try:
+        file = request.files['profile']
+    except KeyError:
+        file = 'no file'
     theme = request.form.get("theme")
     user = database.find_account_data(userid)
     return_list = {
@@ -461,9 +463,9 @@ def handle_connect(userid: str, location):
     username_list = []
     icons = {'settings': '⚙️', 'chat': ''}
 
-    database.set_online(userid)
+    database.set_online(userid, False)
 
-    for key in database.get_all_online():
+    for key in database.find_online():
         user_info = key["displayName"]
         icon = icons.get(location)
         user_info = f"{icon}{user_info}"
@@ -476,7 +478,7 @@ def handle_connect(userid: str, location):
 def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
     try:
-        database.remove_user(request.cookies.get('Userid'))
+        database.set_offline(request.cookies.get('Userid'))
         emit("force_username", broadcast=True)
     except TypeError:
         pass
@@ -486,7 +488,7 @@ def handle_disconnect():
 def handle_online(userid: str):
     """Add username to currently online people list."""
     # database.add_user(username, .sid)
-    database.set_online(userid)
+    database.set_online(userid, False)
     username_list = []
     for key in database.get_all_online():
         username_list.append(key["username"])
@@ -593,7 +595,8 @@ def handle_private_message(message, pmid, userid):
     if result[0] == 'msg':
         chat.add_private_message(result[1], pmid)
         emit("message_chat", (result[1], pmid), broadcast=True)
-        
+        if "$sudo" in message and result[2] != 3:
+                filtering.find_cmds(message, user, pmid)
         # if "$sudo" in message and result[2] != 3:
         #     filtering.find_cmds(message, user, roomid)
         # elif '$sudo' in message and result[2] == 3:
@@ -604,7 +607,7 @@ def handle_private_message(message, pmid, userid):
 @socketio.on('pingtest')
 def handle_ping_tests(start, roomid):
     """Respond with the start time, so ping times can be calculated"""
-    cmds.end_ping(start, roomid)
+    end_ping(start, roomid)
 
 
 @socketio.on("room_connect")
@@ -677,11 +680,12 @@ def emit_on_startup():
     global startup_msg
     if startup_msg:
         emit("message_chat",
-             ("[SYSTEM]: <font color='#ff7f00'>Server is back online!</font>",
+             (format_system_msg("Server is back online!"),
               'ilQvQwgOhm9kNAOrRqbr'),
              broadcast=True,
              namespace='/')
         startup_msg = False
+        emit("force_username", ("", None), brodcast=True)
 
 
 @socketio.on('online_refresh')
@@ -690,13 +694,13 @@ def online_refresh():
     while True:
         database.clear_online()
         socketio.emit("force_username", ("", None))
-        print('e how am i running')
         time.sleep(10)  # this is using a socketio refresh
 
 
+
 if __name__ == "__main__":
-    # socketio.start_background_task(online_refresh)
     # o = threading.Thread(target=online_refresh)
     # o.start()
     setup_func()
+    socketio.start_background_task(online_refresh)
     socketio.run(app, host="0.0.0.0", port=5000)

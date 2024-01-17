@@ -2,13 +2,19 @@
     Copyright (C) 2023  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
+import configparser
+import hashlib
 import os
 import secrets
 from datetime import datetime
 
 import pymongo
-import hashlib
-import configparser
+
+
+def format_system_msg(msg):
+    """Format a message [SYSTEM] would send."""
+    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
+
 config = configparser.ConfigParser()
 config.read('config/keys.conf')
 mongo_pass = config["mongodb"]["passwd"]
@@ -31,32 +37,44 @@ db = client.Extra
 
 def clear_online():
     """Clears the online list"""
-    db.Online.delete_many({})
+    # db.Online.delete_many({})
+    ID.update_many({"status": "online"}, {"$set": {"status": 'offline'}})
 
 
-def remove_user(userid):
+def set_offline(userid):
     """Removes a user from the online list"""
-    ID.update_one({"userId": userid}, {'$set': {"status": 'offline'}})
+    if ID.find_one({'userId': userid
+                                  })['status'] != 'offline-locked':
+        ID.update_one({"userId": userid}, {'$set': {"status": 'offline'}})
 
 
-def update_user(username, id):
-    db.Online.update_one({"socketid": id}, {"$set": {"username": username}})
+def force_set_offline(userid):
+    """Removes a user from the online list"""
+    ID.update_one({"userId": userid}, {'$set': {"status": 'offline-locked'}})
 
 
-def set_online(userid):
+# def update_user(username, id):
+#     db.Online.update_one({"socketid": id}, {"$set": {"username": username}})
+
+
+def set_online(userid, force):
     # db.Online.insert_one({
     #     "username": username,
     #     "socketid": socketid,
     #     "location": location
     # })
-    ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
+    if not force and ID.find_one({'userId': userid
+                                  })['status'] != 'offline-locked':
+        ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
+    if force:
+        ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
 
 
 # new online code
 def find_online():
-    user_list = ID.find()
+    user_list = get_all_online()
     for user in user_list:
-        if user["status"] == 'offline':
+        if 'offline' in user["status"]:
             user_list.remove(user)
     return user_list
 
@@ -465,30 +483,53 @@ def delete_room(data):
     Messages.find_one_and_delete(data)
 
 
-"""      
-def add_rooms(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked):
-    adds a single account to the database
+def set_lock_status(roomid, locked: str):
+    """Set a room's locked status."""
+    Access.update_one({"roomid": roomid}, {"$set": {"locked": locked}})
+
+
+def set_all_lock_status(locked: str):
+    """Set all rooms' locked status."""
+    Access.update_many({}, {"locked": locked})
+
+
+def add_rooms(code, username, generated_at, name):
     room_data = {
         "roomid": code,
         "generatedBy": username,
         "mods": '',
         "generatedAt": generated_at,
         "roomName": name,
+    }
+
+    access_data = {
+        "roomid": code,
+        "whitelisted": 'everyone',
+        "blacklisted": "empty",
+        "canSend": 'everyone',
         "locked": 'false',
     }
-    access_data = {
-        "canSend": 'everyone',
-        "whitelisted": "everyone",
-        "blacklisted": "empty",
-    }
-    message = { "messages": [
-            f"[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>{username}</b> at {generated_at}.</font>"
-        ]}
-    
+    message = { 
+        "roomid": code,
+        "messages": [
+            format_system_msg(f"""<b>{name}</b> created by 
+                <b>[SYSTEM]</b>at {generated_at}.""")
+    ]}
+
     Rooms.insert_one(room_data)
     Access.insert_one(access_data)
     Messages.insert_one(message)
-    """
+    
+def check_private(pmid):
+    """looks for a private chat room"""
+    return bool(Private.find_one({'pmid': pmid}))
+
+
+def find_private(pmid):
+    """find the chat with 2 users"""
+    pm_id = Private.find_one({"pmid": pmid})
+    return pm_id
+
 
 def find_private_messages(userlist):
     """find the chat with 2 users"""
@@ -501,6 +542,11 @@ def send_private_message(message, pmid):
                 {'$push': {
                     "messages": message
                 }})
+    
+    
+def clear_priv_chat(pmid, message):
+    Private.update_one({"pmid": pmid}, {'$set': {"messages": [message]}})
+
 
 def create_private_chat(userlist, code):
     """creates a private chat with 2 users"""
@@ -515,14 +561,14 @@ def distinct_pmid():
     """Find all Private Message IDs"""
     return Private.distinct('pmid')
 
-def check_system_roomids(roomid):
+def check_roomids(roomid):
     """checks if the system chat rooms are there"""
     result = Rooms.find_one({"roomid": roomid})
     print(bool(result))
     return bool(result)
     
 
-def check_system_roomnames(name):
+def check_roomnames(name):
     """checks if the system chat rooms are there"""
     result = Rooms.find_one({"roomName": name})
     print(bool(result))
@@ -531,15 +577,15 @@ def check_system_roomnames(name):
 
 def setup_chatrooms():
     """sets up the starter chat rooms"""
-    if not check_system_roomids('ilQvQwgOhm9kNAOrRqbr'):
+    if not check_roomids('ilQvQwgOhm9kNAOrRqbr'):
         generate_main()
-    if not check_system_roomids('zxMhhAPfWOxuZylxwkES'):
+    if not check_roomids('zxMhhAPfWOxuZylxwkES'):
         generate_locked()
-    if not check_system_roomnames('Dev Chat'):
+    if not check_roomnames('Dev Chat'):
         generate_other('Dev Chat', 'devonly')
-    if not check_system_roomnames('Mod Chat'):
+    if not check_roomnames('Mod Chat'):
         generate_other('Mod Chat', 'modonly')
-    if not check_system_roomnames('Commands'):
+    if not check_roomnames('Commands'):
         generate_other('Commands', 'devonly')
 
 def generate_main():
@@ -547,7 +593,7 @@ def generate_main():
         "roomid": "ilQvQwgOhm9kNAOrRqbr", #secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
         "generatedBy": "[SYSTEM]",
         "mods": '',
-        "generatedAt": datetime.now(),
+        "generatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "roomName": "Main",
     }
 
@@ -561,7 +607,8 @@ def generate_main():
     message = { 
         "roomid": "ilQvQwgOhm9kNAOrRqbr",
         "messages": [
-            f"[SYSTEM]: <font color='#ff7f00'><b>Main</b> created by <b>[SYSTEM]</b> at {datetime.now()}.</font>"
+            format_system_msg(f"""<b>Main</b> created by <b>[SYSTEM]</b> 
+            at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.""")
     ]}
 
     Rooms.insert_one(room_data)
@@ -574,7 +621,7 @@ def generate_locked():
         "roomid": "zxMhhAPfWOxuZylxwkES", #secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
         "generatedBy": "[SYSTEM]",
         "mods": '',
-        "generatedAt": datetime.now(),
+        "generatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "roomName": "Locked Chat",
     }
 
@@ -588,7 +635,8 @@ def generate_locked():
     message = { 
         "roomid": "zxMhhAPfWOxuZylxwkES",
         "messages": [
-            f"[SYSTEM]: <font color='#ff7f00'><b>Locked Chat</b> created by <b>[SYSTEM]</b> at {datetime.now()}.</font>"
+            format_system_msg(f"""<b>Locked Chat</b> created by
+            <b>[SYSTEM]</b> at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.""")
     ]}
 
     Rooms.insert_one(room_data)
@@ -602,7 +650,7 @@ def generate_other(name, permission):
         "roomid": roomid,
         "generatedBy": "[SYSTEM]",
         "mods": '',
-        "generatedAt": datetime.now(),
+        "generatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "roomName": name,
     }
 
@@ -616,7 +664,8 @@ def generate_other(name, permission):
     message = { 
         "roomid": roomid,
         "messages": [
-            f"[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>[SYSTEM]</b> at {datetime.now()}.</font>"
+            format_system_msg(f"""<b>{name}</b> created by <b>[SYSTEM]</b>
+            at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.""")
     ]}
 
     Rooms.insert_one(room_data)

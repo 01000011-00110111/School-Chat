@@ -9,6 +9,7 @@ from better_profanity import profanity
 from flask_socketio import emit
 
 import cmds
+import database
 import log
 import rooms
 import word_lists
@@ -129,7 +130,7 @@ def run_filter_private(user, message, userid):
         profile_picture = user['profile']
 
 
-    final_str = ('msg' ,compile_message(markdown(message), profile_picture, user, role))
+    final_str = ('msg' ,compile_message(markdown(message), profile_picture, user, role), user_muted)
 
     return final_str
 
@@ -238,7 +239,7 @@ def markdown(message):
 def find_pings(message, dispName, profile_picture, roomid):
     """Gotta catch 'em all! (checks for pings in the users message)"""
     pings = re.findall(r'(?<=\[).+?(?=\])', message)
-    room = rooms.get_chat_room(roomid)
+    room = database.find_room({'roomid': roomid}, 'id')
 
     for ping in pings:
         message = message.replace(f"[{ping}]", '')
@@ -267,17 +268,17 @@ def find_cmds(message, user, roomid):
     origin_room = None
     match = re.findall(r"\(|\)", command_string)
 
-    if perms == 'dev' and roomid == 'jN7Ht3giH9EDBvpvnqRB' and match != []:
-        match_msg = re.findall(r"\((.*?)\)", command_string)
-        find_roomid = re.sub(r"\([^()]+\)", "", command_string).strip()
-        room_check = rooms.check_roomids(find_roomid)
-        if room_check is False:
-            failed_message(('permission', 7), roomid)
-            return
-        if len(match) == 2:
-            origin_room = roomid
-            roomid = find_roomid
-            command_split = [match_msg[0]]
+    # if perms == 'dev' and roomid == 'jN7Ht3giH9EDBvpvnqRB' and match != []:
+    #     match_msg = re.findall(r"\((.*?)\)", command_string)
+    #     find_roomid = re.sub(r"\([^()]+\)", "", command_string).strip()
+    #     room_check = rooms.check_roomids(find_roomid)
+    #     if room_check is False:
+    #         failed_message(('permission', 7), roomid)
+    #         return
+    #     if len(match) == 2:
+    #         origin_room = roomid
+    #         roomid = find_roomid
+    #         command_split = [match_msg[0]]
 
     if origin_room is None:
         origin_room = roomid
