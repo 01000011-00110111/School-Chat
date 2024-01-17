@@ -536,6 +536,11 @@ def send_private_message(message, pmid):
                 {'$push': {
                     "messages": message
                 }})
+    
+    
+def clear_priv_chat(pmid, message):
+    Private.update_one({"pmid": pmid}, {'$set': {"messages": [message]}})
+
 
 def create_private_chat(userlist, code):
     """creates a private chat with 2 users"""

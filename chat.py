@@ -49,10 +49,12 @@ def line_blanks(**kwargs) -> None:
 def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
     room = database.find_room({'roomid': roomid}, 'msg')
+    private = True if room is None else False
     room = database.find_private(id) if room is None else room
     lines = len(room["messages"]) if roomid != "all" else 1
     if (((lines >= 500 and roomid != "ilQvQwgOhm9kNAOrRqbr")
-        or (roomid == "ilQvQwgOhm9kNAOrRqbr" and lines >= 1000))
+        or (roomid == "ilQvQwgOhm9kNAOrRqbr" and lines >= 1000)
+        or (lines >= 250 and private))
         and permission != 'true'):
         reset_chat(message_text, False, roomid)
     else:
@@ -74,13 +76,21 @@ def add_private_message(message_text: str, userlist) -> None:
 
 def reset_chat(_: str, admin: bool, roomid) -> str:
     """Admin function for reseting chat. Also used by the GC."""
-    set_message_DB(roomid, admin)
+    if database.check_private(roomid):
+        set_priv_message_DB(roomid, admin),
+        emit("reset_chat", ("priv", roomid), broadcast=True, namespace="/")
+        return ('good', 0)
+    else:
+        set_message_DB(roomid, admin)
+        
+    
     if admin is False:
         emit("reset_chat", ("owner/mod", roomid),
              broadcast=True,
              namespace="/")
     elif admin is True:
         emit("reset_chat", ("admin", roomid), broadcast=True, namespace="/")
+
     else:
         emit("reset_chat", ("auto", roomid), broadcast=True, namespace="/")
     return ('good', 0)
@@ -96,7 +106,9 @@ def system_response(id):
         3:
         'nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here',
         4:
-        "Chat reset by this chat rooms Owner or Mod."
+        "Chat reset by this chat rooms Owner or Mod.",
+        5:
+        "Chat reset by a priavte chat user."
     }
 
     system_answer = format_system_msg(system_response.get(id))
@@ -112,3 +124,9 @@ def set_message_DB(roomid, is_admin: bool):
     else:
         message_text = system_response("message", 2)
     database.clear_chat_room(roomid, message_text)
+    
+
+def set_priv_message_DB(pmid, user):
+    """clears the database"""
+    message_text = system_response(5) if user else system_response(2)
+    database.clear_priv_chat(pmid, message_text)

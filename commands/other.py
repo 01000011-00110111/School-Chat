@@ -74,5 +74,5 @@ def respond_command(result, roomid):
         (3, 'chat'): "you must have a chat name and not ''(this is temp)",
         (4, 'chat'): "that name was taken(this is temp)",
     }
-    response_str = response_strings.get(result)
+    response_str = format_system_msg(response_strings.get(result))
     emit("message_chat", (response_str, roomid), namespace="/")
