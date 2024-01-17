@@ -12,7 +12,7 @@ socket.on("online", (db) => {
     let online_count = db.length;
     
     for (onlineUser of db) {
-        online = online + '<button id="online_buttons" onclick="openuserinfo(\'' + onlineUser + '\')">' + onlineUser + '</button>' + newline;
+        online = online + '<button id="online_buttons" onclick="openuserinfo(\'' + onlineUser[1] + '\')">' + onlineUser[0] + onlineUser[1] + '</button>' + newline;
         // online = online + `<a onclick="openuserinfo('${onlineUser}')">${onlineUser}</a><br>`;
     }
     

@@ -462,14 +462,16 @@ def handle_connect(userid: str, location):
     # socketid = request.sid
     username_list = []
     icons = {'settings': '⚙️', 'chat': ''}
-    icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️"}
+    # the blank str is needed here, as that is what it is in the db
+    # for a user that has no special perms
+    icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️", "": ""}
     database.set_online(userid, False)
 
     for key in database.find_online():
         user_info = key["displayName"]
         icon = icons.get(location)
         user_icon = icon_perm.get(key['SPermission'])
-        user_info = f"{icon} {user_icon}{user_info}"
+        user_info = (f"{icon} {user_icon}", user_info) # f"{icon} {user_icon}{user_info}"
         username_list.append(user_info)
 
     emit("online", username_list, broadcast=True)
