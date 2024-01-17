@@ -50,7 +50,7 @@ def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
     room = database.find_room({'roomid': roomid}, 'msg')
     private = room is None
-    room = database.find_private(id) if room is None else room
+    room = database.find_private(roomid) if private else room
     lines = len(room["messages"]) if roomid != "all" else 1
     if (((lines >= 500 and roomid != "ilQvQwgOhm9kNAOrRqbr")
         or (roomid == "ilQvQwgOhm9kNAOrRqbr" and lines >= 1000)
@@ -59,7 +59,7 @@ def add_message(message_text: str, roomid, permission) -> None:
         reset_chat(message_text, False, roomid)
     else:
         (database.send_message_single(message_text,
-                         roomid) if roomid != 'all' else database.send_message_all(message_text, roomid), log.backup_log(message_text, roomid))
+                         roomid) if roomid != 'all' else database.send_message_all(message_text, roomid), log.backup_log(message_text, roomid, private))
     return ('room', 1)
 
 

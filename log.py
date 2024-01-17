@@ -47,12 +47,15 @@ def get_cmd_logs() -> str:
         cmd_log_txt += f"{cmd}<br>"
     return format_system_msg(f"Last 10 Command Log Entries:<br>{cmd_log_txt}\n")
 
-def backup_log(message_text: str, roomid) -> None:
+def backup_log(message_text: str, roomid: str, private: bool) -> None:
     """adds the newest message from any chat rooom in the backup file"""
     with open("backend/Chat-backup.txt", "a", encoding="utf8") as f_out:
         date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
         room = database.find_room({"roomid": roomid}, 'id')
-        name = room["roomName"] if roomid != "all" else "All rooms"
+        if private:
+            name = "Private Room"
+        else:
+            name = room["roomName"] if roomid != "all" else "All rooms"
         f_out.write(
             f"[{date}], [{name}, Roomid: ({roomid})] The message said: {message_text}\n"
         )
