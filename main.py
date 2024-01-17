@@ -74,7 +74,7 @@ def setup_func():
 import chat
 import filtering
 import log
-from commands.helpers import end_ping
+from commands.other import end_ping
 import private
 
 app = flask.Flask(__name__)

@@ -1,4 +1,10 @@
+"""other.py: functions that need to be imported in multiple places."""
+
+import time
+
 from flask_socketio import emit
+
+import chat
 
 
 def check_if_dev(user):
@@ -76,3 +82,12 @@ def respond_command(result, roomid):
     }
     response_str = format_system_msg(response_strings.get(result))
     emit("message_chat", (response_str, roomid), namespace="/")
+
+def end_ping(start, ID):
+    """The end of the ping comamnd."""
+    end = time.time() * 1000.0
+    difference = end - start
+    msg = '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + str(
+        int(difference)) + 'ms RTT</font>'
+    chat.add_message(msg, ID, 'true')
+    emit("message_chat", (msg, ID), broadcast=True, namespace="/")
