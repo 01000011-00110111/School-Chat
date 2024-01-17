@@ -46,35 +46,10 @@ def line_blanks(**kwargs) -> None:
         cmds.respond_command(("reason", 2, "not_dev"), roomid, None)
 
 
-# this needs to move to cmds.py
-def get_stats(roomid) -> str:
-    """Return full stats list to chat."""
-    lines = get_line_count('main', roomid)
-    lines_b = get_line_count('backup', roomid)
-    # other stats on the repl
-    p_in = psutil.Process()
-    with p_in.oneshot():
-        uptime = timedelta(seconds=time() - p_in.create_time())
-        hours, remainder = divmod(int(uptime.total_seconds()), 3600)
-        minutes, seconds = divmod(remainder, 60)
-        days, hours = divmod(hours, 24)
-        thread_count = p_in.num_threads()
-        # mem_virt = p_in.virtual_memory()[3]/1000000000
-        # mem = p_in.memory_full_info()
-
-    begin_f = "[SYSTEM]: <font color='#ff7f00'>Server Stats:</font>"
-    lines_f = f"Temp logfile: {lines} lines.\nBackup logfile: {lines_b} lines."
-    uptime_f = f"Uptime: {days}d, {hours}h, {minutes}m, {seconds}s."
-    system_s = f"Threads: {thread_count}"
-    # <br>Memory in use (webserver): {mem_virt}
-    longstats = f"{begin_f}<br>{lines_f}<br>{uptime_f}<br>{system_s}<br>"
-    add_message(longstats, roomid, 'true')
-    return longstats
-
-
 def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
     room = database.find_room({'roomid': roomid}, 'msg')
+    room = database.find_private(id) if room is None else room
     lines = len(room["messages"]) if roomid != "all" else 1
     if (((lines >= 500 and roomid != "ilQvQwgOhm9kNAOrRqbr")
         or (roomid == "ilQvQwgOhm9kNAOrRqbr" and lines >= 1000))

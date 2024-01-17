@@ -513,6 +513,17 @@ def add_rooms(code, username, generated_at, name):
     Rooms.insert_one(room_data)
     Access.insert_one(access_data)
     Messages.insert_one(message)
+    
+def check_private(pmid):
+    """looks for a private chat room"""
+    return bool(Private.find_one({'pmid': pmid}))
+
+
+def find_private(pmid):
+    """find the chat with 2 users"""
+    pm_id = Private.find_one({"pmid": pmid})
+    return pm_id
+
 
 def find_private_messages(userlist):
     """find the chat with 2 users"""

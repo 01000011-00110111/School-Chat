@@ -14,14 +14,15 @@ from commands import other
 LOGFILE_B = "backend/Chat-backup.txt"
 
 
-def get_line_count(file, roomid) -> List:
+def get_line_count(file, id) -> List:
     """Return the line count in the logfile."""
     if file == "main":
-        room = database.find_room({'roomid': roomid}, 'msg')
+        room = database.find_room({'roomid': id}, 'msg')
+        room = database.find_private(id) if room is None else room
         lines = len(room["messages"])
         return lines
     elif file == "backup":
-        with open(LOGFILE_B, "r", encoding="utf8") as f_in:
+        with open(LOGFILE_B, "r", encoding="utf8") as f_in: 
             lines_b = len(f_in.readlines())
             return lines_b
 
@@ -29,7 +30,7 @@ def get_line_count(file, roomid) -> List:
 def get_stats(roomid, version) -> str:
     """Return extended stats list to chat."""
     lines_main = get_line_count('main', roomid)
-    lines_backup = get_line_count('backup', roomid)
+    lines_backup = get_line_count('backup', None)
 
     # System stats
     p_in = psutil.Process()
@@ -129,5 +130,5 @@ def send_cmd_logs(**kwargs):
     # user = kwargs['user']
     roomid = kwargs['roomid']
     msg = log.get_cmd_logs()
-    chat.add_message(msg, roomid)
+    chat.add_message(msg, roomid, 'false')
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")

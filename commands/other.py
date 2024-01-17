@@ -67,6 +67,7 @@ def respond_command(result, roomid):
         (0, 'dev'): "Hey, you're not a dev!!!",
         (0, 'admin'): "Hey, acting like an admin I see. Too bad you're not one.",
         (0, None): "Try '$sudo help' to see what commands are available to you.",
+        (0, 'priv'): "Sorry that command is not available wile in private chats.",
         (0, 'chat'): "chat room made(this is temp)",
         (1, 'chat'): "Your chat name is too long. (less them 10 letters long)(this is temp)",
         (2, 'chat'): "you can not make another chat room(this is temp)",
