@@ -2,16 +2,22 @@
     Copyright (C) 2023  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
+from datetime import timedelta
 from time import time
 from typing import List
+
 import psutil
 from flask_socketio import emit
-from main import dbm
+
 import cmds
 import log
+from main import dbm
 
 LOGFILE_B = "backend/Chat-backup.txt"
 
+def format_system_msg(msg):
+    """Format a message [SYSTEM] would send."""
+    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
 
 # Returns a list of dictionaries. Each dictionary in the list
 # is a message that has been sent in our chat server
@@ -39,6 +45,7 @@ def get_line_count(file, roomid) -> List:
 
 
 # this seriously needs to be moved to cmds.py
+# or just remove in general
 def line_blanks(**kwargs) -> None:
     """Send 100 blank lines in chat for testing purposes."""
     user = kwargs['user']
@@ -47,12 +54,13 @@ def line_blanks(**kwargs) -> None:
         message_text = system_response(("message", 3), roomid)
         add_message(message_text, roomid, 'true')
         emit("message_chat", (
-            '[SYSTEM]: <font color="#ff7f00">nothing to see here <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>nothing to see here<br></font>',
+            format_system_msg('nothing to see here <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>nothing to see here'),
             roomid))
     else:
         cmds.respond_command(("reason", 2, "not_dev"), roomid, None)
 
 
+# this needs to move to cmds.py
 def get_stats(roomid) -> str:
     """Return full stats list to chat."""
     lines = get_line_count('main', roomid)
@@ -70,7 +78,7 @@ def get_stats(roomid) -> str:
 
     begin_f = "[SYSTEM]: <font color='#ff7f00'>Server Stats:</font>"
     lines_f = f"Temp logfile: {lines} lines.\nBackup logfile: {lines_b} lines."
-    uptime_f = f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds."
+    uptime_f = f"Uptime: {days}d, {hours}h, {minutes}m, {seconds}s."
     system_s = f"Threads: {thread_count}"
     # <br>Memory in use (webserver): {mem_virt}
     longstats = f"{begin_f}<br>{lines_f}<br>{uptime_f}<br>{system_s}<br>"
@@ -82,9 +90,9 @@ def add_message(message_text: str, roomid, permission) -> None:
     """Handler for messages so they get logged."""
     room = dbm.rooms.find_one({"roomid": roomid})
     lines = len(room["messages"]) if roomid != "all" else 1
-    if lines >= 500 and permission != 'true' and roomid != "ilQvQwgOhm9kNAOrRqbr":
-        reset_chat(message_text, False, roomid)
-    elif roomid == "ilQvQwgOhm9kNAOrRqbr" and lines >= 1000 and permission != 'true':
+    if (((lines >= 500 and roomid != "ilQvQwgOhm9kNAOrRqbr")
+        or (roomid == "ilQvQwgOhm9kNAOrRqbr" and lines >= 1000))
+        and permission != 'true'):
         reset_chat(message_text, False, roomid)
     else:
         (send_message_DB(message_text,
@@ -92,34 +100,34 @@ def add_message(message_text: str, roomid, permission) -> None:
     return ('room', 1)
 
 
-def reset_chat(message: str, admin: bool, roomid) -> str:
+def reset_chat(_: str, admin: bool, roomid) -> str:
     """Admin function for reseting chat. Also used by the GC."""
     set_message_DB(roomid, admin)
-    if admin == False:
+    if admin is False:
         emit("reset_chat", ("owner/mod", roomid),
              broadcast=True,
              namespace="/")
-    elif admin == True:
+    elif admin is True:
         emit("reset_chat", ("admin", roomid), broadcast=True, namespace="/")
     else:
         emit("reset_chat", ("auto", roomid), broadcast=True, namespace="/")
     return ('good', 0)
 
 
-def system_response(message, id):
-    """stores all messages for system"""
+def system_response(id):
+    """Stores all messages for system"""
     system_response = {
         1:
-        "[SYSTEM]: <font color='#ff7f00'>Chat reset by an admin.</font>",
+        "Chat reset by an admin.",
         2:
-        "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font>",
+        "Chat reset by automatic wipe system.",
         3:
-        '[SYSTEM]: <font color="#ff7f00">nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here\n</font>',
+        'nothing to see here \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n nothing to see here',
         4:
-        "[SYSTEM]: <font color='#ff7f00'>Chat reset by this chat rooms Owner or Mod.</font>"
+        "Chat reset by this chat rooms Owner or Mod."
     }
 
-    system_answer = system_response.get(id)
+    system_answer = format_system_msg(system_response.get(id))
     return system_answer
 
 
@@ -136,12 +144,12 @@ def send_message_DB(message_text: str, roomid) -> None:
 
 def set_message_DB(roomid, is_admin: bool):
     """clears the database"""
-    if is_admin == True:
-        message_text = system_response("message", 1)
-    elif is_admin == False:
-        message_text = system_response("message", 4)
+    if is_admin is True:
+        message_text = system_response(1)
+    elif is_admin is False:
+        message_text = system_response(4)
     else:
-        message_text = system_response("message", 2)
+        message_text = system_response(2)
     dbm.rooms.update_one({"roomid": roomid},
                          {'$set': {
                              "messages": [message_text]

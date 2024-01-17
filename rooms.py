@@ -3,12 +3,17 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import random
-from string import ascii_uppercase
 from datetime import datetime
+from string import ascii_uppercase
+
 from flask_socketio import emit
+
 from main import dbm
-#import main
-#forgot about bool for a sec
+
+
+def format_system_msg(msg):
+    """Format a message [SYSTEM] would send."""
+    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
 
 def chat_room_log(message):
     """logs all deletes, creations, and edits done to chat rooms"""
@@ -72,24 +77,24 @@ def create_chat_room(username, name, userinfo):
     possible_room = dbm.rooms.find_one({"generatedBy": user})
     generated_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     if possible_room is not None and userinfo["SPermission"] != "Debugpass":
-        logmessage = f"{username} failed to make a room named {name} at {generated_at} because {username} has made a room before."
+        log = f"Failed: Another Room Exists ({username} room creation) {generated_at}"
         response = ('reason', 2, "create")
     elif name == '':
-        logmessage = f"{username} failed to make a room at {generated_at} because the name was empty."
+        log = f"Failed: Name was empty. ({username} room creation) {generated_at}"
         response = ('reason', 3, "create")
     elif dbm.rooms.find_one({"roomName": name}) is not None:
-        logmessage = f"{username} failed to make a room named {name} at {generated_at} because the name was taken."
+        log = f"Failed: Room Already Exists ({username}) {generated_at}"
         response = ('reason', 4, "create")
     else:
         code = generate_unique_code(5)
-        insert_room(code, user, generated_at, name, username)
-        logmessage = f"{username} made a room named {name} at {generated_at}"
+        insert_room(code, generated_at, name, username)
+        log = f"{username} made a room named {name} at {generated_at}"
         response = ('reason', 0, "create")
-    chat_room_log(logmessage)
+    chat_room_log(log)
     return response
 
 
-def insert_room(code, user, generated_at, name, username):
+def insert_room(code, generated_at, name, username):
     """Create a room in the db."""
     dbm.rooms.insert_one({
         "roomid":
@@ -111,7 +116,9 @@ def insert_room(code, user, generated_at, name, username):
         "locked":
         'false',
         "messages": [
-            f"[SYSTEM]: <font color='#ff7f00'><b>{name}</b> created by <b>{username}</b> at {generated_at}.</font>"
+            format_system_msg(
+                f"<b>{name}</b> created by <b>{username}</b> at {generated_at}."
+            )
         ]
     })
 
@@ -150,50 +157,40 @@ def delete_room(room_name):
 
 
 def chat_room_edit(request, function, room_name, user, users):
-    """checks if the user can edit the chat room and calls the different chat room edits the user can run"""
+    """Checks and edits a chatroom."""
     room = dbm.rooms.find_one({"roomName": room_name})
     username = user["displayName"]
     if request == "whitelist":
         if room["generatedBy"] == user["username"]:
-            return whitelist(room_name, function, user, users, room, username,
-                             False)
-        if user["SPermission"] == "Debugpass":
-            return whitelist(room_name, function, user, users, room, username,
-                             True)
+            return whitelist(room_name, function, user, users, username)
+        if users not in ['clear', '', 'everyone']:
+            chat_room_log(
+                f"{username} tried to whitelist {users} in chat room {room_name}"
+            )
         else:
-            if users not in ['clear', '', 'everyone']:
-                chat_room_log(
-                    f"{username} tried to whitelist {users} in chat room {room_name}"
-                )
-            else:
-                chat_room_log(
-                    f"{username} tried to clear the whitelist in chat room {room_name}"
-                )
-            return ('response', 1, 'edit')
+            chat_room_log(
+                f"{username} tried to clear the whitelist in chat room {room_name}"
+            )
+        return ('response', 1, 'edit')
     elif request == "blacklist":
         if room["generatedBy"] == user["username"]:
-            return blacklist(room_name, function, user, users, room, username,
-                             False)
-        if user["SPermission"] == "Debugpass":
-            return blacklist(room_name, function, user, users, room, username,
-                             True)
+            return blacklist(room_name, function, user, users, username)
+        if users not in ['clear', '']:
+            chat_room_log(
+                f"{username} tried to blacklist {users} in chat room {room_name}"
+            )
         else:
-            if users not in ['clear', '']:
-                chat_room_log(
-                    f"{username} tried to blacklist {users} in chat room {room_name}"
-                )
-            else:
-                chat_room_log(
-                    f"{username} tried to clear the blacklist in chat room {room_name}"
-                )
-            return ('response', 1, 'edit')
+            chat_room_log(
+                f"{username} tried to clear the blacklist in chat room {room_name}"
+            )
+        return ('response', 1, 'edit')
     elif request == 'permote spell fix later':
         print('grant users mod perms in the chat room')
     elif request == "add more stuff later":
         print('what to add')
 
 
-def whitelist(room_name, set_type, user, users, room, username, dev):
+def whitelist(room_name, set_type, user, users, username):
     """Whitelist user a dev or the owner picks"""
     pre_user_list = dbm.rooms.find_one({'roomName': room_name})
     users_to_add = users.split(',')
@@ -207,20 +204,14 @@ def whitelist(room_name, set_type, user, users, room, username, dev):
     for user in users_to_add:
         if user not in ['clear', 'everyone'] and set_type == 'add':
             if user in blacklisted_users:
-                if dev is True:
-                    log = f"The dev {username} tried to whitelist the users: {users} but one or more where already in the whitelist. In chat room {room_name}"
-                else:
-                    log = f"The user {username} tried to whitelist the users: {users} but one or more where already in the whitelist. In chat room {room_name}"
+                log = f"User in whitelist: {users} ({username}) Room: {room_name}"
                 chat_room_log(log)
                 return (4, 'W')
             if user not in whitelisted_users:
                 new_users.append(user)
                 response = (3, 'W')
             else:
-                if dev is True:
-                    log = f"The dev {username} tried to whitelist the users: {users} but one or more where already in the blacklist. In chat room {room_name}"
-                else:
-                    log = f"The user {username} tried to whitelist the users: {users} but one or more where already in the blacklist. In chat room {room_name}"
+                log = f"User in Blacklist: {users} ({username}) Room: {room_name}"
                 chat_room_log(log)
                 return (5, 'W')
         elif user not in ['clear', 'everyone'] and set_type == 'set':
@@ -245,21 +236,15 @@ def whitelist(room_name, set_type, user, users, room, username, dev):
     update_blacklist(room_name, add_users)
     update_whitelist(room_name, add_users)
     emit("force_room_update", broadcast=True)
-    if dev is True:
-        if set_type == 'add':
-            log = f"The dev {username} added {users} to the whitelist in chat room {room_name}"
-        else:
-            log = f"The dev {username} set the whitelist to everyone in chat room {room_name}"
+    if set_type == 'add':
+        log = f"The user {username} added {users} to {room_name}."
     else:
-        if set_type == 'add':
-            log = f"The user {username} added {users} to the whitelist in chat room {room_name}"
-        else:
-            log = f"The user {username} set the whitelist to everyone in chat room {room_name}"
+        log = f"The user {username} set the whitelist to everyone in {room_name}."
     chat_room_log(log)
     return response
 
 
-def blacklist(room_name, set_type, user, users, room, username, dev):
+def blacklist(room_name, set_type, user, users, username):
     """Blacklist user a dev or the owner picks"""
     pre_user_list = dbm.rooms.find_one({'roomName': room_name})
     users_to_add = users.split(',')
@@ -274,29 +259,20 @@ def blacklist(room_name, set_type, user, users, room, username, dev):
 
         if user not in ['clear', 'everyone'] and set_type == 'add':
             if user in whitelisted_users:
-                if dev is True:
-                    log = f"The dev {username} tried to blacklist the users: {users} but one or more where already in the whitelist. In chat room {room_name}"
-                else:
-                    log = f"The user {username} tried to blacklist the users: {users} but one or more where already in the whitelist. In chat room {room_name}"
+                log = f"User in Whitelist: {users} ({username}) Room: {room_name}."
                 chat_room_log(log)
                 return (3, 'B')
             if user not in blacklisted_users:
                 new_users.append(user)
                 response = (2, 'B')
             else:
-                if dev is True:
-                    log = f"The dev {username} tried to blacklist the users: {users} but one or more where already in the blacklist. In chat room {room_name}"
-                else:
-                    log = f"The user {username} tried to blacklist the users: {users} but one or more where already in the blacklist. In chat room {room_name}"
+                log = f"User in Blacklist: {users} ({username}) Room: {room_name}."
                 chat_room_log(log)
                 return (4, 'B')
         elif user not in ['clear', 'everyone'] and set_type == 'set':
             if user == pre_user_list[
                     'generatedBy'] and user not in blacklisted_users:
-                if dev is True:
-                    log = f"The dev {username} tried to blacklist the Owner. In chat room {room_name}"
-                else:
-                    log = f"The user {username} tried to blacklist the Owner. In chat room {room_name}"
+                log = f"Owner cannot be blacklisted. ({username}) Room: {room_name}."
                 chat_room_log(log)
                 return (5, 'B')
             new_users.append(user)
@@ -316,16 +292,10 @@ def blacklist(room_name, set_type, user, users, room, username, dev):
     update_blacklist(room_name, add_users)
     update_blacklist(room_name, add_users)
     emit("force_room_update", broadcast=True)
-    if dev is True:
-        if set_type == 'add':
-            log = f"The dev {username} added {users} to the blacklist in chat room {room_name}"
-        else:
-            log = f"The dev {username} set the blacklist to everyone in chat room {room_name}"
+    if set_type == 'add':
+        log = f"{username} added {users} to the blacklist in chat room {room_name}."
     else:
-        if set_type == 'add':
-            log = f"The user {username} added {users} to the blacklist in chat room {room_name}"
-        else:
-            log = f"The user {username} set the blacklist to everyone in chat room {room_name}"
+        log = f"{username} set the blacklist to everyone in chat room {room_name}."
     chat_room_log(log)
     return response
 
@@ -349,7 +319,4 @@ def update_blacklist(room_name, message):
 def check_roomids(roomid):
     """checks if the roomid you have is a real roomid"""
     roomid_check = dbm.rooms.find_one({"roomid": roomid})
-    if roomid_check is not None:
-        return True
-    else:
-        return False
+    return roomid_check is not None

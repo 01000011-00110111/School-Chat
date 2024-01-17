@@ -3,8 +3,14 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 from collections import deque
-from main import dbm
 from datetime import datetime
+
+from main import dbm
+
+
+def format_system_msg(msg):
+    """Format a message [SYSTEM] would send."""
+    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
 
 def log_accounts(message):
     """Log when something happens to an account."""
@@ -30,7 +36,7 @@ def get_room_logs() -> str:
     cmd_log_txt = ""
     for cmd in cmds_log:
         cmd_log_txt += f"{cmd}<br>"
-    return f"[SYSTEM]: <font color='#ff7f00'>Last 10 Room Log Entries:<br>{cmd_log_txt}</font>\n"
+    return format_system_msg(f"Last 10 Room Log Entries:<br>{cmd_log_txt}\n")
 
 
 def get_cmd_logs() -> str:
@@ -40,7 +46,7 @@ def get_cmd_logs() -> str:
     cmd_log_txt = ""
     for cmd in cmds_log:
         cmd_log_txt += f"{cmd}<br>"
-    return f"[SYSTEM]: <font color='#ff7f00'>Last 10 Command Log Entries:<br>{cmd_log_txt}</font>\n"
+    return format_system_msg(f"Last 10 Command Log Entries:<br>{cmd_log_txt}\n")
 
 def backup_log(message_text: str, roomid) -> None:
     """adds the newest message from any chat rooom in the backup file"""
