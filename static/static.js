@@ -6,13 +6,14 @@
 const socket = io();
 
 socket.on("online", (db) => {
-    let newline = "<br>"
+    // let newline = "<br>"
     let online = "";
     let onlineDiv = document.getElementById("online_users");
     let online_count = db.length;
     
     for (onlineUser of db) {
-        online = online + '<button id="online_buttons" onclick="openuserinfo(\'' + onlineUser[1] + '\')">' + onlineUser[0] + onlineUser[1] + '</button>' + newline;
+        online = `${online}<button id="online_buttons" onclick="openuserinfo('${onlineUser[1]}')">${onlineUser[0]}${onlineUser[1]}</button><br>`
+        // online = online + '<button id="online_buttons" onclick="openuserinfo(\'' + onlineUser[1] + '\')">' + onlineUser[0] + onlineUser[1] + '</button>' + newline;
         // online = online + `<a onclick="openuserinfo('${onlineUser}')">${onlineUser}</a><br>`;
     }
     
