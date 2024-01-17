@@ -14,7 +14,7 @@ def globalock(**kwargs):
     else None
 
     if confirm != "yes":
-        other.respond_command(("reason", 3, "not_confirmed"), roomid, None)
+        other.respond_command((0, "not_confirmed"), roomid)
     else:
         message = other.format_system_msg("All Chatrooms locked by Admin.")
         chat.add_message(message, "all", "none")

@@ -479,7 +479,7 @@ def delete_room(data):
 
 def set_lock_status(roomid, locked: str):
     """Set a room's locked status."""
-    Access.update_one({"roomid": roomid}, {"locked": locked})
+    Access.update_one({"roomid": roomid}, {"$set": {"locked": locked}})
 
 
 def set_all_lock_status(locked: str):
