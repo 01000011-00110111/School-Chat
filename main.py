@@ -644,12 +644,13 @@ def private_connect(sender, receiver, roomid):
     """Switch rooms for the user"""
     socketid = request.sid
     receiverid = database.find_userid(receiver)
-    if sender == receiver:
+    if sender == receiverid:
         emit("message_chat", (
             '[SYSTEM]: <font color="#ff7f00">You can not make a private chat with yourself</font>',
             roomid),
              namespace="/")
         return
+        
     chat = private.get_messages(sender, receiverid)
     # print(sender, receiver)
     emit("private_data", {'message': chat['messages'], 'pmid': chat['pmid'], \
