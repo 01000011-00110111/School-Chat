@@ -402,6 +402,9 @@ def customize_accounts() -> ResponseReturnValue:
         "email": email
     }
     # print(theme)
+    old_path = request.cookies.get('Profile')
+    profile_location = uploading.upload_file(file, old_path) if file != 'no file' else \
+    old_path
     if theme is None:
         return flask.render_template("settings.html",
                                      error='Pick a theme before updating!',
