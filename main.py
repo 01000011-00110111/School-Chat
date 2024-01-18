@@ -45,6 +45,7 @@ import uploading
 
 scheduler = APScheduler()
 
+
 def setup_func():
     """sets up the server"""
     if not os.path.exists('static/profiles'):
@@ -68,6 +69,7 @@ def setup_func():
         with open('backend/webserver.log', 'w'):
             pass
     database.setup_chatrooms()
+
 
 # whereas these files do import dbm, we need to not do this
 # import addons  # addons may, this really should be commented out as it is optional
@@ -326,7 +328,9 @@ def verify(userid, verification_code):
         user_code = accounting.create_verification_code(user_id)
         if user_code == verification_code:
             database.update_account_set('perm', {"userId": user_id["userId"]},
-                                        {'$set': {"locked": "false"}})
+                                        {'$set': {
+                                            "locked": "false"
+                                        }})
             user = user_id["username"]
             log.log_accounts(
                 f'The account {user} is now verified and may now chat in any chat room.'
@@ -402,7 +406,7 @@ def customize_accounts() -> ResponseReturnValue:
         return flask.render_template("settings.html",
                                      error='Pick a theme before updating!',
                                      **return_list)
-        
+
     theme = user['theme'] if theme == '' else theme
     result, error = accounting.run_regex_signup(username, role, displayname)
     if result is not False:
@@ -411,8 +415,8 @@ def customize_accounts() -> ResponseReturnValue:
                                      **return_list)
 
     if (database.find_account({"displayName": displayname}, 'customization')
-            is not None and user["displayName"]
-            != displayname) and displayname in word_lists.banned_usernames:
+            is not None and user["displayName"] != displayname
+        ) and displayname in word_lists.banned_usernames:
         return flask.render_template(
             "settings.html",
             error='That Display name is already taken!',
@@ -471,7 +475,8 @@ def handle_connect(userid: str, location):
         user_info = key["displayName"]
         icon = icons.get(location)
         user_icon = icon_perm.get(key['SPermission'])
-        user_info = (f"{icon} {user_icon}", user_info) # f"{icon} {user_icon}{user_info}"
+        user_info = (f"{icon} {user_icon}", user_info
+                     )  # f"{icon} {user_icon}{user_info}"
         username_list.append(user_info)
 
     emit("online", username_list, broadcast=True)
@@ -562,8 +567,8 @@ def get_rooms(userid):
 def handle_message(_, message, id, userid, private):
     handle_chat_message(message, id, userid) if private == 'false' else \
         handle_private_message(message, id, userid)
-    
-    
+
+
 def handle_chat_message(message, roomid, userid):
     """New New chat message handling pipeline."""
     # print(roomid)
@@ -599,13 +604,14 @@ def handle_private_message(message, pmid, userid):
         chat.add_private_message(result[1], pmid)
         emit("message_chat", (result[1], pmid), broadcast=True)
         if "$sudo" in message and result[2] != 3:
-                filtering.find_cmds(message, user, pmid)
+            filtering.find_cmds(message, user, pmid)
         # if "$sudo" in message and result[2] != 3:
         #     filtering.find_cmds(message, user, roomid)
         # elif '$sudo' in message and result[2] == 3:
         #     filtering.failed_message(('permission', 9), roomid)
     # else:
     #     filtering.failed_message(result, roomid)
+
 
 @socketio.on('pingtest')
 def handle_ping_tests(start, roomid):
@@ -628,15 +634,18 @@ def connect(roomid):
     # print(room)
 
     emit("room_data", room, to=socketid, namespace='/')
-    
+
 
 @socketio.on("private_connect")
-def private_connect(sender, receiver):
+def private_connect(sender, receiver, roomid):
     """Switch rooms for the user"""
     socketid = request.sid
     receiverid = database.find_userid(receiver)
     if sender == receiver:
-        print('make fix later')
+        emit("message_chat", (
+            '[SYSTEM]: <font color="#ff7f00">You can not make a private chat with yourself</font>',
+            roomid),
+             namespace="/")
     chat = private.get_messages(sender, receiverid)
     # print(sender, receiver)
     emit("private_data", {'message': chat['messages'], 'pmid': chat['pmid'], \
@@ -682,9 +691,8 @@ startup_msg = True
 def emit_on_startup():
     global startup_msg
     if startup_msg:
-        emit("message_chat",
-             (format_system_msg("Server is back online!"),
-              'ilQvQwgOhm9kNAOrRqbr'),
+        emit("message_chat", (format_system_msg("Server is back online!"),
+                              'ilQvQwgOhm9kNAOrRqbr'),
              broadcast=True,
              namespace='/')
         startup_msg = False
@@ -698,7 +706,6 @@ def online_refresh():
         database.clear_online()
         socketio.emit("force_username", ("", None))
         time.sleep(10)  # this is using a socketio refresh
-
 
 
 if __name__ == "__main__":
