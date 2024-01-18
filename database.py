@@ -547,11 +547,14 @@ def find_private_messages(userlist):
     pm_id = Private.find_one({"userIds": userlist})
     return pm_id
 
-def send_private_message(message, pmid):
+def send_private_message(message, pmid, userid):
     """sends the message to the private chat room"""
+    unread = Private.find_one({"pmid": pmid})['unread']
+    unread[userid] += 1
     Private.update_one({"pmid": pmid},
                 {'$push': {
-                    "messages": message
+                    "messages": message,
+                    "unread": unread
                 }})
     
     
@@ -561,10 +564,12 @@ def clear_priv_chat(pmid, message):
 
 def create_private_chat(userlist, code):
     """creates a private chat with 2 users"""
+    i = userlist.split(',')
     data = {
         "userIds": userlist,
-        "messages": ['add a better welcome or not'],
+        "messages": ['Welcome to private chat beta2 with this slightly better weelocme message'],
         "pmid": code,
+        "unread": {i[0]: 0, i[1]: 0}
     }
     Private.insert_one(data)
 

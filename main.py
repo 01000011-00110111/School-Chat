@@ -455,7 +455,7 @@ def customize_accounts() -> ResponseReturnValue:
                 **return_list)
         database.update_account_set('id', {"username": username},
                                     {'$set': {
-                                        "email": "email"
+                                        "email": email
                                     }})
         error = 'Updated email!'
     log.log_accounts(f'The account {user} has updated some setting(s)')
@@ -646,7 +646,7 @@ def private_connect(sender, receiver, roomid):
     receiverid = database.find_userid(receiver)
     if sender == receiverid:
         emit("message_chat", (
-            '[SYSTEM]: <font color="#ff7f00">You can not make a private chat with yourself</font>',
+            "[SYSTEM]: <font color='#ff7f00'>Don't be a loaner get some friends.</font>",
             roomid),
              namespace="/")
         return
