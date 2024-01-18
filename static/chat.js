@@ -134,7 +134,7 @@ function changeRoom(room) {
 
 
 function openuserinfo(user) {
-    socket.emit('private_connect', getCookie('Userid'), user)
+    socket.emit('private_connect', getCookie('Userid'), user, window.sessionStorage.getItem('ID'))
 }
 
 // function BTMLog() {
