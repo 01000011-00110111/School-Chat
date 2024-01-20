@@ -595,3 +595,22 @@ html {
   z-index: 1;
   margin-bottom: 100%;
 }
+
+#BottomNav {
+  width: 100%;
+  height: 8%;
+  background: black;
+  display: flex;
+  position: fixed;
+  margin: 159.1% 0;
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
+}
+
+.BottomNavButton {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  font-size: 30px;
+  border: none;
+}
