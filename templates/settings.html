@@ -5,7 +5,47 @@
 {% block content %}
 <form method="post" style="display: grid;">
     <div id="ProfileDisplay">
-      <img id="PfPdisplay" src="{{profile}}">
+      <div id="nav">
+        <div id="ButtonContainer">
+          <button class="SettingsNavItem" onclick="openTab(event, 'My-Profile')">
+            <i class="fa-solid fa-user"></i>
+            My Profile
+          </button>
+      
+          <button class="SettingsNavItem" onclick="openTab(event, 'Account')">
+            <i class="fa-solid fa-user-pen"></i>
+            Account
+          </button>
+      
+          <button class="SettingsNavItem">
+            <i class="fa-solid fa-bell"></i>
+            Notifications
+          </button>
+          <button class="SettingsNavItem">
+            <i class="fa-solid fa-compass-drafting"></i>
+            Preferences
+          </button>
+        </div>
+      </div>
+
+      <div id="MainSettingsBody">
+        <div id="My-Profile" class="tabcontent">
+          <label for="file-upload" id="FileClick">
+            <div id="imageContentControl">
+              <div id="ImageHoverPreview">
+                <p>Click to upload image</p>
+              </div>
+              <img id="PfPdisplay" src="{{profile}}">
+            </div>
+          </label>
+        </div>
+
+        <div id="Account" class="tabcontent">
+          <h3>Account</h3>
+          <p>No Content</p>
+        </div>
+      </div>
+
       <div style="display: grid; align-content: center; margin-left: 16px;
 }">
         <h1>{{displayName}}</h1>
