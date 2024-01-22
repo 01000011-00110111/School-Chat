@@ -89,6 +89,8 @@ class User:
             else:
                 self.check_pause()
             return False
+        self.last_message = datetime.now()
+        return True
 
     def check_pause(self):
         dt = self.pause_time
