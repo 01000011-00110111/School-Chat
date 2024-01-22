@@ -39,6 +39,7 @@ import accounting
 import database
 import word_lists
 import uploading
+import user as usr
 from user import User, add_user_class, loggedin
 
 # from flask_limiter import Limiter
@@ -146,7 +147,7 @@ def logout():
 @app.route('/', methods=['GET', 'POST'])
 def login_page() -> ResponseReturnValue:
     """Show the login page."""
-    if loggedin():
+    if usr.current_user.is_authenticated:
         return flask.redirect(flask.url_for('chat_page'))
 
     if request.method == "POST":

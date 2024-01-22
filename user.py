@@ -11,7 +11,7 @@ login_manager = LoginManager()
 
 
 def loggedin():
-    current_user.is_authenticated
+    return current_user.is_authenticated
 
 def get_user_by_id(userid):
     return Users[userid]
