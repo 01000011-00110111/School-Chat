@@ -13,6 +13,7 @@ import database
 import log
 import rooms
 import word_lists
+from user import get_user_by_id
 
 # old imports, do we still need the markdown package due to us having our own markdown
 # from markdown import markdown
@@ -21,14 +22,10 @@ import word_lists
 # get our custom whitelist words (that shouldnot be banned in the first place)
 profanity.load_censor_words(whitelist_words=word_lists.whitelist_words)
 profanity.add_censor_words(word_lists.censored)
-preuser = 'system'
-message_count = 0
 
 
 def run_filter_chat(user, room, message, roomid, userid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
-    global preuser
-    global message_count
     # print(room)
     locked = check_lock(room)
     perms = check_perms(user)
@@ -42,6 +39,8 @@ def run_filter_chat(user, room, message, roomid, userid):
         # without dev help of email fix
         return ('permission', 12, user_muted)
 
+    userobj = get_user_by_id(userid)
+    
     if user_muted not in [0, 3] and perms != 'dev':
         return ('permission', user_muted)
 
@@ -84,15 +83,11 @@ def run_filter_chat(user, room, message, roomid, userid):
         return_str = ('permission', 5, user_muted)
 
     #check for spam then update message count and prev user
-    if message_count == 15 and preuser == user["username"] and perms != "dev":
-        cmds.warn_user(user)
+    limit = userobj.send_limit()
+    if not limit and perms != "dev":
+        # cmds.warn_user(user)
         return ('permission', 8, user_muted)
 
-    if preuser != user["username"]:
-        message_count = 0
-
-    preuser = user["username"]
-    message_count += 1
 
     if perms in ["dev", "mod"]:
         return_str = ('msg', final_str, user_muted)

@@ -15,18 +15,18 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-import hashlib
+# import hashlib
 import logging
 import os
 import time
-import uuid
-from datetime import datetime, timedelta
+# import uuid
+# from datetime import datetime, timedelta
 import flask
 from flask import request
 from flask.typing import ResponseReturnValue
 from flask_apscheduler import APScheduler
 from flask_login import (
-    LoginManager,
+    # LoginManager,
     current_user,
     login_required,
     login_user,
@@ -39,6 +39,7 @@ import accounting
 import database
 import word_lists
 import uploading
+from user import User, add_user_class
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
@@ -87,8 +88,6 @@ app.secret_key = os.urandom(9001)  #ITS OVER 9000!!!!!!
 #                   app=app,
 #                   on_breach=default_error_responder)
 
-login_manager = LoginManager()
-
 logging.basicConfig(filename="backend/webserver.log",
                     filemode='a',
                     level=logging.ERROR)
@@ -98,63 +97,9 @@ socketio = SocketIO(app)
 
 scheduler.init_app(app)
 scheduler.api_enabled = True
-login_manager.init_app(app)
-login_manager.login_view = 'login_page'
 database.clear_online()
 
-
-class User:
-    """Represents a logged in user."""
-
-    def __init__(self, username):
-        """Initialize the user."""
-        self.username = username
-
-    @staticmethod
-    def is_authenticated():
-        """Check if the user is authenitcated."""
-        # this would only be used if we needed to check 2fa or something like that.
-        return True
-
-    @staticmethod
-    def is_active():
-        """Check if the user's session is recent."""
-        # we could implement some kind of token expire here I think
-        return True
-
-    @staticmethod
-    def is_anonymous():
-        """Check if the user is anonymous (never will be)."""
-        # We disabled anonymous users a while ago
-        return False
-
-    def get_id(self):
-        """Return the user's username."""
-        # whenever we get arround to it, maybe switch this to userid?
-        return self.username
-
-    @staticmethod
-    def check_password(password_hash, password):
-        """Check the user's password against the one entered in the login field."""
-        return hashlib.sha384(bytes(password,
-                                    'utf-8')).hexdigest() == password_hash
-
-    @staticmethod
-    def check_username(username, db_username):
-        """Check the username against the one entered in the login field."""
-        return username == db_username
-
-    # pylint: disable=E0213
-    @login_manager.user_loader
-    def load_user(username):
-        """Load the user into flask-login."""
-        u = database.find_account({'username': username}, 'id')
-        if not u:
-            return None
-        return User(username=u['username'])
-
-    # pylint: enable=E0213
-
+# pylint: enable=E0213
 
 # license stuff
 if __name__ == "__main__":
@@ -220,10 +165,11 @@ def login_page() -> ResponseReturnValue:
             return flask.render_template('login.html',
                                          error='You did not agree to the TOS!')
 
-        if User.check_username(username,
-                               user["username"]) and User.check_password(
-                                   user['password'], password):
-            user_obj = User(username=user['username'])
+        if user.User.check_username(
+                username, user["username"]) and user.User.check_password(
+                    user['password'], password):
+            user_obj = add_user_class(username=user['username'],
+                                      userid=user['userId'])
             login_user(user_obj)
             if next_page is None:
                 next_page = flask.url_for('chat_page')
@@ -650,7 +596,7 @@ def private_connect(sender, receiver, roomid):
             roomid),
              namespace="/")
         return
-        
+
     chat = private.get_messages(sender, receiverid)
     # print(sender, receiver)
     emit("private_data", {'message': chat['messages'], 'pmid': chat['pmid'], \
