@@ -26,7 +26,7 @@ from flask import request
 from flask.typing import ResponseReturnValue
 from flask_apscheduler import APScheduler
 from flask_login import (
-    # LoginManager,
+    LoginManager,
     current_user,
     login_required,
     login_user,
@@ -40,7 +40,7 @@ import database
 import word_lists
 import uploading
 import user as usr
-from user import User, add_user_class, loggedin
+from user import User, add_user_class, login_manager
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
@@ -147,7 +147,7 @@ def logout():
 @app.route('/', methods=['GET', 'POST'])
 def login_page() -> ResponseReturnValue:
     """Show the login page."""
-    if usr.current_user.is_authenticated:
+    if current_user.is_authenticated:
         return flask.redirect(flask.url_for('chat_page'))
 
     if request.method == "POST":
