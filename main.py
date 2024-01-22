@@ -39,7 +39,7 @@ import accounting
 import database
 import word_lists
 import uploading
-from user import User, add_user_class
+from user import User, add_user_class, login_manager
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
@@ -146,8 +146,8 @@ def logout():
 @app.route('/', methods=['GET', 'POST'])
 def login_page() -> ResponseReturnValue:
     """Show the login page."""
-    # if current_user.is_authenticated:
-    #     return flask.redirect(flask.url_for('chat_page'))
+    if current_user.is_authenticated:
+        return flask.redirect(flask.url_for('chat_page'))
 
     if request.method == "POST":
         # redo client side checks here on server side, like signup
