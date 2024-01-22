@@ -146,8 +146,8 @@ def logout():
 @app.route('/', methods=['GET', 'POST'])
 def login_page() -> ResponseReturnValue:
     """Show the login page."""
-    if current_user.is_authenticated:
-        return flask.redirect(flask.url_for('chat_page'))
+    # if current_user.is_authenticated:
+    #     return flask.redirect(flask.url_for('chat_page'))
 
     if request.method == "POST":
         # redo client side checks here on server side, like signup
