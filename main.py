@@ -165,8 +165,8 @@ def login_page() -> ResponseReturnValue:
             return flask.render_template('login.html',
                                          error='You did not agree to the TOS!')
 
-        if user.User.check_username(
-                username, user["username"]) and user.User.check_password(
+        if User.check_username(
+                username, user["username"]) and User.check_password(
                     user['password'], password):
             user_obj = add_user_class(username=user['username'],
                                       userid=user['userId'])
@@ -381,14 +381,13 @@ def customize_accounts() -> ResponseReturnValue:
                                      **return_list)
 
     if user['locked'] != 'locked':
-        database.update_account(user["userId"], messageC, roleC, userC, displayname, role, \
-            profile_location, theme, email)
+        database.update_account(user["userId"], messageC, roleC, userC, displayname,
+                                role, profile_location, theme, email)
 
         resp = flask.make_response(flask.redirect(flask.url_for('chat_page')))
         resp.set_cookie('Username', user['username'])
         resp.set_cookie('Theme', theme)
-        resp.set_cookie('Profile', profile_location if profile_location != "" else \
-                '/static/favicon.ico')
+        resp.set_cookie('Profile', profile_location)
         resp.set_cookie('Userid', user['userId'])
         error = "Updated account!"
         return resp
