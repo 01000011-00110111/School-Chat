@@ -10,9 +10,6 @@ Users = {}
 login_manager = LoginManager()
 
 
-def loggedin():
-    return current_user.is_authenticated
-
 def get_user_by_id(userid):
     return Users[userid]
 
@@ -79,7 +76,7 @@ class User:
 
     def send_limit(self):
         differince = self.last_message - datetime.now()
-        if self.limit <= 15 and differince.seconds <= 20:
+        if self.limit <= 15 and differince.seconds <= 5:
             self.limit += 1
             self.last_message = datetime.now()
             return True
@@ -92,6 +89,7 @@ class User:
             else:
                 self.check_pause()
             return False
+        self.limite = 0
         self.last_message = datetime.now()
         return True
 

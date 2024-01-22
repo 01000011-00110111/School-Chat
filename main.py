@@ -39,7 +39,6 @@ import accounting
 import database
 import word_lists
 import uploading
-import user as usr
 from user import User, add_user_class, login_manager
 
 # from flask_limiter import Limiter
@@ -100,6 +99,9 @@ scheduler.init_app(app)
 scheduler.api_enabled = True
 database.clear_online()
 
+login_manager.init_app(app)
+login_manager.login_view = 'login_page'
+
 # pylint: enable=E0213
 
 # license stuff
@@ -147,6 +149,7 @@ def logout():
 @app.route('/', methods=['GET', 'POST'])
 def login_page() -> ResponseReturnValue:
     """Show the login page."""
+    # print(current_user,'current user')
     if current_user.is_authenticated:
         return flask.redirect(flask.url_for('chat_page'))
 
@@ -663,5 +666,5 @@ if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
     setup_func()
-    socketio.start_background_task(online_refresh)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    # socketio.start_background_task(online_refresh)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
