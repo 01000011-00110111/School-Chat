@@ -39,7 +39,7 @@ import accounting
 import database
 import word_lists
 import uploading
-from user import User, add_user_class, login_manager
+from user import User, add_user_class, loggedin
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
