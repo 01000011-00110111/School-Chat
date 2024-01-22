@@ -3,12 +3,15 @@ import hashlib
 import database
 from datetime import datetime, timedelta
 
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 
 Users = {}
 
 login_manager = LoginManager()
 
+
+def loggedin():
+    current_user.is_authenticated
 
 def get_user_by_id(userid):
     return Users[userid]
