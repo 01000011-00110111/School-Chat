@@ -539,7 +539,7 @@ def handle_private_message(message, pmid, userid):
     user = database.find_account_data(userid)
     result = filtering.run_filter_private(user, message, userid)
     if result[0] == 'msg':
-        chat.add_private_message(result[1], pmid)
+        chat.add_private_message(result[1], pmid, userid)
         emit("message_chat", (result[1], pmid), broadcast=True)
         if "$sudo" in message and result[2] != 3:
             filtering.find_cmds(message, user, pmid)

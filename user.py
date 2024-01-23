@@ -23,7 +23,7 @@ def get_user_by_id(userid):
     obj = Users[userid] if userid in Users else None
     if obj is None:
         username = database.find_account({"userId": {userid}}, 'id')['username']
-        obj = add_user_class(username, userid)
+        obj = add_user_class(username['username'], userid)
     return obj 
 
 
