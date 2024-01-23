@@ -19,11 +19,11 @@ def add_user_class(username, userid):
 
 
 def get_user_by_id(userid):
-    obj = Users[userid]# if userid in Users.keys() else None
-    # if obj is None:
-    #     username = database.find_account({"userId": userid}, 'id')['username']
-    #     obj = add_user_class(username['username'], userid)
-    # return obj 
+    obj = Users[userid] if userid in Users.keys() else None
+    if obj is None:
+        username = database.find_account({"userId": userid}, 'id')['username']
+        obj = add_user_class(username['username'], userid)
+    return obj 
 
 
 class User:
@@ -81,13 +81,13 @@ class User:
         return User(username=u['username'])
 
     def send_limit(self):
-        print(self.limit)
-        print(self.pause)
-        priint(self.last_message)
-        print(self.pause_time)
+        # print(self.limit)
+        # print(self.pause)
+        # priint(self.last_message)
+        # print(self.pause_time)
         difference = self.last_message - datetime.now()
-        print(difference)
-        print(difference.totalseconds())
+        # print(difference)
+        # print(difference.totalseconds())
         if self.limit <= 15 and difference.seconds < 5:
             self.limit += 1
             self.last_message = datetime.now()
