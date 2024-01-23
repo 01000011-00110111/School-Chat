@@ -63,6 +63,7 @@ def set_online(userid, force):
     #     "socketid": socketid,
     #     "location": location
     # })
+    print(userid)
     if not force and ID.find_one({'userId': userid
                                   })['status'] != 'offline-locked':
         ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
@@ -292,7 +293,6 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
     customization_data = {
         "userId": userid,
         "role": SRole,
-        "userId": userid,
         "profile": "",
         "theme": "dark",
         "displayName": SDisplayname,
