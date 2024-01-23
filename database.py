@@ -549,14 +549,14 @@ def find_private_messages(userlist):
 
 def send_private_message(message, pmid, userid):
     """sends the message to the private chat room"""
-    unread = Private.find_one({"pmid": pmid})['unread']
-    if userid is not None:
-        unread[userid] += 1
+    unread = Private.find_one({"pmid": pmid})#['unread']
+    # if userid is not None:
+        # unread[userid] += 1
     #later i might make better but there fixed
     Private.update_one({"pmid": pmid},
                 {'$push': {
                     "messages": message,
-                    "unread": unread
+                    # "unread": unread
                 }})
     
     
