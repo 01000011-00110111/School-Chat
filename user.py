@@ -15,6 +15,8 @@ def get_user_by_id(userid):
 
 
 def add_user_class(username, userid):
+    if Users[userid] is not None:
+        return Users[userid]
     user_class = User(username)
     Users.update({userid: user_class})
     return user_class
@@ -27,7 +29,7 @@ class User:
         """Initialize the user."""
         self.username = username
         self.limit = 0
-        self.paue = False
+        self.pause = False
         self.last_message = datetime.now()
         self.pause_time = 0
 
@@ -75,8 +77,8 @@ class User:
         return User(username=u['username'])
 
     def send_limit(self):
-        differince = self.last_message - datetime.now()
-        if self.limit <= 15 and differince.seconds <= 5:
+        difference = self.last_message - datetime.now()
+        if self.limit <= 15 and difference.total_seconds() <= 5:
             self.limit += 1
             self.last_message = datetime.now()
             return True
@@ -87,18 +89,19 @@ class User:
                 self.pause = True
                 self.pause_time = dt + td
             else:
-                self.check_pause()
+                return self.check_pause()
             return False
-        self.limite = 0
+        self.limit = 0
         self.last_message = datetime.now()
         return True
 
     def check_pause(self):
         dt = self.pause_time
         td = timedelta(minutes=5)
-        if dt + td == datetime.now:  #i forgot how to do this
+        if dt + td == datetime.now():
             self.pause = False
             self.limit = 0
             self.pause_time = None
             return True
         return False
+

@@ -84,7 +84,7 @@ def run_filter_chat(user, room, message, roomid, userid):
 
     #check for spam then update message count and prev user
     limit = userobj.send_limit()
-    if not limit and perms != "dev":
+    if not limit: #and perms != "dev":
         # cmds.warn_user(user)
         return ('permission', 8, user_muted)
 
@@ -105,6 +105,8 @@ def run_filter_private(user, message, userid):
         # or a lock version that doesnt let you login at all
         # without dev help of email fix
         return ('permission', 12, user_muted)
+    
+    userobj = get_user_by_id(userid)
 
     if user_muted not in [0, 3] and perms != 'dev':
         return ('permission', user_muted)
@@ -126,6 +128,11 @@ def run_filter_private(user, message, userid):
 
 
     final_str = ('msg' ,compile_message(markdown(message), profile_picture, user, role), user_muted)
+    
+    limit = userobj.send_limit()
+    if not limit: #and perms != "dev":
+        # cmds.warn_user(user)
+        return ('permission', 8, user_muted)
 
     return final_str
 
@@ -349,7 +356,7 @@ def failed_message(result, roomid):
         (7):
         "This chat room id does not exist.",
         (8):
-        "You are not allowed to send more than 15 messages in a row. (Warning)",
+        "You are not allowed to send more than 15 messages in a row. You have been muted for 5 minutes(Warning)",
         (9):
         "You must verify your account before you can use this command.",
         (10):
