@@ -107,20 +107,16 @@ class User:
 
     
     def unique_online_list(self, userid, location, sid):
-        # socketid = request.sid
-        username_list = []
         icons = {'settings': '⚙️', 'chat': ''}
-        # the blank str is needed here, as that is what it is in the db
-        # for a user that has no special perms
         icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️", "": ""}
         database.set_online(userid, False)
 
+        online_users = set()
         for key in database.find_online():
-            user_info = key["displayName"]
+            username = key["displayName"]
             icon = icons.get(location)
             user_icon = icon_perm.get(key['SPermission'])
-            user_info = (f"{icon} {user_icon}", user_info
-                        )  # f"{icon} {user_icon}{user_info}"
-            username_list.append(user_info)
+            online_users.add((f"{icon} {user_icon}", username))
 
+        username_list = list(online_users)
         emit("online", username_list, to=sid)

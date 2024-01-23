@@ -16,11 +16,6 @@ socket.on("pingTime", (time, ID) => {
     socket.emit('pingtest', time, ID);
 });
 
-
-socket.on("force_username", () => {
-    socket.emit("username", getCookie("Userid"), 'chat');
-});
-
 socket.on("force_room_update", (_statement) => {
     userid = getCookie("Userid")
     socket.emit("get_rooms", userid);

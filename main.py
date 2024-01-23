@@ -644,13 +644,13 @@ def online_refresh():
     """Background task for online list"""
     while True:
         database.clear_online()
-        socketio.emit("force_username", ("", None))
-        time.sleep(10)  # this is using a socketio refresh
+        socketio.emit("force_username", ("", None), namespace='/')
+        socketio.sleep(5)  # this is using a socketio refresh
 
 
 if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
     setup_func()
-    # socketio.start_background_task(online_refresh)
+    socketio.start_background_task(online_refresh)
     socketio.run(app, host="0.0.0.0", debug=True, port=5000)
