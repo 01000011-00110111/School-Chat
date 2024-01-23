@@ -89,7 +89,7 @@ class User:
         difference = self.last_message - datetime.now()
         print(difference)
         print(difference.totalseconds())
-        if self.limit <= 15 and difference.total_seconds() <= 5:
+        if self.limit <= 15 and difference.seconds < 5:
             self.limit += 1
             self.last_message = datetime.now()
             return True
