@@ -39,7 +39,7 @@ import accounting
 import database
 import word_lists
 import uploading
-from user import User, add_user_class, login_manager
+from user import User, add_user_class, get_user_by_id, login_manager
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
@@ -415,23 +415,9 @@ def customize_accounts() -> ResponseReturnValue:
 @socketio.on('username')
 def handle_connect(userid: str, location):
     """Will be used later for online users."""
-    # socketid = request.sid
-    username_list = []
-    icons = {'settings': '⚙️', 'chat': ''}
-    # the blank str is needed here, as that is what it is in the db
-    # for a user that has no special perms
-    icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️", "": ""}
-    database.set_online(userid, False)
-
-    for key in database.find_online():
-        user_info = key["displayName"]
-        icon = icons.get(location)
-        user_icon = icon_perm.get(key['SPermission'])
-        user_info = (f"{icon} {user_icon}", user_info
-                     )  # f"{icon} {user_icon}{user_info}"
-        username_list.append(user_info)
-
-    emit("online", username_list, broadcast=True)
+    sid = request.sid
+    user = get_user_by_id(userid)
+    user.unique_online_list(userid, location, sid)
 
 
 @socketio.on('disconnect')

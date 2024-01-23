@@ -1,9 +1,11 @@
 """user.py: User class for the chat app"""
 import hashlib
-import database
 from datetime import datetime, timedelta
 
-from flask_login import LoginManager, current_user
+from flask_login import LoginManager
+from flask_socketio import emit
+
+import database
 
 Users = {}
 
@@ -15,8 +17,6 @@ def get_user_by_id(userid):
 
 
 def add_user_class(username, userid):
-    if Users[userid] is not None:
-        return Users[userid]
     user_class = User(username)
     Users.update({userid: user_class})
     return user_class
@@ -105,3 +105,22 @@ class User:
             return True
         return False
 
+    
+    def unique_online_list(self, userid, location, sid):
+        # socketid = request.sid
+        username_list = []
+        icons = {'settings': '⚙️', 'chat': ''}
+        # the blank str is needed here, as that is what it is in the db
+        # for a user that has no special perms
+        icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️", "": ""}
+        database.set_online(userid, False)
+
+        for key in database.find_online():
+            user_info = key["displayName"]
+            icon = icons.get(location)
+            user_icon = icon_perm.get(key['SPermission'])
+            user_info = (f"{icon} {user_icon}", user_info
+                        )  # f"{icon} {user_icon}{user_info}"
+            username_list.append(user_info)
+
+        emit("online", username_list, to=sid)
