@@ -10,10 +10,11 @@ def get_messages(sender, receiver):
     chat = database.find_private_messages(userlist, sender)
     # database.update_private_messages(userlist, chat['pmid'])
     # print(chat)
+
     if chat is None:
         code = generate_unique_code(12)
-        database.create_private_chat([sender, receiver], code)
-        chat = database.find_private_messages([sender, receiver])
+        database.create_private_chat(userlist, code)
+        chat = database.find_private_messages(userlist, sender)
 
     return chat
 

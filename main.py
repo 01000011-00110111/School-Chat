@@ -555,6 +555,7 @@ def connect(roomid):
         # ah yes the best kind of error
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
+        return
     # don't need to let the client know the mongodb id
     # del room['_id']
     # print(room)
