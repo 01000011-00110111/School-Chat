@@ -348,7 +348,7 @@ def customize_accounts() -> ResponseReturnValue:
     }
     # print(theme)
     old_path = user["profile"]
-    print()
+    # print()
     profile_location = uploading.upload_file(file, old_path) if file.filename != '' else \
     old_path
     if theme is None:
@@ -639,5 +639,4 @@ if __name__ == "__main__":
     # o.start()
     setup_func()
     socketio.start_background_task(online_refresh)
-    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
-
+    socketio.run(app, host="0.0.0.0", port=5000)

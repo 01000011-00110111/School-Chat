@@ -2,7 +2,7 @@
 import hashlib
 from datetime import datetime, timedelta
 
-from flask_login import LoginManager
+from flask_login import LoginManager, login_user
 from flask_socketio import emit
 
 import database
@@ -13,7 +13,8 @@ login_manager = LoginManager()
 
 
 def get_user_by_id(userid):
-    return Users.get(userid, None)
+    user = Users.get(userid, None)
+    return user
 
 
 def add_user_class(username, status, perm, displayName, userid):
@@ -47,7 +48,7 @@ class User:
         # this would only be used if we needed to check 2fa or something like that.
         return True
 
-    @staticmethod
+    @staticmethodpri
     def is_active():
         """Check if the user's session is recent."""
         # we could implement some kind of token expire here I think

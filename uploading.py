@@ -29,7 +29,7 @@ def rename_file(file_path):
 
 def upload_file(file, old):
     old_file = old.lstrip('/')
-    print(old, ":", file)
+    # print(old, ":", file)
     if not allowed_file(file.filename):
         return 0
     replace_old_file(old)

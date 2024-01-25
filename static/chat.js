@@ -17,7 +17,6 @@ socket.on("pingTime", (time, ID) => {
 });
 
 socket.on("force_username", () => {
-    console.log('Working!')
     socket.emit("username", getCookie("Userid"), 'chat');
 });
 

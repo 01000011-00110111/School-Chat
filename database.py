@@ -63,7 +63,7 @@ def set_online(userid, force):
     #     "socketid": socketid,
     #     "location": location
     # })
-    print(userid)
+    # print(userid)
     if not force and ID.find_one({'userId': userid
                                   })['status'] != 'offline-locked':
         ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
