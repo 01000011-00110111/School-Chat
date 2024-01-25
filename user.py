@@ -22,13 +22,8 @@ def add_user_class(username, status, perm, displayName, userid):
     Users.update({userid: user_class})
     return user_class
 
-
-def get_user_by_id(userid):
-    obj = Users[userid] if userid in Users.keys() else None
-    if obj is None:
-        username = database.find_account({"userId": userid}, 'id')['username']
-        obj = add_user_class(username['username'], userid)
-    return obj 
+def delete_user(userid):
+    Users.remove(userid)
 
 
 class User:

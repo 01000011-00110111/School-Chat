@@ -44,7 +44,7 @@ import private
 import uploading
 import word_lists
 from commands.other import end_ping, format_system_msg
-from user import User, add_user_class, get_user_by_id, login_manager
+from user import User, add_user_class, delete_user, get_user_by_id, login_manager
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
@@ -138,6 +138,7 @@ def specific_private_page(private_chat) -> ResponseReturnValue:
 def logout():
     """Log out the current user"""
     logout_user()
+    delete_user(request.cookies.get("Userid"))
     return flask.redirect(flask.url_for('login_page'))
 
 
