@@ -134,7 +134,7 @@ class User:
         for key in Users.values():
             if key.status == 'offline-locked':
                 continue
-            unread = database.get_unread(format_userlist, key.uuid)
+            unread = database.get_unread(self.uuid, key.uuid)
             icon = icons.get(location)
             user_icon = icon_perm.get(key.perm)
             unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
