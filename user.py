@@ -131,6 +131,8 @@ class User:
 
         online_users = set()
         for key in Users.values():
+            if key.status == 'offline-locked':
+                continue
             icon = icons.get(location)
             user_icon = icon_perm.get(key.perm)
             online_users.add((f"{icon} {user_icon}", key.displayName))

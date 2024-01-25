@@ -44,7 +44,7 @@ import private
 import uploading
 import word_lists
 from commands.other import end_ping, format_system_msg
-from user import User, add_user_class, delete_user, get_user_by_id, login_manager
+from user import Users, User, add_user_class, delete_user, get_user_by_id, login_manager
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
@@ -412,6 +412,8 @@ def customize_accounts() -> ResponseReturnValue:
 def handle_connect(userid: str, location):
     """Will be used later for online users."""
     sid = request.sid
+    for user in Users:
+        user.status = 'offline' if user.status != 'offline-locked' else 'offline-locked'
     user = get_user_by_id(userid)
     if user is not None:
         user.unique_online_list(userid, location, sid)
