@@ -7,7 +7,8 @@ import database
 def get_messages(sender, receiver):
     """gets the chats with 2 users."""
     userlist = sorted([sender, receiver], key=lambda x: (not x[0].isdigit(), x[0].lower()))
-    chat = database.find_private_messages(userlist)
+    chat = database.find_private_messages(userlist, sender)
+    # database.update_private_messages(userlist, chat['pmid'])
     # print(chat)
     if chat is None:
         code = generate_unique_code(12)
