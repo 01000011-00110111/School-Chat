@@ -423,8 +423,8 @@ def handle_connect(userid: str, location):
 def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
     try:
-        database.set_offline(request.cookies.get('Userid'), False)
-        emit("force_username", broadcast=True)
+        database.set_offline(request.cookies.get('Userid'))
+        emit("force_username", ("", None), broadcast=True)
     except TypeError:
         pass
 

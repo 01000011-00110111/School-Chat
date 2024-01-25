@@ -557,7 +557,7 @@ def find_private_messages(userlist, sender):
     """find the chat with 2 users"""
     pm_id = Private.find_one({"userIds": userlist})
     pm_id['unread'][sender] = 0
-    pm_id = Private.update_one({"userIds": userlist}, {'$push': {"unread": pm_id['unread']}})
+    pm_id = Private.update_one({"userIds": userlist}, {'$set': {"unread": pm_id['unread']}})
     return pm_id
 
 def send_private_message(message, pmid, userid):
@@ -568,8 +568,8 @@ def send_private_message(message, pmid, userid):
     Private.update_one({"pmid": pmid},
                 {'$push': {
                     "messages": message,
-                    "unread": unread
                 }})
+    Private.update_one({"pmid": pmid}, {'$set': {"unread": unread}})
     
     
 def clear_priv_chat(pmid, message):
