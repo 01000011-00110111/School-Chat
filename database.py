@@ -577,12 +577,12 @@ def clear_priv_chat(pmid, message):
 
 def create_private_chat(userlist, code):
     """creates a private chat with 2 users"""
-    i = userlist.split(',')
+    # i = userlist.split(',')
     data = {
         "userIds": userlist,
         "messages": ['Welcome to private chat beta2 with this slightly better weelocme message'],
         "pmid": code,
-        "unread": {i[0]: 0, i[1]: 0}
+        "unread": {userlist[0]: 0, userlist[1]: 0}
     }
     Private.insert_one(data)
 
