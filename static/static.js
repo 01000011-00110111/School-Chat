@@ -21,10 +21,6 @@ socket.on("online", (db) => {
     onlineDiv.innerHTML = final_online;
 });
 
-socket.on("force_username", () => {
-    socket.emit("username", getCookie("Userid"), 'chat');
-});
-
 // it returns from the dead!
 function getCookie(name) {
     const value = `; ${document.cookie}`;

@@ -165,9 +165,17 @@ def find_login_data(value, login):
             "as": "customization"
         }
     }, {
+        "$lookup": {
+            "from": "Permission",
+            "localField": "userId",
+            "foreignField": "userId",
+            "as": "permissions"
+        }
+    }, {
         "$project": {
             "_id": 0,
             "userId": "$userId",
+            "status": "$status",
             "username": "$username",
             "password": "$password",
             "email": "$email",
@@ -192,6 +200,9 @@ def find_login_data(value, login):
             "theme": {
                 "$arrayElemAt": ["$customization.theme", 0]
             },
+            "SPermission": {
+                "$arrayElemAt": ["$permissions.SPermission", 0]
+            }
         }
     }]
     match = [{"$match": {"username": value}}] if not login else \
@@ -292,7 +303,6 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
     customization_data = {
         "userId": userid,
         "role": SRole,
-        "userId": userid,
         "profile": "",
         "theme": "dark",
         "displayName": SDisplayname,

@@ -13,11 +13,12 @@ login_manager = LoginManager()
 
 
 def get_user_by_id(userid):
-    return Users[userid]
+    return Users.get(userid, None)
 
 
-def add_user_class(username, userid):
-    user_class = User(username)
+def add_user_class(username, status, perm, displayName, userid):
+    user_class = User(username, status, perm, displayName, userid)
+    database.set_online(userid, False)
     Users.update({userid: user_class})
     return user_class
 
@@ -25,9 +26,13 @@ def add_user_class(username, userid):
 class User:
     """Represents a logged in user."""
 
-    def __init__(self, username):
+    def __init__(self, username, status, perm, displayName, uuid):
         """Initialize the user."""
         self.username = username
+        self.displayName = displayName
+        self.perm = perm
+        self.uuid = uuid
+        self.status = status
         self.limit = 0
         self.pause = False
         self.last_message = datetime.now()
@@ -72,9 +77,11 @@ class User:
     def load_user(username):
         """Load the user into flask-login."""
         u = database.find_account({'username': username}, 'id')
+        obj = Users.get(u['userId'], None)
         if not u:
             return None
-        return User(username=u['username'])
+        # add_user_class(obj, u["userId"])
+        return obj
 
     def send_limit(self):
         difference = self.last_message - datetime.now()
@@ -109,14 +116,15 @@ class User:
     def unique_online_list(self, userid, location, sid):
         icons = {'settings': '⚙️', 'chat': ''}
         icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️", "": ""}
-        database.set_online(userid, False)
+        # database.set_online(userid, False)
+            
 
         online_users = set()
-        for key in database.find_online():
-            username = key["displayName"]
+        for key in Users.values():
             icon = icons.get(location)
-            user_icon = icon_perm.get(key['SPermission'])
-            online_users.add((f"{icon} {user_icon}", username))
+            user_icon = icon_perm.get(key.perm)
+            online_users.add((f"{icon} {user_icon}", key.displayName))
 
         username_list = list(online_users)
         emit("online", username_list, to=sid)
+        

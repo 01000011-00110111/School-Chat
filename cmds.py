@@ -41,7 +41,6 @@ def find_command(**kwargs):
         'offline': online.appear_offline,
         'online': online.appear_online,
         'ping': debug.ping,
-        'create': room.create_chat,
     }
     command = kwargs['commands']['v0']
     perm = permission(kwargs['user'])

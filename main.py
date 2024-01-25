@@ -18,7 +18,8 @@
 # import hashlib
 import logging
 import os
-import time
+
+# import time
 # import uuid
 # from datetime import datetime, timedelta
 import flask
@@ -26,7 +27,6 @@ from flask import request
 from flask.typing import ResponseReturnValue
 from flask_apscheduler import APScheduler
 from flask_login import (
-    LoginManager,
     current_user,
     login_required,
     login_user,
@@ -36,9 +36,14 @@ from flask_socketio import SocketIO, emit
 
 # these are the files that do not import dbm
 import accounting
+import chat
 import database
-import word_lists
+import filtering
+import log
+import private
 import uploading
+import word_lists
+from commands.other import end_ping, format_system_msg
 from user import User, add_user_class, get_user_by_id, login_manager
 
 # from flask_limiter import Limiter
@@ -70,15 +75,6 @@ def setup_func():
         with open('backend/webserver.log', 'w'):
             pass
     database.setup_chatrooms()
-
-
-# whereas these files do import dbm, we need to not do this
-# import addons  # addons may, this really should be commented out as it is optional
-import chat
-import filtering
-import log
-from commands.other import end_ping, format_system_msg
-import private
 
 app = flask.Flask(__name__)
 app.secret_key = os.urandom(9001)  #ITS OVER 9000!!!!!!
@@ -172,8 +168,8 @@ def login_page() -> ResponseReturnValue:
         if User.check_username(
                 username, user["username"]) and User.check_password(
                     user['password'], password):
-            user_obj = add_user_class(username=user['username'],
-                                      userid=user['userId'])
+            user_obj = add_user_class(username, user["status"], user["SPermission"],
+                                      user["displayName"], user["userId"])
             login_user(user_obj)
             if next_page is None:
                 next_page = flask.url_for('chat_page')
@@ -333,10 +329,7 @@ def customize_accounts() -> ResponseReturnValue:
     roleC = request.form.get("role_color")
     userC = request.form.get("user_color")
     email = request.form.get("email")
-    try:
-        file = request.files['profile']
-    except KeyError:
-        file = 'no file'
+    file = request.files['profile']
     theme = request.form.get("theme")
     user = database.find_account_data(userid)
     return_list = {
@@ -352,8 +345,9 @@ def customize_accounts() -> ResponseReturnValue:
         "email": email
     }
     # print(theme)
-    old_path = request.cookies.get('Profile')
-    profile_location = uploading.upload_file(file, old_path) if file != 'no file' else \
+    old_path = user["profile"]
+    print()
+    profile_location = uploading.upload_file(file, old_path) if file.filename != '' else \
     old_path
     if theme is None:
         return flask.render_template("settings.html",
@@ -417,28 +411,18 @@ def handle_connect(userid: str, location):
     """Will be used later for online users."""
     sid = request.sid
     user = get_user_by_id(userid)
-    user.unique_online_list(userid, location, sid)
+    if user is not None:
+        user.unique_online_list(userid, location, sid)
 
 
 @socketio.on('disconnect')
 def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
     try:
-        database.set_offline(request.cookies.get('Userid'))
+        database.set_offline(request.cookies.get('Userid'), False)
         emit("force_username", broadcast=True)
     except TypeError:
         pass
-
-
-@socketio.on('username_msg')
-def handle_online(userid: str):
-    """Add username to currently online people list."""
-    # database.add_user(username, .sid)
-    database.set_online(userid, False)
-    username_list = []
-    for key in database.get_all_online():
-        username_list.append(key["username"])
-    emit("online", username_list, broadcast=True)
 
 
 @socketio.on("get_rooms")
@@ -643,8 +627,8 @@ def emit_on_startup():
 def online_refresh():
     """Background task for online list"""
     while True:
-        database.clear_online()
-        socketio.emit("force_username", ("", None), namespace='/')
+        # database.clear_online()
+        socketio.emit("force_username", ("", None))
         socketio.sleep(5)  # this is using a socketio refresh
 
 
