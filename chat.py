@@ -48,14 +48,14 @@ def add_message(message_text: str, roomid, permission) -> None:
     return ('room', 1)
 
 
-def add_private_message(message_text: str, pmid) -> None:
+def add_private_message(message_text: str, pmid, userid) -> None:
     """Handler for messages so they get logged."""
     # lines = len(room["messages"]) if roomid != "all" else 1
     # if (lines >= 250):
     #     reset_chat(message_text, False, roomid)
     # else:
     database.send_private_message(message_text,
-                        pmid) 
+                        pmid, userid) 
     #if roomid != 'all' else database.send_message_all(message_text, roomid), log.backup_log(message_text, roomid))
     return ('room', 1)
 

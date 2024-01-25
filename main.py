@@ -523,7 +523,7 @@ def handle_private_message(message, pmid, userid):
     user = database.find_account_data(userid)
     result = filtering.run_filter_private(user, message, userid)
     if result[0] == 'msg':
-        chat.add_private_message(result[1], pmid)
+        chat.add_private_message(result[1], pmid, userid)
         emit("message_chat", (result[1], pmid), broadcast=True)
         if "$sudo" in message and result[2] != 3:
             filtering.find_cmds(message, user, pmid)
@@ -637,4 +637,4 @@ if __name__ == "__main__":
     # o.start()
     setup_func()
     socketio.start_background_task(online_refresh)
-    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000)

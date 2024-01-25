@@ -23,6 +23,14 @@ def add_user_class(username, status, perm, displayName, userid):
     return user_class
 
 
+def get_user_by_id(userid):
+    obj = Users[userid] if userid in Users.keys() else None
+    if obj is None:
+        username = database.find_account({"userId": userid}, 'id')['username']
+        obj = add_user_class(username['username'], userid)
+    return obj 
+
+
 class User:
     """Represents a logged in user."""
 
@@ -84,8 +92,14 @@ class User:
         return obj
 
     def send_limit(self):
+        # print(self.limit)
+        # print(self.pause)
+        # priint(self.last_message)
+        # print(self.pause_time)
         difference = self.last_message - datetime.now()
-        if self.limit <= 15 and difference.total_seconds() <= 5:
+        # print(difference)
+        # print(difference.totalseconds())
+        if self.limit <= 15 and difference.seconds < 5:
             self.limit += 1
             self.last_message = datetime.now()
             return True
@@ -127,4 +141,3 @@ class User:
 
         username_list = list(online_users)
         emit("online", username_list, to=sid)
-        

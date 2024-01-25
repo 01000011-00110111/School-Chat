@@ -63,6 +63,7 @@ def set_online(userid, force):
     #     "socketid": socketid,
     #     "location": location
     # })
+    print(userid)
     if not force and ID.find_one({'userId': userid
                                   })['status'] != 'offline-locked':
         ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
@@ -87,7 +88,7 @@ def distinct_userids():
 
 def find_data(data, location):
     if location == 'id':
-        return ID.find(data)
+        return ID.find(data)    
     if location == 'perm':
         return Permission.find(data)
     if location == 'customization':
@@ -559,12 +560,14 @@ def find_private_messages(userlist):
 
 def send_private_message(message, pmid, userid):
     """sends the message to the private chat room"""
-    unread = Private.find_one({"pmid": pmid})['unread']
-    unread[userid] += 1
+    unread = Private.find_one({"pmid": pmid})#['unread']
+    # if userid is not None:
+        # unread[userid] += 1
+    #later i might make better but there fixed
     Private.update_one({"pmid": pmid},
                 {'$push': {
                     "messages": message,
-                    "unread": unread
+                    # "unread": unread
                 }})
     
     
