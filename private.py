@@ -6,7 +6,7 @@ import database
 
 def get_messages(sender, receiver):
     """gets the chats with 2 users."""
-    userlist = sorted([sender, receiver], key=lambda x: (not x[0].isdigit(), x[0].lower()))
+    userlist = format_userlist(sender, receiver)
     chat = database.find_private_messages(userlist, sender)
     # database.update_private_messages(userlist, chat['pmid'])
     # print(chat)
@@ -17,6 +17,10 @@ def get_messages(sender, receiver):
         chat = database.find_private_messages(userlist, sender)
 
     return chat
+
+
+def format_userlist(sender, receiver):
+    return sorted([sender, receiver], key=lambda x: (not x[0].isdigit(), x[0].lower()))
 
 def generate_unique_code(length):
     """Make a room code that doesen't exist yet."""

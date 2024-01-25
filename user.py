@@ -6,6 +6,7 @@ from flask_login import LoginManager, login_user
 from flask_socketio import emit
 
 import database
+from private import format_userlist
 
 Users = {}
 
@@ -133,9 +134,11 @@ class User:
         for key in Users.values():
             if key.status == 'offline-locked':
                 continue
+            unread = database.get_unread(format_userlist, key.uuid)
             icon = icons.get(location)
             user_icon = icon_perm.get(key.perm)
-            online_users.add((f"{icon} {user_icon}", key.displayName))
+            unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+            online_users.add((f"{unread_list}{icon} {user_icon}", key.displayName))
 
         username_list = list(online_users)
         emit("online", username_list, to=sid)

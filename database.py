@@ -553,6 +553,11 @@ def find_private(pmid):
     return pm_id
 
 
+def get_unread(list, uuid):
+    """find the chat with 2 users"""
+    return Private.find_one({"userlist": list})['unread'][uuid]
+
+
 def find_private_messages(userlist, sender):
     """find the chat with 2 users"""
     pm_id = Private.find_one({"userIds": userlist})
