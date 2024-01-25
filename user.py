@@ -23,7 +23,7 @@ def add_user_class(username, status, perm, displayName, userid):
     return user_class
 
 def delete_user(userid):
-    Users.remove(userid)
+    Users.pop(userid)
 
 
 class User:

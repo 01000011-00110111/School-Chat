@@ -137,8 +137,9 @@ def specific_private_page(private_chat) -> ResponseReturnValue:
 @login_required
 def logout():
     """Log out the current user"""
-    logout_user()
     delete_user(request.cookies.get("Userid"))
+    # emit("force_username", ("", None), brodcast=True)
+    logout_user()
     return flask.redirect(flask.url_for('login_page'))
 
 
@@ -638,4 +639,5 @@ if __name__ == "__main__":
     # o.start()
     setup_func()
     socketio.start_background_task(online_refresh)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
+
