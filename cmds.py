@@ -6,9 +6,8 @@ from datetime import datetime, timedelta
 
 from flask_socketio import emit
 
-from main import scheduler
-
-from commands import debug, moderation, online, room, other
+from commands import debug, moderation, online, other, room
+# from main import scheduler
 
 # consts
 troll_str = """
