@@ -48,7 +48,7 @@ class User:
         # this would only be used if we needed to check 2fa or something like that.
         return True
 
-    @staticmethodpri
+    @staticmethod
     def is_active():
         """Check if the user's session is recent."""
         # we could implement some kind of token expire here I think
