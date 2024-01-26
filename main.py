@@ -412,8 +412,8 @@ def customize_accounts() -> ResponseReturnValue:
 def handle_connect(userid: str, location):
     """Will be used later for online users."""
     sid = request.sid
-    for user in Users.values():
-        user.status = 'offline' if user.status != 'offline-locked' else 'offline-locked'
+    # for user in Users.values():
+        # user.status = 'offline' if user.status != 'offline-locked' else 'offline-locked'
     user = get_user_by_id(userid)
     if user is not None:
         user.unique_online_list(userid, location, sid)
