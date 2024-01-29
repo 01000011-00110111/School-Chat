@@ -573,7 +573,7 @@ def send_private_message(message, pmid, userid):
     """sends the message to the private chat room"""
     unread = Private.find_one({"pmid": pmid})
     dict = unread['userIds']
-    del dict[userid]
+    dict.remove(userid)
     reciver = dict[0]
     unread['unread'][reciver] += 1
     #later i might make better but there fixed
