@@ -135,7 +135,7 @@ class User:
         for key in Users.values():
             if key.status in ['offline-locked','offline']:
                 continue
-            unread = database.get_unread(format_userlist(self.uuid, key.uuid), key.uuid)
+            unread = database.get_unread(format_userlist(self.uuid, key.uuid), self.uuid)
             unread = 0 if key.uuid == self.uuid else unread
             icon = icons.get(location)
             user_icon = icon_perm.get(key.perm)
