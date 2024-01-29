@@ -581,7 +581,7 @@ def send_private_message(message, pmid, userid):
                 {'$push': {
                     "messages": message,
                 }})
-    Private.update_one({"pmid": pmid}, {'$set': {"unread": unread}})
+    Private.update_one({"pmid": pmid}, {'$set': {"unread": unread['unread']}})
     
     
 def clear_priv_chat(pmid, message):
