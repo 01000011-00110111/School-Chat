@@ -555,10 +555,10 @@ def find_private(pmid):
 
 def get_unread(list, uuid):
     """find the chat with 2 users"""
-    try:
-        return Private.find_one({"userIds": list})['unread'][uuid]
-    except KeyError:
-        return 0
+        chat = Private.find_one({"userIds": list})
+        if chat is None:
+            return 0
+        return chat['unread'][uuid]
         
 
 def find_private_messages(userlist, sender):
