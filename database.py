@@ -572,7 +572,7 @@ def find_private_messages(userlist, sender):
 def send_private_message(message, pmid, userid):
     """sends the message to the private chat room"""
     unread = Private.find_one({"pmid": pmid})
-    reciver = unread['userIds'].append(userid)[0]
+    reciver = unread['userIds'].pop(userid).values()
     unread['unread'][reciver] += 1
     #later i might make better but there fixed
     Private.update_one({"pmid": pmid},
