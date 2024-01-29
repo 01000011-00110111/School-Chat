@@ -564,8 +564,9 @@ def get_unread(list, uuid):
 def find_private_messages(userlist, sender):
     """find the chat with 2 users"""
     pm_id = Private.find_one({"userIds": userlist})
-    pm_id['unread'][sender] = 0
-    Private.update_one({"userIds": userlist}, {'$set': {"unread": pm_id['unread']}})
+    if pm_id is None:
+        pm_id['unread'][sender] = 0
+        Private.update_one({"userIds": userlist}, {'$set': {"unread": pm_id['unread']}})
     return pm_id
 
 def send_private_message(message, pmid, userid):
