@@ -36,15 +36,15 @@ from flask_socketio import SocketIO, emit
 
 # these are the files that do not import dbm
 import accounting
-import chat
 import database
 import filtering
 import log
 import private
 import uploading
 import word_lists
+from chat import Chat
 from commands.other import end_ping, format_system_msg
-from user import Users, User, add_user_class, delete_user, get_user_by_id, login_manager
+from user import User, Users, add_user_class, delete_user, get_user_by_id, login_manager
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
@@ -502,16 +502,15 @@ def handle_chat_message(message, roomid, userid):
     """New New chat message handling pipeline."""
     # print(roomid)
     # later I will check the if the username is the same as the one for the session somehow
-    room = database.get_room_data(roomid)
+    
+    room = Chat.create_or_get_chat(roomid)
+    
     # print(room)
     user = database.find_account_data(userid)
-    if room is None:
-        result = ("Permission", 6)  # well hello hi
-    else:
-        result = filtering.run_filter_chat(user, room, message, roomid, userid)
+    result = filtering.run_filter_chat(user, room, message, roomid, userid)
     if result[0] == 'msg':
         if room is not None:
-            chat.add_message(result[1], roomid, room)
+            room.add_message(result[1])
             emit("message_chat", (result[1], roomid), broadcast=True)
             # addons.message_addons(message, user, roomid, room)
             # above is not offical again, so commented out
@@ -553,9 +552,11 @@ def connect(roomid):
     """Switch rooms for the user"""
     socketid = request.sid
     try:
-        room = database.get_room_msg_data(
-            roomid)  # WHY ERROR YOU WORK NOW WORK
+        # room = database.get_room_msg_data(
+        #     roomid)  # WHY ERROR YOU WORK NOW WORK
         # ah yes the best kind of error
+        room = Chat.create_or_get_chat(roomid)
+        list = {"roomid": room.id, "name": room.name, "msg": room.messages}
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
         return
@@ -563,7 +564,7 @@ def connect(roomid):
     # del room['_id']
     # print(room)
 
-    emit("room_data", room, to=socketid, namespace='/')
+    emit("room_data", list, to=socketid, namespace='/')
 
 
 @socketio.on("private_connect")
@@ -638,6 +639,12 @@ def online_refresh():
         # database.clear_online()
         socketio.emit("force_username", ("", None))
         socketio.sleep(5)  # this is using a socketio refresh
+        
+@app.teardown_appcontext
+def teardown_request(exception=None):
+    """Run after each request."""
+    for chat_instance in Chat.chats.values():
+        database.update_chat(chat_instance) 
 
 
 if __name__ == "__main__":
@@ -645,4 +652,4 @@ if __name__ == "__main__":
     # o.start()
     setup_func()
     socketio.start_background_task(online_refresh)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)

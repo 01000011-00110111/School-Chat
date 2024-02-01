@@ -445,6 +445,12 @@ def get_room_data(roomid):
             "$project": {
                 "_id": 0,
                 "roomName": "$roomName",
+                "whitelisted": {
+                    "$arrayElemAt": ["$access.whitelisted", 0]
+                },
+                "blacklisted": {
+                    "$arrayElemAt": ["$access.blacklisted", 0]
+                },
                 "canSend": {
                     "$arrayElemAt": ["$access.canSend", 0]
                 },
@@ -489,14 +495,31 @@ def get_room_msg_data(roomid):
     return list(Rooms.aggregate(pipeline))[0]
 
 
+def get_messages(roomid):
+    return Messages.find_one({"roomid": roomid})["messages"]
+
+
+def update_chat(chat):
+    access_data = {
+        "whitelisted": chat.whitelisted,
+        "blacklisted": chat.blacklisted,
+        "canSend": chat.canSend,
+        "locked": chat.locked,
+    }
+
+    # Rooms.insert_one(room_data)
+    Access.update_one({"roomid": chat.id}, {"$set": access_data})
+    Messages.update_one({"roomid": chat.id}, {"$set": {"messages": chat.messages}})
+
+
 def update_whitelist(id, message):  #combine whitelist and blacklist
     """Adds the whitelisted users to the database"""
-    Access.update_one({"id": id}, {"$set": {"whitelisted": message}})
+    Access.update_one({"roomid": id}, {"$set": {"whitelisted": message}})
 
 
 def update_blacklist(id, message):
     """Adds the blacklisted users to the database"""
-    Access.update_one({"id": id}, {"$set": {"blacklisted": message}})
+    Access.update_one({"roomid": id}, {"$set": {"blacklisted": message}})
 
 
 def delete_room(data):
