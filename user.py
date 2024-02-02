@@ -134,8 +134,6 @@ class User:
         online_users = set()
         offline_users = set()
         for key in Users.values():
-            if key.status in ['offline-locked']:
-                continue
             unread = database.get_unread(format_userlist(self.uuid, key.uuid), self.uuid)
             unread = 0 if key.uuid == self.uuid else unread
             icon = icons.get(location)

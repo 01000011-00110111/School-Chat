@@ -14,15 +14,13 @@ socket.on("online", (onlinels, offlinels) => {
     
     for (onlineUser of onlinels) {
         online = `${online}<button id="online_buttons" onclick="openuserinfo('${onlineUser[1]}')">${onlineUser[0]}${onlineUser[1]}</button><br>`
-        // online = online + '<button id="online_buttons" onclick="openuserinfo(\'' + onlineUser[1] + '\')">' + onlineUser[0] + onlineUser[1] + '</button>' + newline;
-        // online = online + `<a onclick="openuserinfo('${onlineUser}')">${onlineUser}</a><br>`;
     }
     for (offlineUser of offlinels) {
         offline = `${offline}<button id="online_buttons" onclick="openuserinfo('${offlineUser[1]}')">${offlineUser[0]}${offlineUser[1]}</button><br>`
     }
 
     
-    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online + "<br><br>" + offline;
+    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online + "<br><br>Offline:<br>" + offline;
     onlineDiv.innerHTML = final_online;
 });
 
