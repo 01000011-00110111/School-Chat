@@ -424,7 +424,7 @@ def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
     try:
         user = get_user_by_id(request.cookies.get('Userid'))
-        if user is not None:
+        if user is not None and user.status != "offline-locked":
             user.status = 'offline'
         database.set_offline(request.cookies.get('Userid'))
         emit("force_username", ("", None), broadcast=True)

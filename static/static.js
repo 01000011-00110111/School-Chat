@@ -5,19 +5,23 @@
 // define socketio connection
 const socket = io();
 
-socket.on("online", (db) => {
+socket.on("online", (online, offline) => {
     // let newline = "<br>"
     let online = "";
     let onlineDiv = document.getElementById("online_users");
-    let online_count = db.length;
+    let online_count = online.length;
     
-    for (onlineUser of db) {
+    for (onlineUser of online) {
         online = `${online}<button id="online_buttons" onclick="openuserinfo('${onlineUser[1]}')">${onlineUser[0]}${onlineUser[1]}</button><br>`
         // online = online + '<button id="online_buttons" onclick="openuserinfo(\'' + onlineUser[1] + '\')">' + onlineUser[0] + onlineUser[1] + '</button>' + newline;
         // online = online + `<a onclick="openuserinfo('${onlineUser}')">${onlineUser}</a><br>`;
     }
+    for (offlineUser of offline) {
+        offline = `${offline}<button id="online_buttons" onclick="openuserinfo('${offlineUser[1]}')">${offlineUser[0]}${offlineUser[1]}</button><br>`
+    }
+
     
-    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online;
+    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online + "<br><br>" + offline;
     onlineDiv.innerHTML = final_online;
 });
 

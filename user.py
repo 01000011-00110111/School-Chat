@@ -132,15 +132,20 @@ class User:
             self.status = "online"
 
         online_users = set()
+        offline_users = set()
         for key in Users.values():
-            if key.status in ['offline-locked','offline']:
+            if key.status in ['offline-locked']:
                 continue
             unread = database.get_unread(format_userlist(self.uuid, key.uuid), self.uuid)
             unread = 0 if key.uuid == self.uuid else unread
             icon = icons.get(location)
             user_icon = icon_perm.get(key.perm)
             unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
-            online_users.add((f"{unread_list}{icon} {user_icon}", key.displayName))
+            if key.status == "online":
+                online_users.add((f"{unread_list}{icon} {user_icon}", key.displayName))
+            else:
+                offline_users.add((f"{unread_list}{icon} {user_icon}", key.displayName))
 
-        username_list = list(online_users)
-        emit("online", username_list, to=sid)
+        online_list = list(online_users)
+        offline_list = list(offline_users)
+        emit("online", online_list, offline_list, to=sid)
