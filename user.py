@@ -148,4 +148,4 @@ class User:
 
         online_list = list(online_users)
         offline_list = list(offline_users)
-        emit("online", online_list, offline_list, to=sid)
+        emit("online", (online_list, offline_list), to=sid)

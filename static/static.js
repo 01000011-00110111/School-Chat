@@ -5,18 +5,19 @@
 // define socketio connection
 const socket = io();
 
-socket.on("online", (online, offline) => {
+socket.on("online", (onlinels, offlinels) => {
     // let newline = "<br>"
     let online = "";
+    let offline = '';
     let onlineDiv = document.getElementById("online_users");
     let online_count = online.length;
     
-    for (onlineUser of online) {
+    for (onlineUser of onlinels) {
         online = `${online}<button id="online_buttons" onclick="openuserinfo('${onlineUser[1]}')">${onlineUser[0]}${onlineUser[1]}</button><br>`
         // online = online + '<button id="online_buttons" onclick="openuserinfo(\'' + onlineUser[1] + '\')">' + onlineUser[0] + onlineUser[1] + '</button>' + newline;
         // online = online + `<a onclick="openuserinfo('${onlineUser}')">${onlineUser}</a><br>`;
     }
-    for (offlineUser of offline) {
+    for (offlineUser of offlinels) {
         offline = `${offline}<button id="online_buttons" onclick="openuserinfo('${offlineUser[1]}')">${offlineUser[0]}${offlineUser[1]}</button><br>`
     }
 
