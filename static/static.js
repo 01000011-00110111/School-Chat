@@ -10,7 +10,8 @@ socket.on("online", (onlinels, offlinels) => {
     let online = "";
     let offline = '';
     let onlineDiv = document.getElementById("online_users");
-    let online_count = online.length;
+    let online_count = onlinels.length;
+    let offline_count = offlinels.length;
     
     for (onlineUser of onlinels) {
         online = `${online}<button id="online_buttons" onclick="openuserinfo('${onlineUser[1]}')">${onlineUser[0]}${onlineUser[1]}</button><br>`
@@ -20,7 +21,7 @@ socket.on("online", (onlinels, offlinels) => {
     }
 
     
-    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online + "<br><br>Offline:<br>" + offline;
+    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online + "<br><br><font size=5%>Offline: " + offline_count + "</font><br>" + offline;
     onlineDiv.innerHTML = final_online;
 });
 
