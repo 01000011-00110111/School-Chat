@@ -17,6 +17,15 @@ def check_if_mod(user):
     return 1 if user['SPermission'] == 'modpass' else 0
 
 
+def song(**kwargs):
+    """Send a song to the chat."""
+    roomid = kwargs['roomid']
+    song = kwargs['command']
+    msg = format_song_msg(f"Playing {song} in {roomid}")
+    chat.add_message(msg, roomid, 'true')
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+
+
 def help(**kwargs):
     """sends a message with a file full of commands that the user can use."""
     roomid = kwargs['roomid']
@@ -64,7 +73,12 @@ def help(**kwargs):
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
     return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
-    
+
+
+def format_song_msg(msg):
+    """Format a message [SONG] would send."""
+    return f'<font color="#0E9556">[SONG]: {msg}</font>'
+
 
 def respond_command(result, roomid):
     """Tell the client that can't run this command for what reason."""
