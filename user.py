@@ -9,9 +9,15 @@ import database
 from private import format_userlist
 
 Users = {}
+inactive_users = []
 
 login_manager = LoginManager()
 
+
+for user in database.get_all_offline():
+    if user["userid"] not in Users:
+        inactive_users.append((user["userid"], user["displayName"], user["SPermission"]))
+        print(inactive_users)
 
 def get_user_by_id(userid):
     user = Users.get(userid, None)
@@ -22,6 +28,7 @@ def add_user_class(username, status, perm, displayName, userid):
     user_class = User(username, status, perm, displayName, userid)
     database.set_online(userid, False)
     Users.update({userid: user_class})
+    inactive_users.remove((userid, displayName, perm))
     return user_class
 
 def delete_user(userid):
@@ -125,7 +132,7 @@ class User:
 
     
     def unique_online_list(self, userid, location, sid):
-        icons = {'settings': '⚙️', 'chat': ''}
+        # icons = {'settings': '⚙️', 'chat': ''}
         icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️", "": ""}
         # database.set_online(userid, False)
         if self.status == "offline":
@@ -136,13 +143,24 @@ class User:
         for key in Users.values():
             unread = database.get_unread(format_userlist(self.uuid, key.uuid), self.uuid)
             unread = 0 if key.uuid == self.uuid else unread
-            icon = icons.get(location)
+            # icon = icons.get(location)
             user_icon = icon_perm.get(key.perm)
             unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
             if key.status == "online":
-                online_users.add((f"{unread_list}{icon} {user_icon}", key.displayName))
+                # online_users.add((f"{unread_list}{icon} {user_icon}", key.displayName))
+                online_users.add((f"{unread_list} {user_icon}", key.displayName))
             else:
-                offline_users.add((f"{unread_list}{icon} {user_icon}", key.displayName))
+                # offline_users.add((f"{unread_list}{icon} {user_icon}", key.displayName))
+                offline_users.add((f"{unread_list} {user_icon}", key.displayName))
+                
+        for user in inactive_users:
+            unread = database.get_unread(format_userlist(self.uuid, user[0]), self.uuid)
+            unread = 0 if user[0] == self.uuid else unread
+            # icon = icons.get(location)
+            user_icon = icon_perm.get(user[2])
+            unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+            # offline_users.add((f"{unread_list}{icon} {user_icon}", user[1]))
+            offline_users.add((f"{unread_list} {user_icon}", user[1]))
 
         online_list = list(online_users)
         offline_list = list(offline_users)

@@ -21,7 +21,7 @@ socket.on("online", (onlinels, offlinels) => {
     }
 
     
-    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online + "<br><br><font size=5%>Offline: " + offline_count + "</font><br>" + offline;
+    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online + "<br><br><font size=5%>Offline: " + offline_count + "</font><br><br>" + offline;
     onlineDiv.innerHTML = final_online;
 });
 

@@ -71,28 +71,19 @@ def set_online(userid, force):
         ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
 
 
-# new online code
-def find_online():
-    user_list = get_all_online()
-    for user in user_list:
-        if 'offline' in user["status"]:
-            user_list.remove(user)
-    return user_list
-
-
 # accounting
 
 def distinct_userids():
     return ID.distinct('userId')
 
 
-def find_data(data, location):
+def find_data(location):
     if location == 'id':
-        return ID.find(data)    
+        return ID.find()    
     if location == 'perm':
-        return Permission.find(data)
+        return Permission.find()
     if location == 'customization':
-        return Customization.find(data)
+        return Customization.find()
 
 
 def find_userid(user):
@@ -112,7 +103,7 @@ def find_account(data, location):
         return Customization.find_one(data)
 
 
-def get_all_online():
+def get_all_offline():
     pipeline = [
         {
             "$lookup": {
@@ -131,15 +122,9 @@ def get_all_online():
             }
         },
         {
-            "$match": {
-                "status": {
-                    "$ne": "offline"
-                }  # Exclude documents where status is "offline"
-            }
-        },
-        {
             "$project": {
                 "_id": 0,
+                "userid": "$userId",
                 "username": "$username",
                 "status": "$status",
                 "profile": {
