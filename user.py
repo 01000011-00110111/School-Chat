@@ -32,6 +32,8 @@ def add_user_class(username, status, perm, displayName, userid):
     return user_class
 
 def delete_user(userid):
+    u = Users[userid]
+    inactive_users.append((u.uuid, u.displayName, u.perm))
     Users.pop(userid)
 
 
