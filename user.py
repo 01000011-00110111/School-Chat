@@ -17,7 +17,6 @@ login_manager = LoginManager()
 for user in database.get_all_offline():
     if user["userid"] not in Users:
         inactive_users.append((user["userid"], user["displayName"], user["SPermission"]))
-        print(inactive_users)
 
 def get_user_by_id(userid):
     user = Users.get(userid, None)
