@@ -36,6 +36,7 @@ def find_command(**kwargs):
     # mod_commands = {}
     basic_commands = {
         'help': other.help,
+        'song': other.song,
         'refresh': online.refresh_online,
         'offline': online.appear_offline,
         'online': online.appear_online,
