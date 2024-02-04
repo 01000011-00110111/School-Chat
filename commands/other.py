@@ -21,7 +21,7 @@ def song(**kwargs):
     """Send a song to the chat."""
     roomid = kwargs['roomid']
     # song = kwargs['command']
-    msg = format_song_msg(' '.join(list(kwargs["command"].values())[1:]))
+    msg = format_song_msg(' '.join(list(kwargs["commands"].values())[1:]))
     chat.add_message(msg, roomid, 'true')
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
