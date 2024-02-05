@@ -160,9 +160,9 @@ def check_allowed_sending(room):
 
 def check_perms(user):
     """Checks if the user has specal perms else return as a user"""
-    if user['SPermission'] == 'Debugpass':
+    if 'Debugpass' in user['SPermission']:
         perms = 'dev'
-    elif user['SPermission'] == 'modpass':
+    elif 'modpass' in user['SPermission']:
         perms = 'mod'
     else:
         perms = 'user'

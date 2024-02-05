@@ -137,7 +137,7 @@ class User:
     
     def unique_online_list(self, userid, location, sid):
         # icons = {'settings': '⚙️', 'chat': ''}
-        icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️", "": ""}
+        icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️", 'adminpass': "⚒️", "": ""}
         # database.set_online(userid, False)
         if self.status == "offline":
             self.status = "online"
@@ -148,7 +148,7 @@ class User:
             unread = database.get_unread(format_userlist(self.uuid, key.uuid), self.uuid)
             unread = 0 if key.uuid == self.uuid else unread
             # icon = icons.get(location)
-            user_icon = icon_perm.get(key.perm)
+            user_icon = icon_perm.get(key.perm[0])
             unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
             if key.status == "online":
                 # online_users.add((f"{unread_list}{icon} {user_icon}", key.displayName))
@@ -161,7 +161,7 @@ class User:
             unread = database.get_unread(format_userlist(self.uuid, user[0]), self.uuid)
             unread = 0 if user[0] == self.uuid else unread
             # icon = icons.get(location)
-            user_icon = icon_perm.get(user[2])
+            user_icon = icon_perm.get(user[2][0])
             unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
             # offline_users.add((f"{unread_list}{icon} {user_icon}", user[1]))
             offline_users.add((f"{unread_list} {user_icon}", user[1]))

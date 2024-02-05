@@ -56,7 +56,7 @@ def create_chat_room(username, name, userinfo):
     possible_room = database.find_room({"generatedBy": username}, 'id')
     generated_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     
-    if possible_room is not None and userinfo["SPermission"] != "Debugpass":
+    if possible_room is not None and "Debugpass" not in userinfo["SPermission"]:
         log = f"Failed: Another Room Exists ({username} room creation) {generated_at}"
         response = (2, "chat")
     elif name == '':
@@ -87,7 +87,7 @@ def delete_chat_room(room_name, user):
             return ("reason", 3, "delete")
         response = delete_room(rooms["roomid"])
         logmessage = f"{username} deleted {room_name} at {date_str}"
-    elif user["SPermission"] == "Debugpass":
+    elif "Debugpass" in user["SPermission"]:
         if len(rooms["roomid"]) == 20:
             return ("reason", 2, "delete")
         response = delete_room(rooms["roomid"])

@@ -126,7 +126,20 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
 @login_required
 def admin_page() -> ResponseReturnValue:
     """Get the specific room in the uri."""
-    return flask.render_template('admin.html')
+    user = database.find_login_data(request.cookies.get('Userid'), True)
+    if "adminpass" in user['SPermission']:
+        return flask.render_template('admin.html')
+    return flask.redirect("chat.html")
+
+
+@app.route('/admin/<room_name>')
+@login_required
+def specific_admin_page(room_name) -> ResponseReturnValue:
+    """Get the specific room in the uri."""
+    # later we can set this up to get the specific room (with permssions)
+    # request.cookies.get('Userid')
+    print(room_name)
+    return flask.redirect(flask.url_for("admin_page"))
 
 
 @app.route('/Private/<private_chat>')
@@ -448,9 +461,10 @@ def get_rooms(userid):
     permission = user_name["locked"].split(' ')
     # print(room_access)
 
-    if user_name["SPermission"] == "Debugpass":
+    if "Debugpass" in user_name["SPermission"]:
         emit('roomsList', (room_access, 'dev'), namespace='/', to=request.sid)
-    elif user_name['SPermission'] == "modpass":
+        return
+    elif "modpass" in user_name['SPermission']:
         rooms_to_remove = []
         for r in room_access:
             if r['whitelisted'] == 'devonly':
@@ -460,6 +474,7 @@ def get_rooms(userid):
         for r in rooms_to_remove:
             room_access.remove(r)
         emit('roomsList', (room_access, 'mod'), namespace='/', to=request.sid)
+        return
     elif permission[0] == "locked":
         emit('roomsList', ([{
             'id': 'zxMhhAPfWOxuZylxwkES',

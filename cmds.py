@@ -71,8 +71,8 @@ def find_command(**kwargs):
 
 def permission(user):
     """get the users permission"""
-    return 'dev' if user['SPermission'] == 'Debugpass' else 'admin' \
-        if user['SPermission'] == 'modpass' else None
+    return 'dev' if 'Debugpass' in user['SPermission'] else 'admin' \
+        if ('adminpass', 'modpass') in user['SPermission'] else None
     # in the 1.4 update ill add room mods back
 
 
