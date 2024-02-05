@@ -27,13 +27,16 @@ def add_user_class(username, status, perm, displayName, userid):
     user_class = User(username, status, perm, displayName, userid)
     database.set_online(userid, False)
     Users.update({userid: user_class})
-    inactive_users.remove((userid, displayName, perm))
+    tupple = (userid, displayName, perm)
+    if tupple in inactive_users:
+        inactive_users.remove(tupple)
     return user_class
 
 def delete_user(userid):
     u = Users[userid]
     inactive_users.append((u.uuid, u.displayName, u.perm))
     Users.pop(userid)
+    u.kill()
 
 
 class User:

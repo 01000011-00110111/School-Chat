@@ -167,7 +167,7 @@ function sendMessage() {
 }
 
 
-setInterval(BTMLog, 3000)
+// setInterval(BTMLog, 3000)
 
 function renderChat(messages, ID) {
     // console.log(messages)
