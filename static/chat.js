@@ -30,9 +30,9 @@ socket.on("ping", ({ who, from, pfp, message, name, ID}) => {
     // room = window.sessionStorage.getItem("ID");
     // console.log(who, from, message);
     if (user_name === who) {
-        new Notification("You where pinged by:", { body: from + ` in ${name}: ` + message, icon: '/static/favicon.ico'});
+        new Notification("You were pinged by:", { body: from + ` in ${name}: ` + message, icon: pfp});
     } else if (who === "everyone") {// add a check to see if the user has access and if so then ping them    
-        new Notification("You where pinged by:", { body: from + ` in ${name}: ` + message, icon: '/static/favicon.ico'});
+        new Notification("You were pinged by:", { body: from + ` in ${name}: ` + message, icon: pfp});
     }
 });
 
