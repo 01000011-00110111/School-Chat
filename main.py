@@ -122,6 +122,12 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
     print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
 
+@app.route('/admin')
+@login_required
+def admin_page() -> ResponseReturnValue:
+    """Get the specific room in the uri."""
+    return flask.render_template('admin.html')
+
 
 @app.route('/Private/<private_chat>')
 @login_required
