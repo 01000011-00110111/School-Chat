@@ -129,7 +129,7 @@ def admin_page() -> ResponseReturnValue:
     user = database.find_login_data(request.cookies.get('Userid'), True)
     if "adminpass" in user['SPermission']:
         return flask.render_template('admin.html')
-    return flask.redirect("chat.html")
+    return flask.render_template("chat.html")
 
 
 @app.route('/admin/<room_name>')
