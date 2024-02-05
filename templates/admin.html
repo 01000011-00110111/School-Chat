@@ -1,9 +1,10 @@
 {% extends 'chat.html' %}
 {% block header %}
-<!-- Well hello there, this is a test.-->
 {{ super() }}
+<script src="/static/cmds.js"></script>
 {% endblock %}
 
 {% block panel %}
 <h2>You are an admin here!</h2>
+<button onClick="sendCmd('lines');" id="send">Send Lines</button>
 {% endblock %}

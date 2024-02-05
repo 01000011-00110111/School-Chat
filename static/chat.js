@@ -147,17 +147,21 @@ function openuserinfo(user) {
 //   window.scrollTo(0, chatDiv.scrollHeight);
 // }
 
-function sendMessage() {
+function getMessage() {
     let messageElement = document.getElementById("message");
+    let message = messageElement["value"];
+    messageElement["value"] = "";
+    sendMessage(message, false);
+}
+
+function sendMessage(message, hidden) {
     let user = getCookie('Username')
     let userid = getCookie('Userid')
-    let message = messageElement["value"];
     if (message === "") {
         return;
     }
-
+    // later i'll implement hiding the cmd
     let chatDiv = document.getElementById("chat");
-    messageElement["value"] = "";
     // this is needed, because this goes over socketio, not a normal http request
     private = window.sessionStorage.getItem('private')
     ID = window.sessionStorage.getItem("ID")
@@ -181,6 +185,6 @@ function renderChat(messages, ID) {
 
 function checkKey() {
     if (event.key === "Enter") {
-        sendMessage();
+        getMessage();
     }
 }
