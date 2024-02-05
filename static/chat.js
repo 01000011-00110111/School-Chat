@@ -92,7 +92,8 @@ socket.on("room_data", (data) => {
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
-    window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['name']}`);
+    let room_cat = window.location.href.split("/")[3];
+    window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/${room_cat}/${data['name']}`);
     roomname = document.getElementById("RoomDisplay").innerHTML = '/'+data['name'];
     document.title = `/${data['name']} - Chat`
     let chat = ""; 
@@ -113,7 +114,8 @@ socket.on("private_data", (data) => {
     // update the url when the room is changed.
     // window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['name']}`);
     // roomname = document.getElementById("RoomDisplay").innerHTML = '/'+data['name'];
-    window.history.replaceState({"pageTitle": `Private Chat`}, "", `/Private/${data['name']}`);
+    let room_cat = window.location.href.split("/")[3];
+    window.history.replaceState({"pageTitle": `Private Chat`}, "", `/${room_cat}/Private/${data['name']}`);
     roomname = document.getElementById("RoomDisplay").innerHTML = 'Private Chat';
     document.title = `/Private`
     let chat = ""; 
