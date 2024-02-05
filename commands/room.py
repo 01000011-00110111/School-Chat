@@ -17,7 +17,7 @@ def reset_chat_user(**kwargs):
         # other.respond_command((), roomid, None)
 
 
-def create_chat(**kwargs):
+def create_room(**kwargs):
     user = kwargs['user']
     name = kwargs['commands']["v1"]
     roomid = kwargs['roomid']
