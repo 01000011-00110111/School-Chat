@@ -142,12 +142,13 @@ def specific_admin_page(room_name) -> ResponseReturnValue:
     return flask.redirect(flask.url_for("admin_page"))
 
 
-@app.route('/Private/<private_chat>')
+@app.route('/<prefix>/Private/<private_chat>')
 @login_required
-def specific_private_page(private_chat) -> ResponseReturnValue:
+def specific_private_page(prefix, private_chat) -> ResponseReturnValue:
     """Get the specific private chat in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
+    print(prefix)
     print(private_chat)
     return flask.redirect(flask.url_for("chat_page"))
 
