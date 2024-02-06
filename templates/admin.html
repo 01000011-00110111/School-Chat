@@ -4,7 +4,20 @@
 <script src="/static/cmds.js"></script>
 {% endblock %}
 
-{% block panel %}
+{% block panel_button %}
 <h2>You are an admin here!</h2>
-<button onClick="sendCmd('lines');" id="send">Send Lines</button>
+<button onclick="open_admin();">Temp text</button>
+{% endblock %}
+
+{% block panel_menu %}
+<div id="admin_menu">
+    <a href="javascript:void(0)" onclick="close_admin()" style="color: rgb(129, 129, 129);">×</a>
+    <button onClick="sendCmd('lines');" id="send">Send Lines</button><br>
+    <button onClick="sendCmd('reset');" id="send">Reset Chat</button><br>
+    <button onClick="sendCmd('lock');" id="send">Lock Chat</button><br>
+    <button onClick="sendCmd('unlock');" id="send">Unlock Chat</button><br>
+    <button onClick="sendCmd('globalock (confirm)');" id="send">globalock</button><br>
+    <button onClick="sendCmd('cmd_logs');" id="send">command logs</button><br>
+   <p>Send as admin.</p> <input type="checkbox" id="send_as_admin" checked>
+</div>
 {% endblock %}
