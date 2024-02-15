@@ -108,6 +108,28 @@ def E_count_bacup(**kwargs):
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
+def most_used_room(**kwargs):
+    roomid = kwargs['roomid']
+    file = open('backend/Chat-backup.txt', "r") 
+    d = dict() 
+    for line in file: 
+        # Remove the leading spaces and newline character 
+        line = line.strip() 
+        
+        words = line.split(" ") 
+
+        for word in words: 
+            # Check if the word is already in dictionary 
+            if word in d: 
+                d[word] = d[word] + 1
+            else: 
+                d[word] = 1
+
+        most = max(d, key=d.get)
+        msg = format_system_msg(f"current e count: {most}")
+        emit("message_chat", (msg, roomid), broadcast=True, namespace="/") 
+
+
 def end_ping(start, ID):
     """The end of the ping comamnd."""
     end = time.time() * 1000.0

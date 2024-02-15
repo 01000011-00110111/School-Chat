@@ -43,6 +43,7 @@ def find_command(**kwargs):
         'ping': debug.ping,
         'ecount': other.E_count_bacup,
         'create': room.create_room,
+        'popular': other.most_used_room,
     }
     command = kwargs['commands']['v0']
     perm = permission(kwargs['user'])
