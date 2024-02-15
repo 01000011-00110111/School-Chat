@@ -24,7 +24,6 @@ def find_command(**kwargs):
         'pstats': debug.pstats,
         'lines': debug.line_count,
         'rc': room.reset_chat_user,
-        'ecount': other.E_count_bacup,
     }
     admin_commands = {
         'cmd_logs': debug.send_cmd_logs,
@@ -42,6 +41,7 @@ def find_command(**kwargs):
         'offline': online.appear_offline,
         'online': online.appear_online,
         'ping': debug.ping,
+        'ecount': other.E_count_bacup,
         'create': room.create_room,
     }
     command = kwargs['commands']['v0']
