@@ -97,6 +97,17 @@ def respond_command(result, roomid):
     response_str = format_system_msg(response_strings.get(result))
     emit("message_chat", (response_str, roomid), namespace="/")
 
+
+def E_count_bacup(**kwargs):
+    """E_count_bacup"""
+    roomid = kwargs['roomid']
+    file = open('backend/Chat-backup.txt', 'r')
+    text = file.read()
+    text.count('e')
+    msg = format_system_msg("current e count: " + str(text.count('e'))")
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+
+
 def end_ping(start, ID):
     """The end of the ping comamnd."""
     end = time.time() * 1000.0

@@ -24,6 +24,7 @@ def find_command(**kwargs):
         'pstats': debug.pstats,
         'lines': debug.line_count,
         'rc': room.reset_chat_user,
+        'ecount': other.E_count_bacup,
     }
     admin_commands = {
         'cmd_logs': debug.send_cmd_logs,
