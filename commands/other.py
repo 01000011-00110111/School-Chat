@@ -1,6 +1,7 @@
 """other.py: functions that need to be imported in multiple places."""
 
 import time
+import re
 
 from flask_socketio import emit
 
@@ -103,32 +104,24 @@ def E_count_bacup(**kwargs):
     roomid = kwargs['roomid']
     file = open('backend/Chat-backup.txt', 'r')
     text = file.read()
-    text.count('e')
-    msg = format_system_msg("Current e count: " + str(text.count('e')))
+    count = len(re.findall(r'\be\b', text))
+    msg = format_system_msg("Current e count: " + str(count))
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
 def most_used_room(**kwargs):
     roomid = kwargs['roomid']
-    file = open('backend/Chat-backup.txt', "r") 
-    d = dict() 
-    for line in file: 
-        # Remove the leading spaces and newline character 
-        line = line.strip() 
-        
-        words = line.split(" ") 
+    with open('backend/Chat-backup.txt', "r") as file:
+        content = file.read()
+        words = content.split()
+    
+    count_dict = {}
+    for word in words:
+        count_dict[word] = count_dict.get(word, 0) + 1
 
-        for word in words: 
-            # Check if the word is already in dictionary 
-            if word in d: 
-                d[word] = d[word] + 1
-            else: 
-                d[word] = 1
-
-    most = max(d, key=d.get)
-    msg = format_system_msg(f"Current most used room: {most}")
+    most_used_word = max(count_dict, key=count_dict.get, default=None)
+    msg = format_system_msg(f"Current most used word in chat: {most_used_word}")
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
-
 
 def end_ping(start, ID):
     """The end of the ping comamnd."""
