@@ -164,4 +164,28 @@ function openTab(evt, tabName) {
   }
   
   // Opens the defualt tab
-  openTab(event, "My-Profile")
+  openTab(event, "My-Profile");
+
+  function enableNotifications() {
+    // Checks if the user's browser supports notifications
+    if (!"Notification" in window) {
+      
+      alert("Your browser does not support desktop notifications.");
+  
+      // It checks if the user already has notifications enabled for this site
+    } else if (Notification.permission === "granted") {
+      
+      const notification = new Notification("Notifications Enabled");
+  
+      // If user has notifications disbaled then it asks for permission to enable them
+    } else if (Notification.permission !== "denied") {
+      
+      Notification.requestPermission().then((permission) => {  
+        if (permission === "granted") {
+          
+          const notification = new Notification("Notifications Enabled");
+          
+        }
+      });
+    }
+  }
