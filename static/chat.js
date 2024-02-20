@@ -160,12 +160,16 @@ function sendMessage(message, hidden) {
     if (message === "") {
         return;
     }
+    if (document.getElementsById("send_as_admin").checked === true) {
+        message = "$sudo admin " + message;
+        hidden = true
+    }
     // later i'll implement hiding the cmd
     let chatDiv = document.getElementById("chat");
     // this is needed, because this goes over socketio, not a normal http request
     private = window.sessionStorage.getItem('private')
     ID = window.sessionStorage.getItem("ID")
-    socket.emit('message_chat', user, message, ID, userid, private);
+    socket.emit('message_chat', user, message, ID, userid, private, hidden);
 
     window.scrollTo(0, chatDiv.scrollHeight);
 }
