@@ -26,6 +26,15 @@ def song(**kwargs):
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
+def send_as_admin(**kwargs):
+    """Send as admin to the chat."""
+    roomid = kwargs['roomid']
+    # song = kwargs['command']
+    msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
+    chat.add_message(msg, roomid, 'true')
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+
+
 def help(**kwargs):
     """sends a message with a file full of commands that the user can use."""
     roomid = kwargs['roomid']
@@ -80,12 +89,18 @@ def format_song_msg(msg):
     return f'<font color="#0E9556">[SONG]: {msg}</font>'
 
 
+def format_admin_msg(msg):
+    """Format a message [SONG] would send."""
+    return f'<font color="#00FF00">[ADMIN]: {msg}</font>'
+
+
 def respond_command(result, roomid):
     """Tell the client that can't run this command for what reason."""
 
     response_strings = {
         (0, 'dev'): "Hey, you're not a dev!!!",
         (0, 'admin'): "Hey, acting like an admin I see. Too bad you're not one.",
+        (0, 'mod'): "Hey, Don't be shy call for help when you need it. Your not a mod.",
         (0, None): "Try '$sudo help' to see what commands are available to you.",
         (0, 'priv'): "Sorry that command is not available wile in private chats.",
         (0, 'chat'): "chat room made(this is temp)",
