@@ -106,22 +106,28 @@ def E_count_bacup(**kwargs):
     text = file.read()
     count = len(re.findall(r'\be\b', text))
     msg = format_system_msg("Current e count: " + str(count))
+    chat.add_message(msg, roomid, 'true')
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
-def most_used_room(**kwargs):
+"""def most_used_room(**kwargs):
     roomid = kwargs['roomid']
     with open('backend/Chat-backup.txt', "r") as file:
         content = file.read()
-        words = content.split()
+        names = re.findall(r'\[name \(([^\)]+)\)\]', content)
     
     count_dict = {}
-    for word in words:
-        count_dict[word] = count_dict.get(word, 0) + 1
-
-    most_used_word = max(count_dict, key=count_dict.get, default=None)
-    msg = format_system_msg(f"Current most used word in chat: {most_used_word}")
-    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+    for name in names:
+        count_dict[name] = count_dict.get(name, 0) + 1
+    
+    if count_dict:
+        most_common_name = max(count_dict, key=count_dict.get)
+        msg = format_system_msg(f"Current most used chat room: {most_common_name}")
+    else:
+        msg = format_system_msg("No data available to determine the most used chat room")
+    
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")"""
+    
 
 def end_ping(start, ID):
     """The end of the ping comamnd."""
@@ -131,3 +137,4 @@ def end_ping(start, ID):
         int(difference)) + 'ms RTT</font>'
     chat.add_message(msg, ID, 'true')
     emit("message_chat", (msg, ID), broadcast=True, namespace="/")
+    
