@@ -677,6 +677,8 @@ input[type="file"] {
   opacity: 0%;
   color: white;
   font-family: sans-serif;
+  margin-left: 9px;
+  margin-top: 16px;
 }
 
 #ImageHoverPreview:hover {
