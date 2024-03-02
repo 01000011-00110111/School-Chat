@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-        <title>Class chat signup page</title>
+        <title>School Chat signup page</title>
         <link rel="icon" type="image/x-icon" href="static/favicon.ico">
         <!-- SOCKETIO IMPORT MUST BE HERE, BEFORE signup.JS IMPORT. IT BREAKS OTHERWISE -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
@@ -11,20 +11,28 @@
         <meta name="googlebot" content="noindex,nofollow,nositelinkssearchbox,nopagereadaloud,notranslate">
 	</head>
 
-    <body style="background-color: #3c5480;">
+    <body style=" background: rgb(33,33,36);
+    background: linear-gradient(138deg, rgba(33,33,36,1) 3%, rgba(98,98,167,1) 41%, rgba(0,0,0,1) 100%); ">
 <form method="post" class="SignUpForm">
-            <div>
-  <h1>School Chat</h1>
-</div><input type="email" class="signuptext" id="SEmail" name="SEmail" placeholder="Email:" required="" value="">
-            <input type="text" class="signuptext" id="SUsername" name="SUsername" placeholder="Username:" maxlength="25" required="" value="">
-            <input type="text" class="signuptext" name="SDisplayname" placeholder="Displayname:" maxlength="15" required="" value="">
-            
-            <input type="text" class="signuptext" name="SRole" placeholder="Role:" maxlength="18" required="" value=""><input type="password" class="signuptext" name="SPassword" placeholder="Password:" required="">
-            <input type="password" class="signuptext" name="SPassword2" placeholder="Confirm password" required="">
-            <div style="display: flex;color: black;">
-  <input type="checkbox">
-  <p>Accept <a href="" style="text-decoration: none;color: #7c0ed7;">Terms &amp; Conditions</a></p>
-</div><button type="submit" class="signupbtn" id="signup" name="submit">Signup</button>
+  <div id="signupContainer2">
+    <button type="submit" class="signupbtn" id="signup" name="submit">Signup</button>
+    <div style="display: flex; color: white; margin-left: 70px;">
+      <input type="checkbox">
+      <p>Accept <a href="" style="text-decoration: none;color: #7c0ed7;">Terms &amp; Conditions</a></p>
+    </div>
+    <p style="text-align: center;">Already have an account? <a href=".">Log in</a></p>
+  </div>
+
+  <div id="signupContainer1">
+              <div>
+    <h1>School Chat</h1>
+  </div><input type="email" class="signuptext" id="SEmail" name="SEmail" placeholder="Email:" required="" value="">
+              <input type="text" class="signuptext" id="SUsername" name="SUsername" placeholder="Username:" maxlength="25" required="" value="">
+              <input type="text" class="signuptext" name="SDisplayname" placeholder="Displayname:" maxlength="15" required="" value="">
+              
+              <input type="text" class="signuptext" name="SRole" placeholder="Role:" maxlength="18" required="" value=""><input type="password" class="signuptext" name="SPassword" placeholder="Password:" required="">
+              <input type="password" class="signuptext" name="SPassword2" placeholder="Confirm password" required="">
+</div>
         </form>
         {% if error %}
         <h2 style="color:red; pointer-events: none;" class="signuptext">{{error}}</h2>

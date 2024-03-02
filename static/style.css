@@ -283,36 +283,40 @@ html {
 }
 
 /* signup page */
-.signuptext { /* ok if you cant fix as long you find the issue then i can fix it | alright */
-  border-radius: 9px;
-  height: 31px;
-  width: 228%;
+.signuptext {
+  height: 40px;
+  width: 85%;
   text-align: left;
   justify-self: center;
   margin: 7px 0;
-  color: black;
+  color: #4f4f4f;
   text-indent: 12px;
-  font-weight: bold;
+  font-weight: normal;
   font-family: sans-serif;
-}
-  
-.signuptext:hover {
-    background: green;
+  outline: none;
+  border: 0px;
+    border-bottom-width: 0px;
+    border-bottom-style: none;
+    border-bottom-color: currentcolor;
+  text-decoration: none;
+  background: transparent;
+  border-bottom: 1.5px #555 solid;
+  font-size: 14px;
 }
 
 .signupbtn {
-    width: 228%;
-    border-radius: 8px;
-    height: 42px;
-    border-color: black;
-    color: white;
-    background: #6303a4;
-    font-size: 20px;
-    justify-self: center;
+  width: 91%;
+  border-radius: 11px;
+  height: 42px;
+  color: white;
+  background: #000;
+  font-size: 20px;
+  border: 0px;
+  margin-left: 23px;
 }
 
 .signupbtn:hover {
-    background: green;
+  background: #2b2b2b;
 }
 
 .rainbow-text-loop {
@@ -492,14 +496,14 @@ html {
 }
 
 .SignUpForm {
-  background: #ffffff;
-  height: 81%;
-  width: 33%;
+  background: #00000085;
+  height: 50%;
+  width: 54%;
   border-radius: 12px;
-  display: grid;
-  align-content: center;
-  justify-content: center;
-  margin: 68px auto;
+  display: flex;
+  margin: 210px auto;
+  box-shadow: 0px 1px 31px 3px black;
+  border: 3px #ffffff4d solid;
 }
 
 
@@ -738,4 +742,15 @@ input[type="file"] {
 
 #user_colorTXT {
   margin-top: 60px;
+}
+
+#signupContainer1 {
+  width: 100%;
+  align-items: center;
+  display: grid;
+}
+
+#signupContainer2 {
+  width: 64%;
+  margin-top: 9%;
 }
