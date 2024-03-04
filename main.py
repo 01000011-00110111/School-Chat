@@ -515,12 +515,13 @@ def get_rooms(userid):
 
 
 @socketio.on('message_chat')
-def handle_message(_, message, id, userid, private):
-    handle_chat_message(message, id, userid) if private == 'false' else \
+def handle_message(_, message, id, userid, private, hidden):
+    print(hidden)
+    handle_chat_message(message, id, userid, hidden) if private == 'false' else \
         handle_private_message(message, id, userid)
 
 
-def handle_chat_message(message, roomid, userid):
+def handle_chat_message(message, roomid, userid, hidden):
     """New New chat message handling pipeline."""
     # print(roomid)
     # later I will check the if the username is the same as the one for the session somehow
@@ -532,7 +533,7 @@ def handle_chat_message(message, roomid, userid):
     else:
         result = filtering.run_filter_chat(user, room, message, roomid, userid)
     if result[0] == 'msg':
-        if room is not None:
+        if room is not None and not hidden:
             chat.add_message(result[1], roomid, room)
             emit("message_chat", (result[1], roomid), broadcast=True)
             # addons.message_addons(message, user, roomid, room)
@@ -541,8 +542,11 @@ def handle_chat_message(message, roomid, userid):
                 filtering.find_cmds(message, user, roomid)
             elif '$sudo' in message and result[2] == 3:
                 filtering.failed_message(('permission', 9), roomid)
+        elif room is not None and hidden:
+            if "$sudo" in message and result[2] != 3:
+                filtering.find_cmds(message, user, roomid)
         else:
-            filtering.failed_message("return", roomid)
+            filtering.failed_message(7, roomid)
     else:
         filtering.failed_message(result, roomid)
 

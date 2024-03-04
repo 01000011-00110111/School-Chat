@@ -31,6 +31,7 @@ def find_command(**kwargs):
         'unlock': moderation.unlock,
         'globalock': moderation.globalock,
         'reset': room.reset_chat_user,
+        'admin': other.send_admin,
         # 'globalunlock': moderation.globalunlock,
     }
     # mod_commands = {}

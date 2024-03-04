@@ -24,6 +24,15 @@ def song(**kwargs):
     msg = format_song_msg(' '.join(list(kwargs["commands"].values())[1:]))
     chat.add_message(msg, roomid, 'true')
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+    
+    
+def send_admin(**kwargs):
+    """Send a song to the chat."""
+    roomid = kwargs['roomid']
+    # song = kwargs['command']
+    msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
+    chat.add_message(msg, roomid, 'true')
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
 def help(**kwargs):
@@ -78,6 +87,10 @@ def format_system_msg(msg):
 def format_song_msg(msg):
     """Format a message [SONG] would send."""
     return f'<font color="#0E9556">[SONG]: {msg}</font>'
+
+def format_admin_msg(msg):
+    """Format a message [SONG] would send."""
+    return f'<font color="#e0790b">[ADMIN]: {msg}</font>'
 
 
 def respond_command(result, roomid):
