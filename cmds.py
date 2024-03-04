@@ -26,12 +26,8 @@ def find_command(**kwargs):
         'rc': room.reset_chat_user,
     }
     admin_commands = {
-        'admin': other.send_as_admin,
         'cmd_logs': debug.send_cmd_logs,
-        'lock': moderation.lock,
-        'unlock': moderation.unlock,
         'globalock': moderation.globalock,
-        'reset': room.reset_chat_user,
         'admin': other.send_admin,
         # 'globalunlock': moderation.globalunlock,
     }
