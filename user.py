@@ -161,7 +161,7 @@ class User:
             unread = database.get_unread(format_userlist(self.uuid, user[0]), self.uuid)
             unread = 0 if user[0] == self.uuid else unread
             # icon = icons.get(location)
-            user_icon = icon_perm.get(user[2][0])
+            user_icon = icon_perm.get(user[2])
             unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
             # offline_users.add((f"{unread_list}{icon} {user_icon}", user[1]))
             offline_users.add((f"{unread_list} {user_icon}", user[1]))

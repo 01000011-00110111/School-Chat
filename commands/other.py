@@ -1,6 +1,7 @@
 """other.py: functions that need to be imported in multiple places."""
 
 import time
+import re
 
 from flask_socketio import emit
 
@@ -28,6 +29,15 @@ def song(**kwargs):
     
 def send_admin(**kwargs):
     """Send a song to the chat."""
+    roomid = kwargs['roomid']
+    # song = kwargs['command']
+    msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
+    chat.add_message(msg, roomid, 'true')
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+
+
+def send_as_admin(**kwargs):
+    """Send as admin to the chat."""
     roomid = kwargs['roomid']
     # song = kwargs['command']
     msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
@@ -93,12 +103,18 @@ def format_admin_msg(msg):
     return f'<font color="#e0790b">[ADMIN]: {msg}</font>'
 
 
+def format_admin_msg(msg):
+    """Format a message [SONG] would send."""
+    return f'<font color="#00FF00">[ADMIN]: {msg}</font>'
+
+
 def respond_command(result, roomid):
     """Tell the client that can't run this command for what reason."""
 
     response_strings = {
         (0, 'dev'): "Hey, you're not a dev!!!",
         (0, 'admin'): "Hey, acting like an admin I see. Too bad you're not one.",
+        (0, 'mod'): "Hey, Don't be shy call for help when you need it. Your not a mod.",
         (0, None): "Try '$sudo help' to see what commands are available to you.",
         (0, 'priv'): "Sorry that command is not available wile in private chats.",
         (0, 'chat'): "chat room made(this is temp)",
@@ -110,6 +126,37 @@ def respond_command(result, roomid):
     response_str = format_system_msg(response_strings.get(result))
     emit("message_chat", (response_str, roomid), namespace="/")
 
+
+def E_count_bacup(**kwargs):
+    """E_count_bacup"""
+    roomid = kwargs['roomid']
+    file = open('backend/Chat-backup.txt', 'r')
+    text = file.read()
+    count = len(re.findall(r'\be\b', text))
+    msg = format_system_msg("Current e count: " + str(count))
+    chat.add_message(msg, roomid, 'true')
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+
+
+"""def most_used_room(**kwargs):
+    roomid = kwargs['roomid']
+    with open('backend/Chat-backup.txt', "r") as file:
+        content = file.read()
+        names = re.findall(r'\[name \(([^\)]+)\)\]', content)
+    
+    count_dict = {}
+    for name in names:
+        count_dict[name] = count_dict.get(name, 0) + 1
+    
+    if count_dict:
+        most_common_name = max(count_dict, key=count_dict.get)
+        msg = format_system_msg(f"Current most used chat room: {most_common_name}")
+    else:
+        msg = format_system_msg("No data available to determine the most used chat room")
+    
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")"""
+    
+
 def end_ping(start, ID):
     """The end of the ping comamnd."""
     end = time.time() * 1000.0
@@ -118,3 +165,4 @@ def end_ping(start, ID):
         int(difference)) + 'ms RTT</font>'
     chat.add_message(msg, ID, 'true')
     emit("message_chat", (msg, ID), broadcast=True, namespace="/")
+    

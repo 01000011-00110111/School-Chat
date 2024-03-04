@@ -26,6 +26,7 @@ def find_command(**kwargs):
         'rc': room.reset_chat_user,
     }
     admin_commands = {
+        'admin': other.send_as_admin,
         'cmd_logs': debug.send_cmd_logs,
         'lock': moderation.lock,
         'unlock': moderation.unlock,
@@ -34,7 +35,11 @@ def find_command(**kwargs):
         'admin': other.send_admin,
         # 'globalunlock': moderation.globalunlock,
     }
-    # mod_commands = {}
+    mod_commands = {
+        'lock': moderation.lock,
+        'unlock': moderation.unlock,
+        'reset': room.reset_chat_user,
+    }
     basic_commands = {
         'help': other.help,
         'song': other.song,
@@ -42,7 +47,9 @@ def find_command(**kwargs):
         'offline': online.appear_offline,
         'online': online.appear_online,
         'ping': debug.ping,
+        'ecount': other.E_count_bacup,
         'create': room.create_room,
+        # 'popular': other.most_used_room,
     }
     command = kwargs['commands']['v0']
     perm = permission(kwargs['user'])
@@ -54,6 +61,9 @@ def find_command(**kwargs):
         # print('admin')
         admin_commands[command](**kwargs) if perm in ['dev', 'admin'] else \
             other.respond_command((0, 'admin'), id)
+    if command in mod_commands:
+        mod_commands[command](**kwargs) if perm in ['dev', 'admin', 'mod'] else \
+            other.respond_command((0, 'mod'), id)
     if command in basic_commands:
         try:
             basic_commands[command](**kwargs)

@@ -521,7 +521,7 @@ def handle_message(_, message, id, userid, private, hidden):
         handle_private_message(message, id, userid)
 
 
-def handle_chat_message(message, roomid, userid, hidden):
+def handle_chat_message(message, roomid, userid):
     """New New chat message handling pipeline."""
     # print(roomid)
     # later I will check the if the username is the same as the one for the session somehow
@@ -671,4 +671,4 @@ if __name__ == "__main__":
     # o.start()
     setup_func()
     socketio.start_background_task(online_refresh)
-    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000)
