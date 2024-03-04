@@ -2,7 +2,7 @@
 import hashlib
 from datetime import datetime, timedelta
 
-from flask_login import LoginManager, login_user
+from flask_login import LoginManager, login_user, logout_user
 from flask_socketio import emit
 
 import database
@@ -33,11 +33,11 @@ def add_user_class(username, status, perm, displayName, userid):
     return user_class
 
 def delete_user(userid):
-    u = Users[userid]
-    inactive_users.append((u.uuid, u.displayName, u.perm[0]))
-    Users.pop(userid)
-    u.kill()
-
+    if userid in Users:
+        u = Users[userid]
+        inactive_users.append((u.uuid, u.displayName, u.perm[0]))
+        del Users[userid]
+        u.remove_user()
 
 class User:
     """Represents a logged in user."""
@@ -76,6 +76,9 @@ class User:
         """Return the user's username."""
         # whenever we get arround to it, maybe switch this to userid?
         return self.username
+    
+    def remove_user(self):
+        logout_user()
 
     @staticmethod
     def check_password(password_hash, password):
