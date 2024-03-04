@@ -16,7 +16,7 @@ login_manager = LoginManager()
 
 for user in database.get_all_offline():
     if user["userid"] not in Users:
-        inactive_users.append((user["userid"], user["displayName"], user["SPermission"]))
+        inactive_users.append((user["userid"], user["displayName"], user["SPermission"][0]))
 
 def get_user_by_id(userid):
     user = Users.get(userid, None)
@@ -27,14 +27,14 @@ def add_user_class(username, status, perm, displayName, userid):
     user_class = User(username, status, perm, displayName, userid)
     database.set_online(userid, False)
     Users.update({userid: user_class})
-    tupple = (userid, displayName, perm)
+    tupple = (userid, displayName, perm[0])
     if tupple in inactive_users:
         inactive_users.remove(tupple)
     return user_class
 
 def delete_user(userid):
     u = Users[userid]
-    inactive_users.append((u.uuid, u.displayName, u.perm))
+    inactive_users.append((u.uuid, u.displayName, u.perm[0]))
     Users.pop(userid)
     u.kill()
 
@@ -137,7 +137,7 @@ class User:
     
     def unique_online_list(self, userid, location, sid):
         # icons = {'settings': '⚙️', 'chat': ''}
-        icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️", 'adminpass': "⚒️", "": ""}
+        icon_perm = {"Debugpass": '🔧', 'modpass': "🛡️", 'adminpass': "⚒️", "": ""}
         # database.set_online(userid, False)
         if self.status == "offline":
             self.status = "online"
