@@ -521,7 +521,7 @@ def handle_message(_, message, id, userid, private, hidden):
         handle_private_message(message, id, userid)
 
 
-def handle_chat_message(message, roomid, userid):
+def handle_chat_message(message, roomid, userid, hidden):
     """New New chat message handling pipeline."""
     # print(roomid)
     # later I will check the if the username is the same as the one for the session somehow
