@@ -301,7 +301,7 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
         "permission": 'true',
         'locked': locked,
         "warned": '0',
-        "SPermission": []
+        "SPermission": [""]
     }
 
     ID.insert_one(id_data)
