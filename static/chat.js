@@ -151,7 +151,15 @@ function getMessage() {
     let messageElement = document.getElementById("message");
     let message = messageElement["value"];
     messageElement["value"] = "";
-    sendMessage(message, false);
+    let hidden = false
+    var admin = document.getElementById('send_as_admin');
+    if (admin) {
+        if (admin.checked) {
+            hidden = true;
+            message = '$sudo admin ' + message;
+        }
+    }
+    sendMessage(message, hidden);
 }
 
 function sendMessage(message, hidden) {
@@ -159,13 +167,6 @@ function sendMessage(message, hidden) {
     let userid = getCookie('Userid')
     if (message === "") {
         return;
-    }
-    var admin = document.getElementById('send_as_admin');
-    if (admin) {
-        if (admin.checked) {
-            hidden = true;
-            message = '$sudo admin ' + message;
-        }
     }
     // later i'll implement hiding the cmd
     let chatDiv = document.getElementById("chat");
