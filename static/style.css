@@ -304,6 +304,11 @@ html {
   font-size: 14px;
 }
 
+.signuptext:focus {
+  transition: all 0.7s;
+  color: white;
+}
+
 .signupbtn {
   width: 91%;
   border-radius: 11px;
