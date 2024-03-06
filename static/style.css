@@ -606,7 +606,8 @@ html {
   margin-top: 4%;
   position: fixed;
   margin-left: 60%;
-  background: rgb(59, 59, 59);
+  background: rgb(21, 21, 21);
   width: 500px;
   height: 500px;
+  border-radius: 10px;
 }
