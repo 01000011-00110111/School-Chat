@@ -5,19 +5,18 @@
 {% endblock %}
 
 {% block panel_button %}
-<h2>You are an admin here!</h2>
-<button onclick="open_admin();">Temp text</button>
+<button onclick="open_admin();" style="margin-left: 75%;background-color: #c41111;color: #ae6303;">Admin Menu</button>
 {% endblock %}
 
 {% block panel_menu %}
-<div id="admin_menu">
-    <a href="javascript:void(0)" onclick="close_admin()" style="color: rgb(129, 129, 129);">×</a><br>
-    <button onClick="sendCmd('lines');" id="send">Send Lines</button><br>
-    <button onClick="sendCmd('reset');" id="send">Reset Chat</button><br>
-    <button onClick="sendCmd('lock');" id="send">Lock Chat</button><br>
-    <button onClick="sendCmd('unlock');" id="send">Unlock Chat</button><br>
-    <button onClick="sendCmd('globalock (confirm)');" id="send">globalock</button><br>
-    <button onClick="sendCmd('cmd_logs');" id="send">command logs</button><br>
-   <p>Send as admin.</p> <input type="checkbox" id="send_as_admin" checked>
+<div id="admin_menu" style="display: block;">
+    <a href="javascript:void(0)" onclick="close_admin()" style="color: rgb(129, 129, 129);">×</a><br><br>
+    <button onclick="sendCmd('lines');" id="send" style="background-color: rgb(0, 102, 0); color: rgb(255, 255, 255);">Send Lines</button><br>
+    <button onclick="sendCmd('reset');" id="send">Reset Chat</button><br>
+    <button onclick="sendCmd('lock');" id="send">Lock Chat</button><br>
+    <button onclick="sendCmd('unlock');" id="send">Unlock Chat</button><br>
+    <button onclick="sendCmd('globalock (confirm)');" id="send">globalock</button><br>
+    <button onclick="sendCmd('cmd_logs');" id="send">command logs</button><br><br>
+   Send as admin:<input type="checkbox" id="send_as_admin" checked="">
 </div>
 {% endblock %}
