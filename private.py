@@ -20,7 +20,7 @@ def get_messages(sender, receiver):
 
 
 def format_userlist(sender, receiver):
-    return sorted([sender, receiver], key=lambda x: (not x[0].isdigit(), x[0].lower()))
+    return sorted([sender, receiver], key=lambda x: (not x.isdigit(), x.lower()))
 
 def generate_unique_code(length):
     """Make a room code that doesen't exist yet."""
