@@ -121,16 +121,16 @@ function toHyperlink(str) {
     return str3;
 }
 
-function BTMLog() {
-  if (Math.floor(window.scrollY) === window.scrollMaxY) {
-    console.log("cheese");
-    setTimeout(ToBtm, 10000)
-  } 
-}
+// function BTMLog() {
+//   if (Math.floor(window.scrollY) === window.scrollMaxY) {
+//     console.log("cheese");
+//     setTimeout(ToBtm, 10000)
+//   } 
+// }
 
-function ToBtm() {
-  window.scrollTo(0, chatDiv.scrollHeight);
-}
+// function ToBtm() {
+//   window.scrollTo(0, chatDiv.scrollHeight);
+// }
 
 function sendMessage() {
     let messageElement = document.getElementById("message");
