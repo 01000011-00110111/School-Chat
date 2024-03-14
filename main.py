@@ -465,10 +465,21 @@ def get_rooms(userid):
     if "Debugpass" in user_name["SPermission"]:
         emit('roomsList', (room_access, 'dev'), namespace='/', to=request.sid)
         return
-    elif "modpass" in user_name['SPermission']:
+    elif ["adminpass"] in user_name['SPermission']:
         rooms_to_remove = []
         for r in room_access:
             if r['whitelisted'] == 'devonly':
+                # this could be simplfied into one for loop you know
+                rooms_to_remove.append(r)
+
+        for r in rooms_to_remove:
+            room_access.remove(r)
+        emit('roomsList', (room_access, 'mod'), namespace='/', to=request.sid)
+        return
+    elif ["modpass"] in user_name['SPermission']:
+        rooms_to_remove = []
+        for r in room_access:
+            if ['devonly','adminonly'] in r['whitelisted']:
                 # this could be simplfied into one for loop you know
                 rooms_to_remove.append(r)
 
