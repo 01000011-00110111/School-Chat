@@ -1,6 +1,7 @@
 """other.py: functions that need to be imported in multiple places."""
 
 import time
+import re
 
 from flask_socketio import emit
 
@@ -15,6 +16,15 @@ def check_if_dev(user):
 def check_if_mod(user):
     """Return if a user is a mod or not."""
     return 1 if user['SPermission'] == 'modpass' else 0
+
+
+def song(**kwargs):
+    """Send a song to the chat."""
+    roomid = kwargs['roomid']
+    # song = kwargs['command']
+    msg = format_song_msg(' '.join(list(kwargs["commands"].values())[1:]))
+    chat.add_message(msg, roomid, 'true')
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
 def help(**kwargs):
@@ -64,7 +74,12 @@ def help(**kwargs):
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
     return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
-    
+
+
+def format_song_msg(msg):
+    """Format a message [SONG] would send."""
+    return f'<font color="#0E9556">[SONG]: {msg}</font>'
+
 
 def respond_command(result, roomid):
     """Tell the client that can't run this command for what reason."""
@@ -83,6 +98,37 @@ def respond_command(result, roomid):
     response_str = format_system_msg(response_strings.get(result))
     emit("message_chat", (response_str, roomid), namespace="/")
 
+
+def E_count_bacup(**kwargs):
+    """E_count_bacup"""
+    roomid = kwargs['roomid']
+    file = open('backend/Chat-backup.txt', 'r')
+    text = file.read()
+    count = len(re.findall(r'\be\b', text))
+    msg = format_system_msg("Current e count: " + str(count))
+    chat.add_message(msg, roomid, 'true')
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+
+
+"""def most_used_room(**kwargs):
+    roomid = kwargs['roomid']
+    with open('backend/Chat-backup.txt', "r") as file:
+        content = file.read()
+        names = re.findall(r'\[name \(([^\)]+)\)\]', content)
+    
+    count_dict = {}
+    for name in names:
+        count_dict[name] = count_dict.get(name, 0) + 1
+    
+    if count_dict:
+        most_common_name = max(count_dict, key=count_dict.get)
+        msg = format_system_msg(f"Current most used chat room: {most_common_name}")
+    else:
+        msg = format_system_msg("No data available to determine the most used chat room")
+    
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")"""
+    
+
 def end_ping(start, ID):
     """The end of the ping comamnd."""
     end = time.time() * 1000.0
@@ -91,3 +137,4 @@ def end_ping(start, ID):
         int(difference)) + 'ms RTT</font>'
     chat.add_message(msg, ID, 'true')
     emit("message_chat", (msg, ID), broadcast=True, namespace="/")
+    

@@ -18,6 +18,7 @@ from better_profanity import profanity
 
 import word_lists
 import database
+from user import inactive_users
 import configparser
 config = configparser.ConfigParser()
 config.read('config/keys.conf')
@@ -199,3 +200,4 @@ def create_user(SUsername: str, SPassword: str, SEmail: str, SRole: str,
             "email":
             SEmail,
         }), userid)
+    inactive_users.append((userid, SDisplayname, ''))

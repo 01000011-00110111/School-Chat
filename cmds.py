@@ -36,10 +36,14 @@ def find_command(**kwargs):
     # mod_commands = {}
     basic_commands = {
         'help': other.help,
+        'song': other.song,
         'refresh': online.refresh_online,
         'offline': online.appear_offline,
         'online': online.appear_online,
         'ping': debug.ping,
+        'ecount': other.E_count_bacup,
+        'create': room.create_room,
+        # 'popular': other.most_used_room,
     }
     command = kwargs['commands']['v0']
     perm = permission(kwargs['user'])
