@@ -289,8 +289,7 @@ def find_cmds(message, user, roomid):
     # leading to users being able to send comamnds, even when chat is locked
     # we should be the only ones that can do that (devs)
     for cmd in command_split:
-        date_str = datetime.now(timezone(
-            timedelta(hours=-5))).strftime("[%a %H:%M] ")
+        date_str = datetime.now().strftime("[%a %H:%M] ")
         Lmessage = date_str + user['username'] + ":" + cmd
         log.log_commands(Lmessage)
 
@@ -315,8 +314,7 @@ def compile_message(message, profile_picture, user, role):
     user_string = f"<font color='{user['userColor']}'>{user['displayName']}</font>"
     message_string = f"<font color='{user['messageColor']}'>{message}</font>"
     role_string = do_dev_easter_egg(role, user)
-    date_str = datetime.now(timezone(
-        timedelta(hours=-5))).strftime("[%a %I:%M %p] ")
+    date_str = datetime.now().strftime("[%a %I:%M %p] ")
     message_string_h = to_hyperlink(message_string)
   
     message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string_h}"
