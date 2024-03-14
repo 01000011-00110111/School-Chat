@@ -567,7 +567,12 @@ def get_unread(list, uuid):
     if chat is None:
         return 0
     return chat['unread'][uuid]
-        
+
+def get_private_chat(userlist):
+    return Private.find_one({"userIds": userlist})
+
+def get_private_messages(list):
+    return Private.find_one({"userIds": list})['messages']
 
 def find_private_messages(userlist, sender):
     """find the chat with 2 users"""

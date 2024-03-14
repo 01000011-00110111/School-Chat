@@ -48,11 +48,10 @@ class Chat:
         
     def add_message(self, message_text: str, permission='false') -> None:
         """Handler for messages so they get logged."""
-        private = self.id == "all"
-        lines = len(self.messages) if not private else 1
+        # private = self.id == "all"
+        lines = len(self.messages)# if not private else 1
 
-        if (((lines >= 500) or (lines >= 250 and private))
-            and permission != 'true'):
+        if ((lines >= 500) and permission != 'true'):
             self.reset_chat(message_text, False)
         else:
             self.messages.append(message_text)
