@@ -528,6 +528,7 @@ def handle_private_message(message, pmid, userid):
     """New New chat message handling pipeline."""
     user = database.find_account_data(userid)
     result = filtering.run_filter_private(user, message, userid)
+    private = private.create_or_get_private(pmid)
     if result[0] == 'msg':
         chat.add_private_message(result[1], pmid, userid)
         emit("message_chat", (result[1], pmid), broadcast=True)

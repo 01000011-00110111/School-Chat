@@ -58,11 +58,15 @@ class Private:
 
 
     @classmethod
-    def create_or_get_private(cls, userlist):
+    def create_or_get_private(cls, userlist, sender):
         """Create a new chat or return an existing one."""
-        
+        database.find_private(userlist)['pmid']
         if id not in cls.chats:
             # Create a new chat instance if it doesn't exist
+            if database.check_private(id) is None:
+                code = generate_unique_code(12)
+                database.create_private_chat(userlist, code)
+                chat = Private.create_or_get_private(userlist, sender)
             private = database.get_private_chat(userlist)
             new_private = cls(private, id, userlist)
             cls.chats[id] = new_private
@@ -75,6 +79,10 @@ class Private:
         """Handler for messages so they get logged."""
         # private = self.id == "all"
         lines = len(self.messages)# if not private else 1
+        dict = self.unread['userIds']
+        dict.remove(userid)
+        reciver = dict[0]
+        self.unread['unread'][reciver] += 1
 
         if ((lines >= 250) and permission != 'true'):
             self.reset_chat(message_text, False)
