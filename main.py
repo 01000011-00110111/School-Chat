@@ -39,7 +39,7 @@ import accounting
 import database
 import filtering
 import log
-import private
+from private import Private, get_messages
 import uploading
 import word_lists
 from chat import Chat

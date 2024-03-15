@@ -9,7 +9,11 @@ from flask_socketio import emit
 
 import database
 import log
-from commands.other import format_system_msg
+
+
+def format_system_msg(msg):
+    """Format a message [SYSTEM] would send."""
+    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
 
 # import cmds
 

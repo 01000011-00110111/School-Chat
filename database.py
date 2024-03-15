@@ -487,7 +487,7 @@ def get_messages(roomid):
 def update_chat(chat):
     access_data = {
         "whitelisted": chat.whitelisted,
-        "blacklisted": chat.blacklisted,
+        "blacklisted": chat.banned,
         "canSend": chat.canSend,
         "locked": chat.locked,
     }

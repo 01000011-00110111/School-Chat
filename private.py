@@ -78,7 +78,7 @@ class Private:
             # Return the existing chat instance
             return cls.chats[id]
 
-    def add_message(self, message_text: str, permission='false', uuid) -> None:
+    def add_message(self, message_text: str, uuid) -> None:
         """Handler for messages so they get logged."""
         # private = self.id == "all"
         lines = len(self.messages)# if not private else 1
@@ -87,7 +87,7 @@ class Private:
         reciver = dict[0]
         self.unread['unread'][reciver] += 1
 
-        if ((lines >= 250) and permission != 'true'):
+        if lines >= 250:
             self.reset_chat(message_text, False)
         else:
             self.messages.append(message_text)
@@ -104,4 +104,3 @@ class Private:
 
     def backup_data(self):
         database.update_private(self)
-        
