@@ -522,7 +522,6 @@ def set_all_lock_status(locked: str):
     """Set all rooms' locked status."""
     Access.update_many({}, {"locked": locked})
 
-
 def add_rooms(code, username, generated_at, name):
     room_data = {
         "roomid": code,
@@ -600,7 +599,16 @@ def send_private_message(message, pmid, userid):
 def clear_priv_chat(pmid, message):
     Private.update_one({"pmid": pmid}, {'$set': {"messages": [message]}})
 
+def update_private(priv):
+    access_data = {
+        "messages": priv.messages,
+        "unread": priv.unread,
+    }
 
+    # Rooms.insert_one(room_data)
+    Private.update_one({"pmid": priv.id}, {"$set": access_data})
+    
+    
 def create_private_chat(userlist, code):
     """creates a private chat with 2 users"""
     # i = userlist.split(',')

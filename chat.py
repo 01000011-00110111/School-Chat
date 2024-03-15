@@ -21,7 +21,7 @@ class Chat:
         self.name = room["roomName"]
         self.id = roomid
         self.whitelisted = room["whitelisted"]
-        self.blacklisted = room["blacklisted"]
+        self.banned = room["blacklisted"]
         self.canSend = room["canSend"]
         self.locked = room["locked"]
         self.messages = database.get_messages(roomid)
