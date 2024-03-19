@@ -113,14 +113,14 @@ class User:
                 self.pause = True
                 self.mute_time = datetime.now() + timedelta(minutes=5)
             else:
-                return self.check_pause()
+                return self.check_mute()
             return False
         self.limit = 0
         self.last_message = datetime.now()
         return True
 
-    def check_pause(self):
-        if self.pause_time <= datetime.now():
+    def check_mute(self):
+        if self.mute_time <= datetime.now():
             self.pause = False
             self.limit = 0
             self.mute_time = None
