@@ -9,23 +9,24 @@ from string import ascii_uppercase
 import database
 from commands.other import format_system_msg
 
+
 def get_messages(sender, receiver):
     """gets the chats with 2 users."""
     userlist = format_userlist(sender, receiver)
-    chat = Private.create_or_get_private(userlist, sender)
+    chat = database.find_private_messages(userlist, sender)
     # database.update_private_messages(userlist, chat['pmid'])
     # print(chat)
 
     if chat is None:
         code = generate_unique_code(12)
         database.create_private_chat(userlist, code)
-        chat = Private.create_or_get_private(userlist, sender)
+        chat = database.find_private_messages(userlist, sender)
 
     return chat
 
 
 def format_userlist(sender, receiver):
-    return sorted([sender, receiver], key=lambda x: (not x[0].isdigit(), x[0].lower()))
+    return sorted([sender, receiver], key=lambda x: (not x.isdigit(), x.lower()))
 
 def generate_unique_code(length):
     """Make a room code that doesen't exist yet."""
@@ -39,7 +40,7 @@ def generate_unique_code(length):
             break
 
     return code
-
+    
 
 class Private:
     chats = {}  # Dictionary to store existing chats
@@ -61,14 +62,9 @@ class Private:
     @classmethod
     def create_or_get_private(cls, userlist, sender, id):
         """Create a new chat or return an existing one."""
-        if userlist is None:
-            userlist = database.find_private(id)['userlist']
-        id = database.find_private(userlist)['pmid']
         if id not in cls.chats:
+            id = id['pmid']
             # Create a new chat instance if it doesn't exist
-            if database.check_private(id) is None:
-                code = generate_unique_code(12)
-                database.create_private_chat(userlist, code)
                 # chat = Private.create_or_get_private(userlist, sender)
             private = database.get_private_chat(userlist)
             new_private = cls(private, id, userlist)

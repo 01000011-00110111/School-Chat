@@ -580,7 +580,7 @@ def private_connect(sender, receiver, roomid):
              namespace="/")
         return
 
-    chat = private.get_messages(sender, receiverid)
+    chat = get_messages(sender, receiverid)
     # print(sender, receiver)
     emit("private_data", {'message': chat['messages'], 'pmid': chat['pmid'], \
         'name': receiver}, to=socketid, namespace='/')
