@@ -52,7 +52,7 @@ class User:
         self.limit = 0
         self.pause = False
         self.last_message = datetime.now()
-        self.pause_time = 0
+        self.mute_time = 0
 
     @staticmethod
     def is_authenticated():
@@ -103,23 +103,15 @@ class User:
         return obj
 
     def send_limit(self):
-        # print(self.limit)
-        # print(self.pause)
-        # priint(self.last_message)
-        # print(self.pause_time)
-        difference = self.last_message - datetime.now()
-        # print(difference)
-        # print(difference.totalseconds())
-        if self.limit <= 15 and difference.seconds < 5:
+        difference = datetime.now() - self.last_message
+        if self.limit <= 15 and difference.total_seconds() < 5:
             self.limit += 1
             self.last_message = datetime.now()
             return True
         if self.limit > 15:
             if not self.pause:
-                dt = datetime.now()
-                td = timedelta(minutes=5)
                 self.pause = True
-                self.pause_time = dt + td
+                self.mute_time = datetime.now() + timedelta(minutes=5)
             else:
                 return self.check_pause()
             return False
@@ -128,12 +120,10 @@ class User:
         return True
 
     def check_pause(self):
-        dt = self.pause_time
-        td = timedelta(minutes=5)
-        if dt + td == datetime.now():
+        if self.pause_time <= datetime.now():
             self.pause = False
             self.limit = 0
-            self.pause_time = None
+            self.mute_time = None
             return True
         return False
 
