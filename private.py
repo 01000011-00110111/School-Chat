@@ -84,6 +84,8 @@ class Private:
             if receiver != uuid:
                 self.unread[receiver] += 1
                 
+        print(self.backups)
+                
         if len(self.messages) >= 250:
             self.reset_chat()
         else:
@@ -104,8 +106,7 @@ class Private:
         self.backups[0] += 1
         if self.last_message > datetime.now() + timedelta(minutes=45):
             self.backups[1] += 1
-            self.delete()
-            self.kill() if self.backups[1] > 3 else None
+            self.delete() if self.backups[1] > 3 else None
             
-        def delete(self):
-            del Private.chats[self.id]
+    def delete(self):
+        del Private.chats[self.id]

@@ -641,7 +641,7 @@ def online_refresh():
         socketio.emit("force_username", ("", None))
         socketio.sleep(5)  # this is using a socketio refresh
         
-@socketio.on('online_refresh')
+@socketio.on('chat_backups')
 def backup_chats(exception=None):
     """Runs after each request."""
     while True:
@@ -649,16 +649,18 @@ def backup_chats(exception=None):
             chat_instance.backup_data() 
         for private_instance in Private.chats.values():
             private_instance.backup_data()
-        socketio.sleep(900)
+        socketio.sleep(4)
         
 @app.teardown_appcontext
 def teardown_request(exception=None):
     """Runs after each request."""
-    for chat_instance in Chat.chats.values():
-        database.update_chat(chat_instance) 
-    for private_instance in Private.chats.values():
-        database.update_private(private_instance)
-
+    chat_chats_copy = dict(Chat.chats)
+    for chat_id, chat_instance in chat_chats_copy.items():
+        chat_instance.backup_data() 
+    private_chats_copy = dict(Private.chats)
+    for private_id, private_instance in private_chats_copy.items():
+        private_instance.backup_data() 
+    socketio.sleep(4)
 
 if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)

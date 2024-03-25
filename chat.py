@@ -68,11 +68,10 @@ class Chat:
         
         
     def backup_data(self):
-        database.update_private(self)
+        database.update_chat(self)
         self.backups[0] += 1
         if self.last_message > datetime.now() + timedelta(minutes=90):
             self.backups[1] += 1
-            self.delete()
             self.kill() if self.backups[1] > 3 else None
             
         def delete(self):
