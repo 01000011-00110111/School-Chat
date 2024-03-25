@@ -130,25 +130,23 @@ class User:
 
     
     def unique_online_list(self, userid, location, sid):
-        # icons = {'settings': '⚙️', 'chat': ''}
         icon_perm = {"Debugpass": '🔧', 'modpass': "🛡️", 'adminpass': "⚒️", "": ""}
-        # database.set_online(userid, False)
         if self.status == "offline":
             self.status = "online"
 
-        offline_users = set()
         online_developers = []
         online_admins = []
         online_moderators = []
         online_regular_users = []
+        offline_users = set()
 
         for key in Users.values():
-            unread = database.get_unread(format_userlist(self.uuid, key.uuid), self.uuid)
-            unread = 0 if key.uuid == self.uuid else unread
-            user_icon = icon_perm.get(key.perm[0])
-            unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
-
             if key.status == "online":
+                unread = database.get_unread(format_userlist(self.uuid, key.uuid), self.uuid)
+                unread = 0 if key.uuid == self.uuid else unread
+                user_icon = icon_perm.get(key.perm[0])
+                unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+
                 if key.perm[0] == "adminpass":
                     online_admins.append((f"{unread_list} {user_icon}", key.displayName))
                 elif key.perm[0] == "modpass":
@@ -169,6 +167,6 @@ class User:
 
         offline_list = list(offline_users)
         
-        emit("online", (online_list, offline_list), to=sid) if online_list != self.online_list else None
         if online_list != self.online_list:
+            emit("online", (online_list, offline_list), to=sid)
             self.online_list = online_list
