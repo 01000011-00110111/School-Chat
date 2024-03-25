@@ -1,7 +1,7 @@
 """private.py - Prive Messaging"""
 import sched
 import time
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import List
 from flask_socketio import SocketIO, emit
 import random
@@ -16,7 +16,6 @@ def get_messages_list(sender, receiver):
     db = database.find_private_messages(userlist, sender)
     # database.update_private_messages(userlist, chat['pmid'])
     # print(chat)
-
     if db is None:
         code = generate_unique_code(12)
         database.create_private_chat(userlist, code)
@@ -62,12 +61,8 @@ class Private:
         self.id = id
         self.messages = database.get_private_messages(userlist)
         self.unread = private['unread']
-
-        # background tasks
-        # app.teardown_appcontext(self.backup_data)
-        self.scheduler = sched.scheduler(time.time, time.sleep)
-        # Schedule the backup function to run every 15 minutes
-        self.scheduler.enter(900, 1, self.backup_data, ())
+        self.backups = [0, 0] # 1st is total and 2nd is total sense last message
+        self.last_message = datetime.now()
 
 
     @classmethod
@@ -83,19 +78,17 @@ class Private:
 
     def add_message(self, message_text: str, uuid) -> None:
         """Handler for messages so they get logged."""
-        # private = self.id == "all"
-        lines = len(self.messages)# if not private else 1
-        dict = self.unread
-        print(dict)
-        dict.remove(uuid)
-        reciver = dict[0]
-        self.unread['unread'][reciver] += 1
+        self.last_message = datetime.now()
 
-        if lines >= 250:
-            self.reset_chat(message_text, False)
+        for receiver in self.unread:
+            if receiver != uuid:
+                self.unread[receiver] += 1
+                
+        if len(self.messages) >= 250:
+            self.reset_chat()
         else:
             self.messages.append(message_text)
-
+            
         return ('room', 1)
 
     def reset_chat(self):
@@ -108,3 +101,11 @@ class Private:
 
     def backup_data(self):
         database.update_private(self)
+        self.backups[0] += 1
+        if self.last_message > datetime.now() + timedelta(minutes=45):
+            self.backups[1] += 1
+            self.delete()
+            self.kill() if self.backups[1] > 3 else None
+            
+        def delete(self):
+            del Private.chats[self.id]

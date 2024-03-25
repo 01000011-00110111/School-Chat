@@ -1,6 +1,6 @@
 import sched
 import time
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import List
 
 import psutil
@@ -29,12 +29,8 @@ class Chat:
         self.canSend = room["canSend"]
         self.locked = room["locked"]
         self.messages = database.get_messages(roomid)
-        
-        # background tasks
-        # app.teardown_appcontext(self.backup_data)
-        self.scheduler = sched.scheduler(time.time, time.sleep)
-        # Schedule the backup function to run every 15 minutes
-        self.scheduler.enter(900, 1, self.backup_data, ())
+        self.backups = [0, 0] # 1st is total and 2nd is total sense last message
+        self.last_message =  datetime.now()
         
 
     @classmethod
@@ -53,6 +49,7 @@ class Chat:
     def add_message(self, message_text: str, permission='false') -> None:
         """Handler for messages so they get logged."""
         # private = self.id == "all"
+        self.last_message = datetime.now()
         lines = len(self.messages)# if not private else 1
 
         if ((lines >= 500) and permission != 'true'):
@@ -71,5 +68,13 @@ class Chat:
         
         
     def backup_data(self):
-        database.update_chat(self)
+        database.update_private(self)
+        self.backups[0] += 1
+        if self.last_message > datetime.now() + timedelta(minutes=90):
+            self.backups[1] += 1
+            self.delete()
+            self.kill() if self.backups[1] > 3 else None
+            
+        def delete(self):
+            del Chat.chats[self.id]
         

@@ -580,7 +580,7 @@ def private_connect(sender, receiver, roomid):
              namespace="/")
         return
 
-    chat = get_messages_list(sender, receiver)
+    chat = get_messages_list(sender, receiverid)
     # print(sender, receiver)
     emit("private_data", {'message': chat.messages, 'pmid': chat.id, \
         'name': receiver}, to=socketid, namespace='/')
@@ -641,9 +641,19 @@ def online_refresh():
         socketio.emit("force_username", ("", None))
         socketio.sleep(5)  # this is using a socketio refresh
         
+@socketio.on('online_refresh')
+def backup_chats(exception=None):
+    """Runs after each request."""
+    while True:
+        for chat_instance in Chat.chats.values():
+            chat_instance.backup_data() 
+        for private_instance in Private.chats.values():
+            private_instance.backup_data()
+        socketio.sleep(900)
+        
 @app.teardown_appcontext
 def teardown_request(exception=None):
-    """Run after each request."""
+    """Runs after each request."""
     for chat_instance in Chat.chats.values():
         database.update_chat(chat_instance) 
     for private_instance in Private.chats.values():
@@ -655,4 +665,5 @@ if __name__ == "__main__":
     # o.start()
     setup_func()
     socketio.start_background_task(online_refresh)
+    socketio.start_background_task(backup_chats)
     socketio.run(app, host="0.0.0.0", debug=True, port=5000)
