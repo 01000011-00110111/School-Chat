@@ -39,7 +39,7 @@ import accounting
 import database
 import filtering
 import log
-from private import Private, get_messages
+from private import Private, get_messages, get_messages_list
 import uploading
 import word_lists
 from chat import Chat
@@ -528,9 +528,9 @@ def handle_private_message(message, pmid, userid):
     """New New chat message handling pipeline."""
     user = database.find_account_data(userid)
     result = filtering.run_filter_private(user, message, userid)
-    private = Private.create_or_get_private(None, None, pmid)
+    private = get_messages(pmid)
     if result[0] == 'msg':
-        private.add_message(result[1], pmid, userid)
+        private.add_message(result[1], userid)
         emit("message_chat", (result[1], pmid), broadcast=True)
         if "$sudo" in message and result[2] != 3:
             filtering.find_cmds(message, user, pmid)
@@ -580,9 +580,9 @@ def private_connect(sender, receiver, roomid):
              namespace="/")
         return
 
-    chat = get_messages(sender, receiverid)
+    chat = get_messages_list(sender, receiver)
     # print(sender, receiver)
-    emit("private_data", {'message': chat['messages'], 'pmid': chat['pmid'], \
+    emit("private_data", {'message': chat.messages, 'pmid': chat.id, \
         'name': receiver}, to=socketid, namespace='/')
 
 
@@ -646,6 +646,8 @@ def teardown_request(exception=None):
     """Run after each request."""
     for chat_instance in Chat.chats.values():
         database.update_chat(chat_instance) 
+    for private_instance in Private.chats.values():
+        database.update_private(private_instance)
 
 
 if __name__ == "__main__":

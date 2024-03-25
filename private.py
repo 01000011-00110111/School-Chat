@@ -10,23 +10,34 @@ import database
 from commands.other import format_system_msg
 
 
-def get_messages(sender, receiver):
+def get_messages_list(sender, receiver):
     """gets the chats with 2 users."""
     userlist = format_userlist(sender, receiver)
-    chat = database.find_private_messages(userlist, sender)
+    db = database.find_private_messages(userlist, sender)
     # database.update_private_messages(userlist, chat['pmid'])
     # print(chat)
 
-    if chat is None:
+    if db is None:
         code = generate_unique_code(12)
         database.create_private_chat(userlist, code)
-        chat = database.find_private_messages(userlist, sender)
+        db = database.find_private_messages(userlist, sender)
+
+    chat = Private.create_or_get_private(userlist, db)
+    
+    return chat
+
+
+def get_messages(id):
+    """gets the chats with 2 users."""
+    db = database.find_private(id)
+
+    chat = Private.create_or_get_private(db['userIds'], db)
 
     return chat
 
 
-def format_userlist(sender, receiver):
-    return sorted([sender, receiver], key=lambda x: (not x.isdigit(), x.lower()))
+def format_userlist(uuid1, uuid2):
+    return sorted([uuid1, uuid2], key=lambda x: (not x.isdigit(), x.lower()))
 
 def generate_unique_code(length):
     """Make a room code that doesen't exist yet."""
@@ -47,7 +58,7 @@ class Private:
 
     def __init__(self, private, id, userlist):
         """Initialize the chat."""
-        self.userlist = private["userlist"]
+        self.userlist = private["userIds"]
         self.id = id
         self.messages = database.get_private_messages(userlist)
         self.unread = private['unread']
@@ -60,25 +71,22 @@ class Private:
 
 
     @classmethod
-    def create_or_get_private(cls, userlist, sender, id):
+    def create_or_get_private(cls, userlist, private):
         """Create a new chat or return an existing one."""
+        id = private['pmid']
         if id not in cls.chats:
-            id = id['pmid']
-            # Create a new chat instance if it doesn't exist
-                # chat = Private.create_or_get_private(userlist, sender)
-            private = database.get_private_chat(userlist)
             new_private = cls(private, id, userlist)
             cls.chats[id] = new_private
             return new_private
         else:
-            # Return the existing chat instance
             return cls.chats[id]
 
     def add_message(self, message_text: str, uuid) -> None:
         """Handler for messages so they get logged."""
         # private = self.id == "all"
         lines = len(self.messages)# if not private else 1
-        dict = self.unread['userIds']
+        dict = self.unread
+        print(dict)
         dict.remove(uuid)
         reciver = dict[0]
         self.unread['unread'][reciver] += 1

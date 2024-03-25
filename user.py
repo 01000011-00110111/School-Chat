@@ -6,7 +6,7 @@ from flask_login import LoginManager, login_user
 from flask_socketio import emit
 
 import database
-from private import format_userlist
+from private import format_userlist, get_messages_list
 
 Users = {}
 inactive_users = []
@@ -169,3 +169,37 @@ class User:
         online_list = list(online_users)
         offline_list = list(offline_users)
         emit("online", (online_list, offline_list), to=sid)
+
+
+def unique_online_list(self, pmid, location, sid):
+    icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️", "": ""}
+
+    if self.status == "offline":
+        self.status = "online"
+
+    online_users = set()
+    offline_users = set()
+    for key in Users.values():
+        unread = get_messages_list(self.uuid, key.uuid)
+        unread = 0 if key.uuid == pmid else unread
+
+        user_icon = icon_perm.get(key.perm[0])
+        unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+
+        if key.status == "online":
+            online_users.add((f"{unread_list} {user_icon}", key.displayName))
+        else:
+            offline_users.add((f"{unread_list} {user_icon}", key.displayName))
+
+    for user in inactive_users:
+        unread = unread = get_messages_list(self.uuid, user[0])
+        unread = 0 if user[0] == pmid else unread
+
+        user_icon = icon_perm.get(user[0])
+        unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+
+        offline_users.add((f"{unread_list} {user_icon}", user[1]))
+
+    online_list = list(online_users)
+    offline_list = list(offline_users)
+    emit("online", (online_list, offline_list), to=sid)
