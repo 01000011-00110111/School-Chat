@@ -5,7 +5,7 @@ import re
 
 from flask_socketio import emit
 
-import chat
+# import chat
 
 
 def check_if_dev(user):

@@ -11,7 +11,8 @@ from flask_socketio import emit
 import cmds
 import database
 import log
-import rooms
+
+# import rooms
 import word_lists
 from user import get_user_by_id
 
@@ -26,10 +27,9 @@ profanity.add_censor_words(word_lists.censored)
 
 def run_filter_chat(user, room, message, roomid, userid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
-    # print(room)
-    locked = check_lock(room)
+    locked = room.locked
     perms = check_perms(user)
-    can_send = check_allowed_sending(room)
+    can_send = room.canSend
     user_muted = check_mute(user)
 
     # we must check if the current user is acutally them, good idea for this to be first
@@ -146,16 +146,6 @@ def check_mute(user):
     elif user["locked"].split(' ')[0] == "locked":
         return 3
     return 0
-
-
-def check_lock(room):
-    """Check if room is locked."""
-    return room["locked"]
-
-
-def check_allowed_sending(room):
-    """This is a check to se if the database allowes you to send"""
-    return room["canSend"]
 
 
 def check_perms(user):
