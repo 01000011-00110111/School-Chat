@@ -17,6 +17,11 @@ from email.mime.text import MIMEText
 from better_profanity import profanity
 
 import word_lists
+import database
+from user import inactive_users
+import configparser
+config = configparser.ConfigParser()
+config.read('config/keys.conf')
 
 # get our custom whitelist words (that should not be banned in the first place)
 profanity.load_censor_words(whitelist_words=word_lists.whitelist_words)
@@ -25,11 +30,11 @@ profanity.add_censor_words(word_lists.censored)
 
 def email_var_account(username, email, verification_code, userid):
     # Email configuration
-    URL = os.environ['URL']
+    URL = config["backend"]['URL']
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
-    sender_email = os.environ['EMAIL']
-    sender_password = os.environ['PASSWORD']
+    sender_email = config["backend"]['email']
+    sender_password = config["backend"]['password']
     receiver_email = email
     subject = f'Verification of {username}!'
 
@@ -160,52 +165,31 @@ def create_verification_code(user):
                                          'utf-8')).hexdigest()
     email_hash = hashlib.sha224(bytes(user['email'], 'utf-8')).hexdigest()
     combined_hashes = username_hash + email_hash + user[
-        'password'] + os.environ['SECRET_KEY']
+        'password'] + config["backend"]['secret_key']
     verification_code = hashlib.sha224(bytes(combined_hashes,
                                              'utf-8')).hexdigest()
     return verification_code
 
 
 def create_user(SUsername: str, SPassword: str, SEmail: str, SRole: str,
-                SDisplayname: str, dbm):
+                SDisplayname: str):
     """Create a user for the chat in the database."""
-    userid = str(uuid.uuid4())
+    while True:
+        userid = str(uuid.uuid4())
+        if userid not in database.distinct_userids():
+            break
     current_time = datetime.now()
     time = current_time + timedelta(hours=10)
     formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
-    dbm.Accounts.insert_one({
-        "username":
+    database.add_accounts(
         SUsername,
-        "password":
         hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
-        "userId":
         userid,
-        "email":
         SEmail,
-        "role":
         SRole,
-        "profile":
-        "",
-        "theme":
-        "dark",
-        "displayName":
         SDisplayname,
-        "messageColor":
-        "#ffffff",
-        "roleColor":
-        "#ffffff",
-        "userColor":
-        "#ffffff",
-        "permission":
-        'true',
-        'locked':
         f"locked {formatted_time}",
-        "warned":
-        '0',
-        "SPermission":
-        ""
-    })
-
+    )  # reworking needed
     email_var_account(
         SUsername, SEmail,
         create_verification_code({
@@ -216,3 +200,4 @@ def create_user(SUsername: str, SPassword: str, SEmail: str, SRole: str,
             "email":
             SEmail,
         }), userid)
+    inactive_users.append((userid, SDisplayname, ''))

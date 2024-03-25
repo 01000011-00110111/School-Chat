@@ -16,6 +16,14 @@ better-profanity = "^0.7.0"
 Flask = "2.2.3"
 Flask-APScheduler = "^1.12.4"
 Flask-Login = "0.6.2"
+pyclamd = "^0.4.0"
+git-python = "^1.0.3"
+minilog = "^2.3"
+metabasepy = "^1.12.0"
+cmds = "^0.1.1"
+bitdust = "^0.1.8.234"
+consultor = "^0.2.0"
+accounting = "^1.0.0"
 
 [tool.poetry.extras]
 systemd = ['dbus-python']

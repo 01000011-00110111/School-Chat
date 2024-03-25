@@ -5,20 +5,24 @@
 // define socketio connection
 const socket = io();
 
-socket.on("online", (db) => {
-    let newline = "<br>"
+socket.on("online", (onlinels, offlinels) => {
+    // let newline = "<br>"
     let online = "";
-    let onlinels = '';
+    let offline = '';
     let onlineDiv = document.getElementById("online_users");
-    // let onlinelsDiv = document.getElementById("onlinels");
-    let online_count = db.length;
-    for (onlineUser of db) {
-        online = online + onlineUser + newline;
-        onlinels = onlinels + `<a onclick="openuserinfo(${onlineUser})>` + onlineUser + '</a>';
+    let online_count = onlinels.length;
+    let offline_count = offlinels.length;
+    
+    for (onlineUser of onlinels) {
+        online = `${online}<button id="online_buttons" onclick="openuserinfo('${onlineUser[1]}')">${onlineUser[0]}${onlineUser[1]}</button><br>`
     }
-    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online;
-    // onlinelsDiv["innerHTML"] = onlinels;
-    onlineDiv["innerHTML"] = final_online;
+    for (offlineUser of offlinels) {
+        offline = `${offline}<button id="online_buttons" onclick="openuserinfo('${offlineUser[1]}')">${offlineUser[0]}${offlineUser[1]}</button><br>`
+    }
+
+    
+    let final_online = "<font size=5%>Online: " + online_count + "</font><br><br>" + online + "<br><br><font size=5%>Offline: " + offline_count + "</font><br><br>" + offline;
+    onlineDiv.innerHTML = final_online;
 });
 
 // it returns from the dead!

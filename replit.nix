@@ -1,5 +1,6 @@
 { pkgs }: {
   deps = [
+    pkgs.iana-etc
     pkgs.zip
     pkgs.python38Full
   ];
