@@ -686,7 +686,7 @@ def backup_chats(exception=None):
             chat_instance.backup_data() 
         for private_instance in Private.chats.values():
             private_instance.backup_data()
-        socketio.sleep(4)
+        socketio.sleep(900)
         
 @app.teardown_appcontext
 def teardown_request(exception=None):
@@ -705,4 +705,4 @@ if __name__ == "__main__":
     setup_func()
     socketio.start_background_task(online_refresh)
     socketio.start_background_task(backup_chats)
-    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000)

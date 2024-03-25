@@ -142,8 +142,8 @@ class User:
 
         for key in Users.values():
             if key.status == "online":
-                unread = get_messages_list(self.uuid, key.uuid)
-                unread = 0 if key.uuid == self.uuid else unread
+                unread = get_messages_list(self.uuid, key.uuid).unread
+                unread = 0 if key.uuid == self.uuid else unread[self.uuid]
                 user_icon = icon_perm.get(key.perm[0])
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
 
@@ -159,8 +159,8 @@ class User:
         online_list = online_developers + online_admins + online_moderators + online_regular_users
 
         for user in inactive_users:
-            unread = unread = get_messages_list(self.uuid, user[0])
-            unread = 0 if user[0] == self.uuid else unread
+            unread = get_messages_list(self.uuid, user[0]).unread
+            unread = 0 if user[0] == self.uuid else unread[self.uuid]
             user_icon = icon_perm.get(user[0])
             unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
             offline_users.add((f"{unread_list} {user_icon}", user[1]))
