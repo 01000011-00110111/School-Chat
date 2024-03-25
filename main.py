@@ -36,15 +36,15 @@ from flask_socketio import SocketIO, emit
 
 # these are the files that do not import dbm
 import accounting
-import chat
 import database
 import filtering
 import log
-import private
+from private import Private, get_messages, get_messages_list
 import uploading
 import word_lists
+from chat import Chat
 from commands.other import end_ping, format_system_msg
-from user import Users, User, add_user_class, delete_user, get_user_by_id, login_manager
+from user import User, Users, add_user_class, delete_user, get_user_by_id, login_manager
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
@@ -536,16 +536,15 @@ def handle_chat_message(message, roomid, userid, hidden):
     """New New chat message handling pipeline."""
     # print(roomid)
     # later I will check the if the username is the same as the one for the session somehow
-    room = database.get_room_data(roomid)
+    
+    room = Chat.create_or_get_chat(roomid)
+    
     # print(room)
     user = database.find_account_data(userid)
-    if room is None:
-        result = ("Permission", 6)  # well hello hi
-    else:
-        result = filtering.run_filter_chat(user, room, message, roomid, userid)
+    result = filtering.run_filter_chat(user, room, message, roomid, userid)
     if result[0] == 'msg':
         if room is not None and not hidden:
-            chat.add_message(result[1], roomid, room)
+            room.add_message(result[1])
             emit("message_chat", (result[1], roomid), broadcast=True)
             # addons.message_addons(message, user, roomid, room)
             # above is not offical again, so commented out
@@ -566,8 +565,9 @@ def handle_private_message(message, pmid, userid):
     """New New chat message handling pipeline."""
     user = database.find_account_data(userid)
     result = filtering.run_filter_private(user, message, userid)
+    private = get_messages(pmid)
     if result[0] == 'msg':
-        chat.add_private_message(result[1], pmid, userid)
+        private.add_message(result[1], userid)
         emit("message_chat", (result[1], pmid), broadcast=True)
         if "$sudo" in message and result[2] != 3:
             filtering.find_cmds(message, user, pmid)
@@ -590,9 +590,11 @@ def connect(roomid):
     """Switch rooms for the user"""
     socketid = request.sid
     try:
-        room = database.get_room_msg_data(
-            roomid)  # WHY ERROR YOU WORK NOW WORK
+        # room = database.get_room_msg_data(
+        #     roomid)  # WHY ERROR YOU WORK NOW WORK
         # ah yes the best kind of error
+        room = Chat.create_or_get_chat(roomid)
+        list = {"roomid": room.id, "name": room.name, "msg": room.messages}
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
         return
@@ -600,7 +602,7 @@ def connect(roomid):
     # del room['_id']
     # print(room)
 
-    emit("room_data", room, to=socketid, namespace='/')
+    emit("room_data", list, to=socketid, namespace='/')
 
 
 @socketio.on("private_connect")
@@ -615,9 +617,9 @@ def private_connect(sender, receiver, roomid):
              namespace="/")
         return
 
-    chat = private.get_messages(sender, receiverid)
+    chat = get_messages_list(sender, receiverid)
     # print(sender, receiver)
-    emit("private_data", {'message': chat['messages'], 'pmid': chat['pmid'], \
+    emit("private_data", {'message': chat.messages, 'pmid': chat.id, \
         'name': receiver}, to=socketid, namespace='/')
 
 
@@ -675,11 +677,32 @@ def online_refresh():
         # database.clear_online()
         socketio.emit("force_username", ("", None))
         socketio.sleep(5)  # this is using a socketio refresh
-
+        
+@socketio.on('chat_backups')
+def backup_chats(exception=None):
+    """Runs after each request."""
+    while True:
+        for chat_instance in Chat.chats.values():
+            chat_instance.backup_data() 
+        for private_instance in Private.chats.values():
+            private_instance.backup_data()
+        socketio.sleep(4)
+        
+@app.teardown_appcontext
+def teardown_request(exception=None):
+    """Runs after each request."""
+    chat_chats_copy = dict(Chat.chats)
+    for chat_id, chat_instance in chat_chats_copy.items():
+        chat_instance.backup_data() 
+    private_chats_copy = dict(Private.chats)
+    for private_id, private_instance in private_chats_copy.items():
+        private_instance.backup_data() 
+    socketio.sleep(4)
 
 if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
     setup_func()
     socketio.start_background_task(online_refresh)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.start_background_task(backup_chats)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)

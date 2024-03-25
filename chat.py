@@ -1,114 +1,79 @@
-"""Handle chat messages.
-    Copyright (C) 2023  cserver45, cseven
-    License info can be viewed in main.py or the LICENSE file.
-"""
-from datetime import timedelta
-from time import time
+import sched
+import time
+from datetime import timedelta, datetime
 from typing import List
 
 import psutil
-from flask_socketio import emit
-import cmds
-import log
-import database
 
-LOGFILE_B = "backend/Chat-backup.txt"
+from flask_socketio import emit
+
+import database
+import log
+
 
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
     return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
 
-# Returns a list of dictionaries. Each dictionary in the list
-# is a message that has been sent in our chat server
-def get_chat(file: str) -> List:
-    """Return list of chat messages."""
-    ret_val = []
-    with open(f"backend/{file}.txt", "r", encoding="utf8") as f_in:
-        for line in f_in:
-            line = line.rstrip("\n\r")
-            rec = {"message": line}
-            ret_val.append(rec)
-    return ret_val
+# import cmds
 
+class Chat:
+    chats = {}  # Dictionary to store existing chats
 
-def add_message(message_text: str, roomid, permission) -> None:
-    """Handler for messages so they get logged."""
-    room = database.find_room({'roomid': roomid}, 'msg')
-    private = room is None
-    room = database.find_private(roomid) if private else room
-    lines = len(room["messages"]) if roomid != "all" else 1
-    if (((lines >= 500) or (lines >= 250 and private))
-        and permission != 'true'):
-        reset_chat(message_text, False, roomid)
-    else:
-        (database.send_message_single(message_text,
-                         roomid) if roomid != 'all' else database.send_message_all(message_text, roomid), log.backup_log(message_text, roomid, private))
-    return ('room', 1)
-
-
-def add_private_message(message_text: str, pmid, userid) -> None:
-    """Handler for messages so they get logged."""
-    # lines = len(room["messages"]) if roomid != "all" else 1
-    # if (lines >= 250):
-    #     reset_chat(message_text, False, roomid)
-    # else:
-    database.send_private_message(message_text,
-                        pmid, userid) 
-    #if roomid != 'all' else database.send_message_all(message_text, roomid), log.backup_log(message_text, roomid))
-    return ('room', 1)
-
-
-def reset_chat(_: str, admin: bool, roomid) -> str:
-    """Admin function for reseting chat. Also used by the GC."""
-    if database.check_private(roomid):
-        set_priv_message_DB(roomid, admin),
-        emit("reset_chat", ("priv", roomid), broadcast=True, namespace="/")
-        return ('good', 0)
-    else:
-        set_message_DB(roomid, admin)
+    def __init__(self, room, roomid):
+        """Initialize the chat."""
+        self.name = room["roomName"]
+        self.id = roomid
+        self.whitelisted = room["whitelisted"]
+        self.banned = room["blacklisted"]
+        self.canSend = room["canSend"]
+        self.locked = room["locked"]
+        self.messages = database.get_messages(roomid)
+        self.backups = [0, 0] # 1st is total and 2nd is total sense last message
+        self.last_message =  datetime.now()
         
-    
-    if admin is False:
-        emit("reset_chat", ("owner/mod", roomid),
-             broadcast=True,
-             namespace="/")
-    elif admin is True:
-        emit("reset_chat", ("admin", roomid), broadcast=True, namespace="/")
 
-    else:
-        emit("reset_chat", ("auto", roomid), broadcast=True, namespace="/")
-    return ('good', 0)
+    @classmethod
+    def create_or_get_chat(cls, roomid):
+        """Create a new chat or return an existing one."""
+        if roomid not in cls.chats:
+            # Create a new chat instance if it doesn't exist
+            room = database.get_room_data(roomid)
+            new_chat = cls(room, roomid)
+            cls.chats[roomid] = new_chat
+            return new_chat
+        else:
+            # Return the existing chat instance
+            return cls.chats[roomid]
+        
+    def add_message(self, message_text: str, permission='false') -> None:
+        """Handler for messages so they get logged."""
+        # private = self.id == "all"
+        self.last_message = datetime.now()
+        lines = len(self.messages)# if not private else 1
 
+        if ((lines >= 500) and permission != 'true'):
+            self.reset_chat(message_text, False)
+        else:
+            self.messages.append(message_text)
 
-def system_response(id):
-    """Stores all messages for system"""
-    system_response = {
-        1:
-        "Chat reset by an admin.",
-        2:
-        "Chat reset by automatic wipe system.",
-        4:
-        "Chat reset by this chat rooms Owner or Mod.",
-        5:
-        "Chat reset by a priavte chat user."
-    }
+        return ('room', 1)
 
-    system_answer = format_system_msg(system_response.get(id))
-    return system_answer
-
-
-def set_message_DB(roomid, is_admin: bool):
-    """clears the database"""
-    if is_admin is True:
-        message_text = system_response(1)
-    elif is_admin is False:
-        message_text = system_response(4)
-    else:
-        message_text = system_response("message", 2)
-    database.clear_chat_room(roomid, message_text)
-    
-
-def set_priv_message_DB(pmid, user):
-    """clears the database"""
-    message_text = system_response(5) if user else system_response(2)
-    database.clear_priv_chat(pmid, message_text)
+    def reset_chat(self):
+        """Reset the chat."""
+        self.messages.clear()
+        msg = format_system_msg('Chat reset by an admin.')
+        self.messages.append(msg)
+        emit("reset_chat", ("admin", self.id), broadcast=True, namespace="/")
+        
+        
+    def backup_data(self):
+        database.update_chat(self)
+        self.backups[0] += 1
+        if self.last_message > datetime.now() + timedelta(minutes=90):
+            self.backups[1] += 1
+            self.kill() if self.backups[1] > 3 else None
+            
+        def delete(self):
+            del Chat.chats[self.id]
+        
