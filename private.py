@@ -54,7 +54,7 @@ def generate_unique_code(length):
 
 class Private:
     chats = {}  # Dictionary to store existing chats
-    id_to_userlist = {}
+    chats_userlist = {} #or do i make it 
 
     def __init__(self, private, id, userlist):
         """Initialize the chat."""
@@ -73,15 +73,15 @@ class Private:
         if id not in cls.chats:
             new_private = cls(private, id, userlist)
             cls.chats[id] = new_private
-            cls.id_to_userlist[userlist] = id
+            cls.chats_userlist[userlist] = new_private
             return new_private
         else:
             return cls.chats[id]
 
     @classmethod
     def get_unread(cls, userlist):
-        if userlist in cls.id_to_userlist:
-            return cls.chats[cls.id_to_userlist[userlist]].unread
+        if userlist in cls.chats_userlist:
+            return cls.chats[cls.chats_userlist[userlist]].unread
         else:
             return 0
         
