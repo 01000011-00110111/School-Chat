@@ -682,12 +682,14 @@ def online_refresh():
 def backup_chats(exception=None):
     """Runs after each request."""
     while True:
-        for chat_instance in Chat.chats.values():
+        chat_chats_copy = dict(Chat.chats)
+        for chat_id, chat_instance in chat_chats_copy.items():
             chat_instance.backup_data() 
-        for private_instance in Private.chats.values():
-            private_instance.backup_data()
+        private_chats_copy = dict(Private.chats)
+        for private_id, private_instance in private_chats_copy.items():
+            private_instance.backup_data() 
         socketio.sleep(900)
-        
+
 @app.teardown_appcontext
 def teardown_request(exception=None):
     """Runs after each request."""
@@ -697,7 +699,6 @@ def teardown_request(exception=None):
     private_chats_copy = dict(Private.chats)
     for private_id, private_instance in private_chats_copy.items():
         private_instance.backup_data() 
-    socketio.sleep(4)
 
 if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)

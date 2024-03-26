@@ -72,8 +72,8 @@ class Chat:
         self.backups[0] += 1
         if self.last_message > datetime.now() + timedelta(minutes=90):
             self.backups[1] += 1
-            self.kill() if self.backups[1] > 3 else None
+            self.delete() if self.backups[1] > 3 else None
             
-        def delete(self):
-            del Chat.chats[self.id]
+    def delete(self):
+        del Chat.chats[self.id]
         

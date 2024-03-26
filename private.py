@@ -54,6 +54,7 @@ def generate_unique_code(length):
 
 class Private:
     chats = {}  # Dictionary to store existing chats
+    id_to_userlist = {}
 
     def __init__(self, private, id, userlist):
         """Initialize the chat."""
@@ -72,9 +73,18 @@ class Private:
         if id not in cls.chats:
             new_private = cls(private, id, userlist)
             cls.chats[id] = new_private
+            cls.id_to_userlist[userlist] = id
             return new_private
         else:
             return cls.chats[id]
+
+    @classmethod
+    def get_unread(cls, userlist):
+        if userlist in cls.id_to_userlist:
+            return cls.chats[cls.id_to_userlist[userlist]].unread
+        else:
+            return 0
+        
 
     def add_message(self, message_text: str, uuid) -> None:
         """Handler for messages so they get logged."""
@@ -104,7 +114,7 @@ class Private:
     def backup_data(self):
         database.update_private(self)
         self.backups[0] += 1
-        if self.last_message > datetime.now() + timedelta(minutes=45):
+        if self.last_message > datetime.now() + timedelta(minutes=30):
             self.backups[1] += 1
             self.delete() if self.backups[1] > 3 else None
             
