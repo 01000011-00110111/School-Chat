@@ -13,25 +13,15 @@ from commands.other import format_system_msg
 def get_messages_list(sender, receiver):
     """gets the chats with 2 users."""
     userlist = format_userlist(sender, receiver)
-    db = database.find_private_messages(userlist, sender)
-    # database.update_private_messages(userlist, chat['pmid'])
-    # print(chat)
-    if db is None:
-        code = generate_unique_code(12)
-        database.create_private_chat(userlist, code)
-        db = database.find_private_messages(userlist, sender)
 
-    chat = Private.create_or_get_private(userlist, db)
+    chat = Private.create_or_get_private(userlist)
     
     return chat
 
 
 def get_messages(id):
     """gets the chats with 2 users."""
-    db = database.find_private(id)
-
-    chat = Private.create_or_get_private(db['userIds'], db)
-
+    chat = Private.create_or_get_private(id)
     return chat
 
 
@@ -67,19 +57,25 @@ class Private:
 
 
     @classmethod
-    def create_or_get_private(cls, userlist, private):
+    def create_or_get_private(cls, userlist):
         """Create a new chat or return an existing one."""
-        id = private['pmid']
-        if id not in cls.chats:
+        if id not in [cls.chats, cls.chats_userlist]:
+            private = database.get_private_chat(id) if isinstance(id, list)\
+            else database.find_private(id)
+            if private is None:
+                code = generate_unique_code(12)
+                private = database.create_private_chat(userlist, code)
+                # private = database.find_private_messages(userlist, sender)
             new_private = cls(private, id, userlist)
             cls.chats[id] = new_private
-            cls.chats_userlist[userlist] = new_private
+            cls.chats_userlist[(userlist[0], userlist[1])] = new_private
             return new_private
         else:
             return cls.chats[id]
 
     @classmethod
     def get_unread(cls, userlist):
+        userlist = (userlist[0], userlist[1])
         if userlist in cls.chats_userlist:
             return cls.chats[cls.chats_userlist[userlist]].unread
         else:
