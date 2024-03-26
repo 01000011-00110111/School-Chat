@@ -159,7 +159,7 @@ class User:
         online_list = online_developers + online_admins + online_moderators + online_regular_users
 
         for user in inactive_users:
-            unread = Private.get_unread(format_userlist(self.uuid, user[0])
+            unread = Private.get_unread(format_userlist(self.uuid, user[0]))
             unread = 0 if user[0] == self.uuid else unread[self.uuid]
             user_icon = icon_perm.get(user[0])
             unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''

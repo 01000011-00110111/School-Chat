@@ -77,7 +77,7 @@ class Private:
     def get_unread(cls, userlist):
         userlist = (userlist[0], userlist[1])
         if userlist in cls.chats_userlist:
-            return cls.chats[cls.chats_userlist[userlist]].unread
+            return cls.chats_userlist[userlist].unread
         else:
             return 0
         
