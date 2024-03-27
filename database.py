@@ -262,6 +262,45 @@ def find_account_data(userid):
     }]
     return list(ID.aggregate(pipeline))[0]
 
+def find_account_room_data(userid):
+    pipeline = [{
+        "$match": {
+            "userId": userid
+        }
+    }, {
+        "$lookup": {
+            "from": "Permission",
+            "localField": "userId",
+            "foreignField": "userId",
+            "as": "permissions"
+        }
+    }, {
+        "$lookup": {
+            "from": "Customization",
+            "localField": "userId",
+            "foreignField": "userId",
+            "as": "customization"
+        }
+    }, {
+        "$project": {
+            "displayName": {
+                "$arrayElemAt": ["$customization.displayName", 0]
+            },
+            "permission": {
+                "$arrayElemAt": ["$permissions.permission", 0]
+            },
+            "locked": {
+                "$arrayElemAt": ["$permissions.locked", 0]
+            },
+            "warned": {
+                "$arrayElemAt": ["$permissions.warned", 0]
+            },
+            "SPermission": {
+                "$arrayElemAt": ["$permissions.SPermission", 0]
+            }
+        }
+    }]
+    return list(ID.aggregate(pipeline))[0]
 
 def find_all_accounts():
     return ID.find()
@@ -541,8 +580,8 @@ def add_rooms(code, username, generated_at, name):
     message = { 
         "roomid": code,
         "messages": [
-            format_system_msg(f"""<b>{name}</b> created by 
-                <b>[SYSTEM]</b>at {generated_at}.""")
+            format_system_msg(f"<b>{name}</b> created by \
+                <b>{username}</b> at {generated_at}.")
     ]}
 
     Rooms.insert_one(room_data)
@@ -614,7 +653,8 @@ def create_private_chat(userlist, code):
     # i = userlist.split(',')
     data = {
         "userIds": userlist,
-        "messages": ['Welcome to private chat beta2 with this slightly better welocme message'],
+        "messages": ['Welcome to private chat beta4 with this slightly better welocme \
+        message and improvements to peformince (i forgot to update the number before)'],
         "pmid": code,
         "unread": {userlist[0]: 0, userlist[1]: 0}
     }

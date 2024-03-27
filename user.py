@@ -8,39 +8,14 @@ from flask_socketio import emit
 import database
 from private import Private, format_userlist
 
-Users = {}
+
 inactive_users = []
 
 login_manager = LoginManager()
 
-
-for user in database.get_all_offline():
-    if user["userid"] not in Users:
-        inactive_users.append((user["userid"], user["displayName"], user["SPermission"][0]))
-
-def get_user_by_id(userid):
-    user = Users.get(userid, None)
-    return user
-
-
-def add_user_class(username, status, perm, displayName, userid):
-    user_class = User(username, status, perm, displayName, userid)
-    database.set_online(userid, False)
-    Users.update({userid: user_class})
-    tupple = (userid, displayName, perm[0])
-    if tupple in inactive_users:
-        inactive_users.remove(tupple)
-    return user_class
-
-def delete_user(userid):
-    if userid in Users:
-        u = Users[userid]
-        inactive_users.append((u.uuid, u.displayName, u.perm[0]))
-        del Users[userid]
-        u.remove_user()
-
 class User:
     """Represents a logged in user."""
+    Users = {}
 
     def __init__(self, username, status, perm, displayName, uuid):
         """Initialize the user."""
@@ -91,13 +66,36 @@ class User:
     def check_username(username, db_username):
         """Check the username against the one entered in the login field."""
         return username == db_username
+    
+    @staticmethod
+    def get_user_by_id(userid):
+        user = User.Users.get(userid, None)
+        return user
+
+    @staticmethod
+    def add_user_class(username, status, perm, displayName, userid):
+        user_class = User(username, status, perm, displayName, userid)
+        database.set_online(userid, False)
+        User.Users.update({userid: user_class})
+        tupple = (userid, displayName, perm[0])
+        if tupple in inactive_users:
+            inactive_users.remove(tupple)
+        return user_class
+
+    @staticmethod
+    def delete_user(cls, userid):
+        if userid in cls.Users:
+            u = cls.Users[userid]
+            inactive_users.append((u.uuid, u.displayName, u.perm[0]))
+            del cls.Users[userid]
+            u.remove_user()
 
     # pylint: disable=E0213
     @login_manager.user_loader
     def load_user(username):
         """Load the user into flask-login."""
         u = database.find_account({'username': username}, 'id')
-        obj = Users.get(u['userId'], None)
+        obj = User.Users.get(u['userId'], None)
         if not u:
             return None
         # add_user_class(obj, u["userId"])
@@ -140,7 +138,7 @@ class User:
         online_regular_users = []
         offline_users = set()
 
-        for key in Users.values():
+        for key in User.Users.values():
             if key.status == "online":
                 unread = Private.get_unread(format_userlist(self.uuid, key.uuid))
                 unread = 0 if key.uuid == self.uuid else unread
@@ -170,3 +168,9 @@ class User:
         if online_list != self.online_list:
             emit("online", (online_list, offline_list), to=sid)
             self.online_list = online_list
+
+
+#####not in the class#####
+for user in database.get_all_offline():
+    if user["userid"] not in User.Users:
+        inactive_users.append((user["userid"], user["displayName"], user["SPermission"][0]))

@@ -76,7 +76,7 @@ socket.on("roomsList", (result, permission) => {
           }
     }
     RoomDiv["innerHTML"] = rooms;
-    for (room of result) {CheckIfExist(result);}
+    // for (room of result) {CheckIfExist(result);}
 });
 
 function CheckIfExist(_params) {

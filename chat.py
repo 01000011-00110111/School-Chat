@@ -46,6 +46,28 @@ class Chat:
             # Return the existing chat instance
             return cls.chats[roomid]
         
+    @classmethod
+    def set_all_lock_status(cls, status):
+        for chat in cls.chats:
+            chat.lock = status
+                
+    @classmethod
+    def add_message_to_all(cls, message_text: str, rooms, permission='false'):
+        """ads messsages to all chatrooms"""
+        for chat in cls.chats:
+            # private = self.id == "all"
+            chat.last_message = datetime.now()
+            lines = len(chat.messages)# if not private else 1
+
+            if ((lines >= 500) and permission != 'true'):
+                chat.reset_chat(message_text, False)
+                chat.messages.append(message_text)
+            else:
+                chat.messages.append(message_text)
+
+            return ('room', 1)
+        
+        
     def add_message(self, message_text: str, permission='false') -> None:
         """Handler for messages so they get logged."""
         # private = self.id == "all"
@@ -54,6 +76,7 @@ class Chat:
 
         if ((lines >= 500) and permission != 'true'):
             self.reset_chat(message_text, False)
+            self.messages.append(message_text)
         else:
             self.messages.append(message_text)
 
@@ -65,6 +88,10 @@ class Chat:
         msg = format_system_msg('Chat reset by an admin.')
         self.messages.append(msg)
         emit("reset_chat", ("admin", self.id), broadcast=True, namespace="/")
+        
+    
+    def set_lock_status(self, status):
+        self.lock = status
         
         
     def backup_data(self):

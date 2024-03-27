@@ -14,7 +14,7 @@ import log
 
 # import rooms
 import word_lists
-from user import get_user_by_id
+from user import User
 
 # old imports, do we still need the markdown package due to us having our own markdown
 # from markdown import markdown
@@ -39,9 +39,9 @@ def run_filter_chat(user, room, message, roomid, userid):
         # without dev help of email fix
         return ('permission', 12, user_muted)
 
-    userobj = get_user_by_id(userid)
+    userobj = User.get_user_by_id(userid)
     
-    if user_muted not in [0, 3] and perms != 'dev':
+    if user_muted not in [0, 3] and perms not in ['dev','admin']:
         return ('permission', user_muted)
 
     if bool(re.search(r'[<>]', message)) is True and perms != 'dev':
@@ -59,7 +59,7 @@ def run_filter_chat(user, room, message, roomid, userid):
     else:
         profile_picture = user['profile']
 
-    if "[" in message and locked != 'true':
+    if "[" in message and not locked:
         if user['locked'] != 'locked':
             find_pings(message, user['displayName'], profile_picture, roomid)
         else:
@@ -69,7 +69,7 @@ def run_filter_chat(user, room, message, roomid, userid):
     final_str = compile_message(markdown(message), profile_picture, user, role)
 
     # check if locked or allowed to send
-    if locked == 'true' and perms not in ["dev", "mod"]:
+    if locked and perms not in ["dev", 'admin', "mod"]:
         return ("permission", 3, user_muted)
 
     if can_send == "everyone":
@@ -106,7 +106,7 @@ def run_filter_private(user, message, userid):
         # without dev help of email fix
         return ('permission', 12, user_muted)
     
-    userobj = get_user_by_id(userid)
+    userobj = User.get_user_by_id(userid)
 
     if user_muted not in [0, 3] and perms != 'dev':
         return ('permission', user_muted)
@@ -150,13 +150,7 @@ def check_mute(user):
 
 def check_perms(user):
     """Checks if the user has specal perms else return as a user"""
-    if 'Debugpass' in user['SPermission']:
-        perms = 'dev'
-    elif 'modpass' in user['SPermission']:
-        perms = 'mod'
-    else:
-        perms = 'user'
-    return perms
+    return 'dev' if 'Debugpass' in user['SPermission'] else 'mod' if 'modpass' in user['SPermission'] else 'user'
 
 
 def to_hyperlink(text: str) -> str:
@@ -248,7 +242,7 @@ def find_pings(message, dispName, profile_picture, roomid):
         break  # ez one per message fix lol
 
 
-def find_cmds(message, user, roomid):
+def find_cmds(message, user, roomid, room):
     """ $sudo commands, 
         will push every cmd found to cmds.py along with the user,
         so we can check if they can do said command.
@@ -293,7 +287,8 @@ def find_cmds(message, user, roomid):
             cmds.find_command(commands=commands,
                               user=user,
                               roomid=roomid,
-                              origin_room=origin_room)
+                              origin_room=origin_room,
+                              room=room)
             break  # that will work ez one per message fix lol
 
 
