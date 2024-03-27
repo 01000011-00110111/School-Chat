@@ -157,7 +157,7 @@ class User:
         online_list = online_developers + online_admins + online_moderators + online_regular_users
 
         for user in inactive_users:
-            userlist = format_userlist(self.uuid, user[0])
+            # userlist = format_userlist(self.uuid, user[0])
             # unread = Private.find_unread(userlist, self.uuid)
             # unread = 0 if user[0] == self.uuid else unread
             user_icon = icon_perm.get(user[2])
@@ -167,9 +167,9 @@ class User:
 
         offline_list = list(offline_users)
         
-        if online_list != self.online_list:
-            emit("online", (online_list, offline_list), to=sid)
-            self.online_list = online_list
+        # if online_list != self.online_list:
+        emit("online", (online_list, offline_list), to=sid)
+        # self.online_list = online_list
 
 
 #####not in the class#####
