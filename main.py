@@ -194,10 +194,15 @@ def login_page() -> ResponseReturnValue:
                         user["SPermission"], user["displayName"], user["userId"])
             login_user(user_obj)
             if next_page is None:
-                next_page = flask.url_for('chat_page')
+                if "adminpass" in user['SPermission']:
+                    next_page = flask.url_for('admin_page')
+                else:
+                    next_page = flask.url_for('chat_page')
             else:
                 if next_page not in word_lists.approved_links:
                     next_page = flask.url_for('chat_page')
+                if "adminpass" in user['SPermission']:
+                    next_page = flask.url_for('admin_page')
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie('Username', user['username'])
             resp.set_cookie('Theme', user['theme'])

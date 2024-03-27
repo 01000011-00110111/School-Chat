@@ -83,11 +83,11 @@ class User:
         return user_class
 
     @staticmethod
-    def delete_user(cls, userid):
-        if userid in cls.Users:
-            u = cls.Users[userid]
+    def delete_user(userid):
+        if userid in User.Users:
+            u = User.Users[userid]
             inactive_users.append((u.uuid, u.displayName, u.perm[0]))
-            del cls.Users[userid]
+            del User.Users[userid]
             u.remove_user()
 
     # pylint: disable=E0213
