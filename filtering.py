@@ -225,7 +225,7 @@ def markdown(message):
 def find_pings(message, dispName, profile_picture, roomid):
     """Gotta catch 'em all! (checks for pings in the users message)"""
     pings = re.findall(r'(?<=\[).+?(?=\])', message)
-    room = database.find_room({'roomid': roomid}, 'id')
+    room = database.find_room({'roomid': roomid}, 'vid')
 
     for ping in pings:
         message = message.replace(f"[{ping}]", '')
@@ -337,7 +337,7 @@ def failed_message(result, roomid):
         (6):
         "This chat room no longer exists, select a chat room that does exist.",
         (7):
-        "This chat room id does not exist.",
+        "This chat room vid does not exist.",
         (8):
         "You are not allowed to send more than 15 messages in a row. You have been muted for 5 minutes(Warning)",
         (9):

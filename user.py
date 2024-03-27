@@ -67,34 +67,34 @@ class User:
         """Check the username against the one entered in the login field."""
         return username == db_username
     
-    @staticmethod
-    def get_user_by_id(userid):
-        user = User.Users.get(userid, None)
+    @classmethod
+    def get_user_by_id(cls, userid):
+        user = cls.Users.get(userid, None)
         return user
 
-    @staticmethod
-    def add_user_class(username, status, perm, displayName, userid):
-        user_class = User(username, status, perm, displayName, userid)
+    @classmethod
+    def add_user_class(cls, username, status, perm, displayName, userid):
+        user_class = cls(username, status, perm, displayName, userid)
         database.set_online(userid, False)
-        User.Users.update({userid: user_class})
+        cls.Users.update({userid: user_class})
         tupple = (userid, displayName, perm[0])
         if tupple in inactive_users:
             inactive_users.remove(tupple)
         return user_class
 
-    @staticmethod
-    def delete_user(userid):
-        if userid in User.Users:
-            u = User.Users[userid]
+    @classmethod
+    def delete_user(cls, userid):
+        if userid in cls.Users:
+            u = cls.Users[userid]
             inactive_users.append((u.uuid, u.displayName, u.perm[0]))
-            del User.Users[userid]
+            del cls.Users[userid]
             u.remove_user()
 
     # pylint: disable=E0213
     @login_manager.user_loader
     def load_user(username):
         """Load the user into flask-login."""
-        u = database.find_account({'username': username}, 'id')
+        u = database.find_account({'username': username}, 'vid')
         obj = User.Users.get(u['userId'], None)
         if not u:
             return None
@@ -157,10 +157,12 @@ class User:
         online_list = online_developers + online_admins + online_moderators + online_regular_users
 
         for user in inactive_users:
-            unread = Private.get_unread(format_userlist(self.uuid, user[0]))
-            unread = 0 if user[0] == self.uuid else unread
+            userlist = format_userlist(self.uuid, user[0])
+            # unread = Private.find_unread(userlist, self.uuid)
+            # unread = 0 if user[0] == self.uuid else unread
             user_icon = icon_perm.get(user[2])
-            unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+            # print(unread)
+            unread_list = '' #f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
             offline_users.add((f"{unread_list} {user_icon}", user[1]))
 
         offline_list = list(offline_users)

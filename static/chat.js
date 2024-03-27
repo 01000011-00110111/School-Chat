@@ -69,7 +69,7 @@ socket.on("roomsList", (result, permission) => {
     let RoomDiv = document.getElementById("ChatRoomls");
     for (room of result) {
         if (permission != 'locked') {
-        rooms = rooms + `<hr id="room_bar"><a id="room_names" onclick=changeRoom("${room.id}")>/` + room.name + '</a><hr id="room_bar">';
+        rooms = rooms + `<hr id="room_bar"><a id="room_names" onclick=changeRoom("${room.vid}")>/` + room.name + '</a><hr id="room_bar">';
         } else {
             rooms = '<hr id="room_bar">verify to have access to chat rooms<hr id="room_bar">'
             changeRoom('zxMhhAPfWOxuZylxwkES')
@@ -80,7 +80,7 @@ socket.on("roomsList", (result, permission) => {
 });
 
 function CheckIfExist(_params) {
-    if (window.sessionStorage.getItem("ID") != room.id) {
+    if (window.sessionStorage.getItem("ID") != room.vid) {
         changeRoom('ilQvQwgOhm9kNAOrRqbr')
     } else {return}
 }

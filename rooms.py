@@ -23,7 +23,7 @@ def create_chat_room(name, username, userinfo):
     """Create a chat room and register it in the database."""
     generated_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     
-    if not name or database.find_room({'roomName': name}, 'id'):
+    if not name or database.find_room({'roomName': name}, 'vid'):
         log = f"Failed: Invalid Room Name ({username} room creation) {generated_at}"
         response = (3, "chat") if not name else (4, "chat")
     else:
@@ -40,7 +40,7 @@ def create_chat_room(name, username, userinfo):
 """
 def delete_chat_room(room_name, user):
     Delete the chat room selected by the owner or admin
-    rooms = database.find_room({"roomName": room_name}, 'id')
+    rooms = database.find_room({"roomName": room_name}, 'vid')
     made_by = rooms.get("generatedBy")
     username = user["displayName"]
     date_str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
@@ -68,4 +68,4 @@ def delete_room(roomid):
 """
 def check_roomids(roomid):
     """Check if the room ID exists."""
-    return bool(database.find_room({"roomid": roomid}, 'id'))
+    return bool(database.find_room({"roomid": roomid}, 'vid'))

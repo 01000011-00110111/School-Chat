@@ -23,7 +23,7 @@ class Chat:
     def __init__(self, room, roomid):
         """Initialize the chat."""
         self.name = room["roomName"]
-        self.id = roomid
+        self.vid = roomid
         self.whitelisted = room["whitelisted"]
         self.banned = room["blacklisted"]
         self.canSend = room["canSend"]
@@ -55,7 +55,7 @@ class Chat:
     def add_message_to_all(cls, message_text: str, rooms, permission='false'):
         """ads messsages to all chatrooms"""
         for chat in cls.chats:
-            # private = self.id == "all"
+            # private = self.vid == "all"
             chat.last_message = datetime.now()
             lines = len(chat.messages)# if not private else 1
 
@@ -70,7 +70,7 @@ class Chat:
         
     def add_message(self, message_text: str, permission='false') -> None:
         """Handler for messages so they get logged."""
-        # private = self.id == "all"
+        # private = self.vid == "all"
         self.last_message = datetime.now()
         lines = len(self.messages)# if not private else 1
 
@@ -87,7 +87,7 @@ class Chat:
         self.messages.clear()
         msg = format_system_msg('Chat reset by an admin.')
         self.messages.append(msg)
-        emit("reset_chat", ("admin", self.id), broadcast=True, namespace="/")
+        emit("reset_chat", ("admin", self.vid), broadcast=True, namespace="/")
         
     
     def set_lock_status(self, status):
@@ -102,5 +102,4 @@ class Chat:
             self.delete() if self.backups[1] > 3 else None
             
     def delete(self):
-        del Chat.chats[self.id]
-        
+        del Chat.chats[self.vid]

@@ -53,8 +53,8 @@ def force_set_offline(userid):
     ID.update_one({"userId": userid}, {'$set': {"status": 'offline-locked'}})
 
 
-# def update_user(username, id):
-#     db.Online.update_one({"socketid": id}, {"$set": {"username": username}})
+# def update_user(username, vid):
+#     db.Online.update_one({"socketid": vid}, {"$set": {"username": username}})
 
 
 def set_online(userid, force):
@@ -78,7 +78,7 @@ def distinct_userids():
 
 
 def find_data(location):
-    if location == 'id':
+    if location == 'vid':
         return ID.find()    
     if location == 'perm':
         return Permission.find()
@@ -94,7 +94,7 @@ def find_userid(user):
 
 
 def find_account(data, location):
-    if location == 'id':
+    if location == 'vid':
         return ID.find_one(data)
     if location == 'perm':
         # print(data)
@@ -307,7 +307,7 @@ def find_all_accounts():
 
 
 def update_account_set(location, data, data2):
-    if location == 'id':
+    if location == 'vid':
         return ID.update_one(data, data2)
     if location == 'perm':
         return Permission.update_one(data, data2)
@@ -387,7 +387,7 @@ def send_message_all(message_text: str):
 
 
 def find_room(data, location):
-    if location == 'id':
+    if location == 'vid':
         return Rooms.find_one(data)
     if location == 'acc':
         return Access.find_one(data)
@@ -396,7 +396,7 @@ def find_room(data, location):
 
 
 def find_rooms(location):
-    if location == 'id':
+    if location == 'vid':
         return Rooms.find()
     if location == 'acc':
         return Access.find()
@@ -432,7 +432,7 @@ def get_rooms():
             "$project": {
                 "_id": 0,
                 "name": "$roomName",
-                "id": "$roomid",
+                "vid": "$roomid",
                 "generatedBy": "$generatedBy",
                 "mods": "$mods",
                 "whitelisted": {
@@ -485,7 +485,11 @@ def get_room_data(roomid):
         }
     ]
 
-    return list(Rooms.aggregate(pipeline))[0]
+    result = list(Rooms.aggregate(pipeline))
+    if not result:
+        get_room_data('ilQvQwgOhm9kNAOrRqbr')
+
+    return result[0]
 
 
 def get_room_msg_data(roomid):
@@ -532,18 +536,18 @@ def update_chat(chat):
     }
 
     # Rooms.insert_one(room_data)
-    Access.update_one({"roomid": chat.id}, {"$set": access_data})
-    Messages.update_one({"roomid": chat.id}, {"$set": {"messages": chat.messages}})
+    Access.update_one({"roomid": chat.vid}, {"$set": access_data})
+    Messages.update_one({"roomid": chat.vid}, {"$set": {"messages": chat.messages}})
 
 
-def update_whitelist(id, message):  #combine whitelist and blacklist
+def update_whitelist(vid, message):  #combine whitelist and blacklist
     """Adds the whitelisted users to the database"""
-    Access.update_one({"roomid": id}, {"$set": {"whitelisted": message}})
+    Access.update_one({"roomid": vid}, {"$set": {"whitelisted": message}})
 
 
-def update_blacklist(id, message):
+def update_blacklist(vid, message):
     """Adds the blacklisted users to the database"""
-    Access.update_one({"roomid": id}, {"$set": {"blacklisted": message}})
+    Access.update_one({"roomid": vid}, {"$set": {"blacklisted": message}})
 
 
 def delete_room(data):
@@ -575,7 +579,7 @@ def add_rooms(code, username, generated_at, name):
         "whitelisted": 'everyone',
         "blacklisted": "empty",
         "canSend": 'everyone',
-        "locked": 'false',
+        "locked": False,
     }
     message = { 
         "roomid": code,
@@ -605,6 +609,9 @@ def get_unread(list, uuid):
     if chat is None:
         return 0
     return chat['unread'][uuid]
+
+def get_unread_all():
+    return Private.find()
 
 def get_private_chat(userlist):
     return Private.find_one({"userIds": userlist})
@@ -645,7 +652,7 @@ def update_private(priv):
     }
 
     # Rooms.insert_one(room_data)
-    Private.update_one({"pmid": priv.id}, {"$set": access_data})
+    Private.update_one({"pmid": priv.vid}, {"$set": access_data})
     
     
 def create_private_chat(userlist, code):

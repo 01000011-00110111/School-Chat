@@ -19,9 +19,9 @@ def get_messages_list(sender, receiver):
     return chat
 
 
-def get_messages(id):
+def get_messages(vid):
     """gets the chats with 2 users."""
-    chat = Private.create_or_get_private(id)
+    chat = Private.create_or_get_private(vid)
     return chat
 
 
@@ -46,10 +46,10 @@ class Private:
     chats = {}  # Dictionary to store existing chats
     chats_userlist = {} #or do i make it 
 
-    def __init__(self, private, id, userlist):
+    def __init__(self, private, vid, userlist):
         """Initialize the chat."""
         self.userlist = private["userIds"]
-        self.id = id
+        self.vid = vid
         self.messages = database.get_private_messages(userlist)
         self.unread = private['unread']
         self.backups = [0, 0] # 1st is total and 2nd is total sense last message
@@ -57,21 +57,22 @@ class Private:
 
 
     @classmethod
-    def create_or_get_private(cls, userlist):
+    def create_or_get_private(cls, vid):
         """Create a new chat or return an existing one."""
-        if id not in [cls.chats, cls.chats_userlist]:
-            private = database.get_private_chat(id) if isinstance(id, list)\
-            else database.find_private(id)
+        if vid not in [cls.chats, cls.chats_userlist]:
+            private = database.get_private_chat(vid) if isinstance(vid, list) \
+                else database.find_private(vid)
             if private is None:
                 code = generate_unique_code(12)
-                private = database.create_private_chat(userlist, code)
-                # private = database.find_private_messages(userlist, sender)
-            new_private = cls(private, id, userlist)
-            cls.chats[id] = new_private
-            cls.chats_userlist[(userlist[0], userlist[1])] = new_private
+                private = database.create_private_chat(vid, code)
+            userlist = private['userIds']
+            priv_id = private['pmid']
+            new_private = cls(private, priv_id, userlist)
+            cls.chats[priv_id] = new_private
+            cls.chats_userlist[tuple(userlist)] = new_private
             return new_private
         else:
-            return cls.chats[id]
+            return cls.chats.get(vid)
 
     @classmethod
     def get_unread(cls, userlist):
@@ -90,7 +91,7 @@ class Private:
             if receiver != uuid:
                 self.unread[receiver] += 1
                 
-        print(self.backups)
+        # print(self.backups)
                 
         if len(self.messages) >= 250:
             self.reset_chat()
@@ -104,7 +105,7 @@ class Private:
         self.messages.clear()
         msg = format_system_msg('This Private room has been reset.')
         self.messages.append(msg)
-        emit("reset_chat", ("admin", self.id), broadcast=True, namespace="/")
+        emit("reset_chat", ("admin", self.vid), broadcast=True, namespace="/")
 
 
     def backup_data(self):
@@ -115,4 +116,7 @@ class Private:
             self.delete() if self.backups[1] > 3 else None
             
     def delete(self):
-        del Private.chats[self.id]
+        del Private.chats[self.vid]
+
+# for private in database.get_unread_all():
+#     Private.unread.append(private['unread'])

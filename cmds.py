@@ -18,7 +18,7 @@ troll_str = """
 
 def find_command(**kwargs):
     """Send whatever sudo command is issued to its respective function."""
-    id = kwargs['roomid']
+    vid = kwargs['roomid']
     dev_commands = {
         'status': debug.status,
         'pstats': debug.pstats,
@@ -52,19 +52,19 @@ def find_command(**kwargs):
     if command in dev_commands:
         # print('dev')
         dev_commands[command](**kwargs) if perm in ['dev'] else \
-            other.respond_command((0, 'dev'), id)
+            other.respond_command((0, 'dev'), vid)
     if command in admin_commands:
         # print('admin')
         admin_commands[command](**kwargs) if perm in ['dev', 'admin'] else \
-            other.respond_command((0, 'admin'), id)
+            other.respond_command((0, 'admin'), vid)
     if command in mod_commands:
         mod_commands[command](**kwargs) if perm in ['dev', 'admin', 'mod'] else \
-            other.respond_command((0, 'mod'), id)
+            other.respond_command((0, 'mod'), vid)
     if command in basic_commands:
         try:
             basic_commands[command](**kwargs)
         except Exception:
-            other.respond_command((0, None), id)
+            other.respond_command((0, None), vid)
     # try:
     #     response_strings[(kwargs['commands']['v0'], permission(kwargs['user']))] \
     #         (**kwargs)

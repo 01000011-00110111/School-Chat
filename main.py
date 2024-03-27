@@ -264,7 +264,7 @@ def signup_post() -> ResponseReturnValue:
                                      SUsername=SUsername,
                                      SRole=SRole,
                                      SDisplayname=SDisplayname)
-    possible_user = database.find_account({'username': SUsername}, 'id')
+    possible_user = database.find_account({'username': SUsername}, 'vid')
     possible_dispuser = database.find_account({'displayName': SDisplayname},
                                               'customization')
     # print("again")
@@ -274,7 +274,7 @@ def signup_post() -> ResponseReturnValue:
             "signup-index.html",
             error='That Username/Display name is already taken!',
             SRole=SRole)
-    possible_email = database.find_account({"email": SEmail}, 'id')
+    possible_email = database.find_account({"email": SEmail}, 'vid')
     if possible_email is not None:
         return flask.render_template("signup-index.html",
                                      error='That Email is allready used!',
@@ -296,7 +296,7 @@ def signup_get() -> ResponseReturnValue:
 @app.route('/verify/<userid>/<verification_code>')
 def verify(userid, verification_code):
     """Verify a user."""
-    user_id = database.find_account({"userId": userid}, 'id')
+    user_id = database.find_account({"userId": userid}, 'vid')
     if user_id is not None:
         user_code = accounting.create_verification_code(user_id)
         if user_code == verification_code:
@@ -395,7 +395,7 @@ def customize_accounts() -> ResponseReturnValue:
             "settings.html",
             error='That Display name is already taken!',
             **return_list)
-    email_check = database.find_account({"email": email}, 'id')
+    email_check = database.find_account({"email": email}, 'vid')
     if (email_check is None and user["email"] != email):
         verification_code = accounting.create_verification_code(user)
         accounting.email_var_account(user["username"], email,
@@ -423,7 +423,7 @@ def customize_accounts() -> ResponseReturnValue:
                 error=
                 'You must verify your account before you can change settings',
                 **return_list)
-        database.update_account_set('id', {"username": username},
+        database.update_account_set('vid', {"username": username},
                                     {'$set': {
                                         "email": email
                                     }})
@@ -468,21 +468,21 @@ def get_rooms(userid):
     # print(room_access)
     if "Debugpass" in user_permissions:
         
-        emit('roomsList', ([{'id': room['id'], 'name': room['name']} for room in room_access], 'dev'), namespace='/', to=request.sid)
+        emit('roomsList', ([{'vid': room['vid'], 'name': room['name']} for room in room_access], 'dev'), namespace='/', to=request.sid)
         return
 
     if "adminpass" in user_permissions:
         room_access = [room for room in room_access if room['whitelisted'] != 'devonly']
-        emit('roomsList', ([{'id': room['id'], 'name': room['name']} for room in room_access], 'mod'), namespace='/', to=request.sid)
+        emit('roomsList', ([{'vid': room['vid'], 'name': room['name']} for room in room_access], 'mod'), namespace='/', to=request.sid)
         return
 
     if "modpass" in user_permissions:
         room_access = [room for room in room_access if 'devonly' not in room['whitelisted'] and 'adminonly' not in room['whitelisted']]
-        emit('roomsList', ([{'id': room['id'], 'name': room['name']} for room in room_access], 'mod'), namespace='/', to=request.sid)
+        emit('roomsList', ([{'vid': room['vid'], 'name': room['name']} for room in room_access], 'mod'), namespace='/', to=request.sid)
         return
 
     if user_info["locked"] == "locked":
-        emit('roomsList', ([{'id': 'zxMhhAPfWOxuZylxwkES', 'name': ''}], 'locked'), namespace='/', to=request.sid)
+        emit('roomsList', ([{'vid': 'zxMhhAPfWOxuZylxwkES', 'name': ''}], 'locked'), namespace='/', to=request.sid)
         return
 
     accessible_rooms = []
@@ -491,7 +491,7 @@ def get_rooms(userid):
            (room['whitelisted'] != 'everyone' and 'users:' in room['whitelisted'] and user_name in room['whitelisted'].split("users:")[1].split(",")) or \
            (room['blacklisted'] != 'empty' and 'users:' in room['blacklisted'] and user_name not in room['blacklisted'].split("users:")[1].split(",") and room['whitelisted'] == 'everyone') and \
            ('devonly' not in room['whitelisted'] and 'modonly' not in room['whitelisted'] and 'lockedonly' not in room['whitelisted']):
-            accessible_rooms.append({'id': room['id'], 'name': room['name']})
+            accessible_rooms.append({'vid': room['vid'], 'name': room['name']})
     
     # print(accessible_rooms)
     emit('roomsList', (accessible_rooms, user_info['locked']), namespace='/', to=request.sid)
@@ -500,10 +500,10 @@ def get_rooms(userid):
 
 
 @socketio.on('message_chat')
-def handle_message(_, message, id, userid, private, hidden):
+def handle_message(_, message, vid, userid, private, hidden):
     print(hidden)
-    handle_chat_message(message, id, userid, hidden) if private == 'false' else \
-        handle_private_message(message, id, userid)
+    handle_chat_message(message, vid, userid, hidden) if private == 'false' else \
+        handle_private_message(message, vid, userid)
 
 
 def handle_chat_message(message, roomid, userid, hidden):
@@ -570,11 +570,11 @@ def connect(roomid):
         #     roomid)  # WHY ERROR YOU WORK NOW WORK
         # ah yes the best kind of error
         room = Chat.create_or_get_chat(roomid)
-        list = {"roomid": room.id, "name": room.name, "msg": room.messages}
+        list = {"roomid": room.vid, "name": room.name, "msg": room.messages}
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
         return
-    # don't need to let the client know the mongodb id
+    # don't need to let the client know the mongodb vid
     # del room['_id']
     # print(room)
 
@@ -595,13 +595,13 @@ def private_connect(sender, receiver, roomid):
 
     chat = get_messages_list(sender, receiverid)
     # print(sender, receiver)
-    emit("private_data", {'message': chat.messages, 'pmid': chat.id, \
+    emit("private_data", {'message': chat.messages, 'pmid': chat.vid, \
         'name': receiver}, to=socketid, namespace='/')
 
 
 """
 @scheduler.task('interval',
-                id='permission_gc',
+                vid='permission_gc',
                 seconds=60,
                 misfire_grace_time=500)
 def update_permission():
@@ -682,4 +682,4 @@ if __name__ == "__main__":
     setup_func()
     socketio.start_background_task(online_refresh)
     socketio.start_background_task(backup_chats)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)

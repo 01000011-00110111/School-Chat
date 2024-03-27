@@ -14,11 +14,11 @@ from commands import other
 LOGFILE_B = "backend/Chat-backup.txt"
 
 
-def get_line_count(file, id) -> List:
+def get_line_count(file, vid) -> List:
     """Return the line count in the logfile."""
     if file == "main":
-        room = database.find_room({'roomid': id}, 'msg')
-        room = database.find_private(id) if room is None else room
+        room = database.find_room({'roomid': vid}, 'msg')
+        room = database.find_private(vid) if room is None else room
         lines = len(room["messages"])
         return lines
     elif file == "backup":
