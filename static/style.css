@@ -599,3 +599,15 @@ html {
   z-index: 1;
   margin-bottom: 100%;
 }
+
+
+#admin_menu {
+  display: none;
+  margin-top: 4%;
+  position: fixed;
+  margin-left: 60%;
+  background: rgb(21, 21, 21);
+  width: 500px;
+  height: 500px;
+  border-radius: 10px;
+}

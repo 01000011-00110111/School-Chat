@@ -80,7 +80,7 @@ def reset_chat(_: str, admin: bool, roomid) -> str:
     return ('good', 0)
 
 
-def system_response(id):
+def system_response(vid):
     """Stores all messages for system"""
     system_response = {
         1:
@@ -93,7 +93,7 @@ def system_response(id):
         "Chat reset by a priavte chat user."
     }
 
-    system_answer = format_system_msg(system_response.get(id))
+    system_answer = format_system_msg(system_response.get(vid))
     return system_answer
 
 

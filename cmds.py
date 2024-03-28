@@ -18,7 +18,7 @@ troll_str = """
 
 def find_command(**kwargs):
     """Send whatever sudo command is issued to its respective function."""
-    id = kwargs['roomid']
+    vid = kwargs['roomid']
     dev_commands = {
         'status': debug.status,
         'pstats': debug.pstats,
@@ -27,13 +27,15 @@ def find_command(**kwargs):
     }
     admin_commands = {
         'cmd_logs': debug.send_cmd_logs,
-        'lock': moderation.lock,
-        'unlock': moderation.unlock,
         'globalock': moderation.globalock,
-        'reset': room.reset_chat_user,
+        'admin': other.send_admin,
         # 'globalunlock': moderation.globalunlock,
     }
-    # mod_commands = {}
+    mod_commands = {
+        'lock': moderation.lock,
+        'unlock': moderation.unlock,
+        'reset': room.reset_chat_user,
+    }
     basic_commands = {
         'help': other.help,
         'song': other.song,
@@ -50,16 +52,19 @@ def find_command(**kwargs):
     if command in dev_commands:
         # print('dev')
         dev_commands[command](**kwargs) if perm in ['dev'] else \
-            other.respond_command((0, 'dev'), id)
+            other.respond_command((0, 'dev'), vid)
     if command in admin_commands:
         # print('admin')
         admin_commands[command](**kwargs) if perm in ['dev', 'admin'] else \
-            other.respond_command((0, 'admin'), id)
+            other.respond_command((0, 'admin'), vid)
+    if command in mod_commands:
+        mod_commands[command](**kwargs) if perm in ['dev', 'admin', 'mod'] else \
+            other.respond_command((0, 'mod'), vid)
     if command in basic_commands:
         try:
             basic_commands[command](**kwargs)
         except Exception:
-            other.respond_command((0, None), id)
+            other.respond_command((0, None), vid)
     # try:
     #     response_strings[(kwargs['commands']['v0'], permission(kwargs['user']))] \
     #         (**kwargs)
@@ -73,20 +78,21 @@ def find_command(**kwargs):
 
 def permission(user):
     """get the users permission"""
-    return 'dev' if user['SPermission'] == 'Debugpass' else 'admin' \
-        if user['SPermission'] == 'modpass' else None
-    # in the 1.4 update ill add room mods back
+    return 'dev' if 'Debugpass' in user.SPermission else 'admin' \
+        if 'adminpass' in user.SPermission else 'mod' \
+        if 'modpass' in user.SPermission else None
+    # in the 1.4 update ill add room mods back modpass
 
 
 def warn_user(user):
     """adds a new warning to the user"""
-    warn_count = user["warned"].split(' ')
+    warn_count = user.warned.split(' ')
     current_time = datetime.now()
     expiration_time = current_time + timedelta(days=30)
     date = expiration_time.strftime("%Y-%m-%d %H:%M:%S")
     warn_updated = int(warn_count[0]) + 1
     dbm.Accounts.update_one(
-        {"username": user["username"]},
+        {"username": user.username},
         {'$set': {
             'warned': f"{str(warn_updated)} {date}"
         }})

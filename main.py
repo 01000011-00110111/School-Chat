@@ -44,7 +44,7 @@ import uploading
 import word_lists
 from chat import Chat
 from commands.other import end_ping, format_system_msg
-from user import User, Users, add_user_class, delete_user, get_user_by_id, login_manager
+from user import User, login_manager
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
@@ -122,13 +122,33 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
     print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
 
-
-@app.route('/Private/<private_chat>')
+@app.route('/admin')
 @login_required
-def specific_private_page(private_chat) -> ResponseReturnValue:
+def admin_page() -> ResponseReturnValue:
+    """Get the specific room in the uri."""
+    user = database.find_login_data(request.cookies.get('Userid'), True)
+    if "adminpass" in user['SPermission']:
+        return flask.render_template('admin.html')
+    return flask.redirect(flask.url_for("chat_page"))
+
+
+@app.route('/admin/<room_name>')
+@login_required
+def specific_admin_page(room_name) -> ResponseReturnValue:
+    """Get the specific room in the uri."""
+    # later we can set this up to get the specific room (with permssions)
+    # request.cookies.get('Userid')
+    print(room_name)
+    return flask.redirect(flask.url_for("admin_page"))
+
+
+@app.route('/<prefix>/Private/<private_chat>')
+@login_required
+def specific_private_page(prefix, private_chat) -> ResponseReturnValue:
     """Get the specific private chat in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
+    print(prefix)
     print(private_chat)
     return flask.redirect(flask.url_for("chat_page"))
 
@@ -137,7 +157,7 @@ def specific_private_page(private_chat) -> ResponseReturnValue:
 @login_required
 def logout():
     """Log out the current user"""
-    delete_user(request.cookies.get("Userid"))
+    User.delete_user(request.cookies.get("Userid"))
     # emit("force_username", ("", None), brodcast=True)
     logout_user()
     return flask.redirect(flask.url_for('login_page'))
@@ -170,14 +190,18 @@ def login_page() -> ResponseReturnValue:
         if User.check_username(
                 username, user["username"]) and User.check_password(
                     user['password'], password):
-            user_obj = add_user_class(username, user["status"], user["SPermission"],
-                                      user["displayName"], user["userId"])
+            user_obj = User.add_user_class(username, user, user["userId"])
             login_user(user_obj)
             if next_page is None:
-                next_page = flask.url_for('chat_page')
+                if "adminpass" in user['SPermission']:
+                    next_page = flask.url_for('admin_page')
+                else:
+                    next_page = flask.url_for('chat_page')
             else:
                 if next_page not in word_lists.approved_links:
                     next_page = flask.url_for('chat_page')
+                if "adminpass" in user['SPermission']:
+                    next_page = flask.url_for('admin_page')
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie('Username', user['username'])
             resp.set_cookie('Theme', user['theme'])
@@ -239,7 +263,7 @@ def signup_post() -> ResponseReturnValue:
                                      SUsername=SUsername,
                                      SRole=SRole,
                                      SDisplayname=SDisplayname)
-    possible_user = database.find_account({'username': SUsername}, 'id')
+    possible_user = database.find_account({'username': SUsername}, 'vid')
     possible_dispuser = database.find_account({'displayName': SDisplayname},
                                               'customization')
     # print("again")
@@ -249,7 +273,7 @@ def signup_post() -> ResponseReturnValue:
             "signup-index.html",
             error='That Username/Display name is already taken!',
             SRole=SRole)
-    possible_email = database.find_account({"email": SEmail}, 'id')
+    possible_email = database.find_account({"email": SEmail}, 'vid')
     if possible_email is not None:
         return flask.render_template("signup-index.html",
                                      error='That Email is allready used!',
@@ -271,7 +295,7 @@ def signup_get() -> ResponseReturnValue:
 @app.route('/verify/<userid>/<verification_code>')
 def verify(userid, verification_code):
     """Verify a user."""
-    user_id = database.find_account({"userId": userid}, 'id')
+    user_id = database.find_account({"userId": userid}, 'vid')
     if user_id is not None:
         user_code = accounting.create_verification_code(user_id)
         if user_code == verification_code:
@@ -370,7 +394,7 @@ def customize_accounts() -> ResponseReturnValue:
             "settings.html",
             error='That Display name is already taken!',
             **return_list)
-    email_check = database.find_account({"email": email}, 'id')
+    email_check = database.find_account({"email": email}, 'vid')
     if (email_check is None and user["email"] != email):
         verification_code = accounting.create_verification_code(user)
         accounting.email_var_account(user["username"], email,
@@ -398,7 +422,7 @@ def customize_accounts() -> ResponseReturnValue:
                 error=
                 'You must verify your account before you can change settings',
                 **return_list)
-        database.update_account_set('id', {"username": username},
+        database.update_account_set('vid', {"username": username},
                                     {'$set': {
                                         "email": email
                                     }})
@@ -414,7 +438,7 @@ def handle_connect(userid: str, location):
     sid = request.sid
     # for user in Users.values():
         # user.status = 'offline' if user.status != 'offline-locked' else 'offline-locked'
-    user = get_user_by_id(userid)
+    user = User.get_user_by_id(userid)
     if user is not None:
         user.unique_online_list(userid, location, sid)
 
@@ -423,7 +447,7 @@ def handle_connect(userid: str, location):
 def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
     try:
-        user = get_user_by_id(request.cookies.get('Userid'))
+        user = User.get_user_by_id(request.cookies.get('Userid'))
         if user is not None and user.status != "offline-locked":
             user.status = 'offline'
         database.set_offline(request.cookies.get('Userid'))
@@ -435,70 +459,53 @@ def handle_disconnect():
 @socketio.on("get_rooms")
 def get_rooms(userid):
     """Grabs the chat rooms."""
-    user_name = database.find_account({"userId": userid}, 'perm')
-    user = database.find_account({"userId": userid},
-                                 'customization')["displayName"]
-    room_access = database.get_rooms()  # rooms.get_chat_rooms()
-    permission = user_name["locked"].split(' ')
+    user_info = database.find_account_room_data(userid)
+    user_name = user_info["displayName"]
+    user_permissions = user_info["SPermission"]
+
+    room_access = database.get_rooms()
     # print(room_access)
+    if "Debugpass" in user_permissions:
+        
+        emit('roomsList', ([{'vid': room['vid'], 'name': room['name']} for room in room_access], 'dev'), namespace='/', to=request.sid)
+        return
 
-    if user_name["SPermission"] == "Debugpass":
-        emit('roomsList', (room_access, 'dev'), namespace='/', to=request.sid)
-    elif user_name['SPermission'] == "modpass":
-        rooms_to_remove = []
-        for r in room_access:
-            if r['whitelisted'] == 'devonly':
-                # this could be simplfied into one for loop you know
-                rooms_to_remove.append(r)
+    if "adminpass" in user_permissions:
+        room_access = [room for room in room_access if room['whitelisted'] != 'devonly']
+        emit('roomsList', ([{'vid': room['vid'], 'name': room['name']} for room in room_access], 'mod'), namespace='/', to=request.sid)
+        return
 
-        for r in rooms_to_remove:
-            room_access.remove(r)
-        emit('roomsList', (room_access, 'mod'), namespace='/', to=request.sid)
-    elif permission[0] == "locked":
-        emit('roomsList', ([{
-            'id': 'zxMhhAPfWOxuZylxwkES',
-            'name': ''
-        }], 'locked'),
-             namespace='/',
-             to=request.sid)
-    else:
-        accessible_rooms = [
-            {
-                'id': r['id'],
-                'name': r['name']
-            } for r in room_access if
-            ((r['blacklisted'] == 'empty' and r['whitelisted'] == 'everyone')
-             or (r['whitelisted'] != 'everyone'
-                 and 'users:' in r['whitelisted'] and user in [
-                     u.strip()
-                     for u in r['whitelisted'].split("users:")[1].split(",")
-                 ]) or
-             (r['blacklisted'] != 'empty' and 'users:' in r['blacklisted']
-              and user not in [
-                  u.strip()
-                  for u in r['blacklisted'].split("users:")[1].split(",")
-              ] and r['whitelisted'] == 'everyone')) and
-            (
-                # user_name['username'] == r['generatedBy']
-                # or user_name['displayName'] == r['mods']) and (
-                r['whitelisted'] != 'devonly' or r['whitelisted'] != 'modonly'
-                or r['whitelisted'] != 'lockedonly')
-        ]
+    if "modpass" in user_permissions:
+        room_access = [room for room in room_access if 'devonly' not in room['whitelisted'] and 'adminonly' not in room['whitelisted']]
+        emit('roomsList', ([{'vid': room['vid'], 'name': room['name']} for room in room_access], 'mod'), namespace='/', to=request.sid)
+        return
 
-        # print(accessible_rooms)
+    if user_info["locked"] == "locked":
+        emit('roomsList', ([{'vid': 'zxMhhAPfWOxuZylxwkES', 'name': ''}], 'locked'), namespace='/', to=request.sid)
+        return
 
-        emit('roomsList', (accessible_rooms, user_name['locked']),
-             namespace='/',
-             to=request.sid)
+    accessible_rooms = []
+    for room in room_access:
+        if (room['blacklisted'] == 'empty' and room['whitelisted'] == 'everyone') or \
+           (room['whitelisted'] != 'everyone' and 'users:' in room['whitelisted'] and user_name in room['whitelisted'].split("users:")[1].split(",")) or \
+           (room['blacklisted'] != 'empty' and 'users:' in room['blacklisted'] and user_name not in room['blacklisted'].split("users:")[1].split(",") and room['whitelisted'] == 'everyone') and \
+           ('devonly' not in room['whitelisted'] and 'modonly' not in room['whitelisted'] and 'lockedonly' not in room['whitelisted']):
+            accessible_rooms.append({'vid': room['vid'], 'name': room['name']})
+    
+    # print(accessible_rooms)
+    emit('roomsList', (accessible_rooms, user_info['locked']), namespace='/', to=request.sid)
+
+
 
 
 @socketio.on('message_chat')
-def handle_message(_, message, id, userid, private):
-    handle_chat_message(message, id, userid) if private == 'false' else \
-        handle_private_message(message, id, userid)
+def handle_message(_, message, vid, userid, private, hidden):
+    print(hidden)
+    handle_chat_message(message, vid, userid, hidden) if private == 'false' else \
+        handle_private_message(message, vid, userid)
 
 
-def handle_chat_message(message, roomid, userid):
+def handle_chat_message(message, roomid, userid, hidden):
     """New New chat message handling pipeline."""
     # print(roomid)
     # later I will check the if the username is the same as the one for the session somehow
@@ -506,27 +513,32 @@ def handle_chat_message(message, roomid, userid):
     room = Chat.create_or_get_chat(roomid)
     
     # print(room)
-    user = database.find_account_data(userid)
+    # user = database.find_account_data(userid)
+    user = User.get_user_by_id(userid)
     result = filtering.run_filter_chat(user, room, message, roomid, userid)
     if result[0] == 'msg':
-        if room is not None:
+        if room is not None and not hidden:
             room.add_message(result[1])
             emit("message_chat", (result[1], roomid), broadcast=True)
             # addons.message_addons(message, user, roomid, room)
             # above is not offical again, so commented out
             if "$sudo" in message and result[2] != 3:
-                filtering.find_cmds(message, user, roomid)
+                filtering.find_cmds(message, user, roomid, room)
             elif '$sudo' in message and result[2] == 3:
                 filtering.failed_message(('permission', 9), roomid)
+        elif room is not None and hidden:
+            if "$sudo" in message and result[2] != 3:
+                filtering.find_cmds(message, user, roomid, room)
         else:
-            filtering.failed_message("return", roomid)
+            filtering.failed_message(7, roomid)
     else:
         filtering.failed_message(result, roomid)
 
 
 def handle_private_message(message, pmid, userid):
     """New New chat message handling pipeline."""
-    user = database.find_account_data(userid)
+    # user = database.find_account_data(userid)
+    user = User.get_user_by_id(userid)
     result = filtering.run_filter_private(user, message, userid)
     private = get_messages(pmid)
     if result[0] == 'msg':
@@ -557,11 +569,11 @@ def connect(roomid):
         #     roomid)  # WHY ERROR YOU WORK NOW WORK
         # ah yes the best kind of error
         room = Chat.create_or_get_chat(roomid)
-        list = {"roomid": room.id, "name": room.name, "msg": room.messages}
+        list = {"roomid": room.vid, "name": room.name, "msg": room.messages}
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
         return
-    # don't need to let the client know the mongodb id
+    # don't need to let the client know the mongodb vid
     # del room['_id']
     # print(room)
 
@@ -582,13 +594,13 @@ def private_connect(sender, receiver, roomid):
 
     chat = get_messages_list(sender, receiverid)
     # print(sender, receiver)
-    emit("private_data", {'message': chat.messages, 'pmid': chat.id, \
+    emit("private_data", {'message': chat.messages, 'pmid': chat.vid, \
         'name': receiver}, to=socketid, namespace='/')
 
 
 """
 @scheduler.task('interval',
-                id='permission_gc',
+                vid='permission_gc',
                 seconds=60,
                 misfire_grace_time=500)
 def update_permission():
@@ -645,12 +657,14 @@ def online_refresh():
 def backup_chats(exception=None):
     """Runs after each request."""
     while True:
-        for chat_instance in Chat.chats.values():
+        chat_chats_copy = dict(Chat.chats)
+        for chat_id, chat_instance in chat_chats_copy.items():
             chat_instance.backup_data() 
-        for private_instance in Private.chats.values():
-            private_instance.backup_data()
-        socketio.sleep(4)
-        
+        private_chats_copy = dict(Private.chats)
+        for private_id, private_instance in private_chats_copy.items():
+            private_instance.backup_data() 
+        socketio.sleep(900)
+
 @app.teardown_appcontext
 def teardown_request(exception=None):
     """Runs after each request."""
@@ -660,7 +674,6 @@ def teardown_request(exception=None):
     private_chats_copy = dict(Private.chats)
     for private_id, private_instance in private_chats_copy.items():
         private_instance.backup_data() 
-    socketio.sleep(4)
 
 if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)

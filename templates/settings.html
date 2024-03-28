@@ -3,6 +3,7 @@
 <script src="static/settings.js" defer></script>
 {% endblock %}
 {% block content %}
+<button onclick="enableNotifications();">Enable Notifications</button>
 <form method="post" enctype="multipart/form-data" style="display: grid;">
     <div id="ProfileDisplay">
       <img id="PfPdisplay">
@@ -65,6 +66,8 @@
         <button type="button" class="themeBtn" onclick="toggleDropdown()">Themes</button>
         <div class="themeContent">
             <a class="themeOption" id='dark' onclick="setTheme('dark');">Dark</a>
+            <a class="themeOption" id='dark' onclick="setTheme('better_dark');">Better 
+                Dark</a>
             <a class="themeOption" id='light' onclick="setTheme('light');">Light</a>
             <a class="themeOption" id='holiday' onclick="setTheme('holiday');">Holiday</a>>
          
@@ -93,7 +96,7 @@
       </div>
 
       <div style="width: 60%; margin-left: 130px;">
-        <button onclick="enableNotifications();">Enable Notifications</button>
+      
       </div>
     </div>
   </div>

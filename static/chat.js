@@ -30,9 +30,9 @@ socket.on("ping", ({ who, from, pfp, message, name, ID}) => {
     // room = window.sessionStorage.getItem("ID");
     // console.log(who, from, message);
     if (user_name === who) {
-        new Notification("You where pinged by:", { body: from + ` in ${name}: ` + message, icon: '/static/favicon.ico'});
+        new Notification("You were pinged by:", { body: from + ` in ${name}: ` + message, icon: pfp});
     } else if (who === "everyone") {// add a check to see if the user has access and if so then ping them    
-        new Notification("You where pinged by:", { body: from + ` in ${name}: ` + message, icon: '/static/favicon.ico'});
+        new Notification("You were pinged by:", { body: from + ` in ${name}: ` + message, icon: pfp});
     }
 });
 
@@ -69,18 +69,18 @@ socket.on("roomsList", (result, permission) => {
     let RoomDiv = document.getElementById("ChatRoomls");
     for (room of result) {
         if (permission != 'locked') {
-        rooms = rooms + `<hr id="room_bar"><a id="room_names" onclick=changeRoom("${room.id}")>/` + room.name + '</a><hr id="room_bar">';
+        rooms = rooms + `<hr id="room_bar"><a id="room_names" onclick=changeRoom("${room.vid}")>/` + room.name + '</a><hr id="room_bar">';
         } else {
             rooms = '<hr id="room_bar">verify to have access to chat rooms<hr id="room_bar">'
             changeRoom('zxMhhAPfWOxuZylxwkES')
           }
     }
     RoomDiv["innerHTML"] = rooms;
-    for (room of result) {CheckIfExist(result);}
+    // for (room of result) {CheckIfExist(result);}
 });
 
 function CheckIfExist(_params) {
-    if (window.sessionStorage.getItem("ID") != room.id) {
+    if (window.sessionStorage.getItem("ID") != room.vid) {
         changeRoom('ilQvQwgOhm9kNAOrRqbr')
     } else {return}
 }
@@ -92,9 +92,10 @@ socket.on("room_data", (data) => {
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
-    window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['name']}`);
+    let room_cat = window.location.href.split("/")[3];
+    window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/${room_cat}/${data['name']}`);
     roomname = document.getElementById("RoomDisplay").innerHTML = '/'+data['name'];
-    document.title = `/${data['name']} - Chat`
+    document.title = `/${data['name']} - Chat`;
     let chat = ""; 
     for (let messageObj of data['msg']) {
         chat = chat + messageObj + newline;
@@ -111,11 +112,10 @@ socket.on("private_data", (data) => {
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
-    // window.history.replaceState({"pageTitle": `${data['name']} - Chat`}, "", `/chat/${data['name']}`);
-    // roomname = document.getElementById("RoomDisplay").innerHTML = '/'+data['name'];
-    window.history.replaceState({"pageTitle": `Private Chat`}, "", `/Private/${data['name']}`);
-    roomname = document.getElementById("RoomDisplay").innerHTML = 'Private Chat';
-    document.title = `/Private`
+    let room_cat = window.location.href.split("/")[3];
+    window.history.replaceState({"pageTitle": `Private Chat`}, "", `/${room_cat}/Private/${data['name']}`);
+    roomname = document.getElementById("RoomDisplay").innerHTML = `Private Chat: ${data['name']}`;
+    document.title = `/Private - ${data['name']}`;
     let chat = ""; 
     for (let messageObj of data['message']) {
         chat = chat + messageObj + newline;
@@ -147,21 +147,33 @@ function openuserinfo(user) {
 //   window.scrollTo(0, chatDiv.scrollHeight);
 // }
 
-function sendMessage() {
+function getMessage() {
     let messageElement = document.getElementById("message");
+    let message = messageElement["value"];
+    messageElement["value"] = "";
+    let hidden = false
+    var admin = document.getElementById('send_as_admin');
+    if (admin) {
+        if (admin.checked) {
+            hidden = true;
+            message = '$sudo admin ' + message;
+        }
+    }
+    sendMessage(message, hidden);
+}
+
+function sendMessage(message, hidden) {
     let user = getCookie('Username')
     let userid = getCookie('Userid')
-    let message = messageElement["value"];
     if (message === "") {
         return;
     }
-
+    // later i'll implement hiding the cmd
     let chatDiv = document.getElementById("chat");
-    messageElement["value"] = "";
     // this is needed, because this goes over socketio, not a normal http request
     private = window.sessionStorage.getItem('private')
     ID = window.sessionStorage.getItem("ID")
-    socket.emit('message_chat', user, message, ID, userid, private);
+    socket.emit('message_chat', user, message, ID, userid, private, hidden);
 
     window.scrollTo(0, chatDiv.scrollHeight);
 }
@@ -181,6 +193,6 @@ function renderChat(messages, ID) {
 
 function checkKey() {
     if (event.key === "Enter") {
-        sendMessage();
+        getMessage();
     }
 }
