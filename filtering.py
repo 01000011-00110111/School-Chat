@@ -33,13 +33,13 @@ def run_filter_chat(user, room, message, roomid, userid):
     user_muted = check_mute(user)
 
     # we must check if the current user is acutally them, good idea for this to be first
-    if userid != user['userId']:
+    if userid != user.userId':
         # idea lock account if they fail 3 times useing the normal lock
         # or a lock version that doesnt let you login at all
         # without dev help of email fix
         return ('permission', 12, user_muted)
 
-    userobj = User.get_user_by_id(userid)
+    # userobj = User.get_user_by_id(userid)
     
     if user_muted not in [0, 3] and perms not in ['dev','admin']:
         return ('permission', user_muted)
@@ -50,18 +50,15 @@ def run_filter_chat(user, room, message, roomid, userid):
 
     if perms != "dev":
         message = filter_message(message)
-        role = profanity.censor(user['role'])
+        role = profanity.censor(user.role)
     else:
-        role = user['role']
+        role = user.role
 
-    if user['profile'] == "":
-        profile_picture = '/static/favicon.ico'
-    else:
-        profile_picture = user['profile']
-
+    profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
+    
     if "[" in message and not locked:
-        if user['locked'] != 'locked':
-            find_pings(message, user['displayName'], profile_picture, roomid)
+        if user.locked != 'locked':
+            find_pings(message, user.displayName, profile_picture, roomid)
         else:
             cmds.warn_user(user)
             failed_message(('permission', 11, 'locked'), roomid)
@@ -83,7 +80,7 @@ def run_filter_chat(user, room, message, roomid, userid):
         return_str = ('permission', 5, user_muted)
 
     #check for spam then update message count and prev user
-    limit = userobj.send_limit()
+    limit = user.send_limit()
     if not limit: #and perms != "dev":
         # cmds.warn_user(user)
         return ('permission', 8, user_muted)
@@ -100,13 +97,13 @@ def run_filter_private(user, message, userid):
     user_muted = check_mute(user)
 
     # we must check if the current user is acutally them, good idea for this to be first
-    if userid != user['userId']:
+    if userid != user.uuid:
         # idea lock account if they fail 3 times useing the normal lock
         # or a lock version that doesnt let you login at all
         # without dev help of email fix
         return ('permission', 12, user_muted)
     
-    userobj = User.get_user_by_id(userid)
+    # userobj = User.get_user_by_id(userid)
 
     if user_muted not in [0, 3] and perms != 'dev':
         return ('permission', user_muted)
@@ -117,19 +114,16 @@ def run_filter_private(user, message, userid):
 
     if perms != "dev":
         message = filter_message(message)
-        role = profanity.censor(user['role'])
+        role = profanity.censor(user.role)
     else:
-        role = user['role']
+        role = user.role
 
-    if user['profile'] == "":
-        profile_picture = '/static/favicon.ico'
-    else:
-        profile_picture = user['profile']
+    profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
 
 
     final_str = ('msg' ,compile_message(markdown(message), profile_picture, user, role), user_muted)
     
-    limit = userobj.send_limit()
+    limit = user.send_limit()
     if not limit: #and perms != "dev":
         # cmds.warn_user(user)
         return ('permission', 8, user_muted)
@@ -138,19 +132,19 @@ def run_filter_private(user, message, userid):
 
 def check_mute(user):
     """Checks if the user is muted or banned."""
-    permission = user["permission"].split(' ')
+    permission = user.permission.split(' ')
     if permission[0] == "muted":
         return 1
-    elif user["permission"] == "banned":
+    elif user.permission == "banned":
         return 2
-    elif user["locked"].split(' ')[0] == "locked":
+    elif user.locked.split(' ')[0] == "locked":
         return 3
     return 0
 
 
 def check_perms(user):
     """Checks if the user has specal perms else return as a user"""
-    return 'dev' if 'Debugpass' in user['SPermission'] else 'mod' if 'modpass' in user['SPermission'] else 'user'
+    return 'dev' if 'Debugpass' in user.SPermission else 'mod' if 'modpass' in user.SPermission else 'user'
 
 
 def to_hyperlink(text: str) -> str:
@@ -274,7 +268,7 @@ def find_cmds(message, user, roomid, room):
     # we should be the only ones that can do that (devs)
     for cmd in command_split:
         date_str = datetime.now().strftime("[%a %H:%M] ")
-        Lmessage = date_str + user['username'] + ":" + cmd
+        Lmessage = date_str + user.username + ":" + cmd
         log.log_commands(Lmessage)
 
         command = cmd.split()
@@ -296,8 +290,8 @@ def compile_message(message, profile_picture, user, role):
     """Taken from old methold of making messages"""
     to_hyperlink(message)
     profile = f"<img class='pfp' src='{profile_picture}'></img>"
-    user_string = f"<font color='{user['userColor']}'>{user['displayName']}</font>"
-    message_string = f"<font color='{user['messageColor']}'>{message}</font>"
+    user_string = f"<font color='{user.userColor}'>{user.displayName}</font>"
+    message_string = f"<font color='{user.messageColor}'>{message}</font>"
     role_string = do_dev_easter_egg(role, user)
     date_str = datetime.now().strftime("[%a %I:%M %p] ")
     message_string_h = to_hyperlink(message_string)
@@ -308,7 +302,7 @@ def compile_message(message, profile_picture, user, role):
 
 def do_dev_easter_egg(role, user):
     """Because we want RAINBOW changing role names."""
-    role_color = user['roleColor']
+    role_color = user.roleColor
     if role_color == "#00ff00":
         role_string = "<font class='Dev_colors-loop'>" + role + "</font>"
     elif role_color == "rainbow":

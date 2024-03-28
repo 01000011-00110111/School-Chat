@@ -186,6 +186,15 @@ def find_login_data(value, login):
             "theme": {
                 "$arrayElemAt": ["$customization.theme", 0]
             },
+            "permission": {
+                "$arrayElemAt": ["$permissions.SPermission", 0]
+            },
+            "locked": {
+                "$arrayElemAt": ["$permissions.location", 0]
+            },
+            "warned": {
+                "$arrayElemAt": ["$permissions.location", 0]
+            },
             "SPermission": {
                 "$arrayElemAt": ["$permissions.SPermission", 0]
             }

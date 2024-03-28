@@ -190,8 +190,7 @@ def login_page() -> ResponseReturnValue:
         if User.check_username(
                 username, user["username"]) and User.check_password(
                     user['password'], password):
-            user_obj = User.add_user_class(username, user["status"],
-                        user["SPermission"], user["displayName"], user["userId"])
+            user_obj = User.add_user_class(username, user, user["userId"])
             login_user(user_obj)
             if next_page is None:
                 if "adminpass" in user['SPermission']:
@@ -514,8 +513,8 @@ def handle_chat_message(message, roomid, userid, hidden):
     room = Chat.create_or_get_chat(roomid)
     
     # print(room)
-    user = database.find_account_data(userid)
-    # user = User.get_user_by_id(userid)
+    # user = database.find_account_data(userid)
+    user = User.get_user_by_id(userid)
     result = filtering.run_filter_chat(user, room, message, roomid, userid)
     if result[0] == 'msg':
         if room is not None and not hidden:
@@ -538,8 +537,8 @@ def handle_chat_message(message, roomid, userid, hidden):
 
 def handle_private_message(message, pmid, userid):
     """New New chat message handling pipeline."""
-    user = database.find_account_data(userid)
-    # user = User.get_user_by_id(userid)
+    # user = database.find_account_data(userid)
+    user = User.get_user_by_id(userid)
     result = filtering.run_filter_private(user, message, userid)
     private = get_messages(pmid)
     if result[0] == 'msg':

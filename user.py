@@ -17,18 +17,28 @@ class User:
     """Represents a logged in user."""
     Users = {}
 
-    def __init__(self, username, status, perm, displayName, uuid):
+    def __init__(self, username, user, uuid):
         """Initialize the user."""
         self.username = username
-        self.displayName = displayName
-        self.perm = perm
+        self.displayName = ['displayName']
+        self.perm = ['perm']
         self.uuid = uuid
-        self.status = status
+        self.status = ['status']
         self.limit = 0
         self.pause = False
         self.last_message = datetime.now()
-        self.mute_time = 0
+        self.mute_time = 0 #later ill add a mute db value # user['mute_time']
         self.online_list = []
+        #other user values
+        self.Rcolor = user['roleColor']
+        self.Mcolor = user['messageColor']
+        self.Ucolor = user['userColor']
+        self.role = user['role']
+        self.profile = user['profile']
+        self.theme = user['theme']
+        self.locked = ['locked']
+        self.permission = user['permission'] # temp will go away
+        self.warned = user['warned']
 
     @staticmethod
     def is_authenticated():
@@ -73,11 +83,11 @@ class User:
         return user
 
     @classmethod
-    def add_user_class(cls, username, status, perm, displayName, userid):
-        user_class = cls(username, status, perm, displayName, userid)
+    def add_user_class(cls, username, user, userid):
+        user_class = cls(username, user, userid)
         database.set_online(userid, False)
         cls.Users.update({userid: user_class})
-        tupple = (userid, displayName, perm[0])
+        tupple = (userid, user['displayName'], user['SPermission'][0])
         if tupple in inactive_users:
             inactive_users.remove(tupple)
         return user_class

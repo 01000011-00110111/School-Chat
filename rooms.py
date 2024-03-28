@@ -21,7 +21,7 @@ def generate_unique_code(length):
 
 def create_chat_room(name, username, userinfo):
     """Create a chat room and register it in the database."""
-    generated_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
+    generated_at = datetime().strftime("%Y-%m-%dT%H:%M:%S")
     
     if not name or database.find_room({'roomName': name}, 'vid'):
         log = f"Failed: Invalid Room Name ({username} room creation) {generated_at}"
@@ -42,14 +42,14 @@ def delete_chat_room(room_name, user):
     Delete the chat room selected by the owner or admin
     rooms = database.find_room({"roomName": room_name}, 'vid')
     made_by = rooms.get("generatedBy")
-    username = user["displayName"]
+    username = user.displayName
     date_str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     
-    if made_by == user["username"] or "Debugpass" in user["SPermission"]:
+    if made_by == user.username or "Debugpass" in user.SPermission:
         if len(rooms.get("roomid", "")) == 20:
             return ("reason", 3, "delete")
         response = delete_room(rooms.get("roomid", ""))
-        logmessage = f"{username} deleted {room_name} at {date_str}" if made_by == user["username"] \
+        logmessage = f"{username} deleted {room_name} at {date_str}" if made_by == user.username \
                      else f"{username} deleted {room_name} owned by {made_by} at {date_str}"
     else:
         logmessage = f"{username} tried to delete {room_name} at {date_str}"
