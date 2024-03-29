@@ -33,7 +33,7 @@ def run_filter_chat(user, room, message, roomid, userid):
     user_muted = check_mute(user)
 
     # we must check if the current user is acutally them, good idea for this to be first
-    if userid != user.userId':
+    if userid != user.uuid:
         # idea lock account if they fail 3 times useing the normal lock
         # or a lock version that doesnt let you login at all
         # without dev help of email fix

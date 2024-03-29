@@ -8,10 +8,10 @@ from flask_socketio import emit
 import database
 from private import Private, format_userlist
 
-
 inactive_users = []
 
 login_manager = LoginManager()
+
 
 class User:
     """Represents a logged in user."""
@@ -27,7 +27,7 @@ class User:
         self.limit = 0
         self.pause = False
         self.last_message = datetime.now()
-        self.mute_time = 0 #later ill add a mute db value # user['mute_time']
+        self.mute_time = 0  #later ill add a mute db value # user['mute_time']
         self.online_list = []
         #other user values
         self.Rcolor = user['roleColor']
@@ -37,8 +37,8 @@ class User:
         self.profile = user['profile']
         self.theme = user['theme']
         self.locked = ['locked']
-        self.permission = user['permission'] # temp will go away
-        self.warned = user['warned']
+        self.permission = user['permission']  # temp will go away
+        # self.warned = user['warned']
 
     @staticmethod
     def is_authenticated():
@@ -62,7 +62,7 @@ class User:
         """Return the user's username."""
         # whenever we get arround to it, maybe switch this to userid?
         return self.username
-    
+
     def remove_user(self):
         logout_user()
 
@@ -76,7 +76,7 @@ class User:
     def check_username(username, db_username):
         """Check the username against the one entered in the login field."""
         return username == db_username
-    
+
     @classmethod
     def get_user_by_id(cls, userid):
         user = cls.Users.get(userid, None)
@@ -136,9 +136,13 @@ class User:
             return True
         return False
 
-    
     def unique_online_list(self, userid, location, sid):
-        icon_perm = {"Debugpass": '🔧', 'modpass': "🛡️", 'adminpass': "⚒️", "": ""}
+        icon_perm = {
+            "Debugpass": '🔧',
+            'modpass': "🛡️",
+            'adminpass': "⚒️",
+            "": ""
+        }
         if self.status == "offline":
             self.status = "online"
 
@@ -150,27 +154,33 @@ class User:
 
         for key in User.Users.values():
             if key.status == "online":
-                unread = Private.get_unread(format_userlist(self.uuid, key.uuid))
+                unread = Private.get_unread(
+                    format_userlist(self.uuid, key.uuid))
                 unread = 0 if key.uuid == self.uuid else unread
                 user_icon = icon_perm.get(key.perm[0])
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
 
                 if key.perm[0] == "adminpass":
-                    online_admins.append((f"{unread_list} {user_icon}", key.displayName))
+                    online_admins.append(
+                        (f"{unread_list} {user_icon}", key.displayName))
                 elif key.perm[0] == "modpass":
-                    online_moderators.append((f"{unread_list} {user_icon}", key.displayName))
+                    online_moderators.append(
+                        (f"{unread_list} {user_icon}", key.displayName))
                 elif key.perm[0] == "Debugpass":
-                    online_developers.append((f"{unread_list} {user_icon}", key.displayName))
+                    online_developers.append(
+                        (f"{unread_list} {user_icon}", key.displayName))
                 else:
-                    online_regular_users.append((f"{unread_list} {user_icon}", key.displayName))
+                    online_regular_users.append(
+                        (f"{unread_list} {user_icon}", key.displayName))
 
             else:
-                unread = Private.get_unread(format_userlist(self.uuid, key.uuid))
+                unread = Private.get_unread(
+                    format_userlist(self.uuid, key.uuid))
                 unread = 0 if key.uuid == self.uuid else unread
                 user_icon = icon_perm.get(key.perm[0])
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
-                offline_users.add((f"{unread_list} {user_icon}", key.displayName))
-
+                offline_users.add(
+                    (f"{unread_list} {user_icon}", key.displayName))
 
         online_list = online_developers + online_admins + online_moderators + online_regular_users
 
@@ -180,11 +190,11 @@ class User:
             # unread = 0 if user[0] == self.uuid else unread
             user_icon = icon_perm.get(user[2])
             # print(unread)
-            unread_list = '' #f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+            unread_list = ''  #f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
             offline_users.add((f"{unread_list} {user_icon}", user[1]))
 
         offline_list = list(offline_users)
-        
+
         # if online_list != self.online_list:
         emit("online", (online_list, offline_list), to=sid)
         # self.online_list = online_list
@@ -193,4 +203,5 @@ class User:
 #####not in the class#####
 for user in database.get_all_offline():
     if user["userid"] not in User.Users:
-        inactive_users.append((user["userid"], user["displayName"], user["SPermission"][0]))
+        inactive_users.append(
+            (user["userid"], user["displayName"], user["SPermission"][0]))
