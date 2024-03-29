@@ -21,7 +21,7 @@ class User:
         """Initialize the user."""
         self.username = username
         self.displayName = user['displayName']
-        self.perm = user['perm']
+        self.perm = user['SPermission']
         self.uuid = uuid
         self.status = user['status']
         self.limit = 0

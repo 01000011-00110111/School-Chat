@@ -49,7 +49,7 @@ class Chat:
     @classmethod
     def set_all_lock_status(cls, status):
         for chat in cls.chats:
-            chat.lock = status
+            chat.locked = status
                 
     @classmethod
     def add_message_to_all(cls, message_text: str, rooms, permission='false'):
@@ -91,7 +91,7 @@ class Chat:
         
     
     def set_lock_status(self, status):
-        self.lock = status
+        self.locked = status
         
         
     def backup_data(self):
