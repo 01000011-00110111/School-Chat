@@ -11,12 +11,12 @@ from flask_socketio import emit
 
 def check_if_dev(user):
     """Return if a user is a dev or not."""
-    return 1 if 'Debugpass' in user.SPermission else 0
+    return 1 if 'Debugpass' in user.perm else 0
 
 
 def check_if_mod(user):
     """Return if a user is a mod or not."""
-    return 1 if 'modpass' in user.SPermission else 0
+    return 1 if 'modpass' in user.perm else 0
 
 
 def song(**kwargs):

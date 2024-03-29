@@ -45,7 +45,7 @@ def delete_chat_room(room_name, user):
     username = user.displayName
     date_str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     
-    if made_by == user.username or "Debugpass" in user.SPermission:
+    if made_by == user.username or "Debugpass" in user.perm:
         if len(rooms.get("roomid", "")) == 20:
             return ("reason", 3, "delete")
         response = delete_room(rooms.get("roomid", ""))

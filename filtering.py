@@ -144,7 +144,7 @@ def check_mute(user):
 
 def check_perms(user):
     """Checks if the user has specal perms else return as a user"""
-    return 'dev' if 'Debugpass' in user.SPermission else 'mod' if 'modpass' in user.SPermission else 'user'
+    return 'dev' if 'Debugpass' in user.perm else 'mod' if 'modpass' in user.perm else 'user'
 
 
 def to_hyperlink(text: str) -> str:

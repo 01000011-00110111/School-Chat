@@ -164,6 +164,14 @@ class User:
                 else:
                     online_regular_users.append((f"{unread_list} {user_icon}", key.displayName))
 
+            else:
+                unread = Private.get_unread(format_userlist(self.uuid, key.uuid))
+                unread = 0 if key.uuid == self.uuid else unread
+                user_icon = icon_perm.get(key.perm[0])
+                unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+                offline_users.add((f"{unread_list} {user_icon}", key.displayName))
+
+
         online_list = online_developers + online_admins + online_moderators + online_regular_users
 
         for user in inactive_users:

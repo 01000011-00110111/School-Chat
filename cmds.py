@@ -78,15 +78,15 @@ def find_command(**kwargs):
 
 def permission(user):
     """get the users permission"""
-    return 'dev' if 'Debugpass' in user.SPermission else 'admin' \
-        if 'adminpass' in user.SPermission else 'mod' \
-        if 'modpass' in user.SPermission else None
+    return 'dev' if 'Debugpass' in user.perm else 'admin' \
+        if 'adminpass' in user.perm else 'mod' \
+        if 'modpass' in user.perm else None
     # in the 1.4 update ill add room mods back modpass
 
 
 def warn_user(user):
     """adds a new warning to the user"""
-    warn_count = user.warned.split(' ')
+    # warn_count = user.warned.split(' ')
     current_time = datetime.now()
     expiration_time = current_time + timedelta(days=30)
     date = expiration_time.strftime("%Y-%m-%d %H:%M:%S")
