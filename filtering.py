@@ -58,7 +58,7 @@ def run_filter_chat(user, room, message, roomid, userid):
     
     if "[" in message and not locked:
         if user.locked != 'locked':
-            find_pings(message, user.displayName, profile_picture, roomid)
+            find_pings(message, user.displayName, profile_picture, roomid, room)
         else:
             cmds.warn_user(user)
             failed_message(('permission', 11, 'locked'), roomid)
@@ -132,13 +132,13 @@ def run_filter_private(user, message, userid):
 
 def check_mute(user):
     """Checks if the user is muted or banned."""
-    permission = user.permission.split(' ')
-    if permission[0] == "muted":
-        return 1
-    elif user.permission == "banned":
-        return 2
-    elif user.locked.split(' ')[0] == "locked":
-        return 3
+    # permission = muteuser.mute_time 
+    # if permission[0] == "muted":
+        # return 1
+    # elif user.permission == "banned":
+        # return 2
+    # elif user.locked.split(' ')[0] == "locked":
+        # return 3
     return 0
 
 
@@ -216,10 +216,10 @@ def markdown(message):
     return compiled_str
 
 
-def find_pings(message, dispName, profile_picture, roomid):
+def find_pings(message, dispName, profile_picture, roomid, room):
     """Gotta catch 'em all! (checks for pings in the users message)"""
     pings = re.findall(r'(?<=\[).+?(?=\])', message)
-    room = database.find_room({'roomid': roomid}, 'vid')
+    # room = database.find_room({'roomid': roomid}, 'vid')
 
     for ping in pings:
         message = message.replace(f"[{ping}]", '')
@@ -228,8 +228,8 @@ def find_pings(message, dispName, profile_picture, roomid):
             "from": dispName,
             "pfp": profile_picture,
             "message": message,
-            "name": room["roomName"],
-            "roomid": room["roomid"]
+            "name": room.name,
+            "roomid": room.vid
         },
              namespace="/",
              broadcast=True)
@@ -290,8 +290,8 @@ def compile_message(message, profile_picture, user, role):
     """Taken from old methold of making messages"""
     to_hyperlink(message)
     profile = f"<img class='pfp' src='{profile_picture}'></img>"
-    user_string = f"<font color='{user.userColor}'>{user.displayName}</font>"
-    message_string = f"<font color='{user.messageColor}'>{message}</font>"
+    user_string = f"<font color='{user.Ucolor}'>{user.displayName}</font>"
+    message_string = f"<font color='{user.Mcolor}'>{message}</font>"
     role_string = do_dev_easter_egg(role, user)
     date_str = datetime.now().strftime("[%a %I:%M %p] ")
     message_string_h = to_hyperlink(message_string)
@@ -302,7 +302,7 @@ def compile_message(message, profile_picture, user, role):
 
 def do_dev_easter_egg(role, user):
     """Because we want RAINBOW changing role names."""
-    role_color = user.roleColor
+    role_color = user.Rcolor
     if role_color == "#00ff00":
         role_string = "<font class='Dev_colors-loop'>" + role + "</font>"
     elif role_color == "rainbow":
