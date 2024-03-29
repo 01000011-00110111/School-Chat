@@ -20,10 +20,10 @@ class User:
     def __init__(self, username, user, uuid):
         """Initialize the user."""
         self.username = username
-        self.displayName = ['displayName']
-        self.perm = ['perm']
+        self.displayName = user['displayName']
+        self.perm = user['perm']
         self.uuid = uuid
-        self.status = ['status']
+        self.status = user['status']
         self.limit = 0
         self.pause = False
         self.last_message = datetime.now()
