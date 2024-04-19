@@ -65,8 +65,8 @@ def mute(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     room = kwargs['room']
-    if True:#add check later
-        muted = {roomid: datetime.now() + timedelta(minutes=5)}
+    if True:  # add check later
+        muted = {str(roomid): datetime.now() + timedelta(minutes=5)}
         user.mutes.append(muted)
         message = other.format_system_msg("User Muted by Admin.")
         room.add_message(message, None)

@@ -31,6 +31,7 @@ def run_filter_chat(user, room, message, roomid, userid):
     perms = check_perms(user)
     can_send = room.canSend
     user_muted = check_mute(user, roomid)
+    limit = user.send_limit()
 
     # we must check if the current user is acutally them, good idea for this to be first
     if userid != user.uuid:
@@ -80,7 +81,6 @@ def run_filter_chat(user, room, message, roomid, userid):
         return_str = ('permission', 5, 0)
 
     #check for spam then update message count and prev user
-    limit = user.send_limit()
     if not limit: #and perms != "dev":
         # cmds.warn_user(user)
         return ('permission', 8, 0)

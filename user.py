@@ -144,10 +144,13 @@ class User:
 
         return bool(to_remove)
 
+    
     def get_perm(self, roomid):
         for mute in self.mutes:
             if mute.keys() == roomid:
-                return True
+                if mute.value() >= datetime.now():
+                    return True
+        return False
         
 
     def unique_online_list(self, userid, location, sid):
