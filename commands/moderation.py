@@ -4,6 +4,7 @@ from chat import Chat
 # from cmds import  other.respond_command, other.check_if_dev, other.format_system_msg, other.check_if_mod
 import database
 from commands import other
+from user import User
 
 
 def globalock(**kwargs):
@@ -62,19 +63,67 @@ def unlock(**kwargs):
 
 def mute(**kwargs):
     """mutes the user"""
-    user = kwargs['user']
+    # user = kwargs['user']
     roomid = kwargs['roomid']
     room = kwargs['room']
+    target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
+    time = kwargs["commands"]["v2"]
+    for user in User.Users:
+        if user.displayName == target:
+            user = user
+    duration = int(time[:-1])
+    if time[-1] == 'm':
+        expiration_time = datetime.now() + timedelta(minutes=duration)
+    elif time[-1] == 'h':
+        expiration_time = datetime.now() + timedelta(hours=duration)
+    elif time[-1] == 'd':
+        expiration_time = datetime.now() + timedelta(days=duration)
+    for user in User.Users:
+        if user.displayName == target:
+            user = user
     if True:  # add check later
-        muted = {str(roomid): datetime.now() + timedelta(minutes=5)}
+        muted = {str(roomid): expiration_time}
         user.mutes.append(muted)
         message = other.format_system_msg("User Muted by Admin.")
         room.add_message(message, None)
         emit("message_chat", (message, roomid), broadcast=True)
 
 
-def unmute(**kwargs):
-    """unmutes the user"""
-    user = kwargs['user']
+def ban(**kwargs):
+    """mutes the user in all chat rooms"""
+    # user = kwargs['user']
     roomid = kwargs['roomid']
     room = kwargs['room']
+    target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
+    time = kwargs["commands"]["v2"]
+    duration = int(time[:-1])
+    if time[-1] == 'm':
+        expiration_time = datetime.now() + timedelta(minutes=duration)
+    elif time[-1] == 'h':
+        expiration_time = datetime.now() + timedelta(hours=duration)
+    elif time[-1] == 'd':
+        expiration_time = datetime.now() + timedelta(days=duration)
+    for user in User.Users:
+        if user.displayName == target:
+            user = user
+    if True:  # add check later
+        muted = {'all': expiration_time}
+        user.mutes.append(muted)
+        message = other.format_system_msg("User Banned by Admin.")
+        room.add_message(message, None)
+        emit("message_chat", (message, roomid), broadcast=True)
+
+def unmute(**kwargs):
+    """unmutes the user"""
+    # user = kwargs['user']
+    roomid = kwargs['roomid']
+    room = kwargs['room']
+    target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
+    # time = kwargs["commands"]["v2"]
+    for user in User.Users:
+        if user.displayName == target:
+            user = user
+    user.mutes = [mute for mute in user.mutes if str(roomid) not in mute.keys()]
+    message = other.format_system_msg("User Unmuted by Admin.")
+    room.add_message(message, None)
+    emit("message_chat", (message, roomid), broadcast=True)

@@ -29,6 +29,7 @@ def find_command(**kwargs):
         'cmd_logs': debug.send_cmd_logs,
         'globalock': moderation.globalock,
         'admin': other.send_admin,
+        'ban': moderation.ban,
         # 'globalunlock': moderation.globalunlock,
     }
     mod_commands = {

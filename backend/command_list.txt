@@ -10,6 +10,9 @@
 <ul>
     <li><code>"$sudo lock"</code>: Locks the chat.</li>
     <li><code>"$sudo unlock"</code>: Unlocks the chat.</li>
+    <li><code>"$sudo mute (time)"</code>: mutes user for your set time in the room you are in.</li>
+    <li><code>"$sudo unmute"</code>: unmutes the chat in the room you are in.</li>
+    <li><code>"$sudo ban (time)"</code>: mutes the user in every room for a set amount of time.</li>
     <li><code>"$sudo reset"</code>: Resets chat rooms.</li>
     <li><code>"$sudo cmd_logs"</code>: Sends the last 10 entries in the command log.</li>
     <li><code>"$sudo globalock (confirm)"</code>: Locks all rooms. Only use in emergencies</li>
