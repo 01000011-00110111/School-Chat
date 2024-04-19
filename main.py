@@ -357,7 +357,7 @@ def customize_accounts() -> ResponseReturnValue:
     email = request.form.get("email")
     file = request.files['profile']
     theme = request.form.get("theme")
-    user = User.get_user_by_id(userid)(userid)
+    user = User.get_user_by_id(userid)
     user_email = database.get_email(user.vid)
     return_list = {
         "user": username,
@@ -668,7 +668,8 @@ def backup_classes(exception=None):
             private_instance.backup_data() 
         users_copy = dict(User.Users)
         for user in users_copy:
-            user.backup_data()
+            if not isinstance(user, str):
+                user.backup_data()
         socketio.sleep(900)
 
 @app.teardown_appcontext
@@ -682,7 +683,8 @@ def teardown_request(exception=None):
         private_instance.backup_data()
     users_copy = dict(User.Users)
     for user in users_copy:
-        user.backup_data()
+        if not isinstance(user, str):
+            user.backup_data()
 
 if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
