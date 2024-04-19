@@ -8,6 +8,7 @@ import random
 from string import ascii_uppercase
 import database
 from commands.other import format_system_msg
+import log
 
 
 def get_messages_list(sender, receiver):
@@ -97,7 +98,8 @@ class Private:
             self.reset_chat()
         else:
             self.messages.append(message_text)
-            
+
+        log.backup_log(message_text, self.vid, True)
         return ('room', 1)
 
     def reset_chat(self):

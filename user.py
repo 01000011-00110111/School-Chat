@@ -27,7 +27,7 @@ class User:
         self.limit = 0
         self.pause = False
         self.last_message = datetime.now()
-        self.mute_time = 0  #later ill add a mute db value # user['mute_time']
+        self.mutes = [] #later ill add a mute db value # user['mute_time']
         self.online_list = []
         #other user values
         self.Rcolor = user['roleColor']
@@ -96,6 +96,7 @@ class User:
     def delete_user(cls, userid):
         if userid in cls.Users:
             u = cls.Users[userid]
+            u.backup_user()
             inactive_users.append((u.uuid, u.displayName, u.perm[0]))
             del cls.Users[userid]
             u.remove_user()
@@ -120,7 +121,7 @@ class User:
         if self.limit > 15:
             if not self.pause:
                 self.pause = True
-                self.mute_time = datetime.now() + timedelta(minutes=5)
+                self.mutes = {'all': datetime.now() + timedelta(minutes=5)}
             else:
                 return self.check_mute()
             return False
@@ -129,12 +130,19 @@ class User:
         return True
 
     def check_mute(self):
-        if self.mute_time <= datetime.now():
+        to_remove = []
+        for mute in self.mutes:
+            if mute.value() <= datetime.now():
+                to_remove.append(mute)
+        
+        for remove in to_remove:
+            self.mutes.remove(remove)
+
+        if not self.mutes:
             self.pause = False
             self.limit = 0
-            self.mute_time = None
-            return True
-        return False
+        
+        return bool(to_remove)
 
     def unique_online_list(self, userid, location, sid):
         icon_perm = {
@@ -176,9 +184,9 @@ class User:
             else:
                 unread = Private.get_unread(
                     format_userlist(self.uuid, key.uuid))
-                unread = 0 if key.uuid == self.uuid else unread
-                user_icon = icon_perm.get(key.perm[0])
-                unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+                # unread = 0 if key.uuid == self.uuid else unread
+                # user_icon = icon_perm.get(key.perm[0])
+                unread_list = 0#f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
                 offline_users.add(
                     (f"{unread_list} {user_icon}", key.displayName))
 
@@ -198,6 +206,10 @@ class User:
         # if online_list != self.online_list:
         emit("online", (online_list, offline_list), to=sid)
         # self.online_list = online_list
+
+    def backup(self):
+        """Backup the user's data."""
+        database.update_user(self)
 
 
 #####not in the class#####

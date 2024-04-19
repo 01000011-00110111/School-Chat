@@ -357,7 +357,8 @@ def customize_accounts() -> ResponseReturnValue:
     email = request.form.get("email")
     file = request.files['profile']
     theme = request.form.get("theme")
-    user = database.find_account_data(userid)
+    user = User.get_user_by_id(userid)(userid)
+    user_email = database.get_email(user.vid)
     return_list = {
         "user": username,
         "passwd": 'we are not adding password editing just yet',
@@ -371,7 +372,7 @@ def customize_accounts() -> ResponseReturnValue:
         "email": email
     }
     # print(theme)
-    old_path = user["profile"]
+    old_path = user.profile
     # print()
     profile_location = uploading.upload_file(file, old_path) if file.filename != '' else \
     old_path
@@ -380,7 +381,7 @@ def customize_accounts() -> ResponseReturnValue:
                                      error='Pick a theme before updating!',
                                      **return_list)
 
-    theme = user['theme'] if theme == '' else theme
+    theme = user.theme if theme == '' else theme
     result, error = accounting.run_regex_signup(username, role, displayname)
     if result is not False:
         return flask.render_template("settings.html",
@@ -388,35 +389,37 @@ def customize_accounts() -> ResponseReturnValue:
                                      **return_list)
 
     if (database.find_account({"displayName": displayname}, 'customization')
-            is not None and user["displayName"] != displayname
+            is not None and user.displayName != displayname
         ) and displayname in word_lists.banned_usernames:
         return flask.render_template(
             "settings.html",
             error='That Display name is already taken!',
             **return_list)
     email_check = database.find_account({"email": email}, 'vid')
-    if (email_check is None and user["email"] != email):
+    if (email_check is None and user_email != email):
         verification_code = accounting.create_verification_code(user)
-        accounting.email_var_account(user["username"], email,
-                                     verification_code, user['userid'])
-    elif (email_check is not None and user["email"] != email):
+        accounting.email_var_account(user.username, email,
+                                     verification_code, user.vid)
+    elif (email_check is not None and user_email != email):
         return flask.render_template("settings.html",
                                      error='that email is taken',
                                      **return_list)
 
-    if user['locked'] != 'locked':
-        database.update_account(user["userId"], messageC, roleC, userC, displayname,
-                                role, profile_location, theme, email)
+    if user.locked != 'locked':
+        # database.update_account(user.userId, messageC, roleC, userC, displayname,
+        #                         role, profile_location, theme, email)
+        user.update_account(messageC, roleC, userC, displayname,
+                               role, profile_location, theme)
 
         resp = flask.make_response(flask.redirect(flask.url_for('chat_page')))
-        resp.set_cookie('Username', user['username'])
+        resp.set_cookie('Username', user.username)
         resp.set_cookie('Theme', theme)
         resp.set_cookie('Profile', profile_location)
-        resp.set_cookie('Userid', user['userId'])
+        resp.set_cookie('Userid', user.vid)
         error = "Updated account!"
         return resp
     else:
-        if user['email'] == email:
+        if user_email == email:
             return flask.render_template(
                 'settings.html',
                 error=
@@ -653,8 +656,8 @@ def online_refresh():
         socketio.emit("force_username", ("", None))
         socketio.sleep(5)  # this is using a socketio refresh
         
-@socketio.on('chat_backups')
-def backup_chats(exception=None):
+@socketio.on('class_backups')
+def backup_classes(exception=None):
     """Runs after each request."""
     while True:
         chat_chats_copy = dict(Chat.chats)
@@ -663,6 +666,9 @@ def backup_chats(exception=None):
         private_chats_copy = dict(Private.chats)
         for private_id, private_instance in private_chats_copy.items():
             private_instance.backup_data() 
+        users_copy = dict(User.Users)
+        for user in users_copy:
+            user.backup_data()
         socketio.sleep(900)
 
 @app.teardown_appcontext
@@ -673,12 +679,15 @@ def teardown_request(exception=None):
         chat_instance.backup_data() 
     private_chats_copy = dict(Private.chats)
     for private_id, private_instance in private_chats_copy.items():
-        private_instance.backup_data() 
+        private_instance.backup_data()
+    users_copy = dict(User.Users)
+    for user in users_copy:
+        user.backup_data()
 
 if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
     setup_func()
     socketio.start_background_task(online_refresh)
-    socketio.start_background_task(backup_chats)
+    socketio.start_background_task(backup_classes)
     socketio.run(app, host="0.0.0.0", debug=True, port=5000)

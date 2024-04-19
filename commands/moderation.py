@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from flask_socketio import emit
 from chat import Chat
 # from cmds import  other.respond_command, other.check_if_dev, other.format_system_msg, other.check_if_mod
@@ -58,3 +59,22 @@ def unlock(**kwargs):
         room.add_message(message, None)
         room.set_lock_status(False)
         emit("message_chat", (message, roomid), broadcast=True)
+
+def mute(**kwargs):
+    """mutes the user"""
+    user = kwargs['user']
+    roomid = kwargs['roomid']
+    room = kwargs['room']
+    if True:#add check later
+        muted = {roomid: datetime.now() + timedelta(minutes=5)}
+        user.mutes.append(muted)
+        message = other.format_system_msg("User Muted by Admin.")
+        room.add_message(message, None)
+        emit("message_chat", (message, roomid), broadcast=True)
+
+
+def unmute(**kwargs):
+    """unmutes the user"""
+    user = kwargs['user']
+    roomid = kwargs['roomid']
+    room = kwargs['room']

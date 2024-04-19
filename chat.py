@@ -65,6 +65,7 @@ class Chat:
             else:
                 chat.messages.append(message_text)
 
+            log.backup_log(message_text, chat.vid, False)
             return ('room', 1)
         
         
@@ -80,6 +81,7 @@ class Chat:
         else:
             self.messages.append(message_text)
 
+        log.backup_log(message_text, self.vid, False)
         return ('room', 1)
 
     def reset_chat(self):

@@ -93,6 +93,10 @@ def find_userid(user):
     return None if userid is None else userid["userId"]
 
 
+def get_email(userid):
+    return ID.find_one({'userId': userid})['email']
+
+
 def find_account(data, location):
     if location == 'vid':
         return ID.find_one(data)
@@ -371,6 +375,26 @@ def update_account(userid, messageC, roleC, userC, displayname, role, profile,
 
     Customization.update_one({'userId': userid}, {'$set': customization_data})
     ID.update_one({'userId': userid}, {'$set': {"email": email}})
+
+
+def backup_user(user):
+    customization_data = {
+        "messageColor": user.Mcolor,
+        "roleColor": user.Rcolor,
+        "userColor": user.Ucolor,
+        "displayName": user.displayName,
+        "role": user.role,
+        "profile": user.profile,
+        "theme": user.theme,
+        }
+    permission_data = {
+        "mutes": user.mutes,
+        "permission": user.permission,
+        # "warned": user.warned,
+    }
+
+    Customization.update_one({'userId': user.vid}, {'$set': customization_data})
+    Permission.update_one({'userId': user.vid}, {'$set': permission_data})
 
 
 def delete_account(user):

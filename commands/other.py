@@ -138,7 +138,7 @@ def E_count_bacup(**kwargs):
     file = open('backend/Chat-backup.txt', 'r')
     text = file.read()
     count = len(re.findall(r'\be\b', text))
-    msg = format_system_msg("Current e count: " + str(count))
+    msg = format_system_msg("Current count: " + str(count))
     # chat.add_message(msg, roomid, 'true')
     room.add_message(msg, 'true')
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")

@@ -35,6 +35,8 @@ def find_command(**kwargs):
         'lock': moderation.lock,
         'unlock': moderation.unlock,
         'reset': room.reset_chat_user,
+        'mute': moderation.mute,
+        'unmute': moderation.unmute,
     }
     basic_commands = {
         'help': other.help,
