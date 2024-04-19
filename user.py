@@ -132,7 +132,7 @@ class User:
     def check_mute(self):
         to_remove = []
         for mute in self.mutes:
-            if mute.value() <= datetime.now():
+            if mute.value() >= datetime.now():
                 to_remove.append(mute)
 
         for remove in to_remove:
@@ -146,9 +146,9 @@ class User:
 
     
     def get_perm(self, roomid):
-        for mute in self.mutes:
-            if mute.keys() == roomid:
-                if mute.value() >= datetime.now():
+        """get the users current send permission"""
+        for mute in user.mutes:
+            if roomid in mute and mute[roomid] >= datetime.now():
                     return True
         return False
         
@@ -218,7 +218,7 @@ class User:
 
     def backup(self):
         """Backup the user's data."""
-        database.update_user(self)
+        database.backup_user(self)
 
 
 #####not in the class#####
