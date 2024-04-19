@@ -67,7 +67,7 @@ def mute(**kwargs):
     roomid = kwargs['roomid']
     room = kwargs['room']
     target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
-    time = kwargs["commands"]["v2"]
+    time = kwargs["commands"]["v2"] if kwargs["commands"]["v2"] else "5m"
     for user in User.Users:
         if user.displayName == target:
             user = user
@@ -95,7 +95,7 @@ def ban(**kwargs):
     roomid = kwargs['roomid']
     room = kwargs['room']
     target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
-    time = kwargs["commands"]["v2"]
+    time = kwargs["commands"]["v2"] if kwargs["commands"]["v2"] else "5m"
     duration = int(time[:-1])
     if time[-1] == 'm':
         expiration_time = datetime.now() + timedelta(minutes=duration)
