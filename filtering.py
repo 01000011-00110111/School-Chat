@@ -41,12 +41,12 @@ def run_filter_chat(user, room, message, roomid, userid):
 
     # userobj = User.get_user_by_id(userid)
     
-    if user_muted not in [0, 3] and perms not in ['dev','admin']:
-        return ('permission', user_muted)
+    if user_muted:
+        return ('permission', 1)
 
     if bool(re.search(r'[<>]', message)) is True and perms != 'dev':
         cmds.warn_user(user)
-        return ('permission', 10, user_muted)
+        return ('permission', 10, 0)
 
     if perms != "dev":
         message = filter_message(message)
@@ -67,27 +67,27 @@ def run_filter_chat(user, room, message, roomid, userid):
 
     # check if locked or allowed to send
     if locked and perms not in ["dev", 'admin', "mod"]:
-        return ("permission", 3, user_muted)
+        return ("permission", 3, 0)
 
     if can_send == "everyone":
-        return_str = ('msg', final_str, user_muted)
+        return_str = ('msg', final_str, 0)
     elif can_send == 'mod':
         if perms == 'mod':
-            return_str = ('msg', final_str, user_muted)
+            return_str = ('msg', final_str, 0)
         else:
-            return_str = ('permission', 5, user_muted)
+            return_str = ('permission', 5, 0)
     else:
-        return_str = ('permission', 5, user_muted)
+        return_str = ('permission', 5, 0)
 
     #check for spam then update message count and prev user
     limit = user.send_limit()
     if not limit: #and perms != "dev":
         # cmds.warn_user(user)
-        return ('permission', 8, user_muted)
+        return ('permission', 8, 0)
 
 
     if perms in ["dev", "mod"]:
-        return_str = ('msg', final_str, user_muted)
+        return_str = ('msg', final_str, 0)
 
     return return_str
 
@@ -106,11 +106,11 @@ def run_filter_private(user, message, userid):
     # userobj = User.get_user_by_id(userid)
 
     if user_muted:
-        return ('permission', user_muted)
+        return ('permission', 1)
 
     if bool(re.search(r'[<>]', message)) is True and perms != 'dev':
         cmds.warn_user(user)
-        return ('permission', 10, user_muted)
+        return ('permission', 10, 0)
 
     if perms != "dev":
         message = filter_message(message)
@@ -121,12 +121,12 @@ def run_filter_private(user, message, userid):
     profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
 
 
-    final_str = ('msg' ,compile_message(markdown(message), profile_picture, user, role), user_muted)
+    final_str = ('msg' ,compile_message(markdown(message), profile_picture, user, role), 0)
     
     limit = user.send_limit()
     if not limit: #and perms != "dev":
         # cmds.warn_user(user)
-        return ('permission', 8, user_muted)
+        return ('permission', 8, 0)
 
     return final_str
 

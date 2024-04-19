@@ -144,7 +144,6 @@ class User:
 
         return bool(to_remove)
 
-
     def get_perm(self, roomid):
         for mute in self.mutes:
             if mute.keys() == roomid:
