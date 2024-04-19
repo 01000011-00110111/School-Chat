@@ -68,9 +68,9 @@ def mute(**kwargs):
     room = kwargs['room']
     target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
     time = kwargs["commands"]["v2"] if kwargs["commands"]["v2"] else "5m"
-    for user in User.Users:
-        if user.displayName == target:
-            user = user
+    for users in User.Users:
+        if users.displayName == target:
+            user = users
     duration = int(time[:-1])
     if time[-1] == 'm':
         expiration_time = datetime.now() + timedelta(minutes=duration)
@@ -78,9 +78,6 @@ def mute(**kwargs):
         expiration_time = datetime.now() + timedelta(hours=duration)
     elif time[-1] == 'd':
         expiration_time = datetime.now() + timedelta(days=duration)
-    for user in User.Users:
-        if user.displayName == target:
-            user = user
     if True:  # add check later
         muted = {str(roomid): expiration_time}
         user.mutes.append(muted)
@@ -103,9 +100,9 @@ def ban(**kwargs):
         expiration_time = datetime.now() + timedelta(hours=duration)
     elif time[-1] == 'd':
         expiration_time = datetime.now() + timedelta(days=duration)
-    for user in User.Users:
-        if user.displayName == target:
-            user = user
+    for users in User.Users:
+        if users.displayName == target:
+            user = users
     if True:  # add check later
         muted = {'all': expiration_time}
         user.mutes.append(muted)
@@ -120,9 +117,9 @@ def unmute(**kwargs):
     room = kwargs['room']
     target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
     # time = kwargs["commands"]["v2"]
-    for user in User.Users:
-        if user.displayName == target:
-            user = user
+    for users in User.Users:
+        if users.displayName == target:
+            user = users
     user.mutes = [mute for mute in user.mutes if str(roomid) not in mute.keys()]
     message = other.format_system_msg("User Unmuted by Admin.")
     room.add_message(message, None)
