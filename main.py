@@ -669,7 +669,7 @@ def backup_classes(exception=None):
         users_copy = dict(User.Users)
         for user in users_copy:
             if not isinstance(user, str):
-                user.backup_data()
+                user.backup()
         socketio.sleep(900)
 
 @app.teardown_appcontext
@@ -684,7 +684,7 @@ def teardown_request(exception=None):
     users_copy = dict(User.Users)
     for user in users_copy:
         if not isinstance(user, str):
-            user.backup_data()
+            user.backup()
 
 if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)

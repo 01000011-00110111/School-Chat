@@ -30,7 +30,7 @@ def run_filter_chat(user, room, message, roomid, userid):
     locked = room.locked
     perms = check_perms(user)
     can_send = room.canSend
-    user_muted = check_mute(user)
+    user_muted = check_mute(user, roomid)
 
     # we must check if the current user is acutally them, good idea for this to be first
     if userid != user.uuid:
@@ -94,7 +94,7 @@ def run_filter_chat(user, room, message, roomid, userid):
 def run_filter_private(user, message, userid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
     perms = check_perms(user)
-    user_muted = check_mute(user)
+    user_muted = check_mute(user, None)
 
     # we must check if the current user is acutally them, good idea for this to be first
     if userid != user.uuid:
@@ -105,7 +105,7 @@ def run_filter_private(user, message, userid):
     
     # userobj = User.get_user_by_id(userid)
 
-    if user_muted not in [0, 3] and perms != 'dev':
+    if user_muted:
         return ('permission', user_muted)
 
     if bool(re.search(r'[<>]', message)) is True and perms != 'dev':
@@ -130,7 +130,7 @@ def run_filter_private(user, message, userid):
 
     return final_str
 
-def check_mute(user):
+def check_mute(user, roomid):
     """Checks if the user is muted or banned."""
     # permission = muteuser.mute_time 
     # if permission[0] == "muted":
@@ -139,7 +139,7 @@ def check_mute(user):
         # return 2
     # elif user.locked.split(' ')[0] == "locked":
         # return 3
-    return 0
+    return user.get_perm(roomid)
 
 
 def check_perms(user):

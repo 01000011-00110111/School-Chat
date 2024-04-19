@@ -96,7 +96,7 @@ class User:
     def delete_user(cls, userid):
         if userid in cls.Users:
             u = cls.Users[userid]
-            u.backup_user()
+            u.backup()
             inactive_users.append((u.uuid, u.displayName, u.perm[0]))
             del cls.Users[userid]
             u.remove_user()
@@ -134,15 +134,22 @@ class User:
         for mute in self.mutes:
             if mute.value() <= datetime.now():
                 to_remove.append(mute)
-        
+
         for remove in to_remove:
             self.mutes.remove(remove)
 
         if not self.mutes:
             self.pause = False
             self.limit = 0
-        
+
         return bool(to_remove)
+
+
+    def get_perm(self, roomid):
+        for mute in self.mutes:
+            if mute.keys() == roomid:
+                return True
+        
 
     def unique_online_list(self, userid, location, sid):
         icon_perm = {
