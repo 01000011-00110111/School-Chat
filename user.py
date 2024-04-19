@@ -147,7 +147,7 @@ class User:
     
     def get_perm(self, roomid):
         """get the users current send permission"""
-        for mute in user.mutes:
+        for mute in self.mutes:
             if roomid in mute and mute[roomid] >= datetime.now():
                     return True
         return False
