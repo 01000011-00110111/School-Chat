@@ -19,13 +19,13 @@ def refresh_online(**kwargs):
 
 def appear_offline(**kwargs):
     """sets the user to appear offline"""
-    database.force_set_offline(kwargs["user"].vid)
-    User.get_user_by_id(kwargs["user"].vid).status = 'offline-locked'
+    database.force_set_offline(kwargs["user"].uuid)
+    User.get_user_by_id(kwargs["user"].uuid).status = 'offline-locked'
     emit("force_username", ("", None), broadcast=True)
     
 
 def appear_online(**kwargs):
     """sets the user to appear online"""
-    database.set_online(kwargs["user"].vid, True)
-    User.get_user_by_id(kwargs["user"].vid).status = 'online'
+    database.set_online(kwargs["user"].uuid, True)
+    User.get_user_by_id(kwargs["user"].uuid).status = 'online'
     emit("force_username", ("", None), broadcast=True)

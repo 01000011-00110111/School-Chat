@@ -3,25 +3,11 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 
-whitelist_words = [
-    'crap',
-    'god',
-    'LMAO',
-    'lmao',
-    'omg',
-    'stupid',
-    'dumb',
-    'piss',
-    'wtf',
-    'suck',
-    'hebe',
-    'gay',
-    'fart',
-]
+with open('unbanned_words.txt', 'r') as file:
+    whitelist_words = [word.strip() for word in file.readlines()]
 
 censored = [
     'sh!t',
-    'dam',
     'boobie',
 ]
 

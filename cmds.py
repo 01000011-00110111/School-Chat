@@ -30,8 +30,8 @@ def find_command(**kwargs):
         'globalock': moderation.globalock,
         'admin': other.send_admin,
         'ban': moderation.ban,
-        'word_ban': moderation.add_word_to_unban_list,
-        "word_unban": moderation.remove_word_from_unban_list,
+        'word_ban': moderation.remove_word_from_unban_list,
+        "word_unban": moderation.add_word_to_unban_list,
         # 'globalunlock': moderation.globalunlock,
     }
     mod_commands = {

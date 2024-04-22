@@ -152,6 +152,16 @@ class User:
                 if mute[roomid] >= datetime.now():
                     return True
         return False
+
+    def update_account(self, messageC, roleC, userC, displayname, role, profile, theme):
+        """Update the user's account details."""
+        self.Mcolor = messageC
+        self.Rcolor = roleC
+        self.Ucolor = userC
+        self.displayName = displayname
+        self.role = role
+        self.profile = profile
+        self.theme = theme
         
 
     def unique_online_list(self, userid, location, sid):
