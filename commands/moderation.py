@@ -68,7 +68,7 @@ def mute(**kwargs):
     room = kwargs['room']
     target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
     time = kwargs["commands"]["v2"] if kwargs["commands"]["v2"] else "5m"
-    for users in User.Users:
+    for users in User.Users.values():
         if users.displayName == target:
             user = users
     duration = int(time[:-1])
@@ -102,7 +102,7 @@ def ban(**kwargs):
         expiration_time = datetime.now() + timedelta(hours=duration)
     elif time[-1] == 'd':
         expiration_time = datetime.now() + timedelta(days=duration)
-    for users in User.Users:
+    for users in User.Users.values():
         if users.displayName == target:
             user = users
     # if True:  # add check later
@@ -136,7 +136,7 @@ def add_word_to_unban_list(**kwargs):
      word = kwargs["commands"]["v1"]
      room = kwargs['room']
      roomid = kwargs['roomid']
-     with open('unbanned_words.txt', 'a') as file:
+     with open('backend/unbanned_words.txt', 'a') as file:
          file.write(word + '\n')
      message = other.format_system_msg(f"New unbanned word: {word} was added by an Admin.")
      room.add_message(message, None)
@@ -147,9 +147,9 @@ def remove_word_from_unban_list(**kwargs):
     room = kwargs['room']
     roomid = kwargs['roomid']
     try:
-        with open("unbanned_words.txt", "r") as file:
+        with open("backend/unbanned_words.txt", "r") as file:
             lines = file.readlines()
-        with open("unbanned_words.txt", "w") as file:
+        with open("backend/unbanned_words.txt", "w") as file:
             for line in lines:
                 if line.strip("\n") != word:
                     file.write(line)

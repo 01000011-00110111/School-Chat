@@ -3,12 +3,11 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 
-with open('unbanned_words.txt', 'r') as file:
+with open('backend/unbanned_words.txt', 'r') as file:
     whitelist_words = [word.strip() for word in file.readlines()]
 
 censored = [
     'sh!t',
-    'boobie',
 ]
 
 banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
