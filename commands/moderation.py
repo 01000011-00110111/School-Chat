@@ -130,16 +130,17 @@ def unmute(**kwargs):
     room.add_message(message, None)
     emit("message_chat", (message, roomid), broadcast=True
 
-         
-def add_word_to_unban_list(**kwargs):
-    word = kwargs["commands"]["v1"]
-    room = kwargs['room']
-    roomid = kwargs['roomid']
-    with open('unbanned_words.txt', 'a') as file:
-        file.write(word + '\n')
-    message = other.format_system_msg(f"New unbanned word: {word} was added by an Admin.")
-    room.add_message(message, None)
-    emit("message_chat", (message, roomid), broadcast=True
+
+"""         
+ def add_word_to_unban_list(**kwargs):
+     word = kwargs["commands"]["v1"]
+     room = kwargs['room']
+     roomid = kwargs['roomid']
+     with open('unbanned_words.txt', 'a') as file:
+         file.write(word + '\n')
+     message = other.format_system_msg(f"New unbanned word: {word} was added by an Admin.")
+     room.add_message(message, None)
+     emit("message_chat", (message, roomid), broadcast=True)
 
 def remove_word_from_unban_list(**kwargs):
     word = kwargs["commands"]["v1"]
@@ -157,4 +158,4 @@ def remove_word_from_unban_list(**kwargs):
         emit("message_chat", (message, roomid), broadcast=True
     except FileNotFoundError:
         pass
-    
+"""

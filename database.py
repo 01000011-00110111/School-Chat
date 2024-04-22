@@ -327,8 +327,8 @@ def find_account_room_data(userid):
 def find_all_accounts():
     return ID.find()
 
-def mute_user(user, muted)
-Permission.update_one({"userId": user}, {"$push": {"mutes": muted}})
+def mute_user(user, muted):
+    Permission.update_one({"userId": user}, {"$push": {"mutes": muted}})
 
 def update_account_set(location, data, data2):
     if location == 'vid':
