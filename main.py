@@ -71,8 +71,11 @@ def setup_func():
     if not os.path.exists('backend/chat-rooms_log.txt'):
         with open('backend/chat-rooms_log.txt', 'w'):
             pass
-    if not os.path.exists('backend/Chat-backup.txt'):
+    if not os.path.exists('backend/webserver.log'):
         with open('backend/webserver.log', 'w'):
+            pass
+    if not os.path.exists('backend/unbanned_words.txt'):
+        with open('backend/unbanned_words.txt', 'w'):
             pass
     database.setup_chatrooms()
 

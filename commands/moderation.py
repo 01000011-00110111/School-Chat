@@ -128,11 +128,11 @@ def unmute(**kwargs):
     user.mutes = [mute for mute in user.mutes if str(roomid) not in mute.keys()]
     message = other.format_system_msg("User Unmuted by Admin.")
     room.add_message(message, None)
-    emit("message_chat", (message, roomid), broadcast=True
+    emit("message_chat", (message, roomid), broadcast=True)
 
 
-"""         
- def add_word_to_unban_list(**kwargs):
+        
+def add_word_to_unban_list(**kwargs):
      word = kwargs["commands"]["v1"]
      room = kwargs['room']
      roomid = kwargs['roomid']
@@ -155,7 +155,6 @@ def remove_word_from_unban_list(**kwargs):
                     file.write(line)
         message = other.format_system_msg(f"An Admin banned the word: {word} was added by an Admin.")
         room.add_message(message, None)
-        emit("message_chat", (message, roomid), broadcast=True
+        emit("message_chat", (message, roomid), broadcast=True)
     except FileNotFoundError:
         pass
-"""
