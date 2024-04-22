@@ -79,13 +79,13 @@ def mute(**kwargs):
     elif time[-1] == 'd':
         expiration_time = datetime.now() + timedelta(days=duration)
     muted = {str(roomid): expiration_time}
-    if target not in inactive_users[2]:  # add check later
+    if target not in inactive_users[1]:  # add check later
         for users in User.Users.values():
             if users.displayName == target:
                 user = users
         user.mutes.append(muted)
     else:
-        database.mute_user(inactive_users[user][1], muted)
+        database.mute_user(inactive_users[user][0], muted)
     message = other.format_system_msg("User Muted by Admin.")
     room.add_message(message, None)
     emit("message_chat", (message, roomid), broadcast=True)
@@ -107,13 +107,13 @@ def ban(**kwargs):
         expiration_time = datetime.now() + timedelta(days=duration)
     # if True:  # add check later
     muted = {'all': expiration_time}
-    if target not in inactive_users[2]:  # add check later
+    if target not in inactive_users[1]:  # add check later
         for users in User.Users.values():
             if users.displayName == target:
                 user = users
         user.mutes.append(muted)
     else:
-        database.mute_user(inactive_users[user][1], muted)
+        database.mute_user(inactive_users[user][0], muted)
     message = other.format_system_msg("User Banned by Admin.")
     room.add_message(message, None)
     emit("message_chat", (message, roomid), broadcast=True)
