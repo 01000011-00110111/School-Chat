@@ -79,7 +79,10 @@ def mute(**kwargs):
     elif time[-1] == 'd':
         expiration_time = datetime.now() + timedelta(days=duration)
     muted = {str(roomid): expiration_time}
-    if user not in inactive_users[2]:  # add check later
+    if target not in inactive_users[2]:  # add check later
+        for users in User.Users.values():
+            if users.displayName == target:
+                user = users
         user.mutes.append(muted)
     else:
         database.mute_user(inactive_users[user][1], muted)
@@ -102,12 +105,12 @@ def ban(**kwargs):
         expiration_time = datetime.now() + timedelta(hours=duration)
     elif time[-1] == 'd':
         expiration_time = datetime.now() + timedelta(days=duration)
-    for users in User.Users.values():
-        if users.displayName == target:
-            user = users
     # if True:  # add check later
     muted = {'all': expiration_time}
-    if user not in inactive_users[2]:  # add check later
+    if target not in inactive_users[2]:  # add check later
+        for users in User.Users.values():
+            if users.displayName == target:
+                user = users
         user.mutes.append(muted)
     else:
         database.mute_user(inactive_users[user][1], muted)
