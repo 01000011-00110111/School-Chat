@@ -4,7 +4,7 @@ from chat import Chat
 # from cmds import  other.respond_command, other.check_if_dev, other.format_system_msg, other.check_if_mod
 import database
 from commands import other
-from user import User
+from user import User, inactive_users
 
 
 def globalock(**kwargs):
@@ -78,12 +78,14 @@ def mute(**kwargs):
         expiration_time = datetime.now() + timedelta(hours=duration)
     elif time[-1] == 'd':
         expiration_time = datetime.now() + timedelta(days=duration)
-    if True:  # add check later
-        muted = {str(roomid): expiration_time}
+    muted = {str(roomid): expiration_time}
+    if user not in inactive_users[2]:  # add check later
         user.mutes.append(muted)
-        message = other.format_system_msg("User Muted by Admin.")
-        room.add_message(message, None)
-        emit("message_chat", (message, roomid), broadcast=True)
+    else:
+        database.mute_user(inactive_users[user][1], muted)
+    message = other.format_system_msg("User Muted by Admin.")
+    room.add_message(message, None)
+    emit("message_chat", (message, roomid), broadcast=True)
 
 
 def ban(**kwargs):
@@ -103,12 +105,15 @@ def ban(**kwargs):
     for users in User.Users:
         if users.displayName == target:
             user = users
-    if True:  # add check later
-        muted = {'all': expiration_time}
+    # if True:  # add check later
+    muted = {'all': expiration_time}
+    if user not in inactive_users[2]:  # add check later
         user.mutes.append(muted)
-        message = other.format_system_msg("User Banned by Admin.")
-        room.add_message(message, None)
-        emit("message_chat", (message, roomid), broadcast=True)
+    else:
+        database.mute_user(inactive_users[user][1], muted)
+    message = other.format_system_msg("User Banned by Admin.")
+    room.add_message(message, None)
+    emit("message_chat", (message, roomid), broadcast=True)
 
 def unmute(**kwargs):
     """unmutes the user"""
@@ -123,4 +128,33 @@ def unmute(**kwargs):
     user.mutes = [mute for mute in user.mutes if str(roomid) not in mute.keys()]
     message = other.format_system_msg("User Unmuted by Admin.")
     room.add_message(message, None)
-    emit("message_chat", (message, roomid), broadcast=True)
+    emit("message_chat", (message, roomid), broadcast=True
+
+         
+def add_word_to_unban_list(**kwargs):
+    word = kwargs["commands"]["v1"]
+    room = kwargs['room']
+    roomid = kwargs['roomid']
+    with open('unbanned_words.txt', 'a') as file:
+        file.write(word + '\n')
+    message = other.format_system_msg(f"New unbanned word: {word} was added by an Admin.")
+    room.add_message(message, None)
+    emit("message_chat", (message, roomid), broadcast=True
+
+def remove_word_from_unban_list(**kwargs):
+    word = kwargs["commands"]["v1"]
+    room = kwargs['room']
+    roomid = kwargs['roomid']
+    try:
+        with open("unbanned_words.txt", "r") as file:
+            lines = file.readlines()
+        with open("unbanned_words.txt", "w") as file:
+            for line in lines:
+                if line.strip("\n") != word:
+                    file.write(line)
+        message = other.format_system_msg(f"An Admin banned the word: {word} was added by an Admin.")
+        room.add_message(message, None)
+        emit("message_chat", (message, roomid), broadcast=True
+    except FileNotFoundError:
+        pass
+    

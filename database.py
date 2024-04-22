@@ -193,6 +193,9 @@ def find_login_data(value, login):
             "permission": {
                 "$arrayElemAt": ["$permissions.SPermission", 0]
             },
+            "mutes": {
+                "$arrayElemAt": ["$permissions.mutes", 0]
+            },
             "locked": {
                 "$arrayElemAt": ["$permissions.location", 0]
             },
@@ -262,6 +265,9 @@ def find_account_data(userid):
             "permission": {
                 "$arrayElemAt": ["$permissions.permission", 0]
             },
+            "mutes": {
+                "$arrayElemAt": ["$permissions.mutes", 0]
+            },
             "locked": {
                 "$arrayElemAt": ["$permissions.locked", 0]
             },
@@ -302,6 +308,9 @@ def find_account_room_data(userid):
             "permission": {
                 "$arrayElemAt": ["$permissions.permission", 0]
             },
+            "mutes": {
+                "$arrayElemAt": ["$permissions.mutes", 0]
+            },
             "locked": {
                 "$arrayElemAt": ["$permissions.locked", 0]
             },
@@ -318,6 +327,8 @@ def find_account_room_data(userid):
 def find_all_accounts():
     return ID.find()
 
+def mute_user(user, muted)
+Permission.update_one({"userId": user}, {"$push": {"mutes": muted}})
 
 def update_account_set(location, data, data2):
     if location == 'vid':
@@ -351,6 +362,7 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
     permission_data = {
         "userId": userid,
         "permission": 'true',
+        "mutes": [],
         'locked': locked,
         "warned": '0',
         "SPermission": [""]
@@ -393,8 +405,8 @@ def backup_user(user):
         # "warned": user.warned,
     }
 
-    Customization.update_one({'userId': user.vid}, {'$set': customization_data})
-    Permission.update_one({'userId': user.vid}, {'$set': permission_data})
+    Customization.update_one({'userId': user.uuid}, {'$set': customization_data})
+    Permission.update_one({'userId': user.uuid}, {'$set': permission_data})
 
 
 def delete_account(user):

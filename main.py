@@ -358,7 +358,7 @@ def customize_accounts() -> ResponseReturnValue:
     file = request.files['profile']
     theme = request.form.get("theme")
     user = User.get_user_by_id(userid)
-    user_email = database.get_email(user.vid)
+    user_email = database.get_email(user.uuid)
     return_list = {
         "user": username,
         "passwd": 'we are not adding password editing just yet',
@@ -399,7 +399,7 @@ def customize_accounts() -> ResponseReturnValue:
     if (email_check is None and user_email != email):
         verification_code = accounting.create_verification_code(user)
         accounting.email_var_account(user.username, email,
-                                     verification_code, user.vid)
+                                     verification_code, user.uuid)
     elif (email_check is not None and user_email != email):
         return flask.render_template("settings.html",
                                      error='that email is taken',
@@ -415,7 +415,7 @@ def customize_accounts() -> ResponseReturnValue:
         resp.set_cookie('Username', user.username)
         resp.set_cookie('Theme', theme)
         resp.set_cookie('Profile', profile_location)
-        resp.set_cookie('Userid', user.vid)
+        resp.set_cookie('Userid', user.uuid)
         error = "Updated account!"
         return resp
     else:
