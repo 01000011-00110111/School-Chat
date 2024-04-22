@@ -85,7 +85,7 @@ def mute(**kwargs):
                 user = users
         user.mutes.append(muted)
     else:
-        database.mute_user(inactive_users[user][0], muted)
+        database.mute_user(inactive_users[target][0], muted)
     message = other.format_system_msg("User Muted by Admin.")
     room.add_message(message, None)
     emit("message_chat", (message, roomid), broadcast=True)
@@ -113,7 +113,7 @@ def ban(**kwargs):
                 user = users
         user.mutes.append(muted)
     else:
-        database.mute_user(inactive_users[user][0], muted)
+        database.mute_user(inactive_users[target][0], muted)
     message = other.format_system_msg("User Banned by Admin.")
     room.add_message(message, None)
     emit("message_chat", (message, roomid), broadcast=True)
