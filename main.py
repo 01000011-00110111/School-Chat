@@ -409,8 +409,8 @@ def customize_accounts() -> ResponseReturnValue:
                                      **return_list)
 
     if user.locked != 'locked':
-        # database.update_account(user.userId, messageC, roleC, userC, displayname,
-        #                         role, profile_location, theme, email)
+        database.update_account(user.uuid, messageC, roleC, userC, displayname,
+                                role, profile_location, theme, email)
         user.update_account(messageC, roleC, userC, displayname,
                                role, profile_location, theme)
 
