@@ -51,7 +51,7 @@ def get_cmd_logs() -> str:
 def backup_log(message_text: str, roomid: str, private: bool) -> None:
     """adds the newest message from any chat rooom in the backup file"""
     with open("backend/Chat-backup.txt", "a", encoding="utf8") as f_out:
-        date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S: ")
+        date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S: ")
         room = database.find_room({"roomid": roomid}, 'vid')
         if private:
             name = "Private Room"

@@ -3,8 +3,11 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 
+# with open('backend/unbanned_words.txt', 'r') as file:
+#     whitelist_words = [word.rstrip() for word in file]
+
 with open('backend/unbanned_words.txt', 'r') as file:
-    whitelist_words = [word.rstrip() for word in file]
+    list[file.read().splitlines()]
 
 
 
