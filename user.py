@@ -149,7 +149,9 @@ class User:
         """get the users current send permission"""
         for mute in self.mutes:
             if roomid in mute or 'all' in mute:
-                if mute.values() >= datetime.now():
+                # if mute.values() >= datetime.now():
+                if mute[roomid] >= datetime.now() or mute['all'] >= datetime.now:
+                    # return 'mute'
                     return True
         return False
 
