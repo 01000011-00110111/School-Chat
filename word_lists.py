@@ -7,7 +7,7 @@
 #     whitelist_words = [word.rstrip() for word in file]
 
 with open('backend/unbanned_words.txt', 'r') as file:
-    list[file.read().splitlines()]
+    whitelist_words = list(file.read().splitlines())
 
 
 
