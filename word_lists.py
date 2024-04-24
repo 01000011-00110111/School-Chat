@@ -4,7 +4,9 @@
 """
 
 with open('backend/unbanned_words.txt', 'r') as file:
-    whitelist_words = [word.strip() for word in file.readlines()]
+    whitelist_words = [word.rstrip() for word in file]
+
+
 
 censored = [
     'sh!t',

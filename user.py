@@ -167,7 +167,7 @@ class User:
     def unique_online_list(self, userid, location, sid):
         icon_perm = {
             "Debugpass": '🔧',
-            'modpass': "c",
+            'modpass': "🛡️",
             'adminpass': "⚒️",
             "": ""
         }
@@ -212,10 +212,10 @@ class User:
 
         online_list = online_developers + online_admins + online_moderators + online_regular_users
 
-        online_developers = []
-        online_admins = []
-        online_moderators = []
-        online_regular_users = []
+        # online_developers = []
+        # online_admins = []
+        # online_moderators = []
+        # online_regular_users = []
         offline_users = []
 
         for user in inactive_users:

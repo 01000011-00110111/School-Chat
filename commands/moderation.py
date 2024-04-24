@@ -125,10 +125,11 @@ def unmute(**kwargs):
     room = kwargs['room']
     target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
     # time = kwargs["commands"]["v2"]
-    for users in User.Users:
-        if users.displayName == target:
-            user = users
-    user.mutes = [mute for mute in user.mutes if str(roomid) not in mute.keys()]
+    if target not in inactive_users[1]:  # add check later
+        for users in User.Users.values():
+            if users.displayName == target:
+                user = users
+        user.mutes = [mute for mute in user.mutes if str(roomid) not in mute.keys()]
     message = other.format_system_msg("User Unmuted by Admin.")
     room.add_message(message, None)
     emit("message_chat", (message, roomid), broadcast=True)
