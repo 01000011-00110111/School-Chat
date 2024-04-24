@@ -216,7 +216,7 @@ class User:
         if len(online_list) == online:
             pass
         else:
-            emit("force_username", ("", None), broadcast=True)
+            emit('force')
         # online_developers = []
         # online_admins = []
         # online_moderators = []
