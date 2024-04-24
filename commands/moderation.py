@@ -5,7 +5,7 @@ from chat import Chat
 import database
 from commands import other
 from user import User, inactive_users
-from word_lists.py import whitelist_words
+from word_lists import whitelist_words
 
 
 def globalock(**kwargs):
