@@ -5,6 +5,7 @@ from chat import Chat
 import database
 from commands import other
 from user import User, inactive_users
+from word_lists.py import whitelist_words
 
 
 def globalock(**kwargs):
@@ -137,14 +138,16 @@ def unmute(**kwargs):
 
         
 def add_word_to_unban_list(**kwargs):
-     word = kwargs["commands"]["v1"]
-     room = kwargs['room']
-     roomid = kwargs['roomid']
-     with open('backend/unbanned_words.txt', 'a') as file:
-         file.write(word + '\n')
-     message = other.format_system_msg(f"New unbanned word: {word} was added by an Admin.")
-     room.add_message(message, None)
-     emit("message_chat", (message, roomid), broadcast=True)
+    word = kwargs["commands"]["v1"]
+    room = kwargs['room']
+    roomid = kwargs['roomid']
+    with open('backend/unbanned_words.txt', 'a') as file:
+        if word not in whitelist_words:
+            file.write(word + '\n')
+    whitelist_words.append(word)
+    message = other.format_system_msg(f"New unbanned word: {word} was added by an Admin.")
+    room.add_message(message, None)
+    emit("message_chat", (message, roomid), broadcast=True)
 
 def remove_word_from_unban_list(**kwargs):
     word = kwargs["commands"]["v1"]
@@ -157,6 +160,7 @@ def remove_word_from_unban_list(**kwargs):
             for line in lines:
                 if line.strip("\n") != word:
                     file.write(line)
+                    whitelist_words.removal(word)
         message = other.format_system_msg(f"An Admin banned the word: {word} was added by an Admin.")
         room.add_message(message, None)
         emit("message_chat", (message, roomid), broadcast=True)
