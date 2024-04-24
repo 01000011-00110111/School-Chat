@@ -164,7 +164,7 @@ def remove_word_from_unban_list(**kwargs):
             for line in lines:
                 if line.strip("\n") != word:
                     file.write(line)
-                    whitelist_words.removal(word)
+                    whitelist_words.remove(word)
         message = other.format_system_msg(f"An Admin banned the word: {word} was added by an Admin.")
         room.add_message(message, None)
         emit("message_chat", (message, roomid), broadcast=True)
