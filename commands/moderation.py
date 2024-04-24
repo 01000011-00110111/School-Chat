@@ -130,7 +130,11 @@ def unmute(**kwargs):
         for users in User.Users.values():
             if users.displayName == target:
                 user = users
-        user.mutes = [{k: v for k, v in mute.items() if k != str(roomid)} for mute in user.mutes]
+        # user.mutes = [{k: v for k, v in mute.items() if k != str(roomid)} for mute in user.mutes]
+        for remove in user.mutes:
+            if remove.keys() == roomid:
+                user.mutes.remove(remove)
+        # user.mutes.remove([for remove in user.mutes if remove.keys() == roomid])
     message = other.format_system_msg("User Unmuted by Admin.")
     room.add_message(message, None)
     emit("message_chat", (message, roomid), broadcast=True)

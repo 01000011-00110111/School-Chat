@@ -148,7 +148,7 @@ class User:
     def get_perm(self, roomid):
         """get the users current send permission"""
         for mute in self.mutes:
-            if roomid in mute or 'all' in mute:
+            if roomid == mute.keys() or 'all' == mute.keys():
                 if mute[roomid] >= datetime.now():
                     return True
         return False
@@ -179,9 +179,11 @@ class User:
         online_moderators = []
         online_regular_users = []
         offline_users = set()
+        online = 0
 
         for key in User.Users.values():
             if key.status == "online":
+                online += 1
                 unread = Private.get_unread(
                     format_userlist(self.uuid, key.uuid))
                 unread = 0 if key.uuid == self.uuid else unread
@@ -209,9 +211,12 @@ class User:
                 unread_list = 0#f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
                 offline_users.add(
                     (f"{unread_list} ", key.displayName))
-
+        
         online_list = online_developers + online_admins + online_moderators + online_regular_users
-
+        if len(online_list) == online:
+            pass
+        else:
+            emit("force_username", ("", None), broadcast=True)
         # online_developers = []
         # online_admins = []
         # online_moderators = []
