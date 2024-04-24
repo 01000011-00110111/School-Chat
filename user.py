@@ -223,8 +223,7 @@ class User:
             unread_list = ""  # f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ""
             offline_users.append((f"{unread_list} {user_icon}", user[1]))
 
-        offline_list = sorted(offline_users, key=lambda x: (('Debugpass' in x[0]),
-                        ('adminpass' in x[0]), ('modpass' in x[0]), ('' in x[0]))
+        offline_list = sorted(offline_users, key=lambda x: (('Debugpass' in x[0]), ('adminpass' in x[0]), ('modpass' in x[0]), ('' in x[0])))
 
         # if online_list != self.online_list:
         emit("online", (online_list, offline_list), to=sid)
