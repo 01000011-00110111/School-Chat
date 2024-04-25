@@ -208,11 +208,11 @@ class User:
             else:
                 unread = Private.get_unread(
                     format_userlist(self.uuid, key.uuid))
-                # unread = 0 if key.uuid == self.uuid else unread
-                # user_icon = icon_perm.get(key.perm[0])
-                unread_list = 0#f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+                unread = 0 if key.uuid == self.uuid else unread
+                user_icon = icon_perm.get(key.perm[0])
+                unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
                 offline_users.add(
-                    (f"{unread_list} ", key.displayName))
+                    (f"{unread_list} {user_icon}", key.displayName))
         
         online_list = online_developers + online_admins + online_moderators + online_regular_users
         if len(online_list) == online:
@@ -223,14 +223,14 @@ class User:
         # online_admins = []
         # online_moderators = []
         # online_regular_users = []
-        offline_users = []
+        # offline_users = []
 
         for user in inactive_users:
             user_icon = icon_perm.get(user[2], "")
             unread_list = ""  # f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ""
             offline_users.append((f"{unread_list} {user_icon}", user[1]))
 
-        offline_list = sorted(offline_users, key=lambda x: (('Debugpass' in x[0]), ('adminpass' in x[0]), ('modpass' in x[0]), ('' in x[0])))
+        offline_list = offline_users#sorted(offline_users, key=lambda x: (('Debugpass' in x[0]), ('adminpass' in x[0]), ('modpass' in x[0]), ('' in x[0])))
 
         # if online_list != self.online_list:
         emit("online", (online_list, offline_list), to=sid)
