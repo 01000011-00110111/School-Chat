@@ -180,7 +180,7 @@ class User:
         online_admins = []
         online_moderators = []
         online_regular_users = []
-        offline_users = set()
+        offline_users = []
         online = 0
 
         for key in User.Users.values():
@@ -211,7 +211,7 @@ class User:
                 unread = 0 if key.uuid == self.uuid else unread
                 user_icon = icon_perm.get(key.perm[0])
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
-                offline_users.add(
+                offline_users.append(
                     (f"{unread_list} {user_icon}", key.displayName))
         
         online_list = online_developers + online_admins + online_moderators + online_regular_users
@@ -228,7 +228,7 @@ class User:
         for user in inactive_users:
             user_icon = icon_perm.get(user[2], "")
             unread_list = ""  # f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ""
-            offline_users.add((f"{unread_list} {user_icon}", user[1]))
+            offline_users.append((f"{unread_list} {user_icon}", user[1]))
 
         offline_list = offline_users#sorted(offline_users, key=lambda x: (('Debugpass' in x[0]), ('adminpass' in x[0]), ('modpass' in x[0]), ('' in x[0])))
 
