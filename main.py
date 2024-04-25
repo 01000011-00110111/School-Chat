@@ -643,7 +643,7 @@ startup_msg = True
 def emit_on_startup():
     global startup_msg
     if startup_msg:
-        emit("message_chat", (format_system_msg("Server is back online!"),
+        emit("message_chat", (format_system_msg("If you can see this message, please refresh your client"),
                               'ilQvQwgOhm9kNAOrRqbr'),
              broadcast=True,
              namespace='/')
