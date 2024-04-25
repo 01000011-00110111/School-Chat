@@ -2,7 +2,7 @@
 import hashlib
 from datetime import datetime, timedelta
 
-from flask_login import LoginManager, login_user, logout_user
+from flask_login import LoginManager, logout_user
 from flask_socketio import emit
 
 import database
@@ -148,11 +148,13 @@ class User:
     def get_perm(self, roomid):
         """get the users current send permission"""
         for mute in self.mutes:
-            if roomid in mute or 'all' in mute:
+            if roomid is not None and roomid in mute or 'all' in mute:
                 # if mute.values() >= datetime.now():
-                if mute[roomid] >= datetime.now() or mute['all'] >= datetime.now:
-                    # return 'mute'
+                if roomid in mute and mute[roomid] >= datetime.now():
                     return True
+                if 'all' in mute and mute['all'] >= datetime.now():
+                    # return 'mute'
+                    return True #if mute[roomid] >= datetime.now() else True if mute['all'] >= datetime.now else False
         return False
 
     def update_account(self, messageC, roleC, userC, displayname, role, profile, theme):
