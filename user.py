@@ -189,7 +189,7 @@ class User:
             if key.status == "online":
                 online += 1
                 unread = Private.get_unread(
-                    format_userlist(self.uuid, key.uuid))
+                    format_userlist(self.uuid, key.uuid))[self.uuid]
                 unread = 0 if key.uuid == self.uuid else unread
                 # user_icon = icon_perm.get(key.perm[0]) if key.perm[0] in icon_perm else ""
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
@@ -209,7 +209,7 @@ class User:
 
             else:
                 unread = Private.get_unread(
-                    format_userlist(self.uuid, key.uuid))
+                    format_userlist(self.uuid, key.uuid))[self.uuid]
                 unread = 0 if key.uuid == self.uuid else unread
                 user_icon = icon_perm.get(key.perm[0])
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
