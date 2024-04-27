@@ -607,7 +607,24 @@ html {
   position: fixed;
   margin-left: 60%;
   background: rgb(21, 21, 21);
-  width: 500px;
-  height: 500px;
+  width: 600px;
+  height: 450px;
   border-radius: 10px;
+  z-index: 9;
+}
+
+.devButtons {
+  background: transparent;
+  color: white;
+  font-size: 25px;
+  height: 100%;
+  width: 100%;
+  border-radius: 9px;
+  border: 2px gray solid;
+}
+
+.devButtons:hover {
+  transition: 0.6s all;
+  background: #403e3e;
+  border: 2px #7ebfd5 solid;
 }

@@ -10,13 +10,26 @@
 
 {% block panel_menu %}
 <div id="admin_menu" style="display: none;">
-    <a href="javascript:void(0)" onclick="close_admin()" style="color: rgb(129, 129, 129);">×</a><br><br>
-    <button onclick="sendCmd('lines');" id="send" style="background-color: rgb(0, 102, 0); color: rgb(255, 255, 255);">Send Lines</button><br>
-    <button onclick="sendCmd('reset');" id="send">Reset Chat</button><br>
-    <button onclick="sendCmd('lock');" id="send">Lock Chat</button><br>
-    <button onclick="sendCmd('unlock');" id="send">Unlock Chat</button><br>
-    <button onclick="sendCmd('globalock (confirm)');" id="send">globalock</button><br>
-    <button onclick="sendCmd('cmd_logs');" id="send">command logs</button><br><br>
-   Send as admin:<input type="checkbox" id="send_as_admin">
+   <div style="width: 100%; text-align: center;">
+    <p>use any admin command, reset chat, commands logs, globalock...</p>
+   </div>
+
+   <div style="display: grid; width: 100%; justify-content: space-around; height: 84%;">
+        <div style="display: flex; padding-bottom: 0px; height: 74%;">
+            <button onclick="sendCmd('lock');" class="devButtons">Lock Chat</button><br>
+            <button onclick="sendCmd('unlock');" class="devButtons">Unlock Chat</button><br>
+            <button onclick="sendCmd('reset');" class="devButtons">Reset Chat</button><br>
+        </div>
+        <button onclick="sendCmd('lines');" class="devButtons">Send Lines</button><br>
+        <button onclick="sendCmd('globalock (confirm)');" class="devButtons">globalock</button><br>
+        <button onclick="sendCmd('cmd_logs');" class="devButtons">command logs</button><br><br>
+        <div style="display: flex; align-items: center; justify-content: start; justify-self: start;">
+            Send as admin:<input type="checkbox" id="send_as_admin">
+        </div>
+   </div>
+
+   <div style="display: flex; justify-content: end; height: 17%; align-items: end; margin: -10% 0%; width: 98%;">
+    <a href="javascript:void(0)" onclick="close_admin()" style="color: rgb(129, 129, 129);">×</a>
+   </div>
 </div>
 {% endblock %}
