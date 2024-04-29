@@ -147,15 +147,29 @@ class User:
     
     def get_perm(self, roomid):
         """get the users current send permission"""
+        
         for mute in self.mutes:
             if roomid is not None and roomid in mute or 'all' in mute:
                 # if mute.values() >= datetime.now():
                 if roomid in mute and datetime.fromisoformat(mute[roomid]) >= datetime.now():
                     return True
-                if 'all' in mute and mute.get('all'):
-                    if datetime.fromisoformat(mute['all']) >= datetime.now():
+                if 'all' in mute and datetime.fromisoformat(mute[]) >= datetime.now():
                         return True
         return False
+
+
+    def get_perm(self, roomid):
+        """get the users current send permission"""
+        for mute_key, mute_value in self.mutes.items():
+            if roomid is not None and roomid in mute_key or 'all' in mute_key:
+                if mute_value >= datetime.now():
+                    if roomid in mute_key and mute_value >= datetime.now():
+                        return True
+                    if 'all' in mute_key and mute_value >= datetime.now():
+                        return True
+    
+        return False
+    
 
     def update_account(self, messageC, roleC, userC, displayname, role, profile, theme):
         """Update the user's account details."""
@@ -190,6 +204,10 @@ class User:
                 online += 1
                 unread = Private.get_unread(
                     format_userlist(self.uuid, key.uuid))
+                if isinstance(unread, list):
+                    for un in unread:
+                        if un['from'] == self.uuid:
+                            unread = un
                 unread = 0 if key.uuid == self.uuid else unread#[self.uuid]
                 # user_icon = icon_perm.get(key.perm[0]) if key.perm[0] in icon_perm else ""
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
