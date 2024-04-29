@@ -160,15 +160,19 @@ class User:
 
     def get_perm(self, roomid):
         """get the users current send permission"""
-        for mute_key, mute_value in self.mutes.items():
-            if roomid is not None and roomid in mute_key or 'all' in mute_key:
-                if mute_value >= datetime.now():
-                    if roomid in mute_key and mute_value >= datetime.now():
-                        return True
-                    if 'all' in mute_key and mute_value >= datetime.now():
-                        return True
-    
+        # for mute_key, mute_value in self.mutes.items():
+        if self.mutes:
+            for mute_key, mute_value in self.mutes.items():
+                if isinstance(mute_key, list):
+                    if roomid is not None and mute_key == roomid or mute_key == 'all':
+                        if mute_value >= datetime.now():
+                            return True
         return False
+        #         if roomid is not None and mute_key == roomid or mute_key == 'all':
+        #             if mute_value >= datetime.now():
+        #                 # if mute_key == roomid or mute_key == 'all':
+        #                     return True
+        # return False
     
 
     def update_account(self, messageC, roleC, userC, displayname, role, profile, theme):
@@ -207,7 +211,7 @@ class User:
                 if isinstance(unread, list):
                     for un in unread:
                         if un['from'] == self.uuid:
-                            unread = un
+                            unread = un.values()
                 unread = 0 if key.uuid == self.uuid else unread#[self.uuid]
                 # user_icon = icon_perm.get(key.perm[0]) if key.perm[0] in icon_perm else ""
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
