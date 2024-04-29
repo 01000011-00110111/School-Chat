@@ -150,11 +150,11 @@ class User:
         for mute in self.mutes:
             if roomid is not None and roomid in mute or 'all' in mute:
                 # if mute.values() >= datetime.now():
-                if roomid in mute and mute[roomid] >= datetime.now():
+                if roomid in mute and datetime.fromisoformat(mute[roomid]) >= datetime.now():
                     return True
-                if 'all' in mute and mute['all'] >= datetime.now():
-                    # return 'mute'
-                    return True #if mute[roomid] >= datetime.now() else True if mute['all'] >= datetime.now else False
+                if 'all' in mute and mute.get('all'):
+                    if datetime.fromisoformat(mute['all']) >= datetime.now():
+                        return True
         return False
 
     def update_account(self, messageC, roleC, userC, displayname, role, profile, theme):
@@ -190,7 +190,7 @@ class User:
                 online += 1
                 unread = Private.get_unread(
                     format_userlist(self.uuid, key.uuid))
-                unread = 0 if key.uuid == self.uuid else unread[self.uuid]
+                unread = 0 if key.uuid == self.uuid else unread#[self.uuid]
                 # user_icon = icon_perm.get(key.perm[0]) if key.perm[0] in icon_perm else ""
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
 
@@ -210,7 +210,7 @@ class User:
             else:
                 unread = Private.get_unread(
                     format_userlist(self.uuid, key.uuid))
-                unread = 0 if key.uuid == self.uuid else unread[self.uuid]
+                unread = 0 if key.uuid == self.uuid else unread#[self.uuid]
                 user_icon = icon_perm.get(key.perm[0])
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
                 offline_users.append(
