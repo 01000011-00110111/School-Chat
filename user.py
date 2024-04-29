@@ -145,17 +145,17 @@ class User:
         return bool(to_remove)
 
     
-    def get_perm(self, roomid):
-        """get the users current send permission"""
+    # def get_perm(self, roomid):
+    #     """get the users current send permission"""
         
-        for mute in self.mutes:
-            if roomid is not None and roomid in mute or 'all' in mute:
-                # if mute.values() >= datetime.now():
-                if roomid in mute and datetime.fromisoformat(mute[roomid]) >= datetime.now():
-                    return True
-                if 'all' in mute and datetime.fromisoformat(mute[]) >= datetime.now():
-                        return True
-        return False
+    #     for mute in self.mutes:
+    #         if roomid is not None and roomid in mute or 'all' in mute:
+    #             # if mute.values() >= datetime.now():
+    #             if roomid in mute and datetime.fromisoformat(mute[roomid]) >= datetime.now():
+    #                 return True
+    #             if 'all' in mute and datetime.fromisoformat(mute[]) >= datetime.now():
+    #                     return True
+    #     return False
 
 
     def get_perm(self, roomid):
