@@ -8,6 +8,7 @@ import psutil
 import database
 import sys
 import platform
+from user import User, inactive_users
 from commands import other
 
 
@@ -136,3 +137,14 @@ def send_cmd_logs(**kwargs):
     msg = log.get_cmd_logs()
     room.add_private_message(msg, None) if database.check_private(roomid) else room.add_message(msg, 'false')
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+
+def clear_all_mutes(**kwargs):
+    """Clears all mutes from every user."""
+    # user = kwargs['user']
+    roomid = kwargs['roomid']
+    room = kwargs['room']
+    for user in User.Users.values():
+        user.mutes = []
+    message = other.format_system_msg("All mutes cleared by a Dev.")
+    room.add_message(message, None)
+    emit("message_chat", (message, roomid), broadcast=True)

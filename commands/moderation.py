@@ -170,3 +170,6 @@ def remove_word_from_unban_list(**kwargs):
         emit("message_chat", (message, roomid), broadcast=True)
     except FileNotFoundError:
         pass
+        
+
+    
