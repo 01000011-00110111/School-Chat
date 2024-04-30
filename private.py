@@ -15,14 +15,14 @@ def get_messages_list(sender, receiver):
     """gets the chats with 2 users."""
     userlist = format_userlist(sender, receiver)
 
-    chat = Private.create_or_get_private(userlist)
+    chat = Private.create_or_get_private(userlist, sender)
     
     return chat
 
 
 def get_messages(vid):
     """gets the chats with 2 users."""
-    chat = Private.create_or_get_private(vid)
+    chat = Private.create_or_get_private(vid, sender)
     return chat
 
 
@@ -49,7 +49,9 @@ class Private:
 
     def __init__(self, private, vid, userlist):
         """Initialize the chat."""
-        self.userlist = private["userIds"]
+        list = private["userIds"]
+        self.userlist = list
+        self.active = {list[0]: False, list[1]: False}
         self.vid = vid
         self.messages = database.get_private_messages(userlist)
         self.unread = private['unread']
@@ -58,7 +60,7 @@ class Private:
 
 
     @classmethod
-    def create_or_get_private(cls, vid):
+    def create_or_get_private(cls, vid, sender):
         """Create a new chat or return an existing one."""
         if vid not in [cls.chats, cls.chats_userlist]:
             private = database.get_private_chat(vid) if isinstance(vid, list) \
@@ -71,9 +73,16 @@ class Private:
             new_private = cls(private, priv_id, userlist)
             cls.chats[priv_id] = new_private
             cls.chats_userlist[tuple(userlist)] = new_private
+            new_private.set_active(sender)
             return new_private
-        else:
-            return cls.chats.get(vid)
+        else: 
+            # new_private = cls.chats.get(vid)
+            # new_private.set_active(sender)
+            # return new_private
+            existing_private = cls.chats.get(vid) or cls.chats_userlist.get(vid)
+            if existing_private:
+                existing_private.set_active(sender)
+                return existing_private
 
     @classmethod
     def get_unread(cls, userlist):
@@ -89,7 +98,7 @@ class Private:
         self.last_message = datetime.now()
 
         for receiver in self.unread:
-            if receiver != uuid:
+            if receiver != uuid and not self.active[receiver]:
                 self.unread[receiver] += 1
                 
         # print(self.backups)
@@ -102,6 +111,11 @@ class Private:
         log.backup_log(message_text, self.vid, True)
         return ('room', 1)
 
+    def set_active(self, sender):
+        """Sets the active user."""
+        self.active[sender] = True
+        self.unread[sender] = 0
+    
     def reset_chat(self):
         """Reset the chat."""
         self.messages.clear()
