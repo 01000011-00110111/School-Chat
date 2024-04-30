@@ -146,7 +146,7 @@ class User:
 
     
     def get_perm(self, roomid):
-        mute_list = user.mutes
+        mute_list = self.mutes
         current_time = datetime.now()
 
         if roomid in mute_list:
