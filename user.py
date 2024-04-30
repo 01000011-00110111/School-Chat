@@ -145,35 +145,24 @@ class User:
         return bool(to_remove)
 
     
-    # def get_perm(self, roomid):
-    #     """get the users current send permission"""
-        
-    #     for mute in self.mutes:
-    #         if roomid is not None and roomid in mute or 'all' in mute:
-    #             # if mute.values() >= datetime.now():
-    #             if roomid in mute and datetime.fromisoformat(mute[roomid]) >= datetime.now():
-    #                 return True
-    #             if 'all' in mute and datetime.fromisoformat(mute[]) >= datetime.now():
-    #                     return True
-    #     return False
-
-
     def get_perm(self, roomid):
-        """get the users current send permission"""
-        # for mute_key, mute_value in self.mutes.items():
-        if self.mutes != []:
-            for mute_dict in self.mutes:
-                mute_key = mute_dict.keys()
-                mute_value = mute_dict.values()
-                if roomid is not None and mute_key == roomid or mute_key == 'all':
-                    if mute_value >= datetime.now():
-                        return True
-        return False
-        #         if roomid is not None and mute_key == roomid or mute_key == 'all':
-        #             if mute_value >= datetime.now():
-        #                 # if mute_key == roomid or mute_key == 'all':
-        #                     return True
-        # return False
+        mute_list = user.mutes
+        current_time = datetime.now()
+
+        if roomid in mute_list:
+            for mute_entry in mute_list:
+                if "all" in mute_entry:
+                    mute_time_all = mute_entry["all"]
+                    if current_time <= mute_time_all:
+                        return False
+    
+                if roomid in mute_entry:
+                    mute_time = mute_entry[roomid]
+                    if current_time <= mute_time:
+                       return False
+        else:
+            return False
+
     
 
     def update_account(self, messageC, roleC, userC, displayname, role, profile, theme):
@@ -207,13 +196,12 @@ class User:
         for key in User.Users.values():
             if key.status == "online":
                 online += 1
-                # unread = Private.get_unread(
-                    # format_userlist(self.uuid, key.uuid))
-                # if isinstance(unread, list):
-                    # for un in unread:
-                        # if un['from'] == self.uuid:
-                            # unread = un[self.uuid]
-                unread = 0 #if key.uuid == self.uuid else unread#[self.uuid]
+                unread = Private.get_unread(
+                    format_userlist(self.uuid, key.uuid))
+                if isinstance(unread, dict):
+                    unread = 0 if key.uuid == self.uuid else unread.get(self.uuid, 0)
+                else:
+                    unread = 0
                 # user_icon = icon_perm.get(key.perm[0]) if key.perm[0] in icon_perm else ""
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
 
@@ -231,13 +219,12 @@ class User:
                         (f"{unread_list} ", key.displayName))
 
             else:
-                # unread = Private.get_unread(
-                    # format_userlist(self.uuid, key.uuid))
-                unread = 0 #if key.uuid == self.uuid else unread#[self.uuid]
-                # if isinstance(unread, list):
-                    # for un in unread:
-                        # if un['from'] == self.uuid:
-                            # unread = un[self.uuid]
+                unread = Private.get_unread(
+                    format_userlist(self.uuid, key.uuid))
+                if isinstance(unread, dict):
+                    unread = 0 if key.uuid == self.uuid else unread.get(self.uuid, 0)
+                else:
+                    unread = 0
                 user_icon = icon_perm.get(key.perm[0])
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
                 offline_users.append(
