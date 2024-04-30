@@ -599,6 +599,9 @@ def private_connect(sender, receiver, roomid):
         return
 
     chat = get_messages_list(sender, receiverid)
+    for private in Private.chats:
+        if private.active[sender]:
+             private.active[sender] = False
     # print(sender, receiver)
     emit("private_data", {'message': chat.messages, 'pmid': chat.vid, \
         'name': receiver}, to=socketid, namespace='/')
