@@ -162,11 +162,12 @@ class User:
         """get the users current send permission"""
         # for mute_key, mute_value in self.mutes.items():
         if self.mutes != []:
-            for mute_key, mute_value in self.mutes.items():
-                if isinstance(mute_key, list):
-                    if roomid is not None and mute_key == roomid or mute_key == 'all':
-                        if mute_value >= datetime.now():
-                            return True
+            for mute_dict in self.mutes:
+                mute_key = list(mute_dict.keys())[0]
+                mute_value = list(mute_dict.values())[0]
+                if roomid is not None and mute_key == roomid or mute_key == 'all':
+                    if mute_value >= datetime.now():
+                        return True
         return False
         #         if roomid is not None and mute_key == roomid or mute_key == 'all':
         #             if mute_value >= datetime.now():
@@ -211,7 +212,7 @@ class User:
                 if isinstance(unread, list):
                     for un in unread:
                         if un['from'] == self.uuid:
-                            unread = un.values()
+                            unread = un[self.uuid]
                 unread = 0 if key.uuid == self.uuid else unread#[self.uuid]
                 # user_icon = icon_perm.get(key.perm[0]) if key.perm[0] in icon_perm else ""
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
@@ -233,6 +234,10 @@ class User:
                 unread = Private.get_unread(
                     format_userlist(self.uuid, key.uuid))
                 unread = 0 if key.uuid == self.uuid else unread#[self.uuid]
+                if isinstance(unread, list):
+                    for un in unread:
+                        if un['from'] == self.uuid:
+                            unread = un[self.uuid]
                 user_icon = icon_perm.get(key.perm[0])
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
                 offline_users.append(
