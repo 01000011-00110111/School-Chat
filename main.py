@@ -583,7 +583,7 @@ def connect(roomid):
     # del room['_id']
     # print(room)
     sender = request.cookies.get('Userid')
-    if Private.chats != []:
+    if Private.chats != {}:
         for private in Private.chats:
             if bool(private.userlist[sender]) and private.active[sender]:
                  private.active[sender] = False
@@ -603,7 +603,7 @@ def private_connect(sender, receiver, roomid):
              namespace="/")
         return
         
-    if Private.chats != []:
+    if Private.chats != {}:
         for private in Private.chats:
             if bool(private.userlist[sender]) and private.active[sender]:
                  private.active[sender] = False
