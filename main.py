@@ -582,6 +582,7 @@ def connect(roomid):
     # don't need to let the client know the mongodb vid
     # del room['_id']
     # print(room)
+    sender = request.cookies.get('Userid')
     if Private.chats != []:
         for private in Private.chats:
             if bool(private.userlist[sender]) and private.active[sender]:
