@@ -582,6 +582,10 @@ def connect(roomid):
     # don't need to let the client know the mongodb vid
     # del room['_id']
     # print(room)
+    if Private.chats != []:
+        for private in Private.chats:
+            if bool(private.userlist[sender]) and private.active[sender]:
+                 private.active[sender] = False
 
     emit("room_data", list, to=socketid, namespace='/')
 
@@ -597,11 +601,13 @@ def private_connect(sender, receiver, roomid):
             roomid),
              namespace="/")
         return
-
+        
+    if Private.chats != []:
+        for private in Private.chats:
+            if bool(private.userlist[sender]) and private.active[sender]:
+                 private.active[sender] = False
+                
     chat = get_messages_list(sender, receiverid)
-    for private in Private.chats:
-        if private.active[sender]:
-             private.active[sender] = False
     # print(sender, receiver)
     emit("private_data", {'message': chat.messages, 'pmid': chat.vid, \
         'name': receiver}, to=socketid, namespace='/')
