@@ -20,7 +20,7 @@ def get_messages_list(sender, receiver):
     return chat
 
 
-def get_messages(vid):
+def get_messages(vid, sender):
     """gets the chats with 2 users."""
     chat = Private.create_or_get_private(vid, sender)
     return chat

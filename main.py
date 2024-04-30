@@ -546,7 +546,7 @@ def handle_private_message(message, pmid, userid):
     # user = database.find_account_data(userid)
     user = User.get_user_by_id(userid)
     result = filtering.run_filter_private(user, message, userid)
-    private = get_messages(pmid)
+    private = get_messages(pmid, userid)
     if result[0] == 'msg':
         private.add_message(result[1], userid)
         emit("message_chat", (result[1], pmid), broadcast=True)
