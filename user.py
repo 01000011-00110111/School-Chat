@@ -161,7 +161,7 @@ class User:
     def get_perm(self, roomid):
         """get the users current send permission"""
         # for mute_key, mute_value in self.mutes.items():
-        if self.mutes:
+        if self.mutes != []:
             for mute_key, mute_value in self.mutes.items():
                 if isinstance(mute_key, list):
                     if roomid is not None and mute_key == roomid or mute_key == 'all':
