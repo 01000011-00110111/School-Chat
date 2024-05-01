@@ -674,7 +674,7 @@ def online_refresh():
     """Background task for online list"""
     while True:
         socketio.emit("force_username", {}, namespace="/")  # Emit event with empty data
-        socketio.sleep(5)
+        socketio.sleep(1)
 
         
 @socketio.on('class_backups')
