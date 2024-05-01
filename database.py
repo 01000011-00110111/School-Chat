@@ -705,8 +705,7 @@ def create_private_chat(userlist, code):
     # i = userlist.split(',')
     data = {
         "userIds": userlist,
-        "messages": ['Welcome to private chat beta4 with this slightly better welocme \
-        message and improvements to peformince (i forgot to update the number before)'],
+        "messages": ['Welcome to private chat beta5'],
         "pmid": code,
         "unread": {userlist[0]: 0, userlist[1]: 0}
     }

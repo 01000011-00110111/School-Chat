@@ -34,17 +34,7 @@ from flask_login import (
 )
 from flask_socketio import SocketIO, emit
 
-# these are the files that do not import dbm
-import accounting
 import database
-import filtering
-import log
-from private import Private, get_messages, get_messages_list
-import uploading
-import word_lists
-from chat import Chat
-from commands.other import end_ping, format_system_msg
-from user import User, login_manager
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
@@ -78,6 +68,19 @@ def setup_func():
         with open('backend/unbanned_words.txt', 'w'):
             pass
     database.setup_chatrooms()
+    
+setup_func()
+
+# these are the files that do not import dbm
+import accounting
+import filtering
+import log
+import uploading
+import word_lists
+from chat import Chat
+from commands.other import end_ping, format_system_msg
+from private import Private, get_messages, get_messages_list
+from user import User, login_manager
 
 app = flask.Flask(__name__)
 app.secret_key = os.urandom(9001)  #ITS OVER 9000!!!!!!
@@ -439,14 +442,15 @@ def customize_accounts() -> ResponseReturnValue:
 
 # socketio stuff
 @socketio.on('username')
-def handle_connect(userid: str, location):
+def handle_connect(data, location):
     """Will be used later for online users."""
     sid = request.sid
     # for user in Users.values():
         # user.status = 'offline' if user.status != 'offline-locked' else 'offline-locked'
-    user = User.get_user_by_id(userid)
+    user = User.get_user_by_id(data['userid'])
+    # print(data['userid'], data['isVisible'])
     if user is not None:
-        user.unique_online_list(userid, location, sid)
+        user.unique_online_list(data['userid'], data['isVisible'], location, sid)
 
 
 @socketio.on('disconnect')
@@ -584,9 +588,12 @@ def connect(roomid):
     # print(room)
     sender = request.cookies.get('Userid')
     if Private.chats != {}:
-        for private in Private.chats:
-            if bool(private.userlist[sender]) and private.active[sender]:
-                 private.active[sender] = False
+        # print('passed stage 1')
+        for private in Private.chats.values():
+            if sender in private.userlist and private.active[sender]:
+                # print('passed stage 2')
+                private.active[sender] = False
+    # print('no stage needed')
 
     emit("room_data", list, to=socketid, namespace='/')
 
@@ -604,9 +611,12 @@ def private_connect(sender, receiver, roomid):
         return
         
     if Private.chats != {}:
-        for private in Private.chats:
-            if bool(private.userlist[sender]) and private.active[sender]:
-                 private.active[sender] = False
+        # print('passed stage 1')
+        for private in Private.chats.values():
+            if sender in private.userlist and private.active[sender]:
+                # print('passed stage 2')
+                private.active[sender] = False
+    # print('no stage needed')
                 
     chat = get_messages_list(sender, receiverid)
     # print(sender, receiver)
@@ -667,6 +677,7 @@ def online_refresh():
     while True:
         # database.clear_online()
         socketio.emit("force_username", ("", None))
+        # print('working')
         socketio.sleep(5)  # this is using a socketio refresh
         
 @socketio.on('class_backups')
@@ -702,7 +713,6 @@ def teardown_request(exception=None):
 if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
-    setup_func()
     socketio.start_background_task(online_refresh)
     socketio.start_background_task(backup_classes)
     socketio.run(app, host="0.0.0.0", debug=True, port=5000)
