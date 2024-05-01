@@ -176,7 +176,7 @@ class User:
         self.theme = theme
         
 
-    def unique_online_list(self, userid, visibility, location, sid):
+    def unique_online_list(self, userid, visibility, sid):
         # print(visibility)
         icon_perm = {
             "Debugpass": '🔧',

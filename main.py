@@ -443,16 +443,12 @@ def customize_accounts() -> ResponseReturnValue:
 
 # socketio stuff
 @socketio.on('username')
-def handle_connect(data, location):
+def handle_connect(data):
     """Will be used later for online users."""
-    # data = json.loads(data)
     sid = request.sid
-    # for user in Users.values():
-        # user.status = 'offline' if user.status != 'offline-locked' else 'offline-locked'
     user = User.get_user_by_id(data['userid'])
-    # print(data['userid'], data['isVisible'])
     if user is not None:
-        user.unique_online_list(data['userid'], data['isVisible'], location, sid)
+        user.unique_online_list(data['userid'], data['isVisible'], sid)
 
 
 @socketio.on('disconnect')
@@ -714,6 +710,6 @@ def teardown_request(exception=None):
 if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
-    socketio.start_background_task(online_refresh)
+    # socketio.start_background_task(online_refresh)
     socketio.start_background_task(backup_classes)
     socketio.run(app, host="0.0.0.0", debug=True, port=5000)

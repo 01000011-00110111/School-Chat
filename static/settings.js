@@ -105,11 +105,11 @@ setInterval(updateExamples, 250);
 socket.emit("username", getCookie("Username"), 'settings');
 
 
-socket.on("force_username", function() {
+socket.on("force_username", () => {
   // Get the current visibility status of the tab
   var isHidden = document.hidden;
   // Send the visibility status along with the user ID to the server
-  socket.emit("username", { userid: getCookie("Userid"), isVisible: !isHidden }, 'settings');
+  socket.emit("username", { 'userid': getCookie("Userid"), 'isVisible': !isHidden });
   console.log('onlne request updated');
 });
 
