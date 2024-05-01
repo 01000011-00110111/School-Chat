@@ -176,7 +176,7 @@ class User:
         self.theme = theme
         
 
-    def unique_online_list(self, userid, visibility, sid):
+    def unique_online_list(self, userid, visibility, location, sid):
         # print(visibility)
         icon_perm = {
             "Debugpass": '🔧',
@@ -186,7 +186,7 @@ class User:
         }
         visibility_icon = {
             True: '',
-            False: '💤'
+            False: '💤',
         }
         
         if self.status == "offline":

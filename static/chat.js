@@ -20,7 +20,7 @@ socket.on("force_username", () => {
     // Get the current visibility status of the tab
     // var isHidden = document.hidden;
     // Send the visibility status along with the user ID to the server
-    socket.emit("username", { 'userid': getCookie("Userid"), 'isVisible': !document.hidden })
+    socket.emit("username", getCookie("Userid"), !document.hidden, 'chat')
     // console.log('onlne request updated');
 });
 

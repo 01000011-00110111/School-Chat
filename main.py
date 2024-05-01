@@ -443,12 +443,12 @@ def customize_accounts() -> ResponseReturnValue:
 
 # socketio stuff
 @socketio.on('username')
-def handle_connect(data):
+def handle_connect(userid, isVisible, location):
     """Will be used later for online users."""
     sid = request.sid
-    user = User.get_user_by_id(data['userid'])
+    user = User.get_user_by_id(userid)
     if user is not None:
-        user.unique_online_list(data['userid'], data['isVisible'], sid)
+        user.unique_online_list(userid, isVisible, location, sid)
 
 
 @socketio.on('disconnect')
