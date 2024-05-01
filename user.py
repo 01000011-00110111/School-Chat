@@ -24,6 +24,7 @@ class User:
         self.perm = user['SPermission']
         self.uuid = uuid
         self.status = user['status']
+        self.active = True
         self.limit = 0
         self.pause = False
         self.last_message = datetime.now()
@@ -176,7 +177,7 @@ class User:
         self.theme = theme
         
 
-    def unique_online_list(self, userid, visibility, location, sid):
+    def unique_online_list(self, userid, visibilty, location, sid):
         # print(visibility)
         icon_perm = {
             "Debugpass": '🔧',
@@ -184,13 +185,15 @@ class User:
             'adminpass': "⚒️",
             "": ""
         }
-        visibility_icon = {
+        visibilty_icon = {
             True: '',
             False: '💤',
         }
         
         if self.status == "offline":
             self.status = "online"
+        if self.active != visibilty:
+            self.active = visibilty
 
         online_developers = []
         online_admins = []
@@ -210,7 +213,7 @@ class User:
                     unread = 0
                 # user_icon = icon_perm.get(key.perm[0]) if key.perm[0] in icon_perm else ""
                 unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
-                visibility_stat = visibility_icon.get(visibility)
+                visibility_stat = visibilty_icon.get(key.active)
                 # print(visibility_stat)
                 if key.perm[0] == "adminpass":
                     online_admins.append(
