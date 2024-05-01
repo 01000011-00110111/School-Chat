@@ -710,6 +710,6 @@ def teardown_request(exception=None):
 if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
-    # socketio.start_background_task(online_refresh)
+    socketio.start_background_task(online_refresh)
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000)
