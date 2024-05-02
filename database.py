@@ -53,8 +53,8 @@ def force_set_offline(userid):
     ID.update_one({"userId": userid}, {'$set': {"status": 'offline-locked'}})
 
 
-# def update_user(username, id):
-#     db.Online.update_one({"socketid": id}, {"$set": {"username": username}})
+# def update_user(username, vid):
+#     db.Online.update_one({"socketid": vid}, {"$set": {"username": username}})
 
 
 def set_online(userid, force):
@@ -78,7 +78,7 @@ def distinct_userids():
 
 
 def find_data(location):
-    if location == 'id':
+    if location == 'vid':
         return ID.find()    
     if location == 'perm':
         return Permission.find()
@@ -93,8 +93,12 @@ def find_userid(user):
     return None if userid is None else userid["userId"]
 
 
+def get_email(userid):
+    return ID.find_one({'userId': userid})['email']
+
+
 def find_account(data, location):
-    if location == 'id':
+    if location == 'vid':
         return ID.find_one(data)
     if location == 'perm':
         # print(data)
@@ -186,6 +190,18 @@ def find_login_data(value, login):
             "theme": {
                 "$arrayElemAt": ["$customization.theme", 0]
             },
+            "permission": {
+                "$arrayElemAt": ["$permissions.SPermission", 0]
+            },
+            "mutes": {
+                "$arrayElemAt": ["$permissions.mutes", 0]
+            },
+            "locked": {
+                "$arrayElemAt": ["$permissions.location", 0]
+            },
+            "warned": {
+                "$arrayElemAt": ["$permissions.location", 0]
+            },
             "SPermission": {
                 "$arrayElemAt": ["$permissions.SPermission", 0]
             }
@@ -249,6 +265,9 @@ def find_account_data(userid):
             "permission": {
                 "$arrayElemAt": ["$permissions.permission", 0]
             },
+            "mutes": {
+                "$arrayElemAt": ["$permissions.mutes", 0]
+            },
             "locked": {
                 "$arrayElemAt": ["$permissions.locked", 0]
             },
@@ -262,13 +281,57 @@ def find_account_data(userid):
     }]
     return list(ID.aggregate(pipeline))[0]
 
+def find_account_room_data(userid):
+    pipeline = [{
+        "$match": {
+            "userId": userid
+        }
+    }, {
+        "$lookup": {
+            "from": "Permission",
+            "localField": "userId",
+            "foreignField": "userId",
+            "as": "permissions"
+        }
+    }, {
+        "$lookup": {
+            "from": "Customization",
+            "localField": "userId",
+            "foreignField": "userId",
+            "as": "customization"
+        }
+    }, {
+        "$project": {
+            "displayName": {
+                "$arrayElemAt": ["$customization.displayName", 0]
+            },
+            "permission": {
+                "$arrayElemAt": ["$permissions.permission", 0]
+            },
+            "mutes": {
+                "$arrayElemAt": ["$permissions.mutes", 0]
+            },
+            "locked": {
+                "$arrayElemAt": ["$permissions.locked", 0]
+            },
+            "warned": {
+                "$arrayElemAt": ["$permissions.warned", 0]
+            },
+            "SPermission": {
+                "$arrayElemAt": ["$permissions.SPermission", 0]
+            }
+        }
+    }]
+    return list(ID.aggregate(pipeline))[0]
 
 def find_all_accounts():
     return ID.find()
 
+def mute_user(user, muted):
+    Permission.update_one({"userId": user}, {"$push": {"mutes": muted}})
 
 def update_account_set(location, data, data2):
-    if location == 'id':
+    if location == 'vid':
         return ID.update_one(data, data2)
     if location == 'perm':
         return Permission.update_one(data, data2)
@@ -299,9 +362,10 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
     permission_data = {
         "userId": userid,
         "permission": 'true',
+        "mutes": [],
         'locked': locked,
         "warned": '0',
-        "SPermission": ""
+        "SPermission": [""]
     }
 
     ID.insert_one(id_data)
@@ -323,6 +387,26 @@ def update_account(userid, messageC, roleC, userC, displayname, role, profile,
 
     Customization.update_one({'userId': userid}, {'$set': customization_data})
     ID.update_one({'userId': userid}, {'$set': {"email": email}})
+
+
+def backup_user(user):
+    customization_data = {
+        "messageColor": user.Mcolor,
+        "roleColor": user.Rcolor,
+        "userColor": user.Ucolor,
+        "displayName": user.displayName,
+        "role": user.role,
+        "profile": user.profile,
+        "theme": user.theme,
+        }
+    permission_data = {
+        "mutes": user.mutes,
+        "permission": user.permission,
+        # "warned": user.warned,
+    }
+
+    Customization.update_one({'userId': user.uuid}, {'$set': customization_data})
+    Permission.update_one({'userId': user.uuid}, {'$set': permission_data})
 
 
 def delete_account(user):
@@ -348,7 +432,7 @@ def send_message_all(message_text: str):
 
 
 def find_room(data, location):
-    if location == 'id':
+    if location == 'vid':
         return Rooms.find_one(data)
     if location == 'acc':
         return Access.find_one(data)
@@ -357,7 +441,7 @@ def find_room(data, location):
 
 
 def find_rooms(location):
-    if location == 'id':
+    if location == 'vid':
         return Rooms.find()
     if location == 'acc':
         return Access.find()
@@ -393,7 +477,7 @@ def get_rooms():
             "$project": {
                 "_id": 0,
                 "name": "$roomName",
-                "id": "$roomid",
+                "vid": "$roomid",
                 "generatedBy": "$generatedBy",
                 "mods": "$mods",
                 "whitelisted": {
@@ -446,7 +530,11 @@ def get_room_data(roomid):
         }
     ]
 
-    return list(Rooms.aggregate(pipeline))[0]
+    result = list(Rooms.aggregate(pipeline))
+    if not result:
+        get_room_data('ilQvQwgOhm9kNAOrRqbr')
+
+    return result[0]
 
 
 def get_room_msg_data(roomid):
@@ -493,18 +581,18 @@ def update_chat(chat):
     }
 
     # Rooms.insert_one(room_data)
-    Access.update_one({"roomid": chat.id}, {"$set": access_data})
-    Messages.update_one({"roomid": chat.id}, {"$set": {"messages": chat.messages}})
+    Access.update_one({"roomid": chat.vid}, {"$set": access_data})
+    Messages.update_one({"roomid": chat.vid}, {"$set": {"messages": chat.messages}})
 
 
-def update_whitelist(id, message):  #combine whitelist and blacklist
+def update_whitelist(vid, message):  #combine whitelist and blacklist
     """Adds the whitelisted users to the database"""
-    Access.update_one({"roomid": id}, {"$set": {"whitelisted": message}})
+    Access.update_one({"roomid": vid}, {"$set": {"whitelisted": message}})
 
 
-def update_blacklist(id, message):
+def update_blacklist(vid, message):
     """Adds the blacklisted users to the database"""
-    Access.update_one({"roomid": id}, {"$set": {"blacklisted": message}})
+    Access.update_one({"roomid": vid}, {"$set": {"blacklisted": message}})
 
 
 def delete_room(data):
@@ -536,13 +624,13 @@ def add_rooms(code, username, generated_at, name):
         "whitelisted": 'everyone',
         "blacklisted": "empty",
         "canSend": 'everyone',
-        "locked": 'false',
+        "locked": False,
     }
     message = { 
         "roomid": code,
         "messages": [
-            format_system_msg(f"""<b>{name}</b> created by 
-                <b>[SYSTEM]</b>at {generated_at}.""")
+            format_system_msg(f"<b>{name}</b> created by \
+                <b>{username}</b> at {generated_at}.")
     ]}
 
     Rooms.insert_one(room_data)
@@ -566,6 +654,9 @@ def get_unread(list, uuid):
     if chat is None:
         return 0
     return chat['unread'][uuid]
+
+def get_unread_all():
+    return Private.find()
 
 def get_private_chat(userlist):
     return Private.find_one({"userIds": userlist})
@@ -606,7 +697,7 @@ def update_private(priv):
     }
 
     # Rooms.insert_one(room_data)
-    Private.update_one({"pmid": priv.id}, {"$set": access_data})
+    Private.update_one({"pmid": priv.vid}, {"$set": access_data})
     
     
 def create_private_chat(userlist, code):
@@ -614,7 +705,7 @@ def create_private_chat(userlist, code):
     # i = userlist.split(',')
     data = {
         "userIds": userlist,
-        "messages": ['Welcome to private chat beta2 with this slightly better welocme message'],
+        "messages": ['Welcome to private chat beta5'],
         "pmid": code,
         "unread": {userlist[0]: 0, userlist[1]: 0}
     }

@@ -23,7 +23,7 @@ class Chat:
     def __init__(self, room, roomid):
         """Initialize the chat."""
         self.name = room["roomName"]
-        self.id = roomid
+        self.vid = roomid
         self.whitelisted = room["whitelisted"]
         self.banned = room["blacklisted"]
         self.canSend = room["canSend"]
@@ -46,17 +46,42 @@ class Chat:
             # Return the existing chat instance
             return cls.chats[roomid]
         
+    @classmethod
+    def set_all_lock_status(cls, status):
+        for chat in cls.chats:
+            chat.locked = status
+                
+    @classmethod
+    def add_message_to_all(cls, message_text: str, rooms, permission='false'):
+        """ads messsages to all chatrooms"""
+        for chat in cls.chats:
+            # private = self.vid == "all"
+            chat.last_message = datetime.now()
+            lines = len(chat.messages)# if not private else 1
+
+            if ((lines >= 500) and permission != 'true'):
+                chat.reset_chat(message_text, False)
+                chat.messages.append(message_text)
+            else:
+                chat.messages.append(message_text)
+
+            log.backup_log(message_text, chat.vid, False)
+            return ('room', 1)
+        
+        
     def add_message(self, message_text: str, permission='false') -> None:
         """Handler for messages so they get logged."""
-        # private = self.id == "all"
+        # private = self.vid == "all"
         self.last_message = datetime.now()
         lines = len(self.messages)# if not private else 1
 
         if ((lines >= 500) and permission != 'true'):
             self.reset_chat(message_text, False)
+            self.messages.append(message_text)
         else:
             self.messages.append(message_text)
 
+        log.backup_log(message_text, self.vid, False)
         return ('room', 1)
 
     def reset_chat(self):
@@ -64,7 +89,11 @@ class Chat:
         self.messages.clear()
         msg = format_system_msg('Chat reset by an admin.')
         self.messages.append(msg)
-        emit("reset_chat", ("admin", self.id), broadcast=True, namespace="/")
+        emit("reset_chat", ("admin", self.vid), broadcast=True, namespace="/")
+        
+    
+    def set_lock_status(self, status):
+        self.locked = status
         
         
     def backup_data(self):
@@ -72,8 +101,7 @@ class Chat:
         self.backups[0] += 1
         if self.last_message > datetime.now() + timedelta(minutes=90):
             self.backups[1] += 1
-            self.kill() if self.backups[1] > 3 else None
+            self.delete() if self.backups[1] > 3 else None
             
-        def delete(self):
-            del Chat.chats[self.id]
-        
+    def delete(self):
+        del Chat.chats[self.vid]

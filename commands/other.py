@@ -2,6 +2,7 @@
 
 import time
 import re
+from chat import Chat
 
 from flask_socketio import emit
 
@@ -10,20 +11,44 @@ from flask_socketio import emit
 
 def check_if_dev(user):
     """Return if a user is a dev or not."""
-    return 1 if user['SPermission'] == 'Debugpass' else 0
+    return 1 if 'Debugpass' in user.perm else 0
 
 
 def check_if_mod(user):
     """Return if a user is a mod or not."""
-    return 1 if user['SPermission'] == 'modpass' else 0
+    return 1 if 'modpass' in user.perm else 0
 
 
 def song(**kwargs):
     """Send a song to the chat."""
     roomid = kwargs['roomid']
+    room = kwargs['room']
     # song = kwargs['command']
     msg = format_song_msg(' '.join(list(kwargs["commands"].values())[1:]))
-    chat.add_message(msg, roomid, 'true')
+    room.add_message(msg, 'true')
+    # chat.add_message(msg, roomid, 'true')
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+    
+    
+def send_admin(**kwargs):
+    """Send a song to the chat."""
+    roomid = kwargs['roomid']
+    room = kwargs['room']
+    # song = kwargs['command']
+    msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
+    # chat.add_message(msg, roomid, 'true')
+    room.add_message(msg, 'true')
+    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+
+
+def send_as_admin(**kwargs):
+    """Send as admin to the chat."""
+    roomid = kwargs['roomid']
+    room = kwargs['room']
+    # song = kwargs['command']
+    msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
+    # chat.add_message(msg, roomid, 'true')
+    room.add_message(msg, 'true')
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
@@ -48,23 +73,20 @@ def help(**kwargs):
                 start_index = i
             elif 'end' in line.lower():
                 end_index = i - 1
-    else:
-        for i, line in enumerate(lines):
+    # else:
+        # for i, line in enumerate(lines):
             # if check_if_owner(roomid, issuer) == 1:
             #     if 'user commands' in line.lower():
             #         start_index = i
             #     elif 'end' in line.lower():
             #         end_index = i - 1
-            # elif check_if_room_mod(issuer) == 1:
+            # if check_if_room_mod(issuer) == 1:
             #     if 'user commands' in line.lower():
             #         start_index = i
             #     elif 'room owner commands' in line.lower():
-            #         end_index = i - 1
-            # else:
-                if 'user commands' in line.lower():        
-                    start_index = i
-                elif 'end' in line.lower():
-                    end_index = i - 1
+            #         end_index = i - roomid
+                # elif 'end' in line.lower():
+                    # end_index = i - 1
 
     command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(
         line.strip() for line in lines[start_index:end_index + 1]) + "</font>"
@@ -80,6 +102,15 @@ def format_song_msg(msg):
     """Format a message [SONG] would send."""
     return f'<font color="#0E9556">[SONG]: {msg}</font>'
 
+def format_admin_msg(msg):
+    """Format a message [SONG] would send."""
+    return f'<font color="#e0790b">[ADMIN]: {msg}</font>'
+
+
+def format_admin_msg(msg):
+    """Format a message [SONG] would send."""
+    return f'<font color="#00FF00">[ADMIN]: {msg}</font>'
+
 
 def respond_command(result, roomid):
     """Tell the client that can't run this command for what reason."""
@@ -87,6 +118,7 @@ def respond_command(result, roomid):
     response_strings = {
         (0, 'dev'): "Hey, you're not a dev!!!",
         (0, 'admin'): "Hey, acting like an admin I see. Too bad you're not one.",
+        (0, 'mod'): "Hey, Don't be shy call for help when you need it. Your not a mod.",
         (0, None): "Try '$sudo help' to see what commands are available to you.",
         (0, 'priv'): "Sorry that command is not available wile in private chats.",
         (0, 'chat'): "chat room made(this is temp)",
@@ -102,11 +134,13 @@ def respond_command(result, roomid):
 def E_count_bacup(**kwargs):
     """E_count_bacup"""
     roomid = kwargs['roomid']
+    room = kwargs['room']
     file = open('backend/Chat-backup.txt', 'r')
     text = file.read()
     count = len(re.findall(r'\be\b', text))
-    msg = format_system_msg("Current e count: " + str(count))
-    chat.add_message(msg, roomid, 'true')
+    msg = format_system_msg("Current count: " + str(count))
+    # chat.add_message(msg, roomid, 'true')
+    room.add_message(msg, 'true')
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
@@ -131,10 +165,12 @@ def E_count_bacup(**kwargs):
 
 def end_ping(start, ID):
     """The end of the ping comamnd."""
+    room = room = Chat.create_or_get_chat(ID)
     end = time.time() * 1000.0
     difference = end - start
     msg = '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + str(
         int(difference)) + 'ms RTT</font>'
-    chat.add_message(msg, ID, 'true')
+    # chat.add_message(msg, ID, 'true')
+    room.add_message(msg, 'true')
     emit("message_chat", (msg, ID), broadcast=True, namespace="/")
     

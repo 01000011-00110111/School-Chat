@@ -2,57 +2,44 @@
 import hashlib
 from datetime import datetime, timedelta
 
-from flask_login import LoginManager, login_user
+from flask_login import LoginManager, logout_user
 from flask_socketio import emit
 
 import database
-from private import format_userlist, get_messages_list
+from private import Private, format_userlist
 
-Users = {}
 inactive_users = []
 
 login_manager = LoginManager()
 
 
-for user in database.get_all_offline():
-    if user["userid"] not in Users:
-        inactive_users.append((user["userid"], user["displayName"], user["SPermission"]))
-
-def get_user_by_id(userid):
-    user = Users.get(userid, None)
-    return user
-
-
-def add_user_class(username, status, perm, displayName, userid):
-    user_class = User(username, status, perm, displayName, userid)
-    database.set_online(userid, False)
-    Users.update({userid: user_class})
-    tupple = (userid, displayName, perm)
-    if tupple in inactive_users:
-        inactive_users.remove(tupple)
-    return user_class
-
-def delete_user(userid):
-    u = Users[userid]
-    inactive_users.append((u.uuid, u.displayName, u.perm))
-    Users.pop(userid)
-    u.kill()
-
-
 class User:
     """Represents a logged in user."""
+    Users = {}
 
-    def __init__(self, username, status, perm, displayName, uuid):
+    def __init__(self, username, user, uuid):
         """Initialize the user."""
         self.username = username
-        self.displayName = displayName
-        self.perm = perm
+        self.displayName = user['displayName']
+        self.perm = user['SPermission']
         self.uuid = uuid
-        self.status = status
+        self.status = user['status']
+        self.active = True
         self.limit = 0
         self.pause = False
         self.last_message = datetime.now()
-        self.pause_time = 0
+        self.mutes = user['mutes'] #later ill add a mute db value # user['mute_time']
+        self.online_list = []
+        #other user values
+        self.Rcolor = user['roleColor']
+        self.Mcolor = user['messageColor']
+        self.Ucolor = user['userColor']
+        self.role = user['role']
+        self.profile = user['profile']
+        self.theme = user['theme']
+        self.locked = ['locked']
+        self.permission = user['permission']  # temp will go away
+        # self.warned = user['warned']
 
     @staticmethod
     def is_authenticated():
@@ -77,6 +64,9 @@ class User:
         # whenever we get arround to it, maybe switch this to userid?
         return self.username
 
+    def remove_user(self):
+        logout_user()
+
     @staticmethod
     def check_password(password_hash, password):
         """Check the user's password against the one entered in the login field."""
@@ -88,118 +78,197 @@ class User:
         """Check the username against the one entered in the login field."""
         return username == db_username
 
+    @classmethod
+    def get_user_by_id(cls, userid):
+        user = cls.Users.get(userid, None)
+        return user
+
+    @classmethod
+    def add_user_class(cls, username, user, userid):
+        user_class = cls(username, user, userid)
+        database.set_online(userid, False)
+        cls.Users.update({userid: user_class})
+        tupple = (userid, user['displayName'], user['SPermission'][0])
+        if tupple in inactive_users:
+            inactive_users.remove(tupple)
+        return user_class
+
+    @classmethod
+    def delete_user(cls, userid):
+        if userid in cls.Users:
+            u = cls.Users[userid]
+            u.backup()
+            inactive_users.append((u.uuid, u.displayName, u.perm[0]))
+            del cls.Users[userid]
+            u.remove_user()
+
     # pylint: disable=E0213
     @login_manager.user_loader
     def load_user(username):
         """Load the user into flask-login."""
-        u = database.find_account({'username': username}, 'id')
-        obj = Users.get(u['userId'], None)
+        u = database.find_account({'username': username}, 'vid')
+        obj = User.Users.get(u['userId'], None)
         if not u:
             return None
         # add_user_class(obj, u["userId"])
         return obj
 
     def send_limit(self):
-        # print(self.limit)
-        # print(self.pause)
-        # priint(self.last_message)
-        # print(self.pause_time)
-        difference = self.last_message - datetime.now()
-        # print(difference)
-        # print(difference.totalseconds())
-        if self.limit <= 15 and difference.seconds < 5:
+        difference = datetime.now() - self.last_message
+        if self.limit <= 15 and difference.total_seconds() < 5:
             self.limit += 1
             self.last_message = datetime.now()
             return True
         if self.limit > 15:
             if not self.pause:
-                dt = datetime.now()
-                td = timedelta(minutes=5)
                 self.pause = True
-                self.pause_time = dt + td
+                self.mutes = {'all': datetime.now() + timedelta(minutes=5)}
             else:
-                return self.check_pause()
+                return self.check_mute()
             return False
         self.limit = 0
         self.last_message = datetime.now()
         return True
 
-    def check_pause(self):
-        dt = self.pause_time
-        td = timedelta(minutes=5)
-        if dt + td == datetime.now():
+    def check_mute(self):
+        to_remove = []
+        for mute in self.mutes:
+            if mute.value() >= datetime.now():
+                to_remove.append(mute)
+
+        for remove in to_remove:
+            self.mutes.remove(remove)
+
+        if not self.mutes:
             self.pause = False
             self.limit = 0
-            self.pause_time = None
-            return True
-        return False
+
+        return bool(to_remove)
 
     
-    def unique_online_list(self, userid, location, sid):
-        # icons = {'settings': '⚙️', 'chat': ''}
-        icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️", "": ""}
-        # database.set_online(userid, False)
+    def get_perm(self, roomid):
+        mute_list = self.mutes
+        current_time = datetime.now()
+
+        if roomid in mute_list:
+            for mute_entry in mute_list:
+                if "all" in mute_entry:
+                    mute_time_all = mute_entry["all"]
+                    if current_time <= mute_time_all:
+                        return False
+    
+                if roomid in mute_entry:
+                    mute_time = mute_entry[roomid]
+                    if current_time <= mute_time:
+                       return False
+        else:
+            return False
+
+    
+
+    def update_account(self, messageC, roleC, userC, displayname, role, profile, theme):
+        """Update the user's account details."""
+        self.Mcolor = messageC
+        self.Rcolor = roleC
+        self.Ucolor = userC
+        self.displayName = displayname
+        self.role = role
+        self.profile = profile
+        self.theme = theme
+        
+
+    def unique_online_list(self, userid, visibilty, location, sid):
+        # print(visibility)
+        icon_perm = {
+            "Debugpass": '🔧',
+            'modpass': "🛡️",
+            'adminpass': "⚒️",
+            "": ""
+        }
+        visibilty_icon = {
+            True: '',
+            False: '💤',
+        }
+        
         if self.status == "offline":
             self.status = "online"
+        if self.active != visibilty:
+            self.active = visibilty
 
-        online_users = set()
-        offline_users = set()
-        for key in Users.values():
-            unread = database.get_unread(format_userlist(self.uuid, key.uuid), self.uuid)
-            unread = 0 if key.uuid == self.uuid else unread
-            # icon = icons.get(location)
-            user_icon = icon_perm.get(key.perm[0])
-            unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+        online_developers = []
+        online_admins = []
+        online_moderators = []
+        online_regular_users = []
+        offline_users = []
+        online = 0
+
+        for key in User.Users.values():
             if key.status == "online":
-                # online_users.add((f"{unread_list}{icon} {user_icon}", key.displayName))
-                online_users.add((f"{unread_list} {user_icon}", key.displayName))
+                online += 1
+                unread = Private.get_unread(
+                    format_userlist(self.uuid, key.uuid))
+                if isinstance(unread, dict):
+                    unread = 0 if key.uuid == self.uuid else unread.get(self.uuid, 0)
+                else:
+                    unread = 0
+                # user_icon = icon_perm.get(key.perm[0]) if key.perm[0] in icon_perm else ""
+                unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+                visibility_stat = visibilty_icon.get(key.active)
+                # print(visibility_stat)
+                if key.perm[0] == "adminpass":
+                    online_admins.append(
+                        (f"{unread_list} ⚒️", key.displayName + visibility_stat))
+                elif key.perm[0] == "modpass":
+                    online_moderators.append(
+                        (f"{unread_list} 🛡️", key.displayName + visibility_stat))
+                elif key.perm[0] == "Debugpass":
+                    online_developers.append(
+                        (f"{unread_list} 🔧", key.displayName + visibility_stat))
+                else:
+                    online_regular_users.append(
+                        (f"{unread_list} ", key.displayName + visibility_stat))
+
             else:
-                # offline_users.add((f"{unread_list}{icon} {user_icon}", key.displayName))
-                offline_users.add((f"{unread_list} {user_icon}", key.displayName))
-                
-        for user in inactive_users:
-            unread = database.get_unread(format_userlist(self.uuid, user[0]), self.uuid)
-            unread = 0 if user[0] == self.uuid else unread
-            # icon = icons.get(location)
-            user_icon = icon_perm.get(user[0])
-            unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
-            # offline_users.add((f"{unread_list}{icon} {user_icon}", user[1]))
-            offline_users.add((f"{unread_list} {user_icon}", user[1]))
-
-        online_list = list(online_users)
-        offline_list = list(offline_users)
-        emit("online", (online_list, offline_list), to=sid)
-
-
-def unique_online_list(self, pmid, location, sid):
-    icon_perm = {"Debugpass": '🔧', 'modpass': "⚒️", "": ""}
-
-    if self.status == "offline":
-        self.status = "online"
-
-    online_users = set()
-    offline_users = set()
-    for key in Users.values():
-        unread = get_messages_list(self.uuid, key.uuid)
-        unread = 0 if key.uuid == pmid else unread
-
-        user_icon = icon_perm.get(key.perm[0])
-        unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
-
-        if key.status == "online":
-            online_users.add((f"{unread_list} {user_icon}", key.displayName))
+                unread = Private.get_unread(
+                    format_userlist(self.uuid, key.uuid))
+                if isinstance(unread, dict):
+                    unread = 0 if key.uuid == self.uuid else unread.get(self.uuid, 0)
+                else:
+                    unread = 0
+                user_icon = icon_perm.get(key.perm[0])
+                unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+                offline_users.append(
+                    (f"{unread_list} {user_icon}", key.displayName))
+        
+        online_list = online_developers + online_admins + online_moderators + online_regular_users
+        if len(online_list) == online:
+            pass
         else:
-            offline_users.add((f"{unread_list} {user_icon}", key.displayName))
+            emit('force')
+        # online_developers = []
+        # online_admins = []
+        # online_moderators = []
+        # online_regular_users = []
+        # offline_users = []
 
-    for user in inactive_users:
-        unread = unread = get_messages_list(self.uuid, user[0])
-        unread = 0 if user[0] == pmid else unread
+        for user in inactive_users:
+            user_icon = icon_perm.get(user[2], "")
+            unread_list = ""  # f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ""
+            offline_users.append((f"{unread_list} {user_icon}", user[1]))
 
-        user_icon = icon_perm.get(user[0])
-        unread_list = f"<font color='#FF0000'>{unread}</font>." if unread > 0 else ''
+        offline_list = offline_users#sorted(offline_users, key=lambda x: (('Debugpass' in x[0]), ('adminpass' in x[0]), ('modpass' in x[0]), ('' in x[0])))
 
-        offline_users.add((f"{unread_list} {user_icon}", user[1]))
+        # if online_list != self.online_list:
+        emit("online", (online_list, offline_list), to=sid)
+        # self.online_list = online_list
 
-    online_list = list(online_users)
-    offline_list = list(offline_users)
-    emit("online", (online_list, offline_list), to=sid)
+    def backup(self):
+        """Backup the user's data."""
+        database.backup_user(self)
+
+
+#####not in the class#####
+for user in database.get_all_offline():
+    if user["userid"] not in User.Users:
+        inactive_users.append(
+            (user["userid"], user["displayName"], user["SPermission"][0]))

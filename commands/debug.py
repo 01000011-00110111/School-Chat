@@ -8,17 +8,18 @@ import psutil
 import database
 import sys
 import platform
+from user import User, inactive_users
 from commands import other
 
 
 LOGFILE_B = "backend/Chat-backup.txt"
 
 
-def get_line_count(file, id) -> List:
+def get_line_count(file, vid) -> List:
     """Return the line count in the logfile."""
     if file == "main":
-        room = database.find_room({'roomid': id}, 'msg')
-        room = database.find_private(id) if room is None else room
+        room = database.find_room({'roomid': vid}, 'msg')
+        room = database.find_private(vid) if room is None else room
         lines = len(room["messages"])
         return lines
     elif file == "backup":
@@ -27,7 +28,7 @@ def get_line_count(file, id) -> List:
             return lines_b
 
 
-def get_stats(roomid, version) -> str:
+def get_stats(roomid, version, room) -> str:
     """Return extended stats list to chat."""
     lines_main = get_line_count('main', roomid)
     lines_backup = get_line_count('backup', None)
@@ -94,29 +95,32 @@ def get_stats(roomid, version) -> str:
     )
 
     # Displaying formatted stats
-    chat.add_message( \
-        partial_stats_text if version == 'partial' else full_stats_text, roomid, 'true')
+    room.add_message( \
+        partial_stats_text if version == 'partial' else full_stats_text, 'true')
     return partial_stats_text if version == 'partial' else full_stats_text
 
 
 def status(**kwargs):
     """Send stats into the chat."""
     roomid = kwargs['roomid']
-    emit("message_chat", (get_stats(roomid, 'full'), roomid), broadcast=True)
+    room = kwargs['room']
+    emit("message_chat", (get_stats(roomid, 'full', room), roomid), broadcast=True)
     
 
 def pstats(**kwargs):
     """Send stats into the chat."""
     roomid = kwargs['roomid']
-    emit("message_chat", (get_stats(roomid, 'partial'), roomid), broadcast=True)
+    room = kwargs['room']
+    emit("message_chat", (get_stats(roomid, 'partial', room), roomid), broadcast=True)
     
 
 def line_count(**kwargs):
     """Respond with the current line count for the room (TBD)"""
     roomid = kwargs['roomid']
+    room = kwargs['room']
     lines = get_line_count("main", roomid)
     msg = other.format_system_msg(f"Line count is {lines}\n")
-    chat.add_message(msg, roomid, 'true')
+    room.add_message(msg, 'true')
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 def ping(**kwargs):
@@ -129,6 +133,18 @@ def send_cmd_logs(**kwargs):
     """Send the last 10 lines in command_log.txt"""
     # user = kwargs['user']
     roomid = kwargs['roomid']
+    room = kwargs['room']
     msg = log.get_cmd_logs()
-    chat.add_private_message(msg, roomid, None) if database.check_private(roomid) else chat.add_message(msg, roomid, 'false')
+    room.add_private_message(msg, None) if database.check_private(roomid) else room.add_message(msg, 'false')
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+
+def clear_all_mutes(**kwargs):
+    """Clears all mutes from every user."""
+    # user = kwargs['user']
+    roomid = kwargs['roomid']
+    room = kwargs['room']
+    for user in User.Users.values():
+        user.mutes = []
+    message = other.format_system_msg("All mutes cleared by a Dev.")
+    room.add_message(message, None)
+    emit("message_chat", (message, roomid), broadcast=True)
