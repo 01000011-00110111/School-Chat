@@ -14,7 +14,7 @@ const responses = [
     { message: "Try $sudo help in chat to find out all the command you can use.", rarity: 60 },
     { message: "Never gonna give you up, never gonna let you down.", rarity: 45 },
     { message: "This is how the chat was made https://stackoverflow.com.", rarity: 5 },
-    { message: "This message does not exist", rarity: 2 },
+    { message: "Challenge if you can the rarest message on 4 messages and show proof to a dev then you rainbow role colors!(This challenge is over new one soon)", rarity: 2 },
     { message: "Try $sudo E in chat.", rarity: 1 },
 ];
 
@@ -75,7 +75,6 @@ function updateExamples() {
     const roleColor = document.getElementById("role_color").value;
     const role = document.getElementById("role").value;
     const messageColor = document.getElementById("message_color").value;
-    document.getElementById('PfPdisplay').src = profile
 
     inputIds.forEach(id => {
         const element = document.getElementById(id);
@@ -102,15 +101,11 @@ createExamples();
 
 // Update examples every 250 milliseconds (0.25 seconds)
 setInterval(updateExamples, 250);
-socket.emit("username", getCookie("Username"), !document.hidden,  'settings');
+socket.emit("username", getCookie("Username"), 'settings');
 
 
-socket.on("force_username", () => {
-  // Get the current visibility status of the tab
-  var isHidden = document.hidden;
-  // Send the visibility status along with the user ID to the server
-  socket.emit("username", getCookie("Userid"), !document.hidden, 'settings');
-  // console.log('onlne request updated');
+socket.on("force_username", (_statement) => {
+    socket.emit("username", getCookie("Username"), 'settings');
 });
 
 const holidays = {
@@ -147,26 +142,50 @@ function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function enableNotifications() {
-  // Checks if the user's browser supports notifications
-  if (!"Notification" in window) {
-
-    alert("Your browser does not support desktop notifications.");
-
-    // It checks if the user already has notifications enabled for this site
-  } else if (Notification.permission === "granted") {
-
-    const notification = new Notification("Notifications Enabled");
-
-    // If user has notifications disbaled then it asks for permission to enable them
-  } else if (Notification.permission !== "denied") {
-
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-
-        const notification = new Notification("Notifications Enabled");
-
-      }
-    });
+function openTab(evt, tabName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+  
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+  
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+  
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
   }
-}
+  
+  // Opens the defualt tab
+  openTab(event, "My-Profile");
+
+  function enableNotifications() {
+    // Checks if the user's browser supports notifications
+    if (!"Notification" in window) {
+      
+      alert("Your browser does not support desktop notifications.");
+  
+      // It checks if the user already has notifications enabled for this site
+    } else if (Notification.permission === "granted") {
+      
+      const notification = new Notification("Notifications Enabled");
+  
+      // If user has notifications disbaled then it asks for permission to enable them
+    } else if (Notification.permission !== "denied") {
+      
+      Notification.requestPermission().then((permission) => {  
+        if (permission === "granted") {
+          
+          const notification = new Notification("Notifications Enabled");
+          
+        }
+      });
+    }
+  }
