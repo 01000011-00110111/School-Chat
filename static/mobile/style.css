@@ -35,6 +35,7 @@ html {
     padding-left: 0.7%;
     padding-top: 5%;
     color: #ffffff;
+    height: 100%;
 }
 
 #online_border {
@@ -73,20 +74,19 @@ html {
 
 #chat {
     z-index: 0;
-	padding-left: 5%;
+    padding-left: 5%;
     padding-right: 12%;
     margin-left: 1.5%;
-    line-height: 72px;
-    padding-bottom: 9%;
+    line-height: 40px;
+    padding-bottom: calc(15pc + env(safe-area-inset-bottom));
     margin-bottom: 2%;
     margin-top: 1%;
-    padding-top: 20px;
+    padding-top: calc(10pc + env(safe-area-inset-top));
     word-wrap: break-word;
-    font-size: 40px;
 }
 
 #message {
-    font-size: 18px;
+    font-size: 36px;
     width: 100%;
     border-radius: 15px;
 }
@@ -94,8 +94,8 @@ html {
 /* id start by getting the text above the area the text box is */
 #chatbox {
     display: flex;
-    width: 50%;
-    height: 100%;
+    width: 86%;
+    height: 79%;
     align-self: center;
 }
 
@@ -103,23 +103,25 @@ html {
     position: fixed;
     bottom: 0%;
     width: 100%;
-    /*border-top: 5px solid black;*/
+    /* border-top: 5px solid black; */
     justify-content: center;
     display: flex;
     height: 9%;
     margin: 0px -7.7px;
     background: black;
+    padding: 1pc 1pc calc(3pc + env(safe-area-inset-bottom));
 }
 
 #activenav {
-  position: fixed;
-  top: 7%;
-  width: 100%;
-  padding-bottom: 60%;
-  margin-left: 88%;
-  border-left: 5px solid #000;
-  color: white;
-  box-shadow: 10px 20px 17px 16px #191919;
+    position: fixed;
+    width: 60%;
+    border-left: 5px solid #000;
+    color: white;
+    box-shadow: 0px 0px 14px 21px #191919;
+    height: 100%;
+    right: -330%;
+    z-index: 999;
+    top: 0%;
 }
 
 .activenav {
@@ -411,8 +413,9 @@ html {
 .AccountPopup {
   display: grid;
   text-align: center;
-  margin: 5px 95%;
+  margin: 5px 91%;
   position: fixed;
+  scale: 1.9;
 }
 
 .AccountPopup a {
@@ -594,23 +597,6 @@ html {
   box-shadow: 0px -1px 44px 15px #191919;
   z-index: 1;
   margin-bottom: 100%;
-}
-
-#BottomNav {
-  width: 100%;
-  height: 8%;
-  background: black;
-  display: flex;
-  position: fixed;
-  margin: 159.1% 0;
-  border-top-right-radius: 15px;
-  border-top-left-radius: 15px;
-}
-
-.BottomNavButton {
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  font-size: 30px;
-  border: none;
+  align-items: center;
+  font-size: 40px
 }

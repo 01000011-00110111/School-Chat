@@ -5,9 +5,7 @@
 {% endblock %}
 {% block content %}
 <div id="topbar">
-        
-    <span id="topleft" style="font-size: 40px; cursor: pointer;  color: rgb(25, 32, 128);" onclick="openNav()">☰</span>
-    <h2 id="RoomDisplay" style="margin: 14.5px 0;">/e</h2>
+    <h2 id="RoomDisplay" style="margin: 14.5px 0; padding-left: 22px;" onclick="openNav();">/e</h2>
     <div class="AccountPopup">
     <input type="image" id="pfpmenu" class="PictureBTN" onclick="OpenAC();" name="pfpmenu" src="static/favicon.ico">
     <div id="AccControls" class="AccControls" style="display: none;">
@@ -15,12 +13,9 @@
             <a href="/settings">Settings</a>
             <a href="/#">Soon</a>
         </div>
-    </div></div>
-<div id="BottomNav">
-  <button class="BottomNavButton"><i class="fa-solid fa-message" style="color: #ffffff;"></i></button>
-  <button class="BottomNavButton"><i class="fa-solid fa-globe" style="color: #ffffff;"></i></button>
-  <button class="BottomNavButton"><i class="fa-solid fa-user" style="color: #ffffff;"></i></button>
+    </div>
 </div>
+
     <div id="mySidenav" class="sidenav" style="background-color: rgb(17, 17, 17); width: 0px;">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="color: rgb(129, 129, 129);">×</a>
         <hr style="border: 5px solid grey;">
