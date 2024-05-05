@@ -59,6 +59,7 @@ function setStyles(
 function setTheme(themeName) {
     const themes = {
         dark: darkTheme,
+        better_dark: betterdarkTheme,
         light: lightTheme,
         ogdev: ogDevTheme,
         dev: devTheme,
@@ -69,7 +70,7 @@ function setTheme(themeName) {
     setStyles(...themes[themeName]);
 }
 
-// Note the the code for the themes are arraganged in this order, so if you want the background to be the color black you change the first value of the thme to #000000 or black.
+// Note the the code for the themes are arraganged in this order, so if you want the background to be the color black you change the first value of the theme to #000000 or black.
 
 // Background Color
 // Chat Color
@@ -186,4 +187,24 @@ const halloweenTheme = [
     "#d65e13",
     "#111111",
     "ffffff"
+];
+
+const betterdarkTheme = [
+  "#000000",
+  "#ffffff",
+  "",
+  "#transparent",
+  "#000000",
+  "#0c0c0c",
+  "#000000",
+  "#ffffff",
+  "#transparent",
+  "192080",
+  "#e9e9ed",
+  "#000000",
+  "#111111",
+  "ffffff",
+  "#ffffff",
+  "#ffffff",
+  "#000000"
 ];

@@ -8,6 +8,7 @@
         
     <span id="topleft" style="font-size: 40px; cursor: pointer;  color: rgb(25, 32, 128);" onclick="openNav()">☰</span>
     <h2 id="RoomDisplay" style="margin: 14.5px 0;">/e</h2>
+    {% block panel_button %}{% endblock %}
     <div class="AccountPopup">
     <input type="image" id="pfpmenu" class="PictureBTN" onclick="OpenAC();" name="pfpmenu" src="static/favicon.ico">
     <div id="AccControls" class="AccControls" style="display: none;">
@@ -16,6 +17,7 @@
             <a href="/#">Soon</a>
         </div>
     </div></div>
+    {% block panel_menu %}{% endblock %}
     <div id="mySidenav" class="sidenav" style="background-color: rgb(17, 17, 17); width: 0px;">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="color: rgb(129, 129, 129);">×</a>
         <hr style="border: 5px solid grey;">
@@ -38,12 +40,12 @@
 <div id="sides">
     <div id="chatbox">       
         <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250"></input><br/>
-        <button onClick="sendMessage();" id="send">Send</button>
+        <button onClick="getMessage();" id="send">Send</button>
     </div>
 </div><br>
 
 <div class="activenav" id="activenav" style="background-color: rgb(12, 12, 12);">
-    <!-- <hr id="online_border"> -->
+    <!-- {% block panel %}{% endblock %} -->
     <div id="online_users"></div>
 </div>
 <script type='text/javascript' defer>runStartup();</script>
