@@ -362,7 +362,7 @@ def customize_accounts() -> ResponseReturnValue:
     roleC = request.form.get("role_color")
     userC = request.form.get("user_color")
     email = request.form.get("email")
-    file = request.files['profile']
+    file = request.files.get('profile')# if 'profile' in request.files else None
     theme = request.form.get("theme")
     user = User.get_user_by_id(userid)
     user_email = database.get_email(user.uuid)
