@@ -163,7 +163,7 @@ class User:
                 else:
                     self.check_mute()
                 
-        print(self.mutes)
+        # print(self.mutes)
         return False
 
     def update_account(self, messageC, roleC, userC, displayname, role, profile, theme):

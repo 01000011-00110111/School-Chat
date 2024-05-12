@@ -129,7 +129,7 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
-    print(room_name)
+    # print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
 
 @app.route('/admin')
@@ -148,7 +148,7 @@ def specific_admin_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
-    print(room_name)
+    # print(room_name)
     return flask.redirect(flask.url_for("admin_page"))
 
 
@@ -158,8 +158,8 @@ def specific_private_page(prefix, private_chat) -> ResponseReturnValue:
     """Get the specific private chat in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
-    print(prefix)
-    print(private_chat)
+    # print(prefix)
+    # print(private_chat)
     return flask.redirect(flask.url_for("chat_page"))
 
 
@@ -716,4 +716,4 @@ if __name__ == "__main__":
     # o.start()
     socketio.start_background_task(online_refresh)
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000)
