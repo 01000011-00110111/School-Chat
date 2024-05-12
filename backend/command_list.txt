@@ -29,7 +29,7 @@
     <li><code>"$sudo online</code>": Appear online.</li>
     <li><code>"$sudo offline</code>": Appear offline.</li>
     <li><code>"$sudo ping"</code>: Tells you how much ping you have.</li>
-    <li><code>"$sudo create "room name"</code>: There was once a legendary command that let you own a room but was lost, but now its been found.</li>
+    <li><code>"$sudo create "room name"</code>: There was once a legendary command that let you own a room but was lost. Thanks verson 1.3 we where able to recode it in.</li>
 </ul>
 end
 

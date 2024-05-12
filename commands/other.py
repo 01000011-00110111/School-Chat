@@ -73,20 +73,20 @@ def help(**kwargs):
                 start_index = i
             elif 'end' in line.lower():
                 end_index = i - 1
-    # else:
-        # for i, line in enumerate(lines):
+    else:
+        for i, line in enumerate(lines):
             # if check_if_owner(roomid, issuer) == 1:
-            #     if 'user commands' in line.lower():
-            #         start_index = i
-            #     elif 'end' in line.lower():
-            #         end_index = i - 1
+            if 'user commands' in line.lower():
+                start_index = i
+            elif 'end' in line.lower():
+                end_index = i - 1
             # if check_if_room_mod(issuer) == 1:
             #     if 'user commands' in line.lower():
             #         start_index = i
             #     elif 'room owner commands' in line.lower():
             #         end_index = i - roomid
-                # elif 'end' in line.lower():
-                    # end_index = i - 1
+            #     elif 'end' in line.lower():
+            #         end_index = i - 1
 
     command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(
         line.strip() for line in lines[start_index:end_index + 1]) + "</font>"
@@ -146,9 +146,7 @@ def E_count_bacup(**kwargs):
 
 """def most_used_room(**kwargs):
     roomid = kwargs['roomid']
-    with open('backend/Chat-backup.txt', "r") as file:
-        content = file.read()
-        names = re.findall(r'\[name \(([^\)]+)\)\]', content)
+ *  History restored 
     
     count_dict = {}
     for name in names:

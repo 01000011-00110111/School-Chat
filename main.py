@@ -68,6 +68,9 @@ def setup_func():
     if not os.path.exists('backend/unbanned_words.txt'):
         with open('backend/unbanned_words.txt', 'w'):
             pass
+    if not os.path.exists('backend/banned_words.txt'):
+        with open('backend/banned_words.txt', 'w'):
+            pass
     database.setup_chatrooms()
     
 setup_func()
@@ -380,9 +383,10 @@ def customize_accounts() -> ResponseReturnValue:
     }
     # print(theme)
     old_path = user.profile
-    # print()
-    profile_location = uploading.upload_file(file, old_path) if file.filename != '' else \
+    # print(file)
+    profile_location = uploading.upload_file(file, old_path) if file is not None else \
     old_path
+    
     if theme is None:
         return flask.render_template("settings.html",
                                      error='Pick a theme before updating!',
@@ -712,4 +716,4 @@ if __name__ == "__main__":
     # o.start()
     socketio.start_background_task(online_refresh)
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
