@@ -688,10 +688,10 @@ def backup_classes(exception=None):
     """Runs after each request."""
     while True:
         chat_chats_copy = Chat.chats
-        for chat_id, chat_instance in chat_chats_copy.items():
+        for chat_id, chat_instance in chat_chats_copy:
             chat_instance.backup_data() 
-        private_chats_copy = dict(Private.chats)
-        for private_id, private_instance in private_chats_copy.items():
+        private_chats_copy = Private.chats
+        for private_id, private_instance in private_chats_copy:
             private_instance.backup_data() 
         users_copy = dict(User.Users)
         for user in users_copy:
@@ -703,10 +703,10 @@ def backup_classes(exception=None):
 def teardown_request(exception=None):
     """Runs after each request."""
     chat_chats_copy = Chat.chats
-    for chat_id, chat_instance in chat_chats_copy.items():
+    for chat_id, chat_instance in chat_chats_copy:
         chat_instance.backup_data() 
-    private_chats_copy = dict(Private.chats)
-    for private_id, private_instance in private_chats_copy.items():
+    private_chats_copy = Private.chats
+    for private_id, private_instance in private_chats_copy:
         private_instance.backup_data()
     users_copy = dict(User.Users)
     for user in users_copy:
