@@ -584,9 +584,9 @@ def connect(roomid, sender):
         return
     
     # sender = request.cookies.get('Userid')
-    for private in Private.chats.values():
-        if sender in private.userlist and private.active.get(sender, False):
-            private.active[sender] = False
+    active_privates = [private for private in Private.chats.values() if sender in private.userlist and private.active.get(sender, False)]
+    for private in active_privates:
+        private.active[sender] = False
     
     emit("room_data", list, to=socketid, namespace='/')
 

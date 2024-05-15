@@ -38,6 +38,8 @@ class Chat:
     def create_or_get_chat(cls, roomid):
         """Create a new chat or return an existing one."""
         cls.log_rooms()
+        if roomid in cls.chats:
+            return cls.chats[roomid]
         if roomid not in cls.chats:
             print('remade it')
             # Create a new chat instance if it doesn't exist
@@ -45,9 +47,6 @@ class Chat:
             new_chat = cls(room, roomid)
             cls.chats[roomid] = new_chat
             return new_chat
-        else:
-            # Return the existing chat instance
-            return cls.chats[roomid]
 
     @classmethod
     def log_rooms(cls):
