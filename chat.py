@@ -37,12 +37,12 @@ class Chat:
     @classmethod
     def create_or_get_chat(cls, roomid):
         """Create a new chat or return an existing one."""
+        cls.log_rooms()
         if roomid not in cls.chats:
             # Create a new chat instance if it doesn't exist
             room = database.get_room_data(roomid)
             new_chat = cls(room, roomid)
             cls.chats[roomid] = new_chat
-            cls.log_rooms()
             return new_chat
         else:
             # Return the existing chat instance
@@ -52,9 +52,8 @@ class Chat:
     def log_rooms(cls):
         if os.path.exists("chatlog.txt"):
             with open("chatlog.txt", "a") as logfile:
-                logfile.write(f"{datetime.now()} - Chat log updated\nChats:\n")
-                for chatid, chat in cls.chats.items():
-                    logfile.write(f"Chat ID: {chatid}\n")
+                for chats in cls.chats:
+                    logfile.write(chats.keys())
         
     @classmethod
     def set_all_lock_status(cls, status):
