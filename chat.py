@@ -39,6 +39,7 @@ class Chat:
         """Create a new chat or return an existing one."""
         cls.log_rooms()
         if roomid not in cls.chats:
+            print('remade it')
             # Create a new chat instance if it doesn't exist
             room = database.get_room_data(roomid)
             new_chat = cls(room, roomid)
@@ -70,11 +71,11 @@ class Chat:
             chat.last_message = datetime.now()
             lines = len(chat.messages)# if not private else 1
 
-            if ((lines >= 500) and permission != 'true'):
-                chat.reset_chat(message_text, False)
-                chat.messages.append(message_text)
-            else:
-                chat.messages.append(message_text)
+            # if ((lines >= 500) and permission != 'true'):
+            #     chat.reset_chat(message_text, False)
+            #     chat.messages.append(message_text)
+            # else:
+            chat.messages.append(message_text)
 
             log.backup_log(message_text, chat.vid, False)
             return ('room', 1)

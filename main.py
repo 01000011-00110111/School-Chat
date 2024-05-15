@@ -573,37 +573,21 @@ def handle_ping_tests(start, roomid):
 
 
 @socketio.on("room_connect")
-def connect(roomid):
+def connect(roomid, sender):
     """Switch rooms for the user"""
     socketid = request.sid
     try:
-        # room = database.get_room_msg_data(
-        #     roomid)  # WHY ERROR YOU WORK NOW WORK
-        # ah yes the best kind of error
         room = Chat.create_or_get_chat(roomid)
-        # if room is None:
-        #     return
         list = {"roomid": room.vid, "name": room.name, "msg": room.messages}
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
         return
-    # don't need to let the client know the mongodb vid
-    # del room['_id']
-    # print(room)
-    sender = request.cookies.get('Userid')
-    if Private.chats != {}:
-        # print('passed stage 1')
-        for private in Private.chats.values():
-            if sender in private.userlist and private.active[sender]:
-                # print('passed stage 2')
-                private.active[sender] = False
-    if os.path.exists("backend/chatlog.txt"):
-        with open("backend/chatlog.txt", "a") as logfile:
-            logfile.write(f"{datetime.now()} - Chat log updated\nPriv:\n")
-            for key, chat in Private.chats.items():
-                logfile.write(key+'\n')
-    # print('no stage needed')
-
+    
+    # sender = request.cookies.get('Userid')
+    for private in Private.chats.values():
+        if sender in private.userlist and private.active.get(sender, False):
+            private.active[sender] = False
+    
     emit("room_data", list, to=socketid, namespace='/')
 
 

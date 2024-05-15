@@ -132,7 +132,7 @@ socket.on("private_data", (data) => {
 function changeRoom(room) {
     window.sessionStorage.setItem("ID", room);
     closeNav();
-    socket.emit('room_connect', room)
+    socket.emit('room_connect', room, getCookie("Userid"))
 }
 
 
