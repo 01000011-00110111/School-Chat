@@ -2,6 +2,7 @@ import sched
 import time
 from datetime import timedelta, datetime
 from typing import List
+import os
 
 import psutil
 
@@ -41,15 +42,19 @@ class Chat:
             room = database.get_room_data(roomid)
             new_chat = cls(room, roomid)
             cls.chats[roomid] = new_chat
-            if os.path.exists("chatlog.txt"):
-                with open("chatlog.txt", "a") as logfile:
-                    logfile.write(f"{datetime.now()} - Chat log updated\nChats:\n")
-                    for chatid, chat in cls.chats.items():
-                        logfile.write(f"Chat ID: {chatid}\n")
+            cls.log_rooms()
             return new_chat
         else:
             # Return the existing chat instance
             return cls.chats[roomid]
+
+    @classmethod
+    def log_rooms(cls):
+        if os.path.exists("chatlog.txt"):
+            with open("chatlog.txt", "a") as logfile:
+                logfile.write(f"{datetime.now()} - Chat log updated\nChats:\n")
+                for chatid, chat in cls.chats.items():
+                    logfile.write(f"Chat ID: {chatid}\n")
         
     @classmethod
     def set_all_lock_status(cls, status):
