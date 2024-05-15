@@ -52,9 +52,9 @@ class Chat:
     def log_rooms(cls):
         if os.path.exists("backend/chatlog.txt"):
             with open("backend/chatlog.txt", "a") as logfile:
-                logfile.wirte(f"{datetime.now()} - Chat log updated\nChats:\n")
-                for chats in cls.chats:
-                    logfile.write(chats.keys()+'\n')
+                logfile.write(f"{datetime.now()} - Chat log updated\nChats:\n")
+                for key, chat in cls.chats:
+                    logfile.write(key+'\n')
         
     @classmethod
     def set_all_lock_status(cls, status):
