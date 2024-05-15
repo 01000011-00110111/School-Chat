@@ -621,7 +621,7 @@ html {
 }
 
 .SettingsNavItem {
-  width: 100%;
+  width: 12.76%;
   height: 100%;
   font-size: 19px;
   border: 0px;
@@ -655,7 +655,7 @@ html {
 
 #ButtonContainer {
   height: 100%;
-  width: 51%;
+  width: 100%;
   display: flex;
   margin-top: 15px;
 }

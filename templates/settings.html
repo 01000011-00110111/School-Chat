@@ -16,11 +16,17 @@
     <button class="SettingsNavItem" onclick="openTab(event, 'Notifications')">
       Notifications
     </button>
+
     <button class="SettingsNavItem" onclick="openTab(event, 'Preferences')">
       Preferences
     </button>
+
     <button class="SettingsNavItem" onclick="openTab(event, 'DeveloperSettings')" hidden>
       Developer Settings
+    </button>
+
+    <button class="SettingsNavItem" onclick="openTab(event, 'AppInfo')">
+      App
     </button>
   </div>
 </div>
@@ -61,7 +67,6 @@
         </div>
 
         <div id="Account" class="tabcontent">
-          <h3>Account</h3>
           <p id="user_colorTXT">Email</p>
           <input type="text" id="email" value='{{email}}' placeholder="Email" name="email" class='std_box'>
 
@@ -96,6 +101,10 @@
 
         <div id="DeveloperSettings" class="tabcontent">
 
+        </div>
+
+        <div id="AppInfo" class="tabcontent">
+          <a href="https://github.com/01000011-00110111/School-Chat">Source Code</a>
         </div>
       </div>
     </div>
