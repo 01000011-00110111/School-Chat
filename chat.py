@@ -53,7 +53,7 @@ class Chat:
         if os.path.exists("backend/chatlog.txt"):
             with open("backend/chatlog.txt", "a") as logfile:
                 logfile.write(f"{datetime.now()} - Chat log updated\nChats:\n")
-                for key, chat in cls.chats:
+                for key, chat in cls.chats.items():
                     logfile.write(key+'\n')
         
     @classmethod
