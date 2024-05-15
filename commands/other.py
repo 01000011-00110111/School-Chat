@@ -163,7 +163,7 @@ def E_count_bacup(**kwargs):
 
 def end_ping(start, ID):
     """The end of the ping comamnd."""
-    room = room = Chat.create_or_get_chat(ID)
+    room = Chat.create_or_get_chat(ID)
     end = time.time() * 1000.0
     difference = end - start
     msg = '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + str(

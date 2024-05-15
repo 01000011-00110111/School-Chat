@@ -132,10 +132,9 @@ def unmute(**kwargs):
     room = kwargs['room']
     target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
     # time = kwargs["commands"]["v2"]
-    if target not in inactive_users:
+    if target not in [user[1] for user in inactive_users]:
         for user in User.Users.values():
             if user.displayName == target:
-                # Iterate over a copy of user.mutes to avoid modifying the list while iterating
                 for remove in list(user.mutes):
                     if remove.get(str(roomid)):
                         user.mutes.remove(remove)
@@ -149,6 +148,28 @@ def unmute(**kwargs):
     emit("message_chat", (message, roomid), broadcast=True)
 
 
+def unban(**kwargs):
+    """unmutes the user"""
+    # user = kwargs['user']
+    roomid = kwargs['roomid']
+    room = kwargs['room']
+    target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
+    # time = kwargs["commands"]["v2"]
+    if target not in [user[1] for user in inactive_users]:
+        for user in User.Users.values():
+            if user.displayName == target:
+                for remove in list(user.mutes):
+                    if remove.get(str('all')):
+                        user.mutes.remove(remove)
+    else:
+        message = other.format_system_msg(
+            "you can only unban users who have recently been online")
+        emit("message_chat", (message, roomid), broadcast=True)
+
+    message = other.format_system_msg("User Unbanned by Admin.")
+    room.add_message(message, None)
+    emit("message_chat", (message, roomid), broadcast=True)
+    
         
 def add_word_to_unban_list(**kwargs):
     word = kwargs["commands"]["v1"]

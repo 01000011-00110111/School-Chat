@@ -18,7 +18,7 @@ def format_system_msg(msg):
 # import cmds
 
 class Chat:
-    chats = {}  # Dictionary to store existing chats
+    chats = []  # Dictionary to store existing chats
 
     def __init__(self, room, roomid):
         """Initialize the chat."""
@@ -40,11 +40,13 @@ class Chat:
             # Create a new chat instance if it doesn't exist
             room = database.get_room_data(roomid)
             new_chat = cls(room, roomid)
-            cls.chats[roomid] = new_chat
+            cls.chats.append({roomid: new_chat})
             return new_chat
-        else:
+        if roomid in cls.chats:
             # Return the existing chat instance
             return cls.chats[roomid]
+        emit('message_chat', (format_system_msg("Chat not found"), roomid), namespace='/')
+        return None
         
     @classmethod
     def set_all_lock_status(cls, status):

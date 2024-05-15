@@ -557,7 +557,7 @@ def handle_private_message(message, pmid, userid):
         private.add_message(result[1], userid)
         emit("message_chat", (result[1], pmid), broadcast=True)
         if "$sudo" in message and result[2] != 3:
-            filtering.find_cmds(message, user, pmid)
+            filtering.find_cmds(message, user, pmid, private)
         # if "$sudo" in message and result[2] != 3:
         #     filtering.find_cmds(message, user, roomid)
         # elif '$sudo' in message and result[2] == 3:
@@ -581,6 +581,8 @@ def connect(roomid):
         #     roomid)  # WHY ERROR YOU WORK NOW WORK
         # ah yes the best kind of error
         room = Chat.create_or_get_chat(roomid)
+        if room is None:
+            return
         list = {"roomid": room.vid, "name": room.name, "msg": room.messages}
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
