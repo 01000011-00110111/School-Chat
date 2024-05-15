@@ -56,6 +56,7 @@ class Chat:
                 for key, chat in cls.chats.items():
                     logfile.write(key+'\n')
         
+        
     @classmethod
     def set_all_lock_status(cls, status):
         for chat in cls.chats:

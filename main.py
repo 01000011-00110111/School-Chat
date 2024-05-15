@@ -597,6 +597,11 @@ def connect(roomid):
             if sender in private.userlist and private.active[sender]:
                 # print('passed stage 2')
                 private.active[sender] = False
+    if os.path.exists("backend/chatlog.txt"):
+        with open("backend/chatlog.txt", "a") as logfile:
+            logfile.write(f"{datetime.now()} - Chat log updated\nPriv:\n")
+            for key, chat in Private.chats.items():
+                logfile.write(key+'\n')
     # print('no stage needed')
 
     emit("room_data", list, to=socketid, namespace='/')
