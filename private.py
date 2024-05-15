@@ -44,8 +44,8 @@ def generate_unique_code(length):
     
 
 class Private:
-    chats = []  # Dictionary to store existing chats
-    chats_userlist = [] #or do i make it 
+    chats = {}  # Dictionary to store existing chats
+    chats_userlist = {} #or do i make it 
 
     def __init__(self, private, vid, userlist):
         """Initialize the chat."""
