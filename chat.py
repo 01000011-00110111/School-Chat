@@ -40,7 +40,7 @@ class Chat:
             # Create a new chat instance if it doesn't exist
             room = database.get_room_data(roomid)
             new_chat = cls(room, roomid)
-            cls.chats.append({roomid: new_chat})
+            cls.chats[roomid] = new_chat
             return new_chat
         if roomid in cls.chats:
             # Return the existing chat instance
@@ -57,6 +57,7 @@ class Chat:
     def add_message_to_all(cls, message_text: str, rooms, permission='false'):
         """ads messsages to all chatrooms"""
         for chat in cls.chats:
+            chat = chat.values()
             # private = self.vid == "all"
             chat.last_message = datetime.now()
             lines = len(chat.messages)# if not private else 1
@@ -68,7 +69,7 @@ class Chat:
                 chat.messages.append(message_text)
 
             log.backup_log(message_text, chat.vid, False)
-            return ('room', 1)
+        return ('room', 1)
         
         
     def add_message(self, message_text: str, permission='false') -> None:

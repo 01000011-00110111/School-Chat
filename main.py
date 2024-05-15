@@ -687,7 +687,7 @@ def online_refresh():
 def backup_classes(exception=None):
     """Runs after each request."""
     while True:
-        chat_chats_copy = dict(Chat.chats)
+        chat_chats_copy = Chat.chats
         for chat_id, chat_instance in chat_chats_copy.items():
             chat_instance.backup_data() 
         private_chats_copy = dict(Private.chats)
@@ -702,7 +702,7 @@ def backup_classes(exception=None):
 @app.teardown_appcontext
 def teardown_request(exception=None):
     """Runs after each request."""
-    chat_chats_copy = dict(Chat.chats)
+    chat_chats_copy = Chat.chats
     for chat_id, chat_instance in chat_chats_copy.items():
         chat_instance.backup_data() 
     private_chats_copy = dict(Private.chats)
