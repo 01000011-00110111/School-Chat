@@ -581,8 +581,8 @@ def connect(roomid):
         #     roomid)  # WHY ERROR YOU WORK NOW WORK
         # ah yes the best kind of error
         room = Chat.create_or_get_chat(roomid)
-        if room is None:
-            return
+        # if room is None:
+        #     return
         list = {"roomid": room.vid, "name": room.name, "msg": room.messages}
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)

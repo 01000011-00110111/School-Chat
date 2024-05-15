@@ -41,7 +41,6 @@ class Chat:
             room = database.get_room_data(roomid)
             new_chat = cls(room, roomid)
             cls.chats[roomid] = new_chat
-            
             if os.path.exists("chatlog.txt"):
                 with open("chatlog.txt", "a") as logfile:
                     logfile.write(f"{datetime.now()} - Chat log updated\nChats:\n")
@@ -51,8 +50,6 @@ class Chat:
         else:
             # Return the existing chat instance
             return cls.chats[roomid]
-        # emit('message_chat', (format_system_msg("Chat not found"), roomid), namespace='/')
-        # return None
         
     @classmethod
     def set_all_lock_status(cls, status):
@@ -63,7 +60,6 @@ class Chat:
     def add_message_to_all(cls, message_text: str, rooms, permission='false'):
         """ads messsages to all chatrooms"""
         for chat in cls.chats:
-            chat = chat.values()
             # private = self.vid == "all"
             chat.last_message = datetime.now()
             lines = len(chat.messages)# if not private else 1
@@ -75,7 +71,7 @@ class Chat:
                 chat.messages.append(message_text)
 
             log.backup_log(message_text, chat.vid, False)
-        return ('room', 1)
+            return ('room', 1)
         
         
     def add_message(self, message_text: str, permission='false') -> None:
