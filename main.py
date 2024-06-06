@@ -19,6 +19,7 @@
 import json
 import logging
 import os
+import hashlib
 
 # import time
 # import uuid
@@ -321,6 +322,57 @@ def verify(userid, verification_code):
     return "Invalid verification code."
 
 
+@app.route('/change-password', methods=["POST", "GET"])
+def change_password() -> ResponseReturnValue:
+    """Handles the user password reset request and sends the reset email."""
+    if request.method == "GET":
+        return flask.render_template("password_part1.html")
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        user = database.find_login_data(username, False)
+        if user:
+            accounting.password(user)
+        return "check the email you used to make the account for a password reset link"
+        # return flask.render_template("password_part1.html")
+
+
+@app.route('/reset/<userid>/<verification_code>', methods=["POST", "GET"])
+def reset_password(userid, verification_code) -> ResponseReturnValue:
+    """Handles the user password reset request and sends the reset email."""
+    user_id = database.find_account({"userId": userid}, 'vid')
+    if request.method == "GET":
+        return flask.render_template("password_part2.html",
+                                     username=user_id["username"])
+
+    if request.method == "POST":
+        password = request.form.get("password")
+        password2 = request.form.get("password2")
+        if user_id is not None:
+            user_code = accounting.create_verification_code(user_id)
+            
+            if user_code == verification_code:
+                if password != password2:
+                    return flask.render_template("password_part2.html",
+                                     error='Your passwords do not match!',
+                                     username=user_id["username"])
+                    
+                password_hash = hashlib.sha384(bytes(password,
+                                    'utf-8')).hexdigest()
+                
+                if password_hash == user_id['password']:
+                    return flask.render_template("password_part2.html",
+                                     error='You can not use your previous password!',
+                                     username=user_id["username"])
+                    
+                database.update_account_set('vid', {"userId": user_id["userId"]},
+                                        {'$set': {
+                                            "password": password_hash
+                                        }})
+                return flask.redirect(flask.url_for('login_page')) 
+    return "Invalid reset code."
+
+
 @app.route('/backup')
 @login_required
 def get_logs_page() -> ResponseReturnValue:
@@ -575,7 +627,7 @@ def handle_private_message(message, pmid, userid):
     result = filtering.run_filter_private(user, message, userid)
     private = get_messages(pmid, userid)
     if result[0] == 'msg':
-        print(private.sids)
+        # print(private.sids)
         private.add_message(result[1], userid)
         # emit("message_chat", (result[1], pmid), broadcast=True)
         if "$sudo" in message and result[2] != 3:
@@ -624,7 +676,7 @@ def connect(roomid, sender):
         chat.sids.remove(socketid)
     
     room.sids.append(socketid)
-    print(room.sids)
+    # print(room.sids)
     emit("room_data", list, to=socketid, namespace='/')
 
 
@@ -760,4 +812,4 @@ if __name__ == "__main__":
     # o.start()
     socketio.start_background_task(online_refresh)
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)

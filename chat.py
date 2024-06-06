@@ -42,7 +42,7 @@ class Chat:
         if roomid in cls.chats:
             return cls.chats[roomid]
         if roomid not in cls.chats:
-            print('remade it')
+            # print('remade it')
             # Create a new chat instance if it doesn't exist
             room = database.get_room_data(roomid)
             new_chat = cls(room, roomid)
