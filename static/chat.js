@@ -2,8 +2,8 @@
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 
-socket.on("message_chat", (message, ID) => {
-    renderChat((message), ID);
+socket.on("message_chat", (message) => {
+    renderChat((message));
 });
 
 socket.on("troll", (message, ID) => {
@@ -185,13 +185,11 @@ function sendMessage(message, hidden) {
 
 // setInterval(BTMLog, 3000)
 
-function renderChat(messages, ID) {
+function renderChat(messages) {
     // console.log(messages)
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
-    if (ID === window.sessionStorage.getItem('ID') || ID === "all") {
-        chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
-    }
+    chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
 }
 
 

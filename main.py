@@ -458,6 +458,27 @@ def handle_connect(userid, isVisible, location):
 @socketio.on('disconnect')
 def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
+    socketid = request.sid
+    userid = request.cookies.get('Userid')
+    
+    active_privates = [
+        private for private in Private.chats.values() 
+        if (userid in private.userlist and private.active.get(userid, False)) or socketid in private.sids
+    ]
+
+    for private in active_privates:
+        private.active[userid] = False
+        if socketid in private.sids:
+            private.sids.remove(socketid)
+            
+    active_chats = [
+        chat for chat in Chat.chats.values()
+        if socketid in chat.sids
+    ]
+    
+    for chat in active_chats:
+        chat.sids.remove(socketid)
+        
     try:
         user = User.get_user_by_id(request.cookies.get('Userid'))
         if user is not None and user.status != "offline-locked":
@@ -512,7 +533,7 @@ def get_rooms(userid):
 
 @socketio.on('message_chat')
 def handle_message(_, message, vid, userid, private, hidden):
-    print(hidden)
+    # print(hidden)
     handle_chat_message(message, vid, userid, hidden) if private == 'false' else \
         handle_private_message(message, vid, userid)
 
@@ -531,7 +552,7 @@ def handle_chat_message(message, roomid, userid, hidden):
     if result[0] == 'msg':
         if room is not None and not hidden:
             room.add_message(result[1])
-            emit("message_chat", (result[1], roomid), broadcast=True)
+            # emit("message_chat", (result[1], roomid), broadcast=True)
             # addons.message_addons(message, user, roomid, room)
             # above is not offical again, so commented out
             if "$sudo" in message and result[2] != 3:
@@ -554,8 +575,9 @@ def handle_private_message(message, pmid, userid):
     result = filtering.run_filter_private(user, message, userid)
     private = get_messages(pmid, userid)
     if result[0] == 'msg':
+        print(private.sids)
         private.add_message(result[1], userid)
-        emit("message_chat", (result[1], pmid), broadcast=True)
+        # emit("message_chat", (result[1], pmid), broadcast=True)
         if "$sudo" in message and result[2] != 3:
             filtering.find_cmds(message, user, pmid, private)
         # if "$sudo" in message and result[2] != 3:
@@ -583,11 +605,26 @@ def connect(roomid, sender):
         emit('room_data', "failed", namespace='/', to=socketid)
         return
     
-    # sender = request.cookies.get('Userid')
-    active_privates = [private for private in Private.chats.values() if sender in private.userlist and private.active.get(sender, False)]
+    active_privates = [
+        private for private in Private.chats.values() 
+        if (sender in private.userlist and private.active.get(sender, False)) or socketid in private.sids
+    ]
+
     for private in active_privates:
         private.active[sender] = False
+        if socketid in private.sids:
+            private.sids.remove(socketid)
+            
+    active_chats = [
+        chat for chat in Chat.chats.values()
+        if socketid in chat.sids
+    ]
     
+    for chat in active_chats:
+        chat.sids.remove(socketid)
+    
+    room.sids.append(socketid)
+    print(room.sids)
     emit("room_data", list, to=socketid, namespace='/')
 
 
@@ -603,18 +640,34 @@ def private_connect(sender, receiver, roomid):
              namespace="/")
         return
         
-    if Private.chats != {}:
-        # print('passed stage 1')
-        for private in Private.chats.values():
-            if sender in private.userlist and private.active[sender]:
-                # print('passed stage 2')
-                private.active[sender] = False
-    # print('no stage needed')
-                
-    chat = get_messages_list(sender, receiverid)
-    # print(sender, receiver)
-    emit("private_data", {'message': chat.messages, 'pmid': chat.vid, \
-        'name': receiver}, to=socketid, namespace='/')
+    active_privates = [
+        private for private in Private.chats.values() 
+        if (sender in private.userlist and private.active.get(sender, False)) or socketid in private.sids
+    ]
+
+    for private in active_privates:
+        private.active[sender] = False
+        if socketid in private.sids:
+            private.sids.remove(socketid)
+            
+    active_chats = [
+        chat for chat in Chat.chats.values()
+        if socketid in chat.sids
+    ]
+    
+    for chat in active_chats:
+        chat.sids.remove(socketid)   
+            
+    try:
+        chat = get_messages_list(sender, receiverid)
+        list = {'message': chat.messages, 'pmid': chat.vid, \
+        'name': receiver}
+    except TypeError:
+        emit('room_data', "failed", namespace='/', to=socketid)
+        return
+        
+    chat.sids.append(socketid)        
+    emit("private_data", list, to=socketid, namespace='/')
 
 
 """

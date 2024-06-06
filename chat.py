@@ -32,6 +32,7 @@ class Chat:
         self.messages = database.get_messages(roomid)
         self.backups = [0, 0] # 1st is total and 2nd is total sense last message
         self.last_message =  datetime.now()
+        self.sids = []
         
 
     @classmethod
@@ -75,6 +76,7 @@ class Chat:
             #     chat.messages.append(message_text)
             # else:
             chat.messages.append(message_text)
+            # emit("message_chat", (message_text), brodcast=True)
 
             log.backup_log(message_text, chat.vid, False)
             return ('room', 1)
@@ -86,11 +88,12 @@ class Chat:
         self.last_message = datetime.now()
         lines = len(self.messages)# if not private else 1
 
-        if ((lines >= 500) and permission != 'true'):
+        if ((lines >= 250) and permission != 'true'):
             self.reset_chat(message_text, False)
-            self.messages.append(message_text)
-        else:
-            self.messages.append(message_text)
+
+        for sid in self.sids:
+            emit("message_chat", (message_text), room=sid)
+        self.messages.append(message_text)
 
         log.backup_log(message_text, self.vid, False)
         return ('room', 1)
