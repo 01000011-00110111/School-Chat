@@ -41,7 +41,7 @@
                 <div id="ImageHoverPreview">
                   <p>Click to upload image</p>
                 </div>
-                <img id="PfPdisplay" src="{{profile}}">
+                <img id="PfPdisplay" src="{{profile}}" name="profile">
               </div>
             </label>
 
@@ -51,8 +51,8 @@
             </div>
           </div>
 
-          <p id="user_colorTXT">Username: </p>
-          <input type="text" id="username" value='{{displayName}}' placeholder="Username" name="display" maxlength="12" class='std_box'><br>
+          <p id="user_colorTXT">Displayname: </p>
+          <input type="text" id="username" value='{{displayName}}' placeholder="Display Name" name="display" maxlength="12" class='std_box'><br>
           <input type="color" value='{{user_color}}' id="user_color" name="user_color"><br>
           <p id="user_colorTXT">Role: </p>
           <input type="text" id="role" name="role" placeholder="role" value='{{role}}' maxlength="18" class='std_box'><br>
@@ -67,6 +67,9 @@
         </div>
 
         <div id="Account" class="tabcontent">
+          <h3>Account</h3>
+          <p id="user_colorTXT">Username: </p>
+          <input type="text" id="username" value='{{user}}' placeholder="Username" name="user" maxlength="15" class='std_box'><br>
           <p id="user_colorTXT">Email</p>
           <input type="text" id="email" value='{{email}}' placeholder="Email" name="email" class='std_box'>
 
@@ -111,7 +114,7 @@
 
     <div id="StatusContainer">
       <a href="." id="cancelButton" class="statusButton">Back</a>
-      <button type="submit" id="change" name="update" class="statusButton">Save</button>
+      <button type="submit" id="change" name="u pdate" class="statusButton">Save</button>
     </div>
 </form>
 

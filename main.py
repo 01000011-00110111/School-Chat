@@ -68,6 +68,9 @@ def setup_func():
     if not os.path.exists('backend/unbanned_words.txt'):
         with open('backend/unbanned_words.txt', 'w'):
             pass
+    if not os.path.exists('backend/banned_words.txt'):
+        with open('backend/banned_words.txt', 'w'):
+            pass
     database.setup_chatrooms()
     
 setup_func()
@@ -126,7 +129,7 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
-    print(room_name)
+    # print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
 
 @app.route('/admin')
@@ -145,7 +148,7 @@ def specific_admin_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
-    print(room_name)
+    # print(room_name)
     return flask.redirect(flask.url_for("admin_page"))
 
 
@@ -155,8 +158,8 @@ def specific_private_page(prefix, private_chat) -> ResponseReturnValue:
     """Get the specific private chat in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
-    print(prefix)
-    print(private_chat)
+    # print(prefix)
+    # print(private_chat)
     return flask.redirect(flask.url_for("chat_page"))
 
 
@@ -362,7 +365,7 @@ def customize_accounts() -> ResponseReturnValue:
     roleC = request.form.get("role_color")
     userC = request.form.get("user_color")
     email = request.form.get("email")
-    file = request.files['profile']
+    file = request.files.get('profile')# if 'profile' in request.files else None
     theme = request.form.get("theme")
     user = User.get_user_by_id(userid)
     user_email = database.get_email(user.uuid)
@@ -380,9 +383,10 @@ def customize_accounts() -> ResponseReturnValue:
     }
     # print(theme)
     old_path = user.profile
-    # print()
-    profile_location = uploading.upload_file(file, old_path) if file.filename != '' else \
+    # print(file)
+    profile_location = uploading.upload_file(file, old_path) if file is not None else \
     old_path
+    
     if theme is None:
         return flask.render_template("settings.html",
                                      error='Pick a theme before updating!',
@@ -553,7 +557,7 @@ def handle_private_message(message, pmid, userid):
         private.add_message(result[1], userid)
         emit("message_chat", (result[1], pmid), broadcast=True)
         if "$sudo" in message and result[2] != 3:
-            filtering.find_cmds(message, user, pmid)
+            filtering.find_cmds(message, user, pmid, private)
         # if "$sudo" in message and result[2] != 3:
         #     filtering.find_cmds(message, user, roomid)
         # elif '$sudo' in message and result[2] == 3:
@@ -569,30 +573,21 @@ def handle_ping_tests(start, roomid):
 
 
 @socketio.on("room_connect")
-def connect(roomid):
+def connect(roomid, sender):
     """Switch rooms for the user"""
     socketid = request.sid
     try:
-        # room = database.get_room_msg_data(
-        #     roomid)  # WHY ERROR YOU WORK NOW WORK
-        # ah yes the best kind of error
         room = Chat.create_or_get_chat(roomid)
         list = {"roomid": room.vid, "name": room.name, "msg": room.messages}
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
         return
-    # don't need to let the client know the mongodb vid
-    # del room['_id']
-    # print(room)
-    sender = request.cookies.get('Userid')
-    if Private.chats != {}:
-        # print('passed stage 1')
-        for private in Private.chats.values():
-            if sender in private.userlist and private.active[sender]:
-                # print('passed stage 2')
-                private.active[sender] = False
-    # print('no stage needed')
-
+    
+    # sender = request.cookies.get('Userid')
+    active_privates = [private for private in Private.chats.values() if sender in private.userlist and private.active.get(sender, False)]
+    for private in active_privates:
+        private.active[sender] = False
+    
     emit("room_data", list, to=socketid, namespace='/')
 
 

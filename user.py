@@ -119,52 +119,52 @@ class User:
             self.limit += 1
             self.last_message = datetime.now()
             return True
-        if self.limit > 15:
+        if self.limit > 15 or self.pause:
             if not self.pause:
                 self.pause = True
-                self.mutes = {'all': datetime.now() + timedelta(minutes=5)}
-            else:
-                return self.check_mute()
+                self.mutes.append({'spam': datetime.now() + timedelta(minutes=5)})
             return False
+        
         self.limit = 0
         self.last_message = datetime.now()
         return True
 
+
     def check_mute(self):
+        current_time = datetime.now()
         to_remove = []
+
         for mute in self.mutes:
-            if mute.value() >= datetime.now():
-                to_remove.append(mute)
+            for mute_duration in mute.values():
+                if mute_duration <= current_time:
+                    to_remove.append(mute)
 
         for remove in to_remove:
             self.mutes.remove(remove)
 
         if not self.mutes:
             self.pause = False
-            self.limit = 0
-
+            
         return bool(to_remove)
 
-    
     def get_perm(self, roomid):
         mute_list = self.mutes
         current_time = datetime.now()
 
-        if roomid in mute_list:
-            for mute_entry in mute_list:
-                if "all" in mute_entry:
-                    mute_time_all = mute_entry["all"]
-                    if current_time <= mute_time_all:
-                        return False
-    
-                if roomid in mute_entry:
-                    mute_time = mute_entry[roomid]
-                    if current_time <= mute_time:
-                       return False
-        else:
-            return False
-
-    
+        for mute_entry in mute_list:
+            if isinstance(mute_entry, dict):
+                if "all" in mute_entry and mute_entry["all"] >= current_time:
+                    return True
+                else:
+                    self.check_mute()
+                    
+                if roomid in mute_entry and mute_entry[roomid] >= current_time:
+                    return True
+                else:
+                    self.check_mute()
+                
+        # print(self.mutes)
+        return False
 
     def update_account(self, messageC, roleC, userC, displayname, role, profile, theme):
         """Update the user's account details."""

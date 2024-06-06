@@ -401,7 +401,7 @@ def backup_user(user):
         }
     permission_data = {
         "mutes": user.mutes,
-        "permission": user.permission,
+        "SPermission": user.perm,
         # "warned": user.warned,
     }
 

@@ -10,6 +10,7 @@ backend/chat-rooms_log.txt
 backend/permission.txt
 backend/accounts.txt
 backend/unbanned_words.txt
+backend/banned_words.txt
 config/keys.conf
 static/profiles
 

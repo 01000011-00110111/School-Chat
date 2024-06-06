@@ -62,7 +62,7 @@ function runStartup() {
     changeRoom('ilQvQwgOhm9kNAOrRqbr')
     userid = getCookie("Userid")
     document.getElementById("pfpmenu").src = getCookie("Profile");
-    socket.emit("username", userid, !document.hidden, 'chat');
+    socket.emit("username", getCookie("Userid"), !document.hidden, 'chat');
     socket.emit("get_rooms", userid);
     setTheme(getCookie('Theme'))
 }
@@ -132,7 +132,7 @@ socket.on("private_data", (data) => {
 function changeRoom(room) {
     window.sessionStorage.setItem("ID", room);
     closeNav();
-    socket.emit('room_connect', room)
+    socket.emit('room_connect', room, getCookie("Userid"))
 }
 
 
