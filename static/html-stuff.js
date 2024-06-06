@@ -45,7 +45,7 @@ function CloseTOS() {
   TOSPopup.style.display = "none";
 }
 
-//Do not remove
+//Code broken as far as I know
 function Prepare() {
   let ActiveNav = document.getElementById("activenav");
   let Chat = document.getElementById("chat");

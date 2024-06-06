@@ -9,9 +9,12 @@ from better_profanity import profanity
 from flask_socketio import emit
 
 import cmds
+import database
 import log
-import rooms
+
+# import rooms
 import word_lists
+from user import User
 
 # old imports, do we still need the markdown package due to us having our own markdown
 # from markdown import markdown
@@ -20,47 +23,43 @@ import word_lists
 # get our custom whitelist words (that shouldnot be banned in the first place)
 profanity.load_censor_words(whitelist_words=word_lists.whitelist_words)
 profanity.add_censor_words(word_lists.censored)
-preuser = 'system'
-message_count = 0
 
 
-def run_filter(user, room, message, roomid, userid):
+def run_filter_chat(user, room, message, roomid, userid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
-    global preuser
-    global message_count
-    locked = check_lock(room)
+    locked = room.locked
     perms = check_perms(user)
-    can_send = check_allowed_sending(room)
-    user_muted = check_mute(user)
+    can_send = room.canSend
+    user_muted = check_mute(user, roomid)
+    limit = user.send_limit()
 
     # we must check if the current user is acutally them, good idea for this to be first
-    if userid != user['userId']:
+    if userid != user.uuid:
         # idea lock account if they fail 3 times useing the normal lock
         # or a lock version that doesnt let you login at all
         # without dev help of email fix
         return ('permission', 12, user_muted)
 
-    if user_muted not in [0, 3] and perms != 'dev':
-        return ('permission', user_muted)
+    # userobj = User.get_user_by_id(userid)
+    
+    if user_muted:
+        return ('permission', 1)
 
     if bool(re.search(r'[<>]', message)) is True and perms != 'dev':
         cmds.warn_user(user)
-        return ('permission', 10, user_muted)
+        return ('permission', 10, 0)
 
     if perms != "dev":
         message = filter_message(message)
-        role = profanity.censor(user['role'])
+        role = profanity.censor(user.role)
     else:
-        role = user['role']
+        role = user.role
 
-    if user['profile'] == "":
-        profile_picture = '/static/favicon.ico'
-    else:
-        profile_picture = user['profile']
-
-    if "[" in message and locked != 'true':
-        if user['locked'] != 'locked':
-            find_pings(message, user['displayName'], profile_picture, roomid)
+    profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
+    
+    if "[" in message and not locked:
+        if user.locked != 'locked':
+            find_pings(message, user.displayName, profile_picture, roomid, room)
         else:
             cmds.warn_user(user)
             failed_message(('permission', 11, 'locked'), roomid)
@@ -68,74 +67,100 @@ def run_filter(user, room, message, roomid, userid):
     final_str = compile_message(markdown(message), profile_picture, user, role)
 
     # check if locked or allowed to send
-    if locked == 'true' and perms not in ["dev", "mod"]:
-        return ("permission", 3, user_muted)
+    if locked and perms not in ["dev", 'admin', "mod"]:
+        return ("permission", 3, 0)
 
     if can_send == "everyone":
-        return_str = ('msg', final_str, user_muted)
+        return_str = ('msg', final_str, 0)
     elif can_send == 'mod':
         if perms == 'mod':
-            return_str = ('msg', final_str, user_muted)
+            return_str = ('msg', final_str, 0)
         else:
-            return_str = ('permission', 5, user_muted)
+            return_str = ('permission', 5, 0)
     else:
-        return_str = ('permission', 5, user_muted)
+        return_str = ('permission', 5, 0)
 
     #check for spam then update message count and prev user
-    if message_count == 15 and preuser == user["username"] and perms != "dev":
-        cmds.warn_user(user)
-        return ('permission', 8, user_muted)
+    if not limit: #and perms != "dev":
+        # cmds.warn_user(user)
+        return ('permission', 8, 0)
 
-    if preuser != user["username"]:
-        message_count = 0
-
-    preuser = user["username"]
-    message_count += 1
 
     if perms in ["dev", "mod"]:
-        return_str = ('msg', final_str, user_muted)
+        return_str = ('msg', final_str, 0)
 
     return return_str
 
+def run_filter_private(user, message, userid):
+    """Its simple now, but when chat rooms come this will be more convoluted."""
+    perms = check_perms(user)
+    user_muted = check_mute(user, None)
 
-def check_mute(user):
+    # we must check if the current user is acutally them, good idea for this to be first
+    if userid != user.uuid:
+        # idea lock account if they fail 3 times useing the normal lock
+        # or a lock version that doesnt let you login at all
+        # without dev help of email fix
+        return ('permission', 12, user_muted)
+    
+    # userobj = User.get_user_by_id(userid)
+
+    if user_muted:
+        return ('permission', 1)
+
+    if bool(re.search(r'[<>]', message)) is True and perms != 'dev':
+        cmds.warn_user(user)
+        return ('permission', 10, 0)
+
+    if perms != "dev":
+        message = filter_message(message)
+        role = profanity.censor(user.role)
+    else:
+        role = user.role
+
+    profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
+
+
+    final_str = ('msg' ,compile_message(markdown(message), profile_picture, user, role), 0)
+    
+    limit = user.send_limit()
+    if not limit: #and perms != "dev":
+        # cmds.warn_user(user)
+        return ('permission', 8, 0)
+
+    return final_str
+
+def check_mute(user, roomid):
     """Checks if the user is muted or banned."""
-    permission = user["permission"].split(' ')
-    if permission[0] == "muted":
-        return 1
-    elif user["permission"] == "banned":
-        return 2
-    elif user["locked"].split(' ')[0] == "locked":
-        return 3
-    return 0
-
-
-def check_lock(room):
-    """Check if room is locked."""
-    return room["locked"]
-
-
-def check_allowed_sending(room):
-    """This is a check to se if the database allowes you to send"""
-    return room["canSend"]
+    # permission = muteuser.mute_time 
+    # if permission[0] == "muted":
+        # return 1
+    # elif user.permission == "banned":
+        # return 2
+    # elif user.locked.split(' ')[0] == "locked":
+        # return 3
+    return user.get_perm(roomid)
 
 
 def check_perms(user):
     """Checks if the user has specal perms else return as a user"""
-    if user['SPermission'] == 'Debugpass':
-        perms = 'dev'
-    elif user['SPermission'] == 'modpass':
-        perms = 'mod'
-    else:
-        perms = 'user'
-    return perms
+    return 'dev' if 'Debugpass' in user.perm else 'mod' if 'modpass' in user.perm else 'user'
 
 
-def to_hyperlink(text):
-    """Taken from the js file, we don't need to have the client process it really."""
-    # mails = re.findall(r"mailto:([^\?]*)", text)
-    # links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text)
-    # print(f"{mails}\n\n\n{links2}")
+def to_hyperlink(text: str) -> str:
+    """Auto hyperlinks any links we find as common."""
+    mails = re.findall(r"mailto:(.+?)[\s?]", text, flags=re.M)
+    links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text, flags=re.M | re.I)
+    links1 = re.findall(r"(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])", text, flags=re.I)
+
+    # Iterate over the results and replace the strings
+    for link in mails:
+        text = text.replace(f'mailto:{link}', f'<a href="mailto:{link}">{link}</a>')
+    for link in links1:
+        text = text.replace(link[0], f'<a href="{link[0]}">{link[0]}</a>')
+    for link in links2:
+        text = text.replace(link[1], f'<a target="_blank" href="{link[1]}">{link[1]}</a>')
+    return text
 
 
 def filter_message(message):
@@ -191,10 +216,10 @@ def markdown(message):
     return compiled_str
 
 
-def find_pings(message, dispName, profile_picture, roomid):
+def find_pings(message, dispName, profile_picture, roomid, room):
     """Gotta catch 'em all! (checks for pings in the users message)"""
     pings = re.findall(r'(?<=\[).+?(?=\])', message)
-    room = rooms.get_chat_room(roomid)
+    # room = database.find_room({'roomid': roomid}, 'vid')
 
     for ping in pings:
         message = message.replace(f"[{ping}]", '')
@@ -203,15 +228,15 @@ def find_pings(message, dispName, profile_picture, roomid):
             "from": dispName,
             "pfp": profile_picture,
             "message": message,
-            "name": room["roomName"],
-            "roomid": room["roomid"]
+            "name": room.name,
+            "roomid": room.vid
         },
              namespace="/",
              broadcast=True)
         break  # ez one per message fix lol
 
 
-def find_cmds(message, user, roomid):
+def find_cmds(message, user, roomid, room):
     """ $sudo commands, 
         will push every cmd found to cmds.py along with the user,
         so we can check if they can do said command.
@@ -223,17 +248,17 @@ def find_cmds(message, user, roomid):
     origin_room = None
     match = re.findall(r"\(|\)", command_string)
 
-    if perms == 'dev' and roomid == 'jN7Ht3giH9EDBvpvnqRB' and match != []:
-        match_msg = re.findall(r"\((.*?)\)", command_string)
-        find_roomid = re.sub(r"\([^()]+\)", "", command_string).strip()
-        room_check = rooms.check_roomids(find_roomid)
-        if room_check is False:
-            failed_message(('permission', 7), roomid)
-            return
-        if len(match) == 2:
-            origin_room = roomid
-            roomid = find_roomid
-            command_split = [match_msg[0]]
+    # if perms == 'dev' and roomid == 'jN7Ht3giH9EDBvpvnqRB' and match != []:
+    #     match_msg = re.findall(r"\((.*?)\)", command_string)
+    #     find_roomid = re.sub(r"\([^()]+\)", "", command_string).strip()
+    #     room_check = rooms.check_roomids(find_roomid)
+    #     if room_check is False:
+    #         failed_message(('permission', 7), roomid)
+    #         return
+    #     if len(match) == 2:
+    #         origin_room = roomid
+    #         roomid = find_roomid
+    #         command_split = [match_msg[0]]
 
     if origin_room is None:
         origin_room = roomid
@@ -242,9 +267,8 @@ def find_cmds(message, user, roomid):
     # leading to users being able to send comamnds, even when chat is locked
     # we should be the only ones that can do that (devs)
     for cmd in command_split:
-        date_str = datetime.now(timezone(
-            timedelta(hours=-5))).strftime("[%a %H:%M] ")
-        Lmessage = date_str + user['username'] + ":" + cmd
+        date_str = datetime.now().strftime("[%a %H:%M] ")
+        Lmessage = date_str + user.username + ":" + cmd
         log.log_commands(Lmessage)
 
         command = cmd.split()
@@ -257,7 +281,8 @@ def find_cmds(message, user, roomid):
             cmds.find_command(commands=commands,
                               user=user,
                               roomid=roomid,
-                              origin_room=origin_room)
+                              origin_room=origin_room,
+                              room=room)
             break  # that will work ez one per message fix lol
 
 
@@ -265,26 +290,19 @@ def compile_message(message, profile_picture, user, role):
     """Taken from old methold of making messages"""
     to_hyperlink(message)
     profile = f"<img class='pfp' src='{profile_picture}'></img>"
-    user_string = f"<font color='{user['userColor']}'>{user['displayName']}</font>"
-    message_string = f"<font color='{user['messageColor']}'>{message}</font>"
+    user_string = f"<font color='{user.Ucolor}'>{user.displayName}</font>"
+    message_string = f"<font color='{user.Mcolor}'>{message}</font>"
     role_string = do_dev_easter_egg(role, user)
-    date_str = datetime.now(timezone(
-        timedelta(hours=-5))).strftime("[%a %I:%M %p] ")
-
-    # should we change it to a f string
-    # if user["username"] == preuser:
-    #     message = message_string
-    # else:
-    message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string}"
-    # convert to fstring is above
-    # message = date_str + profile + " " + user_string + " (" + role_string + ")" +
-    # " - " + message_string  # split onto 2 lines, combine later if you need it
+    date_str = datetime.now().strftime("[%a %I:%M %p] ")
+    message_string_h = to_hyperlink(message_string)
+  
+    message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string_h}"
     return message
 
 
 def do_dev_easter_egg(role, user):
     """Because we want RAINBOW changing role names."""
-    role_color = user['roleColor']
+    role_color = user.Rcolor
     if role_color == "#00ff00":
         role_string = "<font class='Dev_colors-loop'>" + role + "</font>"
     elif role_color == "rainbow":
@@ -313,9 +331,9 @@ def failed_message(result, roomid):
         (6):
         "This chat room no longer exists, select a chat room that does exist.",
         (7):
-        "This chat room id does not exist.",
+        "This chat room vid does not exist.",
         (8):
-        "You are not allowed to send more than 15 messages in a row. (Warning)",
+        "You are not allowed to send more than 15 messages in a row. You have been muted for 5 minutes(Warning)",
         (9):
         "You must verify your account before you can use this command.",
         (10):

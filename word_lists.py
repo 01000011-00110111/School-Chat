@@ -3,26 +3,18 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 
-whitelist_words = [
-    'crap',
-    'god',
-    'LMAO',
-    'lmao',
-    'omg',
-    'stupid',
-    'dumb',
-    'piss',
-    'wtf',
-    'suck',
-    'hebe',
-    'gay',
-    'fart',
-]
+# with open('backend/unbanned_words.txt', 'r') as file:
+#     whitelist_words = [word.rstrip() for word in file]
+
+with open('backend/unbanned_words.txt', 'r') as file:
+    whitelist_words = list(file.read().splitlines())
+
+
+with open('backend/banned_words.txt', 'r') as file:
+    blacklist_words = list(file.read().splitlines())
 
 censored = [
     'sh!t',
-    'dam',
-    'boobie',
 ]
 
 banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
@@ -31,4 +23,4 @@ banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
                     " ", "  ", "   ", "cseven", "cserver", 'system',
                     '[system]', '[System]', 'System')
 
-approved_links = ('/settings', '/backup')
+approved_links = ('/settings', '/backup', "/admin")

@@ -31,6 +31,13 @@ html {
     margin: 0 auto;
 }
 
+#online_buttons {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 15px;
+}
+
 #online_users {
     padding-left: 0.7%;
     padding-top: 5%;
@@ -105,7 +112,7 @@ html {
     /*border-top: 5px solid black;*/
     justify-content: center;
     display: flex;
-    height: 9%;
+    height: 8%;
     margin: 0px -7.7px;
     background: black;
 }
@@ -145,10 +152,13 @@ html {
 }
 
 #topleft {
-    width: 50px;
+    width: 3%;
     height: 100%;
     padding-left: 5px;
     background: transparent !important;
+    display: grid;
+    align-items: center;
+    padding-bottom: 3px;
 }
 
 /* Nav Menu left */
@@ -283,36 +293,45 @@ html {
 }
 
 /* signup page */
-.signuptext { /* ok if you cant fix as long you find the issue then i can fix it | alright */
-  border-radius: 9px;
-  height: 31px;
-  width: 228%;
+.signuptext {
+  height: 40px;
+  width: 85%;
   text-align: left;
   justify-self: center;
   margin: 7px 0;
-  color: black;
+  color: #4f4f4f;
   text-indent: 12px;
-  font-weight: bold;
+  font-weight: normal;
   font-family: sans-serif;
+  outline: none;
+  border: 0px;
+    border-bottom-width: 0px;
+    border-bottom-style: none;
+    border-bottom-color: currentcolor;
+  text-decoration: none;
+  background: transparent;
+  border-bottom: 1.5px #555 solid;
+  font-size: 14px;
 }
-  
-.signuptext:hover {
-    background: green;
+
+.signuptext:focus {
+  transition: all 0.7s;
+  color: white;
 }
 
 .signupbtn {
-    width: 228%;
-    border-radius: 8px;
-    height: 42px;
-    border-color: black;
-    color: white;
-    background: #6303a4;
-    font-size: 20px;
-    justify-self: center;
+  width: 91%;
+  border-radius: 11px;
+  height: 42px;
+  color: white;
+  background: #000;
+  font-size: 20px;
+  border: 0px;
+  margin-left: 23px;
 }
 
 .signupbtn:hover {
-    background: green;
+  background: #2b2b2b;
 }
 
 .rainbow-text-loop {
@@ -465,6 +484,7 @@ html {
 
 #ProfileDisplay {
   display: flex;
+  width: 99%;
 }
 
 .StatusBTN {
@@ -492,14 +512,14 @@ html {
 }
 
 .SignUpForm {
-  background: #ffffff;
-  height: 81%;
-  width: 33%;
+  background: #00000085;
+  height: 50%;
+  width: 54%;
   border-radius: 12px;
-  display: grid;
-  align-content: center;
-  justify-content: center;
-  margin: 68px auto;
+  display: flex;
+  margin: 210px auto;
+  box-shadow: 0px 1px 31px 3px black;
+  border: 3px #ffffff4d solid;
 }
 
 
@@ -585,10 +605,198 @@ html {
   position: fixed;
   width: 100%;
   height: 8%;
-  margin: -14.9px -7.7px;
+  margin: -1% -7.7px;
   padding: 0px;
   display: flex;
   box-shadow: 0px -1px 44px 15px #191919;
   z-index: 1;
   margin-bottom: 100%;
+  align-items: center;
+}
+
+#nav {
+  width: 100%;
+  height: 6%;
+  border-bottom: 2px gray solid;
+}
+
+.SettingsNavItem {
+  width: 12.76%;
+  height: 100%;
+  font-size: 19px;
+  border: 0px;
+  background: transparent;
+  border-radius: 15px;
+  padding: 12px;
+  font-family: sans;
+  text-align: center;
+  color: white;
+}
+
+.SettingsNavItem:hover {
+  background: #64646469;
+}
+
+#MainSettingsBody {
+  width: 100%;
+  height: 17%;
+  display: grid;
+}
+
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border-top: none;
+  height: 100%;
+  border-radius: inherit;
+  background: transparent;
+  width: 100%;
+}
+
+#ButtonContainer {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  margin-top: 15px;
+}
+
+@keyframes fadeEffect {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+input[type="file"] {
+    display: none;
+}
+
+#FileClick {
+  width: fit-content;
+  height: fit-content;
+}
+
+#imageContentControl {
+  width: 130px;
+  height: 130px;
+  background: transparent;
+  border-radius: 100%;
+  display: grid;
+}
+
+#ImageHoverPreview {
+  position: absolute;
+  z-index: 9;
+  width: 122px;
+  height: 122px;
+  border-radius: 100%;
+  align-self: center;
+  display: grid;
+  justify-self: center;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0%;
+  color: white;
+  font-family: sans-serif;
+  margin-left: 8px;
+  margin-top: 16px;
+}
+
+#ImageHoverPreview:hover {
+  opacity: 100%;
+  background: #0000005e;
+}
+
+#StatusContainer {
+  background: #282828;
+  width: 297px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  border-radius: 10px;
+  align-self: end;
+  position: fixed;
+  bottom: 1%;
+}
+
+.statusButton {
+  width: 45%;
+  height: 75%;
+  border-radius: 11px;
+  color: white;
+  border: 1.7px #b5aeae solid;
+}
+
+.statusButton:hover {
+  opacity: 75%;
+}
+
+#change {
+  background: cyan;
+}
+
+#cancelButton {
+  background: transparent;
+  justify-content: center;
+  align-content: center;
+  display: grid;
+  text-decoration: none;
+}
+
+#notificationsButton {
+  width: 160px;
+  height: 49px;
+  border: 1px #1522ee solid;
+  background: transparent;
+  color: white;
+  border-radius: 8px;
+}
+
+#notificationsButton:hover {
+  background: #1e1e1e;
+}
+
+#user_colorTXT {
+  margin-top: 60px;
+}
+
+#signupContainer1 {
+  width: 100%;
+  align-items: center;
+  display: grid;
+}
+
+#signupContainer2 {
+  width: 64%;
+  margin-top: 9%;
+}
+
+#admin_menu {
+  display: none;
+  margin-top: 4%;
+  position: fixed;
+  margin-left: 60%;
+  background: rgb(21, 21, 21);
+  width: 500px;
+  height: 500px;
+  width: 600px;
+  height: 450px;
+  border-radius: 10px;
+  z-index: 9;
+}
+
+.devButtons {
+  background: transparent;
+  color: white;
+  font-size: 25px;
+  height: 100%;
+  width: 100%;
+  border-radius: 9px;
+  border: 2px gray solid;
+}
+
+.devButtons:hover {
+  transition: 0.6s all;
+  background: #403e3e;
+  border: 2px #7ebfd5 solid;
 }

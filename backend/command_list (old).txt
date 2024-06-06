@@ -1,0 +1,51 @@
+<h2>Dev commands:</h2>
+<ul>
+    <li><code>"$sudo command prompt"</code>:This is how you type a command in chat (prompt is only for commands that need text.</li>
+    <li><code>"$sudo (command) room id"</code>: You can run any command for any room by typing it in this format. ONLY IN DEV CHAT!</li><h6>Not yet added.</h6>
+    <li><code>"$sudo roomlist"</code>: Shows you all room names and IDs.</li><h6>Not yet added.</h6>
+    <li><code>"$sudo system (message)"</code>: Send a message as the system.</li><h6>Not yet added.</h6>
+    <li><code>"$sudo Admin"</code>: Send as admin (not added).</li><h6>Not yet added.</h6>
+    <li><code>"$sudo reset/rc"</code>: Resets chat rooms.</li>
+    <li><code>"$sudo status"</code>: Gets the full status of the chat.</li>
+    <li><code>"$sudo shutdown"</code>: Shuts down the server.</li><h6>Not yet added.</h6>
+    <li><code>"$sudo blanks"</code>: Sends 100 blank lines in the chat room you are currently in.</li><h6>Not yet added.</h6>
+    <li><code>"$sudo lines/pstats"</code>: Gets the line count of the chat room you are on.</li><h6>Not yet added.</h6>
+    <li><code>"$sudo ban (username) (reason)"</code>: The reason is optional.</li><h6>Not yet added.</h6>
+    <li><code>"$sudo globalock (confirm)"</code>: Locks all rooms. Only use in emergencies</li>
+    <li><code>"$sudo cmd_logs"</code>: Sends the last 10 entries in the command log.</li>
+    <li><code>"$sudo room_logs"</code>: Sends the last 10 entries in the room logs.</li><h6>Not yet added.</h6>
+</ul>
+
+<h2>Admin commands:</h2>
+<ul>
+    <li><code>"$sudo command prompt"</code>:This is how you type a command in chat (prompt is only for commands that need text.</li>
+    <li><code>"$sudo mute (username) (time) (reason)"</code>: Reason and time are optional.</li><h6>Not yet added.</h6>
+    <li><code>"$sudo unmute (username)"</code>.</li><h6>Not yet added.</h6>
+    <li><code>"$sudo permlist"</code>: Allows you to see who is banned or muted.</li><h6>Not yet added.</h6>
+    <li><code>"$sudo mod"</code>: Send as mod.</li><h6>Not yet added.</h6>
+    <li><code>"$sudo lock"</code>: Locks the chat.</li>
+    <li><code>"$sudo unlock"</code>: Unlocks the chat.</li>
+    <li><code>"$sudo reset"</code>: Resets chat rooms.</li>
+</ul>
+
+<h2>User commands:</h2>
+<ul>
+    <li><code>"$sudo command prompt"</code>:This is how you type a command in chat (prompt is only for commands that need text.</li>
+    <li><code>"$sudo song (text)"</code>: Send as Song (added public for now).</li><h6>Not yet added.</h6>          <li><code>"$sudo refresh"</code>: Refresh the online list.</li>
+    <li><code>"$sudo chat (room name) create"</code>: Creates a chat room with the name you set.</li><h6>Not yet added.</h6>
+    <li><code>"$sudo chat (room name) delete"</code>: Deletes the chat room with the name you typed.</li><h6>Not yet added.</h6>
+    <li><code>"$sudo chat (room name) info"</code>: Tells you the info of the chat room you typed.</li><h6>Not yet added.</h6>
+</ul>
+
+<h2>Room Mod commands:</h2>
+<ul>
+    <li><code>"$sudo chat mute (username) (time) (reason)" Mutes a user in the chat room your in (all commands here are not added).</li>
+</ul>
+
+<h2>Room Owner commands:</h2>
+<ul>
+    <li><code>"$sudo chat (room name) whitelist (users)"</code>: Whitelist users in the chat room you typed.</li><h6>Not yet added.</h6>
+    <li><code>"$sudo chat (room name) blacklist (users)"</code>: Blacklist users in the chat room you typed.</li><h6>Not yet added.</h6>
+</ul>
+
+end

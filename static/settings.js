@@ -101,11 +101,11 @@ createExamples();
 
 // Update examples every 250 milliseconds (0.25 seconds)
 setInterval(updateExamples, 250);
-socket.emit("username", getCookie("Username"), 'settings');
+socket.emit("username", getCookie("Userid"), !document.hidden, 'settings');
 
 
 socket.on("force_username", (_statement) => {
-    socket.emit("username", getCookie("Username"), 'settings');
+    socket.emit("username", getCookie("Username"), !document.hidden, 'settings');
 });
 
 const holidays = {
@@ -142,4 +142,50 @@ function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-    
+function openTab(evt, tabName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+  
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+  
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+  
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+  
+  // Opens the defualt tab
+  openTab(event, "My-Profile");
+
+  function enableNotifications() {
+    // Checks if the user's browser supports notifications
+    if (!"Notification" in window) {
+      
+      alert("Your browser does not support desktop notifications.");
+  
+      // It checks if the user already has notifications enabled for this site
+    } else if (Notification.permission === "granted") {
+      
+      const notification = new Notification("Notifications Enabled");
+  
+      // If user has notifications disbaled then it asks for permission to enable them
+    } else if (Notification.permission !== "denied") {
+      
+      Notification.requestPermission().then((permission) => {  
+        if (permission === "granted") {
+          
+          const notification = new Notification("Notifications Enabled");
+          
+        }
+      });
+    }
+  }
