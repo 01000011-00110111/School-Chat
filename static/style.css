@@ -1,17 +1,17 @@
-* {
-  font-family: sans-serif;
-  scrollbar-color: orange black;
-}
-
-body {
+body, html {
   background-color: #000000;
   color: #dd7016;
   height: 100%;
+  width: 100%;
+  display: grid;
 }
 
-html {
-  width: 100%;
-  height: 100%;
+* {
+  font-family: sans-serif;
+  scrollbar-color: orange black;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 #LoginContent {
@@ -66,8 +66,7 @@ html {
     height:30px;
     width:30px;
     border-radius:100px;
-    overflow: hidden
-    dragable: false;
+    overflow: hidden;
     border: 2px solid #404040;
 }
 
@@ -152,41 +151,45 @@ html {
 }
 
 #topleft {
-    width: 3%;
+    width: 4.5%;
     height: 100%;
     padding-left: 5px;
     background: transparent !important;
     display: grid;
     align-items: center;
     padding-bottom: 3px;
+    text-align: center;
 }
 
 /* Nav Menu left */
 
 .sidenav {
-    height: 100%;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 57px;
-    background: black;
-    scrollbar-width: thin;
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  transition: 0.5s;
+  background: black;
+    background-color: black;
+  scrollbar-width: thin;
+  display: grid;
+  grid-template-rows: 85px;
 }
 
 .sidenav a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #d0c8c8;
-    display: block;
-    transition: 0.3s;
-    background: black;
-    border-radius: 15px;
-    height: 40px;
-    width: 84%;
+  text-decoration: none;
+  font-size: 25px;
+  color: #d0c8c8;
+  display: grid;
+  transition: 0.3s;
+  background: black;
+  height: 70px;
+  width: 100%;
+  text-align: justify;
+  align-content: center;
+  text-indent: 17px;
 }
 
 .sidenav a:hover {
@@ -194,11 +197,11 @@ html {
 }
 
 .closebtn {
-    position: absolute;
-    margin: -73px 74%;
-    width: 12px !important;
-    font-size: 40px !important;
-    background: transparent !important;
+  width: 56px !important;
+  font-size: 40px !important;
+  background: transparent !important;
+  position: static;
+  justify-self: flex-end;
 }
 
 @media screen and (max-height: 450px) {
@@ -367,45 +370,6 @@ html {
   100%{color: #f47106;}
 }
 
-/* Login popup */
-
-.LoginInput {
-  width: 92%;
-  height: 35px;
-  border-radius: 10px;
-  border: 1px;
-  outline: none;
-  margin-bottom: 10px;
-  background: aliceblue;
-}
-
-.LoginPopup {
-    background: #ffffff;
-    color: black;
-    width: 24%;
-    height: 100%;
-    border-radius: 0px 20px 20px 0px;
-    text-align: center;
-    margin-left: -8px;
-    margin-top: -7px;
-    display: grid;
-    align-content: end;
-}
-
-.LoginBTN {
-    background: #2990f9;
-    color: white;
-    border: 0px;
-    width: 92%;
-    height: 40px;
-    border-radius: 10px;
-    margin-top: 30px;
-}
-
-.LoginBTN:hover {
-  background: #1b5c9d;
-}
-
 .PictureBTN {
     border-radius: 100px;
     width: 50px;
@@ -445,34 +409,6 @@ html {
   border: #c72b07e5 0.5px solid;
 }
 
-.ChatinfoLP {
-    text-align: center;
-    margin-left: 76px;
-    width: 65%;
-}
-  
-.LoginTTL {
-    font-size: 80px;
-}
-
-.LoginTXT {
-    color: white;
-    text-align: left;
-}
-
-
-.version {
-    background: #2d2d2d;
-    color: white;
-    border: 1px solid grey;
-    /* padding: .25em; */
-    position: fixed;
-    bottom: -20px;
-    left: 92.8%;
-    transform-origin: top left;
-    border-radius: 5%;
-}
-
 #PfPdisplay {
   width: 130px;
   height: 130px;
@@ -484,7 +420,9 @@ html {
 
 #ProfileDisplay {
   display: flex;
-  width: 99%;
+  width: 100%;
+  height: 100%;
+  m: ;
 }
 
 .StatusBTN {
@@ -517,9 +455,10 @@ html {
   width: 54%;
   border-radius: 12px;
   display: flex;
-  margin: 210px auto;
   box-shadow: 0px 1px 31px 3px black;
   border: 3px #ffffff4d solid;
+  justify-self: center;
+  align-self: center;
 }
 
 
@@ -605,7 +544,6 @@ html {
   position: fixed;
   width: 100%;
   height: 8%;
-  margin: -1% -7.7px;
   padding: 0px;
   display: flex;
   box-shadow: 0px -1px 44px 15px #191919;
@@ -616,8 +554,12 @@ html {
 
 #nav {
   width: 100%;
-  height: 6%;
+  height: fit-content;
   border-bottom: 2px gray solid;
+  min-height: 100%;
+  max-height: 100%;
+  grid-template-rows: 0%;
+  display: grid;
 }
 
 .SettingsNavItem {
@@ -654,10 +596,13 @@ html {
 }
 
 #ButtonContainer {
-  height: 100%;
-  width: 100%;
   display: flex;
-  margin-top: 15px;
+  padding: 6px 12px;
+  border-top: none;
+  height: 100%;
+  border-radius: inherit;
+  background: transparent;
+  width: 100%;
 }
 
 @keyframes fadeEffect {
@@ -697,8 +642,6 @@ input[type="file"] {
   opacity: 0%;
   color: white;
   font-family: sans-serif;
-  margin-left: 8px;
-  margin-top: 16px;
 }
 
 #ImageHoverPreview:hover {
@@ -717,6 +660,7 @@ input[type="file"] {
   align-self: end;
   position: fixed;
   bottom: 1%;
+  left: 0.5%;
 }
 
 .statusButton {
@@ -799,4 +743,209 @@ input[type="file"] {
   transition: 0.6s all;
   background: #403e3e;
   border: 2px #7ebfd5 solid;
+}
+
+version {
+  display: flex;
+  background: #151515;
+  align-items: center;
+  width: 194px;
+  height: 52px;
+  border-radius: 10px;
+  margin: 4%;
+  justify-content: space-around;
+  color: white;
+  position: fixed;
+  bottom: -3%;
+  right: -13.3%;
+  transform-origin: top left;
+  font-family: sans-serif;
+  font-size: 15px;
+}
+
+version div, span{
+  height: 100%;
+  align-content: center;
+}
+
+version div {
+  border-right: 2px #464646 solid;
+  width: 15%
+}
+
+#loginContainer {
+  width: 100%;
+  height: 100%;
+  background: black;
+  display: flex;
+  flex-direction: row;
+  font-family: sans-serif;
+}
+
+/* #leftPanel {
+  height: 85%;
+  width: 30%;
+  background: white;
+  align-self: center;
+  border-radius: 10px;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: 100%;
+  margin: 42px;
+} */
+
+#rightPanel {
+  height: 85%;
+  background: transparent;
+  align-self: center;
+  border-radius: 10px;
+  width: calc(100% - 37%);
+  display: grid;
+  justify-items: center;
+  color: white;
+}
+
+#loginForm {
+  width: 100%;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: 100%;
+}
+
+.wrapperPanel {
+  display: grid;
+  width: 85%;
+  justify-content: center;
+  justify-self: center;
+  grid-template-columns: 100%;
+  grid-template-rows: min-content;
+}
+
+.wrapperPanel span {
+  display: flex;
+  padding: 2% 0px 8%;
+}
+
+#leftsubDiv {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.loginInput {
+  width: 100%;
+  height: 51px;
+  outline: none;
+  border-radius: 5px;
+  display: flex;
+  border: 1.5px #2990f9 solid;
+  text-indent: 12px;
+}
+
+#pswInput {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  border-top-right-radius: 0px;
+  border-right: 0;
+  border-bottom-right-radius: 0;
+  border: 0px;
+  outline: none;
+  text-indent: inherit;
+}
+
+#showPswButton {
+  width: 15%;
+  height: 100%;
+  background: #fff;
+  border: 0;
+  z-index: 58;
+  border-radius: inherit;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+
+/* #loginButton {
+  width: 100%;
+  height: 51px;
+  border-radius: 5px;
+  color: white;
+  background: black;
+  border: 0;
+} */
+
+#loginButton:hover {
+  background: #1c1c1c;
+}
+
+#linksContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: end;
+  padding: 0px 0px 37px 0px;
+}
+
+#topInformation {
+  display: grid;
+  text-indent: 39px;
+  width: 100%;
+  grid-template-rows: min-content;
+  height: fit-content;
+  align-content: center;
+  min-height: 40%;
+  max-height: 100%;
+  padding: 38px 0px 0px 0px;
+}
+
+#rulesContainer {
+  display: inline-block;
+  text-align: left;
+}
+
+#rulesContainer ul {
+  padding: 3px 33px;
+}
+
+#innerContainer {
+  line-height: 34px;
+  background: #0000006b;
+  border-radius: 10px;
+  width: 100%;
+  color: white;
+  box-shadow: 0px 0px 37px 2px #464646;
+  padding: 10px 0px 0px 20px;
+}
+
+#Title {
+  font-size: 80px;
+  align-self: center;
+  color: #dd7016;
+}
+
+/* This is test code for dark mode */
+
+
+#loginButton {
+  width: 100%;
+  height: 51px;
+  border-radius: 5px;
+  color: white;
+  background: black;
+  box-shadow: 0px 1px 43px 1px #464646;
+  border: 0.1px #393939 solid;
+} 
+
+#leftPanel {
+  height: 85%;
+  width: 30%;
+  background: black;
+  align-self: center;
+  border-radius: 10px;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: 100%;
+  margin: 42px;
+  box-shadow: 0px 0px 37px 2px #464646;
+  color: white;
 }
