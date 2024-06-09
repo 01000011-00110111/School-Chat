@@ -61,45 +61,72 @@ Thank you for using School Chat! If you have any questions or concerns about the
 </div>
     </div>
 
-<div style="display: flex; height: 100%; width: 100%;">
-    <div class="LoginPopup" id="LoginPopup">
-        <div id="LoginContent">
-        <h2>Login</h2>
-            <form method="post">
-                <input type="text" id="user" placeholder="Username" autocomplete="off" class="LoginInput" name="username">
-                <input type="password" id="passwd" placeholder="Password" autocomplete="off" class="LoginInput" name="password"><br>
-                <input type="checkbox" id="tosCH" style="margin-top: 20px;" name='TOSagree'>Accept <a onclick="OpenTOS();" style="text-decoration: none;color: #7c0ed7; cursor: pointer;">Terms &amp; Conditions</a>
-                <button type='submit' class="LoginBTN" name="login">Log In</button>
-                <a href="/change-password" style="color:#2990f9;">Forgot Password?</a> <a href="/signup" style="color:#2990f9;">Create an account here</a>
-            </form>
+    <div id="loginContainer">
+        <div id="leftPanel">
+          <div id="topInformation">
+            <h1>Login</h1>
+            <p>Don't have an account yet? <a href="#">Sign up</a></p>
+          </div>
+          
+          <form method="post" id="loginForm">
+            <div class="wrapperPanel">
+              <p>Username</p>
+              <input type="text" name="username" id="emailInput" class="loginInput" placeholder="Enter your username">
+            </div>
+            <div class="wrapperPanel">
+              <div id="leftsubDiv">
+                <p>Password</p>
+                <a href="#">Forgot Password?</a>
+              </div>
+              <div class="loginInput">
+                <input type="password" name="password" id="pswInput" placeholder="Enter your account password">
+                <button id="showPswButton" type="button" onclick="showPassword()">
+                  <i class="fa-regular fa-eye fa-2xl" style="color: black;" id="re" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="wrapperPanel">
+              <span>
+                <input type="checkbox" name="TOSagree" id="checkBox" style="margin: 0px 8px 0px 0px;">
+                <p>    
+                  Accept 
+                  <a style="text-decoration: none; color: #7c0ed7; cursor: pointer;">Terms &amp; Conditions</a>
+                </p>
+              </span>
+              <button type="submit" id="loginButton" name="login">Login</button>
+            </div>
+          </form>
+    
+          <div id="linksContainer">
+            <p>External Link#1</p>
+            <p>External Link#2</p>
+            <p>External Link#3</p>
+          </div>
         </div>
-        {% if error %}
-            <h2 style="color:red; pointer-events: none;">{{error}}</h2>
-        {% endif %}
-    </div>
-    <div class="ChatinfoLP">
-        <h1 class="LoginTTL">School Chat</h1>
-        <hr>
-        <h4 class="LoginTXT">School chat was made by cserver, and cseven for chatting with friends but grew into a bigger project.</h4>
-        <h3 class="LoginTXT">Rules:</h3>
-        <h4 class="LoginTXT">
+        
+        <div id="rightPanel">
+          <h1 id="Title">School Chat</h1>
+    
+          <div id="innerContainer">
+          <p>School chat was made by cserver, and cseven for chatting with friends but grew into a bigger project.</p>
+    
+          <div id="rulesContainer">
+            <h2>Rules:</h2>
             <ul>
-                <li>Do not be racist.</li>
-                <li>no nsfw</li>
-                <li>Keep cursing to a minimal.</li>
-                <li>Do not make chat room names offensive.</li>
-                <li>Do not spam pings.</li>
-                <li>No capitalized words.</li>
-                <li>Keep the language english (unless in a specal chat room).</li>
-            </ul>              
-            <font color="red">Breaking the rules will cause you to be muted, continue to break will result in a ban.</font>
-            <!-- <font color="orange">This version of the chat is a beta version so things might not work as intended if you find any bugs make a issue <a href="https://github.com/01000011-00110111/School-Chat/issues">here</a>.</font> -->
-            <p>(if you have more rules open the Issue <a href="https://github.com/01000011-00110111/School-Chat/discussions/97">Rules</a> and comment the rule there!)</p>
-        </h4>
-    </div>
-    <!-- <div class="activenav" id="activenav">
-        <hr id="online_border">
-        <div id="online_users"></div>
-    </div> -->
-</div>
+              <li>Do not be racist.</li>
+              <li>No nsfw.</li>
+              <li>Keep cursing to a minimal.</li>
+              <li>Do not make chat room names offensive.</li>
+              <li>Do not spam pings.</li>
+              <li>No capitalized words.</li>
+              <li>Keep the language english (unless in a specal chat room).</li>
+            </ul>
+          </div>
+    
+          <p style="color: red;">Breaking the rules will cause you to be muted, continue to break will result in a ban.</p>
+    
+          <p>(if you have more rules open the Issue <a href="">Rules</a> and comment the rule there!)</p>
+        </div>
+      </div>
+      </div>
 {% endblock %}
