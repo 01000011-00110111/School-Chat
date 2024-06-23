@@ -422,7 +422,6 @@ body, html {
   display: flex;
   width: 100%;
   height: 100%;
-  m: ;
 }
 
 .StatusBTN {
@@ -462,44 +461,86 @@ body, html {
 }
 
 
-#tos-btm {
-  position: fixed;
+#tos-footer {
   align-self: end;
-  width: 35%;
+  width: 100%;
   justify-content: space-evenly;
   display: flex;
-  height: 10%;
+  height: 13%;
   border-top-width: 2px;
   border-top-style: solid;
   border-top-color: #00000063;
-  background: white;
-  border-bottom-left-radius: 12px;
+  background: black;
   border-bottom-right-radius: 12px;
+  justify-content: end;
 }
 
 #tos-popup {
-  background: white;
+  background: black;
   position: fixed;
   z-index: 99;
-  width: 35%;
-  height: 60%;
+  width: 64%;
+  height: 72%;
   display: none;
-  margin: 123px 44%;
   border-radius: 12px;
+  flex-direction: row;
+  grid-template-columns: 100%;
+  justify-self: center;
+  align-self: center;
+}
+
+#tos-left-panel {
+  width: 30%;
+  background: rgb(34, 34, 34);
+}
+
+#tos-left-panel button {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  background: transparent;
+  border: 0;
+  font-size: 20px;
+  padding: 1px 1px 1px 1px;
+  align-content: center;
+  color: #6310c8;
+  text-shadow: 3px 2px 2px #000;
+}
+
+/* #tos-left-panel {
+  width: 30%;
+  background: rgb(230, 230, 230);
+} */
+
+#tos-right-panel {
+  width: 70%;
+  grid-template-columns: 100%;
+}
+
+.tos-panels {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .tos-btn {
-  width: 77%;
-  height: 60%;
+  width: 21%;
+  height: 55%;
   align-self: center;
   border-style: double;
-  border-color: #9c58ff;
-  color: #d40ad4;
+  border-color: rgb(59, 59, 59);
+  color: white;
   border-radius: 12px;
+  right: 1%;
+  position: relative;
+}
+
+#tos-accept:hover {
+  background: rgb(1, 1, 146);
 }
 
 #tos-accept {
-  background: #561b56;
+  background: rgb(2, 2, 190);
 }
 
 #tos-decline {
@@ -514,11 +555,13 @@ body, html {
   scrollbar-width: thin;
   align-content: baseline;
   display: grid;
+  line-height: 1.4;
+  padding: 18px;
 }
 
 #tos-header {
   width: 100%;
-  height: 60%;
+  height: 20%;
   display: flex;
   justify-content: center;
   text-align: center;
@@ -536,7 +579,9 @@ body, html {
 
 .header-item {
   width: 100%;
-  justify-content: center;
+  text-align: left;
+  text-indent: 15px;
+  align-content: center;
 }
 
 #topbar {
@@ -921,6 +966,11 @@ version div {
   font-size: 80px;
   align-self: center;
   color: #dd7016;
+  text-shadow: 7px 3px 7px #464646;
+}
+
+#Title::selection {
+  color: red;
 }
 
 /* This is test code for dark mode */
@@ -948,4 +998,22 @@ version div {
   margin: 42px;
   box-shadow: 0px 0px 37px 2px #464646;
   color: white;
+}
+
+#schemeButton {
+  width: 50px;
+  height: 50px;
+  border: 0;
+  color: white;
+  background: transparent;
+}
+
+.light-mode {
+  background: white !important;
+  color: black !important;
+}
+
+.flat-style {
+  box-shadow: 0 0 0 0 transparent !important;
+  border: 2px solid #464646;
 }
