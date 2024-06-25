@@ -82,6 +82,7 @@ import filtering
 import log
 import uploading
 import word_lists
+import appConfig
 from chat import Chat
 from commands.other import end_ping, format_system_msg
 from private import Private, get_messages, get_messages_list
