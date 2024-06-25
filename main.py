@@ -86,6 +86,7 @@ from chat import Chat
 from commands.other import end_ping, format_system_msg
 from private import Private, get_messages, get_messages_list
 from user import User, login_manager
+from appConfig import application
 
 app = flask.Flask(__name__)
 app.secret_key = os.urandom(9001)  #ITS OVER 9000!!!!!!
@@ -225,7 +226,7 @@ def login_page() -> ResponseReturnValue:
             return flask.render_template(
                 'login.html', error="That username or password is incorrect!")
     else:
-        return flask.render_template('login.html')
+        return flask.render_template('login.html', appVersion = application.appVersion)
 
 
 # @app.route('/changelog')
@@ -287,7 +288,7 @@ def signup_post() -> ResponseReturnValue:
     possible_email = database.find_account({"email": SEmail}, 'vid')
     if possible_email is not None:
         return flask.render_template("signup-index.html",
-                                     error='That Email is allready used!',
+                                     error='That Email is already used!',
                                      SEmail=SEmail,
                                      SUsername=SUsername,
                                      SDisplayname=SDisplayname,

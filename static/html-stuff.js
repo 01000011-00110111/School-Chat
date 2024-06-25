@@ -101,15 +101,3 @@ function moveTouch(e) {
    
   e.preventDefault();
 };
-
-let versionTag = document.querySelector('version');
-
-versionTag.addEventListener('mouseover', () => {
-  versionTag.style.transition = "all 1s ease-in-out";
-  versionTag.style.right = "-3.2%";
-})
-
-versionTag.addEventListener('mouseleave', () => {
-  versionTag.transition = "all 1s ease-in-out";
-  versionTag.style.right = "";
-})
