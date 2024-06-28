@@ -16,14 +16,6 @@ socket.on("pingTime", (time, ID) => {
     socket.emit('pingtest', time, ID);
 });
 
-socket.on("force_username", () => {
-    // Get the current visibility status of the tab
-    // var isHidden = document.hidden;
-    // Send the visibility status along with the user ID to the server
-    socket.emit("username", getCookie("Userid"), !document.hidden, 'chat');
-    // console.log('onlne request updated');
-});
-
 socket.on("force_room_update", (_statement) => {
     userid = getCookie("Userid")
     socket.emit("get_rooms", userid);

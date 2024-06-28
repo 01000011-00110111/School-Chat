@@ -172,7 +172,6 @@ def specific_private_page(prefix, private_chat) -> ResponseReturnValue:
 def logout():
     """Log out the current user"""
     User.delete_user(request.cookies.get("Userid"))
-    # emit("force_username", ("", None), brodcast=True)
     logout_user()
     sid = socketids[request.cookies.get("Userid")]
     del socketids[request.cookies.get("Userid")]
@@ -560,7 +559,6 @@ def handle_disconnect():
         if user is not None and user.status != "offline-locked":
             user.status = 'offline'
         database.set_offline(request.cookies.get('Userid'))
-        # emit("force_username", ("", None), broadcast=True)
         emit('update_list', (list(users_list.values())), brodcast=True)
     except TypeError:
         pass
@@ -793,17 +791,8 @@ def emit_on_startup():
              broadcast=True,
              namespace='/')
         startup_msg = False
-        emit("force_username", ("", None), brodcast=True)
     if uuid in socketids:
         socketids[uuid] = socketid
-
-
-@socketio.on('online_refresh')
-def online_refresh():
-    """Background task for online list"""
-    while True:
-        socketio.emit("force_username", {}, namespace="/")  # Emit event with empty data
-        socketio.sleep(1)
 
         
 @socketio.on('class_backups')
@@ -839,6 +828,5 @@ def teardown_request(exception=None):
 if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
-    socketio.start_background_task(online_refresh)
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000)

@@ -46,9 +46,9 @@ def find_command(**kwargs):
     basic_commands = {
         'help': other.help,
         'song': other.song,
-        'refresh': online.refresh_online,
-        'offline': online.appear_offline,
-        'online': online.appear_online,
+        # 'refresh': online.refresh_online,
+        # 'offline': online.appear_offline,
+        # 'online': online.appear_online,
         'ping': debug.ping,
         'ecount': other.E_count_bacup,
         'create': room.create_room,
