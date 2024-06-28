@@ -176,8 +176,11 @@ class User:
         self.profile = profile
         self.theme = theme
         
-
-    def unique_online_list(self, userid, visibilty, location, sid):
+    def backup(self):
+        """Backup the user's data."""
+        database.backup_user(self)
+        
+"""    def unique_online_list(self, userid, visibilty, location, sid):
         # print(visibility)
         icon_perm = {
             "Debugpass": '🔧',
@@ -261,10 +264,7 @@ class User:
         # if online_list != self.online_list:
         emit("online", (online_list, offline_list), to=sid)
         # self.online_list = online_list
-
-    def backup(self):
-        """Backup the user's data."""
-        database.backup_user(self)
+        """
 
 
 # #####not in the class#####

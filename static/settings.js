@@ -103,11 +103,6 @@ createExamples();
 setInterval(updateExamples, 250);
 socket.emit("username", getCookie("Userid"), !document.hidden, 'settings');
 
-
-socket.on("force_username", (_statement) => {
-    socket.emit("username", getCookie("Username"), !document.hidden, 'settings');
-});
-
 const holidays = {
   "halloween": {
     name: "halloween",
