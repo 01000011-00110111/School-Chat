@@ -212,8 +212,7 @@ def login_page() -> ResponseReturnValue:
             user_obj = User.add_user_class(username, user, user["userId"])
             login_user(user_obj)
             socketids[user['userId']] = socketid
-            update_userlist(socketid, {'status': 'online'}, request.cookies.get("Userid"))
-            emit('update_list', (list(users_list.values())), namespace='/', to=socketid)
+            update_userlist(socketid, {'status': 'active'}, user['userId'])
             if next_page is None:
                 if "adminpass" in user['SPermission']:
                     next_page = flask.url_for('admin_page')
@@ -522,7 +521,6 @@ def handle_connect(data):
     socketid = request.sid
     # user = User.get_user_by_id(request.cookies.get('Userid'))
     user = update_userlist(socketid, data, request.cookies.get('Userid'))
-    emit('update_list', (user), brodcast=True)
     # if user is not None:
     #     user.unique_online_list(userid, isVisible, location, sid)
     

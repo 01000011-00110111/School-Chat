@@ -1,3 +1,4 @@
+from flask_socketio import emit
 import database
 # from user import U
 socketids = {}
@@ -6,6 +7,7 @@ users_list = {}
 def update_userlist(sid, data, uuid):
     for key, value in data.items():
         users_list[uuid][key] = value
+    emit('update_list', users_list[uuid], namespace='/', broadcast=True) #later ill advabce ui to be able to send to only one user
     return users_list[uuid]
 
 
