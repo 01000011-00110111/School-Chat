@@ -25,7 +25,7 @@ import hashlib
 # import uuid
 # from datetime import datetime, timedelta
 import flask
-from flask import request
+from flask import request, make_response
 from flask.typing import ResponseReturnValue
 from flask_apscheduler import APScheduler
 from flask_login import (
@@ -175,8 +175,10 @@ def logout():
     logout_user()
     sid = socketids[request.cookies.get("Userid")]
     del socketids[request.cookies.get("Userid")]
-    update_userlist(sid, {'status': 'offline'}, request.cookies.get("Userid"))
-    return flask.redirect(flask.url_for('login_page'))
+    # update_userlist(sid, {'status': 'offline'}, request.cookies.get("Userid"))
+    resp = make_response(flask.redirect(flask.url_for('login_page')))
+    resp.set_cookie('Userid', '', expires=0)
+    return resp
 
 
 @app.route('/login', methods=["POST", "GET"])
