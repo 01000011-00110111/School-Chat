@@ -18,7 +18,14 @@ def get_all_offline():
             offline.append(user['username'])
     return offline
     
-    
+"""
+unread = Private.get_unread(
+    format_userlist(self.uuid, key.uuid))
+if isinstance(unread, dict):
+    unread = 0 if key.uuid == self.uuid else unread.get(self.uuid, 0)
+else:
+    unread = 0    
+"""# for future us will rework
 
 # def status_change(data):
 #     status = data['status']
