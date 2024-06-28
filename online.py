@@ -17,33 +17,6 @@ def get_all_offline():
         if user['status'] in ['offline','offline-locked']:
             offline.append(user['username'])
     return offline
-    
-"""
-unread = Private.get_unread(
-    format_userlist(self.uuid, key.uuid))
-if isinstance(unread, dict):
-    unread = 0 if key.uuid == self.uuid else unread.get(self.uuid, 0)
-else:
-    unread = 0    
-"""# for future us will rework
-
-# def status_change(data):
-#     status = data['status']
-#     # if username:
-#     user_statuses[username] = status
-#     emit('status_update', {'username': username, 'status': status['status'], 'permission': status['permission']}, broadcast=True)
-
-
-# # def handle_request_user_list():
-# #     emit('full_status_update', user_statuses)
-
-
-# # def handle_ping_user(data):
-# #     target_username = data['target_username']
-# #     target_sid = user_sockets.get(target_username)
-# #     if target_sid:
-# #         emit('ping', {}, room=target_sid)
-# #test code for unread messages later
 
 for user in database.get_all_offline():
     perm = 'dev' if user['SPermission'][0] == 'Debugpass' else 'mod' if\
@@ -55,4 +28,11 @@ for user in database.get_all_offline():
     users_list[user['userid']] = {'username': user['displayName'],
                                   'status': status, 'perm': perm}
     
-print(users_list)
+"""
+unread = Private.get_unread(
+    format_userlist(self.uuid, key.uuid))
+if isinstance(unread, dict):
+    unread = 0 if key.uuid == self.uuid else unread.get(self.uuid, 0)
+else:
+    unread = 0    
+"""# for future us will rework
