@@ -82,6 +82,7 @@ import filtering
 import log
 import uploading
 import word_lists
+from online import socketids, update_userlist, users_list
 import appConfig
 from chat import Chat
 from commands.other import end_ping, format_system_msg
@@ -173,6 +174,9 @@ def logout():
     User.delete_user(request.cookies.get("Userid"))
     # emit("force_username", ("", None), brodcast=True)
     logout_user()
+    sid = socketids[request.cookies.get("Userid")]
+    del socketids[request.cookies.get("Userid")]
+    update_userlist(sid, {'status': 'offline'}, request.cookies.get("Userid"))
     return flask.redirect(flask.url_for('login_page'))
 
 
@@ -180,6 +184,7 @@ def logout():
 @app.route('/', methods=['GET', 'POST'])
 def login_page() -> ResponseReturnValue:
     """Show the login page."""
+    # socketid = request.sid
     # print(current_user,'current user')
     if current_user.is_authenticated:
         return flask.redirect(flask.url_for('chat_page'))
@@ -189,6 +194,7 @@ def login_page() -> ResponseReturnValue:
         username = request.form.get("username")
         password = request.form.get("password")
         TOSagree = request.form.get("TOSagree")
+        socketid = request.form.get('socket')
         next_page = request.args.get("next")
         user = database.find_login_data(username, False)
         # print(userids)
@@ -205,6 +211,9 @@ def login_page() -> ResponseReturnValue:
                     user['password'], password):
             user_obj = User.add_user_class(username, user, user["userId"])
             login_user(user_obj)
+            socketids[user['userId']] = socketid
+            update_userlist(socketid, {'status': 'online'}, request.cookies.get("Userid"))
+            emit('update_list', (list(users_list.values())), namespace='/', to=socketid)
             if next_page is None:
                 if "adminpass" in user['SPermission']:
                     next_page = flask.url_for('admin_page')
@@ -500,13 +509,28 @@ def customize_accounts() -> ResponseReturnValue:
 
 
 # socketio stuff
-@socketio.on('username')
-def handle_connect(userid, isVisible, location):
+# @socketio.on('username')
+# def handle_connect(userid, isVisible, location):
+#     """Will be used later for online users."""
+#     sid = request.sid
+#     user = User.get_user_by_id(userid)
+#     if user is not None:
+#         user.unique_online_list(userid, isVisible, location, sid)
+@socketio.on('status_change')
+def handle_connect(data):
     """Will be used later for online users."""
-    sid = request.sid
-    user = User.get_user_by_id(userid)
-    if user is not None:
-        user.unique_online_list(userid, isVisible, location, sid)
+    socketid = request.sid
+    # user = User.get_user_by_id(request.cookies.get('Userid'))
+    user = update_userlist(socketid, data, request.cookies.get('Userid'))
+    emit('update_list', (user), brodcast=True)
+    # if user is not None:
+    #     user.unique_online_list(userid, isVisible, location, sid)
+    
+
+@socketio.on('get_full_list')
+def handle_full_list_request():
+    socketid = request.sid
+    emit('update_list_full', (list(users_list.values())), namespace='/', to=socketid)
 
 
 @socketio.on('disconnect')
@@ -538,7 +562,8 @@ def handle_disconnect():
         if user is not None and user.status != "offline-locked":
             user.status = 'offline'
         database.set_offline(request.cookies.get('Userid'))
-        emit("force_username", ("", None), broadcast=True)
+        # emit("force_username", ("", None), broadcast=True)
+        emit('update_list', (list(users_list.values())), brodcast=True)
     except TypeError:
         pass
 
@@ -761,6 +786,8 @@ startup_msg = True
 
 @socketio.on('connect')
 def emit_on_startup():
+    socketid = request.sid
+    uuid = request.cookies.get('Userid')
     global startup_msg
     if startup_msg:
         emit("message_chat", (format_system_msg("If you can see this message, please refresh your client"),
@@ -769,6 +796,8 @@ def emit_on_startup():
              namespace='/')
         startup_msg = False
         emit("force_username", ("", None), brodcast=True)
+    if uuid in socketids:
+        socketids[uuid] = socketid
 
 
 @socketio.on('online_refresh')

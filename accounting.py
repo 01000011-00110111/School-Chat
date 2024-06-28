@@ -14,7 +14,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import word_lists
 import database
-from user import inactive_users
+# from user import inactive_users
+from online import users_list
 import configparser
 
 config = configparser.ConfigParser()
@@ -176,7 +177,7 @@ def create_user(SUsername: str, SPassword: str, SEmail: str, SRole: str, SDispla
             "password": hashlib.sha384(bytes(SPassword, 'utf-8')).hexdigest(),
             "email": SEmail,
         }), userid)
-    inactive_users.append((userid, SDisplayname, ''))
+    users_list[userid] = {'username': SDisplayname, 'status': 'offline', 'perm': None}
 
 def password(user):
     reset_code = create_verification_code(user)
