@@ -1,3 +1,8 @@
+const users_list = {
+    onlineList: [],
+    offlineList: []
+};
+
 function notifyStatusChange(status) {
     socket.emit('status_change', { status: status });
 }
@@ -52,21 +57,7 @@ function updateUserList(onlineList, offlineList) {
 }
 
 function getCurrentUserLists() {
-    let onlineList = [];
-    let offlineList = [];
-    let onlineDiv = document.getElementById('online_users');
-    let buttons = onlineDiv.getElementsByTagName('button');
-
-    for (let button of buttons) {
-        let username = button.innerHTML.trim();
-        if (button.parentElement.previousSibling.nodeValue.includes('Online')) {
-            onlineList.push({ username: username });
-        } else {
-            offlineList.push({ username: username });
-        }
-    }
-
-    return { onlineList, offlineList };
+    return users_list;
 }
 
 socket.on('update_list_full', (userStatuses) => {
@@ -80,7 +71,10 @@ socket.on('update_list_full', (userStatuses) => {
             offlineList.push(userStatuses[username]);
         }
     }
-
+    
+    users_list.onlineList = onlineList;
+    users_list.offlineList = offlineList;
+    
     updateUserList(onlineList, offlineList);
 });
 
@@ -107,6 +101,9 @@ socket.on("update_list", (updatedUser) => {
         onlineList = onlineList.filter(user => user.username !== updatedUser.username);
         offlineList.push(updatedUser);
     }
+
+    users_list.onlineList = onlineList;
+    users_list.offlineList = offlineList;
 
     updateUserList(onlineList, offlineList);
 });
