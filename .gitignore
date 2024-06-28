@@ -28,3 +28,4 @@ replit.nix
 .local
 addons.py
 keys.py
+test.py
