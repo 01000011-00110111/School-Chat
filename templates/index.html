@@ -27,6 +27,27 @@
     <body>
         {% block content %} 
         {% endblock %}
-        <h4 class="version">1.3</h4>
+        <version style="transition: 1s ease-in-out;">
+            <div id="arrowContainer">
+              <h1>&lt;</h1>
+            </div>
+            <span id="versionText" style="font-size: 20px;margin-top: 25px;">Version: 1.3.1</span>
+        </version>
+
+        <script>
+            let versionTag = document.querySelector('version');
+
+            versionTag.addEventListener('mouseover', () => {
+            versionTag.style.transition = "all 1s ease-in-out";
+            versionTag.style.right = "-3.2%";
+            })
+
+            versionTag.addEventListener('mouseleave', () => {
+            versionTag.transition = "all 1s ease-in-out";
+            versionTag.style.right = "";
+            })
+        </script>
+
+        <script src="https://kit.fontawesome.com/69e44b2a4c.js" crossorigin="anonymous"></script>
     </body>
 </html>

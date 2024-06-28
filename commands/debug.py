@@ -8,7 +8,7 @@ import psutil
 import database
 import sys
 import platform
-from user import User, inactive_users
+from user import User
 from commands import other
 
 

@@ -4,7 +4,8 @@ from chat import Chat
 # from cmds import  other.respond_command, other.check_if_dev, other.format_system_msg, other.check_if_mod
 import database
 from commands import other
-from user import User, inactive_users
+from user import User
+from online import get_all_offline
 from word_lists import whitelist_words, blacklist_words
 
 
@@ -81,15 +82,15 @@ def mute(**kwargs):
     elif time[-1] == 'd':
         expiration_time = datetime.now() + timedelta(days=duration)
     muted = {str(roomid): expiration_time}
-    if target not in [user[1] for user in inactive_users]:
+    if target not in get_all_offline():# [user[1] for user in inactive_users]:
         for users in User.Users.values():
             if users.displayName == target:
                 user = users
                 user.mutes.append(muted)
-    else:
-        for user_data in inactive_users:
-            if user_data[1] == target:
-                database.mute_user(user_data[0], muted)
+    # else:
+    #     for user_data in inactive_users:
+    #         if user_data[1] == target:
+    #             database.mute_user(user_data[0], muted)
     message = other.format_system_msg("User Muted by Admin.")
     room.add_message(message, None)
     emit("message_chat", (message, roomid), broadcast=True)
@@ -111,15 +112,15 @@ def ban(**kwargs):
         expiration_time = datetime.now() + timedelta(days=duration)
     # if True:  # add check later
     muted = {'all': expiration_time}
-    if target not in [user[1] for user in inactive_users]:
+    if target not in get_all_offline():# [user[1] for user in inactive_users]:
         for users in User.Users.values():
             if users.displayName == target:
                 user = users
                 user.mutes.append(muted)
-    else:
-        for user_data in inactive_users:
-            if user_data[1] == target:
-                database.mute_user(user_data[0], muted)
+    # else:
+    #     for user_data in inactive_users:
+    #         if user_data[1] == target:
+    #             database.mute_user(user_data[0], muted)
     message = other.format_system_msg("User Banned by Admin.")
     room.add_message(message, None)
     emit("message_chat", (message, roomid), broadcast=True)
@@ -132,7 +133,7 @@ def unmute(**kwargs):
     room = kwargs['room']
     target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
     # time = kwargs["commands"]["v2"]
-    if target not in [user[1] for user in inactive_users]:
+    if target not in get_all_offline():#[user[1] for user in inactive_users]:
         for user in User.Users.values():
             if user.displayName == target:
                 for remove in list(user.mutes):
@@ -155,7 +156,7 @@ def unban(**kwargs):
     room = kwargs['room']
     target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
     # time = kwargs["commands"]["v2"]
-    if target not in [user[1] for user in inactive_users]:
+    if target not in get_all_offline():#[user[1] for user in inactive_users]:
         for user in User.Users.values():
             if user.displayName == target:
                 for remove in list(user.mutes):

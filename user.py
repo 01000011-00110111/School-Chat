@@ -8,7 +8,7 @@ from flask_socketio import emit
 import database
 from private import Private, format_userlist
 
-inactive_users = []
+# inactive_users = []
 
 login_manager = LoginManager()
 
@@ -89,8 +89,8 @@ class User:
         database.set_online(userid, False)
         cls.Users.update({userid: user_class})
         tupple = (userid, user['displayName'], user['SPermission'][0])
-        if tupple in inactive_users:
-            inactive_users.remove(tupple)
+        # if tupple in inactive_users:
+        #     inactive_users.remove(tupple)
         return user_class
 
     @classmethod
@@ -98,7 +98,7 @@ class User:
         if userid in cls.Users:
             u = cls.Users[userid]
             u.backup()
-            inactive_users.append((u.uuid, u.displayName, u.perm[0]))
+            # inactive_users.append((u.uuid, u.displayName, u.perm[0]))
             del cls.Users[userid]
             u.remove_user()
 
@@ -267,8 +267,8 @@ class User:
         database.backup_user(self)
 
 
-#####not in the class#####
-for user in database.get_all_offline():
-    if user["userid"] not in User.Users:
-        inactive_users.append(
-            (user["userid"], user["displayName"], user["SPermission"][0]))
+# #####not in the class#####
+# for user in database.get_all_offline():
+#     if user["userid"] not in User.Users:
+#         inactive_users.append(
+#             (user["userid"], user["displayName"], user["SPermission"][0]))
