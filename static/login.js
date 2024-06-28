@@ -47,6 +47,10 @@ const checkbox = document.getElementById('checkBox')
   })
 
   schemeButton.addEventListener('click', (event) => {
+    if (!schemeState) {
+      window.localStorage.setItem("schemeState", "dark")
+    }
+
     if (schemeState == "light")
     {
       window.localStorage.setItem("schemeState", "dark")
