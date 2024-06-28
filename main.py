@@ -559,7 +559,9 @@ def handle_disconnect():
         if user is not None and user.status != "offline-locked":
             user.status = 'offline'
         database.set_offline(request.cookies.get('Userid'))
-        emit('update_list', (list(users_list.values())), brodcast=True)
+        # emit('update_list', (list(users_list.values())), brodcast=True)
+        update_userlist(socketid, {'status': 'offline'}, request.cookies.get('Userid'))
+        # del socketids[request.cookies.get("Userid")]
     except TypeError:
         pass
 
@@ -793,6 +795,8 @@ def emit_on_startup():
         startup_msg = False
     if uuid in socketids:
         socketids[uuid] = socketid
+    update_userlist(socketid, {'status': 'active'}, request.cookies.get('Userid'))
+    
 
         
 @socketio.on('class_backups')
