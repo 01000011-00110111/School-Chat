@@ -557,12 +557,13 @@ def handle_disconnect():
         chat.sids.remove(socketid)
         
     try:
-        user = User.get_user_by_id(request.cookies.get('Userid'))
+        user = User.get_user_by_id(userid)
         if user is not None and user.status != "offline-locked":
             user.status = 'offline'
-        database.set_offline(request.cookies.get('Userid'))
+        database.set_offline(userid)
         # emit('update_list', (list(users_list.values())), brodcast=True)
-        update_userlist(socketid, {'status': 'offline'}, request.cookies.get('Userid'))
+        if userid is not None:
+            update_userlist(socketid, {'status': 'offline'}, userid)
         # del socketids[request.cookies.get("Userid")]
     except TypeError:
         pass
@@ -797,7 +798,8 @@ def emit_on_startup():
         startup_msg = False
     if uuid in socketids:
         socketids[uuid] = socketid
-    update_userlist(socketid, {'status': 'active'}, request.cookies.get('Userid'))
+    if uuid is not None:
+        update_userlist(socketid, {'status': 'active'}, uuid)
     
 
         
