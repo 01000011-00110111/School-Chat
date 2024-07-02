@@ -125,7 +125,7 @@ if __name__ == "__main__":
 def chat_page() -> ResponseReturnValue:
     """Serve the main chat window."""
     user_agent = request.user_agent.string
-    direction = 'mobile/' if "Mobile" in user_agent else 'desktop/'
+    direction = 'mobile' if "Mobile" in user_agent else 'desktop'
     return flask.render_template(f'{direction}/chat.html')
 
 
@@ -143,7 +143,7 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
 def admin_page() -> ResponseReturnValue:
     """Get the specific room in the uri."""
     user_agent = request.user_agent.string
-    direction = 'mobile/' if "Mobile" in user_agent else 'desktop/'
+    direction = 'mobile' if "Mobile" in user_agent else 'desktop'
     user = database.find_login_data(request.cookies.get('Userid'), True)
     if "adminpass" in user['SPermission']:
         return flask.render_template(f'{direction}/admin.html')
@@ -190,7 +190,7 @@ def logout():
 def login_page() -> ResponseReturnValue:
     """Show the login page."""
     user_agent = request.user_agent.string
-    direction = 'mobile/' if "Mobile" in user_agent else 'desktop/'
+    direction = 'mobile' if "Mobile" in user_agent else 'desktop'
     
     if current_user.is_authenticated:
         return flask.redirect(flask.url_for('chat_page'))
@@ -263,7 +263,7 @@ def login_page() -> ResponseReturnValue:
 def signup_post() -> ResponseReturnValue:
     """The creating of an account."""
     user_agent = request.user_agent.string
-    direction = 'mobile/' if "Mobile" in user_agent else 'desktop/'
+    direction = 'mobile' if "Mobile" in user_agent else 'desktop'
     # global verification_code_list
     # global verification_code
     SUsername = request.form.get("SUsername")
@@ -318,7 +318,9 @@ def signup_post() -> ResponseReturnValue:
 @app.route('/signup', methods=["GET"])
 def signup_get() -> ResponseReturnValue:
     """Serve the signup page."""
-    return flask.render_template('signup-index.html')
+    user_agent = request.user_agent.string
+    direction = 'mobile' if "Mobile" in user_agent else 'desktop'
+    return flask.render_template(f'{direction}/signup-index.html')
 
 
 @app.route('/verify/<userid>/<verification_code>')
@@ -404,7 +406,7 @@ def get_logs_page() -> ResponseReturnValue:
 def settings_page() -> ResponseReturnValue:
     """Serve the settings page for the user."""
     user_agent = request.user_agent.string
-    direction = 'mobile/' if "Mobile" in user_agent else 'desktop/'
+    direction = 'mobile' if "Mobile" in user_agent else 'desktop'
     user = database.find_login_data(request.cookies.get('Userid'), True)
     if request.cookies.get('Userid') != user['userId']:
         # someone is trying something funny
@@ -430,7 +432,7 @@ def settings_page() -> ResponseReturnValue:
 def customize_accounts() -> ResponseReturnValue:
     """Customize the account."""
     user_agent = request.user_agent.string
-    direction = 'mobile/' if "Mobile" in user_agent else 'desktop/'
+    direction = 'mobile' if "Mobile" in user_agent else 'desktop'
     username = request.form.get("user")
     userid = request.cookies.get('Userid')
     displayname = request.form.get("display")
