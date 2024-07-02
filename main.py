@@ -19,12 +19,13 @@
 import json
 import logging
 import os
+import hashlib
 
 # import time
 # import uuid
 # from datetime import datetime, timedelta
 import flask
-from flask import request
+from flask import request, make_response
 from flask.typing import ResponseReturnValue
 from flask_apscheduler import APScheduler
 from flask_login import (
@@ -68,6 +69,9 @@ def setup_func():
     if not os.path.exists('backend/unbanned_words.txt'):
         with open('backend/unbanned_words.txt', 'w'):
             pass
+    if not os.path.exists('backend/banned_words.txt'):
+        with open('backend/banned_words.txt', 'w'):
+            pass
     database.setup_chatrooms()
     
 setup_func()
@@ -78,10 +82,13 @@ import filtering
 import log
 import uploading
 import word_lists
+from online import socketids, update_userlist, users_list
+import appConfig
 from chat import Chat
 from commands.other import end_ping, format_system_msg
 from private import Private, get_messages, get_messages_list
 from user import User, login_manager
+from appConfig import application
 
 app = flask.Flask(__name__)
 app.secret_key = os.urandom(9001)  #ITS OVER 9000!!!!!!
@@ -129,7 +136,7 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
-    print(room_name)
+    # print(room_name)
     return flask.redirect(flask.url_for("chat_page"))
 
 @app.route('/admin')
@@ -148,7 +155,7 @@ def specific_admin_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
-    print(room_name)
+    # print(room_name)
     return flask.redirect(flask.url_for("admin_page"))
 
 
@@ -158,8 +165,8 @@ def specific_private_page(prefix, private_chat) -> ResponseReturnValue:
     """Get the specific private chat in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
-    print(prefix)
-    print(private_chat)
+    # print(prefix)
+    # print(private_chat)
     return flask.redirect(flask.url_for("chat_page"))
 
 
@@ -168,9 +175,13 @@ def specific_private_page(prefix, private_chat) -> ResponseReturnValue:
 def logout():
     """Log out the current user"""
     User.delete_user(request.cookies.get("Userid"))
-    # emit("force_username", ("", None), brodcast=True)
     logout_user()
-    return flask.redirect(flask.url_for('login_page'))
+    sid = socketids[request.cookies.get("Userid")]
+    del socketids[request.cookies.get("Userid")]
+    # update_userlist(sid, {'status': 'offline'}, request.cookies.get("Userid"))
+    resp = make_response(flask.redirect(flask.url_for('login_page')))
+    resp.set_cookie('Userid', '', expires=0)
+    return resp
 
 
 @app.route('/login', methods=["POST", "GET"])
@@ -188,6 +199,7 @@ def login_page() -> ResponseReturnValue:
         username = request.form.get("username")
         password = request.form.get("password")
         TOSagree = request.form.get("TOSagree")
+        socketid = request.form.get('socket')
         next_page = request.args.get("next")
         user = database.find_login_data(username, False)
         # print(userids)
@@ -204,6 +216,8 @@ def login_page() -> ResponseReturnValue:
                     user['password'], password):
             user_obj = User.add_user_class(username, user, user["userId"])
             login_user(user_obj)
+            socketids[user['userId']] = socketid
+            update_userlist(socketid, {'status': 'active'}, user['userId'])
             if next_page is None:
                 if "adminpass" in user['SPermission']:
                     next_page = flask.url_for('admin_page')
@@ -226,7 +240,7 @@ def login_page() -> ResponseReturnValue:
             return flask.render_template(
                 f'{direction}login.html', error="That username or password is incorrect!")
     else:
-        return flask.render_template(f'{direction}login.html')
+        return flask.render_template(f'{direction}login.html', appVersion = application.appVersion)
 
 
 # @app.route('/changelog')
@@ -288,7 +302,7 @@ def signup_post() -> ResponseReturnValue:
     possible_email = database.find_account({"email": SEmail}, 'vid')
     if possible_email is not None:
         return flask.render_template("signup-index.html",
-                                     error='That Email is allready used!',
+                                     error='That Email is already used!',
                                      SEmail=SEmail,
                                      SUsername=SUsername,
                                      SDisplayname=SDisplayname,
@@ -321,6 +335,57 @@ def verify(userid, verification_code):
             )
             return f"{user} has been verified. You may now chat in other chat rooms."
     return "Invalid verification code."
+
+
+@app.route('/change-password', methods=["POST", "GET"])
+def change_password() -> ResponseReturnValue:
+    """Handles the user password reset request and sends the reset email."""
+    if request.method == "GET":
+        return flask.render_template("password_part1.html")
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        user = database.find_login_data(username, False)
+        if user:
+            accounting.password(user)
+        return "check the email you used to make the account for a password reset link"
+        # return flask.render_template("password_part1.html")
+
+
+@app.route('/reset/<userid>/<verification_code>', methods=["POST", "GET"])
+def reset_password(userid, verification_code) -> ResponseReturnValue:
+    """Handles the user password reset request and sends the reset email."""
+    user_id = database.find_account({"userId": userid}, 'vid')
+    if request.method == "GET":
+        return flask.render_template("password_part2.html",
+                                     username=user_id["username"])
+
+    if request.method == "POST":
+        password = request.form.get("password")
+        password2 = request.form.get("password2")
+        if user_id is not None:
+            user_code = accounting.create_verification_code(user_id)
+            
+            if user_code == verification_code:
+                if password != password2:
+                    return flask.render_template("password_part2.html",
+                                     error='Your passwords do not match!',
+                                     username=user_id["username"])
+                    
+                password_hash = hashlib.sha384(bytes(password,
+                                    'utf-8')).hexdigest()
+                
+                if password_hash == user_id['password']:
+                    return flask.render_template("password_part2.html",
+                                     error='You can not use your previous password!',
+                                     username=user_id["username"])
+                    
+                database.update_account_set('vid', {"userId": user_id["userId"]},
+                                        {'$set': {
+                                            "password": password_hash
+                                        }})
+                return flask.redirect(flask.url_for('login_page')) 
+    return "Invalid reset code."
 
 
 @app.route('/backup')
@@ -367,7 +432,7 @@ def customize_accounts() -> ResponseReturnValue:
     roleC = request.form.get("role_color")
     userC = request.form.get("user_color")
     email = request.form.get("email")
-    file = request.files['profile']
+    file = request.files.get('profile')# if 'profile' in request.files else None
     theme = request.form.get("theme")
     user = User.get_user_by_id(userid)
     user_email = database.get_email(user.uuid)
@@ -385,9 +450,10 @@ def customize_accounts() -> ResponseReturnValue:
     }
     # print(theme)
     old_path = user.profile
-    # print()
-    profile_location = uploading.upload_file(file, old_path) if file.filename != '' else \
+    # print(file)
+    profile_location = uploading.upload_file(file, old_path) if file is not None else \
     old_path
+    
     if theme is None:
         return flask.render_template("settings.html",
                                      error='Pick a theme before updating!',
@@ -447,24 +513,62 @@ def customize_accounts() -> ResponseReturnValue:
 
 
 # socketio stuff
-@socketio.on('username')
-def handle_connect(userid, isVisible, location):
+# @socketio.on('username')
+# def handle_connect(userid, isVisible, location):
+#     """Will be used later for online users."""
+#     sid = request.sid
+#     user = User.get_user_by_id(userid)
+#     if user is not None:
+#         user.unique_online_list(userid, isVisible, location, sid)
+@socketio.on('status_change')
+def handle_connect(data):
     """Will be used later for online users."""
-    sid = request.sid
-    user = User.get_user_by_id(userid)
-    if user is not None:
-        user.unique_online_list(userid, isVisible, location, sid)
+    socketid = request.sid
+    # user = User.get_user_by_id(request.cookies.get('Userid'))
+    user = update_userlist(socketid, data, request.cookies.get('Userid'))
+    # if user is not None:
+    #     user.unique_online_list(userid, isVisible, location, sid)
+    
+
+@socketio.on('get_full_list')
+def handle_full_list_request():
+    socketid = request.sid
+    emit('update_list_full', (list(users_list.values())), namespace='/', to=socketid)
 
 
 @socketio.on('disconnect')
 def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
+    socketid = request.sid
+    userid = request.cookies.get('Userid')
+    
+    active_privates = [
+        private for private in Private.chats.values() 
+        if (userid in private.userlist and private.active.get(userid, False)) or socketid in private.sids
+    ]
+
+    for private in active_privates:
+        private.active[userid] = False
+        if socketid in private.sids:
+            private.sids.remove(socketid)
+            
+    active_chats = [
+        chat for chat in Chat.chats.values()
+        if socketid in chat.sids
+    ]
+    
+    for chat in active_chats:
+        chat.sids.remove(socketid)
+        
     try:
-        user = User.get_user_by_id(request.cookies.get('Userid'))
+        user = User.get_user_by_id(userid)
         if user is not None and user.status != "offline-locked":
             user.status = 'offline'
-        database.set_offline(request.cookies.get('Userid'))
-        emit("force_username", ("", None), broadcast=True)
+        database.set_offline(userid)
+        # emit('update_list', (list(users_list.values())), brodcast=True)
+        if userid is not None:
+            update_userlist(socketid, {'status': 'offline'}, userid)
+        # del socketids[request.cookies.get("Userid")]
     except TypeError:
         pass
 
@@ -513,7 +617,7 @@ def get_rooms(userid):
 
 @socketio.on('message_chat')
 def handle_message(_, message, vid, userid, private, hidden):
-    print(hidden)
+    # print(hidden)
     handle_chat_message(message, vid, userid, hidden) if private == 'false' else \
         handle_private_message(message, vid, userid)
 
@@ -532,7 +636,7 @@ def handle_chat_message(message, roomid, userid, hidden):
     if result[0] == 'msg':
         if room is not None and not hidden:
             room.add_message(result[1])
-            emit("message_chat", (result[1], roomid), broadcast=True)
+            # emit("message_chat", (result[1], roomid), broadcast=True)
             # addons.message_addons(message, user, roomid, room)
             # above is not offical again, so commented out
             if "$sudo" in message and result[2] != 3:
@@ -555,10 +659,11 @@ def handle_private_message(message, pmid, userid):
     result = filtering.run_filter_private(user, message, userid)
     private = get_messages(pmid, userid)
     if result[0] == 'msg':
+        # print(private.sids)
         private.add_message(result[1], userid)
-        emit("message_chat", (result[1], pmid), broadcast=True)
+        # emit("message_chat", (result[1], pmid), broadcast=True)
         if "$sudo" in message and result[2] != 3:
-            filtering.find_cmds(message, user, pmid)
+            filtering.find_cmds(message, user, pmid, private)
         # if "$sudo" in message and result[2] != 3:
         #     filtering.find_cmds(message, user, roomid)
         # elif '$sudo' in message and result[2] == 3:
@@ -574,30 +679,36 @@ def handle_ping_tests(start, roomid):
 
 
 @socketio.on("room_connect")
-def connect(roomid):
+def connect(roomid, sender):
     """Switch rooms for the user"""
     socketid = request.sid
     try:
-        # room = database.get_room_msg_data(
-        #     roomid)  # WHY ERROR YOU WORK NOW WORK
-        # ah yes the best kind of error
         room = Chat.create_or_get_chat(roomid)
         list = {"roomid": room.vid, "name": room.name, "msg": room.messages}
     except TypeError:
         emit('room_data', "failed", namespace='/', to=socketid)
         return
-    # don't need to let the client know the mongodb vid
-    # del room['_id']
-    # print(room)
-    sender = request.cookies.get('Userid')
-    if Private.chats != {}:
-        # print('passed stage 1')
-        for private in Private.chats.values():
-            if sender in private.userlist and private.active[sender]:
-                # print('passed stage 2')
-                private.active[sender] = False
-    # print('no stage needed')
+    
+    active_privates = [
+        private for private in Private.chats.values() 
+        if (sender in private.userlist and private.active.get(sender, False)) or socketid in private.sids
+    ]
 
+    for private in active_privates:
+        private.active[sender] = False
+        if socketid in private.sids:
+            private.sids.remove(socketid)
+            
+    active_chats = [
+        chat for chat in Chat.chats.values()
+        if socketid in chat.sids
+    ]
+    
+    for chat in active_chats:
+        chat.sids.remove(socketid)
+    
+    room.sids.append(socketid)
+    # print(room.sids)
     emit("room_data", list, to=socketid, namespace='/')
 
 
@@ -613,18 +724,34 @@ def private_connect(sender, receiver, roomid):
              namespace="/")
         return
         
-    if Private.chats != {}:
-        # print('passed stage 1')
-        for private in Private.chats.values():
-            if sender in private.userlist and private.active[sender]:
-                # print('passed stage 2')
-                private.active[sender] = False
-    # print('no stage needed')
-                
-    chat = get_messages_list(sender, receiverid)
-    # print(sender, receiver)
-    emit("private_data", {'message': chat.messages, 'pmid': chat.vid, \
-        'name': receiver}, to=socketid, namespace='/')
+    active_privates = [
+        private for private in Private.chats.values() 
+        if (sender in private.userlist and private.active.get(sender, False)) or socketid in private.sids
+    ]
+
+    for private in active_privates:
+        private.active[sender] = False
+        if socketid in private.sids:
+            private.sids.remove(socketid)
+            
+    active_chats = [
+        chat for chat in Chat.chats.values()
+        if socketid in chat.sids
+    ]
+    
+    for chat in active_chats:
+        chat.sids.remove(socketid)   
+            
+    try:
+        chat = get_messages_list(sender, receiverid)
+        list = {'message': chat.messages, 'pmid': chat.vid, \
+        'name': receiver}
+    except TypeError:
+        emit('room_data', "failed", namespace='/', to=socketid)
+        return
+        
+    chat.sids.append(socketid)        
+    emit("private_data", list, to=socketid, namespace='/')
 
 
 """
@@ -664,6 +791,8 @@ startup_msg = True
 
 @socketio.on('connect')
 def emit_on_startup():
+    socketid = request.sid
+    uuid = request.cookies.get('Userid')
     global startup_msg
     if startup_msg:
         emit("message_chat", (format_system_msg("If you can see this message, please refresh your client"),
@@ -671,15 +800,11 @@ def emit_on_startup():
              broadcast=True,
              namespace='/')
         startup_msg = False
-        emit("force_username", ("", None), brodcast=True)
-
-
-@socketio.on('online_refresh')
-def online_refresh():   
-    """Background task for online list"""
-    while True:
-        socketio.emit("force_username", {}, namespace="/")  # Emit event with empty data
-        socketio.sleep(1)
+    if uuid in socketids:
+        socketids[uuid] = socketid
+    if uuid is not None:
+        update_userlist(socketid, {'status': 'active'}, uuid)
+    
 
         
 @socketio.on('class_backups')
@@ -715,6 +840,5 @@ def teardown_request(exception=None):
 if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
-    socketio.start_background_task(online_refresh)
     socketio.start_background_task(backup_classes)
     socketio.run(app, host="0.0.0.0", port=5000)

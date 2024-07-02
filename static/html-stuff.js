@@ -36,7 +36,7 @@ function OpenAC() {
 
 function OpenTOS() {
   let TOSPopup = document.getElementById("tos-popup");
-  TOSPopup.style.display = "grid";
+  TOSPopup.style.display = "flex";
 }
 
 function CloseTOS() {

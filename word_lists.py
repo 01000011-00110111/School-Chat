@@ -10,6 +10,8 @@ with open('backend/unbanned_words.txt', 'r') as file:
     whitelist_words = list(file.read().splitlines())
 
 
+with open('backend/banned_words.txt', 'r') as file:
+    blacklist_words = list(file.read().splitlines())
 
 censored = [
     'sh!t',

@@ -1,12 +1,13 @@
 {% extends 'index.html' %}
 {% block header %}
 <script src="static/chat.js"></script>
+<script src="static/online.js"></script>
 <script src="static/styles.js"></script>
 {% endblock %}
 {% block content %}
 <div id="topbar">
         
-    <span id="topleft" style="font-size: 40px; cursor: pointer;  color: rgb(25, 32, 128);" onclick="openNav()">☰</span>
+    <span id="topleft" style="font-size: 50px; cursor: pointer;  color: rgb(25, 32, 128);" onclick="openNav()">☰</span>
     <h2 id="RoomDisplay" style="margin: 14.5px 0;">/e</h2>
     {% block panel_button %}{% endblock %}
     <div class="AccountPopup">
@@ -20,17 +21,16 @@
     {% block panel_menu %}{% endblock %}
     <div id="mySidenav" class="sidenav" style="background-color: rgb(17, 17, 17); width: 0px;">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="color: rgb(129, 129, 129);">×</a>
-        <hr style="border: 5px solid grey;">
-        <div>
+        <div style="align-self: baseline;">
             <p>change the chat room you are in</p>
             <div class="ChatRoomS">
                 <div id="ChatRoomls"><hr></div>
             </div>
         </div>
-            <div id="extratext">
-                <h6><a href="/changelog" style="color: rgb(129, 129, 129);">Update log</a></h6>
-                <h6><a href="#TELL-THE-OWNERS-TO-GET-YOUR-OWN-CONTACT-FOR-YOU-AND-LET-THEM-CONTACT-US" style="color: rgb(129, 129, 129);">Contact us</a></h6>
-                <h6><a href="https://github.com/01000011-00110111/School-Chat" style="color: rgb(129, 129, 129);">Source Code</a></h6>
+            <div id="extratext" style="align-self: baseline;">
+                <h6 style="padding: 0 0 15px 0;"><a href="/changelog" style="color: rgb(129, 129, 129);">Update log</a></h6>
+                <h6 style="padding: 0 0 15px 0;"><a href="#TELL-THE-OWNERS-TO-GET-YOUR-OWN-CONTACT-FOR-YOU-AND-LET-THEM-CONTACT-US" style="color: rgb(129, 129, 129);">Contact us</a></h6>
+                <h6 style="padding: 0 0 15px 0;"><a href="https://github.com/01000011-00110111/School-Chat" style="color: rgb(129, 129, 129);">Source Code</a></h6>
             </div>
             <br>
             <br>

@@ -2,104 +2,151 @@
 {% block content %}
 
 <div id="tos-popup">
-        <div id="tos-header">
-            <div id="header-1" class="header-item">
-  <h2>TERMS OF SERVICE</h2>
-  <h4 style="font-size: 13px;">Last updated on 8/30/2023</h4>
+  <div id="tos-left-panel" class="tos-panels">
+    <button onclick="tosScroll(0, 100)">Acceptable Use</button>
+    <button onclick="tosScroll(0, 290)">Privacy</button>
+    <button onclick="tosScroll(0, 450)">Intellectual Property</button>
+    <button onclick="tosScroll(0, 595)">Termination</button>
+    <button onclick="tosScroll(0, 700)">Disclaimers and Limitation of Liability</button>
+    <button onclick="tosScroll(0, 900)">Miscellaneous</button>
+  </div>
+
+  <div id="tos-right-panel" class="tos-panels">
+    <div id="tos-header">
+      <div id="header-1" class="header-item">
+        <h2>TERMS OF SERVICE</h2>
+        <h4 style="font-size: 13px;">Last updated on 8/30/2023</h4>
+      </div>   
+    </div>
+          
+    <div id="tos-body">
+      <p>Welcome to School Chat! These Terms of Service ("TOS") outline the terms and conditions governing your use of the School Chat platform. Please read these terms carefully before using School Chat. By accessing or using our services, you acknowledge that you have read, understood, and agree to be bound by these terms. If you do not agree with any part of these terms, please do not use School Chat.
+
+      <h1>1. Acceptable Use</h1>
+
+      1.1. User Conduct: You agree to use School Chat in a responsible and respectful manner. You will not engage in any behavior that disrupts the educational environment, violates school policies, or infringes upon the rights of others. Harassment, bullying, hate speech, and any form of inappropriate conduct are strictly prohibited.
+
+      1.2. Academic Integrity: Users shall uphold academic integrity. Sharing or seeking answers during exams or assignments in a way that violates the educational institution's honor code or policies is prohibited.
+
+      <h1>2. Privacy</h1>
+
+      2.1. Data Security: We prioritize the security and privacy of your data. Our data collection and usage practices are outlined in our Privacy Policy. By using School Chat, you consent to the collection, storage, and processing of your data as described in the Privacy Policy.
+
+      2.2. Educational Records: Any communication or content exchanged on School Chat, including class discussions and assignments, may be considered part of your educational records and subject to applicable laws and regulations.
+
+      <h1>3. Intellectual Property</h1>
+
+      3.1. Ownership: School Chat and its content are protected by intellectual property laws. You may not copy, modify, distribute, or reproduce any part of the platform without explicit permission from School Chat.
+
+      3.2. User Content: By contributing content to School Chat, you retain ownership of your intellectual property rights. However, you grant School Chat a non-exclusive license to use, store, and display your content solely for the purpose of providing and improving the platform's services.
+
+      <h1>4. Termination</h1>
+
+      4.1. User Termination: School Chat reserves the right to suspend or terminate access to the platform for users who violate these TOS or engage in activities that disrupt the educational environment.
+
+      4.2. Platform Changes: School Chat may modify, update, or discontinue any aspect of the platform without prior notice. We are not liable for any consequences resulting from such changes.
+
+      <h1>5. Disclaimers and Limitation of Liability</h1>
+
+      5.1. Platform Availability: School Chat strives to provide a reliable service, but we do not guarantee uninterrupted or error-free access to the platform.
+
+      5.2. Content Accuracy: We do not endorse or verify the accuracy of user-generated content on School Chat. Users are responsible for evaluating and using information at their own discretion.
+
+      5.3. Liability Limitation: School Chat shall not be liable for any indirect, incidental, consequential, or punitive damages arising from the use of the platform.
+
+      <h1>6. Miscellaneous</h1>
+
+      6.1. Governing Law: These TOS are governed by the laws of [Jurisdiction], without regard to its conflict of law principles.
+
+      6.2. Entire Agreement: These TOS constitute the entire agreement between you and School Chat regarding your use of the platform.
+
+      Thank you for using School Chat! If you have any questions or concerns about these terms, please contact us at [Contact Information].
+      </p>
+    </div>
+          
+    <div id="tos-footer">
+      <button class="tos-btn" id="tos-accept" onclick="CloseTOS();">Close</button>
+    </div>
+  </div>
 </div>
-            
-            
+
+<div id="loginContainer">
+        <div id="leftPanel">
+          <div id="topInformation">
+            <h1>Login</h1>
+            <p>Don't have an account yet? <a href="/signup" style="text-decoration: none;">Sign up</a></p>
+          </div>
+          
+          <form method="post" id="loginForm">
+            <input name="socket" value="", id="socket" hidden>
+            <div class="wrapperPanel">
+              <p>Username</p>
+              <input type="text" name="username" id="emailInput" class="loginInput" placeholder="Enter your username" autocomplete="off">
+            </div>
+            <div class="wrapperPanel">
+              <div id="leftsubDiv">
+                <p>Password</p>
+                <a href="/change-password" target="_blank" style="text-decoration: none;" tabindex="-1">Forgot Password?</a>
+              </div>
+              <div class="loginInput">
+                <input type="password" name="password" id="pswInput" placeholder="Enter your account password" autocomplete="off">
+                <button id="showPswButton" type="button" onclick="showPassword()">
+                  <i class="fa-regular fa-eye fa-2xl" style="color: black;" id="re" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="wrapperPanel">
+              <span>
+                <input type="checkbox" name="TOSagree" id="checkBox" style="margin: 0px 8px 0px 0px;">
+                <p>    
+                  Accept 
+                  <a style="text-decoration: none; color: #7c0ed7; cursor: pointer;" onclick="OpenTOS()">Terms &amp; Conditions</a>
+                </p>
+              </span>
+              <button type="submit" id="loginButton" name="login">Login</button>
+            </div>
+          </form>
+
+          {% if error %}
+            <h2 style="color:red; pointer-events: none; height: 0px; text-align: center;">{{error}}</h2>
+          {% endif %}
+    
+          <div id="linksContainer">
+            <a href="https://github.com/01000011-00110111/School-Chat/releases" target="_blank"><p>Releases</p></a>
+            <a href="https://github.com/01000011-00110111/School-Chat/discussions" target="_blank"><p>Discussions</p></a>
+            <a href="https://github.com/01000011-00110111/School-Chat" target="_blank"><p>Github</p></a>
+          </div>
         </div>
         
-        <div id="tos-body">
-          <p>Welcome to School Chat! These Terms of Service ("TOS") outline the terms and conditions governing your use of the School Chat platform. Please read these terms carefully before using School Chat. By accessing or using our services, you acknowledge that you have read, understood, and agree to be bound by these terms. If you do not agree with any part of these terms, please do not use School Chat.
-
-<h1>1. Acceptable Use</h1>
-
-1.1. User Conduct: You agree to use School Chat in a responsible and respectful manner. You will not engage in any behavior that disrupts the educational environment, violates school policies, or infringes upon the rights of others. Harassment, bullying, hate speech, and any form of inappropriate conduct are strictly prohibited.
-
-1.2. Academic Integrity: Users shall uphold academic integrity. Sharing or seeking answers during exams or assignments in a way that violates the educational institution's honor code or policies is prohibited.
-
-<h1>2. Privacy</h1>
-
-2.1. Data Security: We prioritize the security and privacy of your data. Our data collection and usage practices are outlined in our Privacy Policy. By using School Chat, you consent to the collection, storage, and processing of your data as described in the Privacy Policy.
-
-2.2. Educational Records: Any communication or content exchanged on School Chat, including class discussions and assignments, may be considered part of your educational records and subject to applicable laws and regulations.
-
-<h1>3. Intellectual Property</h1>
-
-3.1. Ownership: School Chat and its content are protected by intellectual property laws. You may not copy, modify, distribute, or reproduce any part of the platform without explicit permission from School Chat.
-
-3.2. User Content: By contributing content to School Chat, you retain ownership of your intellectual property rights. However, you grant School Chat a non-exclusive license to use, store, and display your content solely for the purpose of providing and improving the platform's services.
-
-<h1>4. Termination</h1>
-
-4.1. User Termination: School Chat reserves the right to suspend or terminate access to the platform for users who violate these TOS or engage in activities that disrupt the educational environment.
-
-4.2. Platform Changes: School Chat may modify, update, or discontinue any aspect of the platform without prior notice. We are not liable for any consequences resulting from such changes.
-
-<h1>5. Disclaimers and Limitation of Liability</h1>
-
-5.1. Platform Availability: School Chat strives to provide a reliable service, but we do not guarantee uninterrupted or error-free access to the platform.
-
-5.2. Content Accuracy: We do not endorse or verify the accuracy of user-generated content on School Chat. Users are responsible for evaluating and using information at their own discretion.
-
-5.3. Liability Limitation: School Chat shall not be liable for any indirect, incidental, consequential, or punitive damages arising from the use of the platform.
-
-<h1>6. Miscellaneous</h1>
-
-6.1. Governing Law: These TOS are governed by the laws of [Jurisdiction], without regard to its conflict of law principles.
-
-6.2. Entire Agreement: These TOS constitute the entire agreement between you and School Chat regarding your use of the platform.
-
-Thank you for using School Chat! If you have any questions or concerns about these terms, please contact us at [Contact Information].
-</p>
-        </div>
-        
-        <div id="tos-btm">
-  <button class="tos-btn" id="tos-accept" onclick="CloseTOS();">Close</button>
-</div>
-    </div>
-
-<div style="display: flex; height: 100%; width: 100%;">
-    <div class="LoginPopup" id="LoginPopup">
-        <div id="LoginContent">
-        <h2>Login</h2>
-            <form method="post">
-                <input type="text" id="user" placeholder="Username" autocomplete="off" class="LoginInput" name="username">
-                <input type="password" id="passwd" placeholder="Password" autocomplete="off" class="LoginInput" name="password"><br>
-                <input type="checkbox" id="tosCH" style="margin-top: 20px;" name='TOSagree'>Accept <a onclick="OpenTOS();" style="text-decoration: none;color: #7c0ed7; cursor: pointer;">Terms &amp; Conditions</a>
-                <button type='submit' class="LoginBTN" name="login">Log In</button>
-                <a href="/signup" style="color:#2990f9;">Create an account here</a>
-            </form>
-        </div>
-        {% if error %}
-            <h2 style="color:red; pointer-events: none;">{{error}}</h2>
-        {% endif %}
-    </div>
-    <div class="ChatinfoLP">
-        <h1 class="LoginTTL">School Chat</h1>
-        <hr>
-        <h4 class="LoginTXT">School chat was made by cserver, and cseven for chatting with friends but grew into a bigger project.</h4>
-        <h3 class="LoginTXT">Rules:</h3>
-        <h4 class="LoginTXT">
+        <div id="rightPanel">
+          <h1 id="Title">School Chat</h1>
+    
+          <div id="innerContainer">
+          <p>School chat was made by cserver, and cseven for chatting with friends but grew into a bigger project.</p>
+    
+          <div id="rulesContainer">
+            <h2>Rules:</h2>
             <ul>
-                <li>Do not be racist.</li>
-                <li>no nsfw</li>
-                <li>Keep cursing to a minimal.</li>
-                <li>Do not make chat room names offensive.</li>
-                <li>Do not spam pings.</li>
-                <li>No capitalized words.</li>
-                <li>Keep the language english (unless in a specal chat room).</li>
-            </ul>              
-            <font color="red">Breaking the rules will cause you to be muted, continue to break will result in a ban.</font>
-            <!-- <font color="orange">This version of the chat is a beta version so things might not work as intended if you find any bugs make a issue <a href="https://github.com/01000011-00110111/School-Chat/issues">here</a>.</font> -->
-            <p>(if you have more rules open the Issue <a href="https://github.com/01000011-00110111/School-Chat/discussions/97">Rules</a> and comment the rule there!)</p>
-        </h4>
-    </div>
-    <!-- <div class="activenav" id="activenav">
-        <hr id="online_border">
-        <div id="online_users"></div>
-    </div> -->
+              <li>Do not be racist.</li>
+              <li>No nsfw.</li>
+              <li>Keep cursing to a minimal.</li>
+              <li>Do not make chat room names offensive.</li>
+              <li>Do not spam pings.</li>
+              <li>No capitalized words.</li>
+              <li>Keep the language english (unless in a special chat room).</li>
+            </ul>
+          </div>
+    
+          <p style="color: red;">Breaking the rules will cause you to be muted, continue to break will result in a ban.</p>
+    
+          <p>(if you have more rules open the Issue <a href="">Rules</a> and comment the rule there!)</p>
+        </div>
+      </div>
+
+      <button id="schemeButton">
+        <i class="fa-regular fa-sun fa-2xl" id="schemeIcon"></i>
+      </button>
+
 </div>
+<script src="static/login.js"></script>
 {% endblock %}

@@ -1,71 +1,22 @@
 [![Pylint](https://github.com/01000011-00110111/School-Chat/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/01000011-00110111/School-Chat/actions/workflows/pylint.yml)
 
 # Class-Chat
-This is a private chat made for chatting with friends. This chat has been made over our free time at highschool and is in no way made with the best ways you can do stuff. We use MongoDB for the database, with the backend written in python, (while using nginx as a reverse proxy) and a javascript front end.
+This is a private chat made for chatting with friends. This chat has been made over our free time at highschool and is in no way made with the best ways you can do stuff. We use MongoDB for the database, with the backend written in python and a javascript front end. (while using nginx as a reverse proxy)
 
-Also not done whatsoever, many things have to be done beforehand
+This chat is in no way complete and has many issues so be warned.
 
 Steps to make the chat run
 
 ## Requirements to run (The chat data)
-- Put your mongodb authentication string and other strings and your keys for mod and dev into `example.keys.py`
-- Rename `example.keys.py` to `keys.py`
-- in the data base make a database named `Chat` and add 3 collections named `Accounts`, `Online`, `rooms`
-- inside of rooms add 4 documents to the database
-```
-"roomid":"ilQvQwgOhm9kNAOrRqbr",
-"generatedBy":"[SYSTEM]",
-"generatedAt":"2022-10-24T20:00:00",
-"roomName":"add your room name",
-"canSend":"everyone",
-"whitelisted":"everyone",
-"blacklisted":"empty",
-"locked":"false",
-"messages":[]
-```
+- Put your mongodb authentication string and other data into `example.keys.conf`
+- Rename `example.keys.conf` to `keys.conf`
+- in the data base make 2 databases named `Accounts` and `Rooms`
+- inside of Accounts make 3 collections named `Accounts`, `Customization`, and `Permission`
+- inside of Rooms make 4 collections named `Rooms`, `Permission`, `Messages`, and `Private`
 
-```
-"roomid":"jN7Ht3giH9EDBvpvnqRB",
-"generatedBy":"[SYSTEM]",
-"mods":"",
-"generatedAt":"2023-07-29T21:30:00",
-"roomName":"add your room name",
-"canSend":"devonly",
-"whitelisted":"devonly",
-"blacklisted":"empty",
-"locked":"false",
-"messages":[]
-```
-
-```
-"roomid":"wTZOyPgelLPWTittBAjj",
-"generatedBy":"[SYSTEM]",
-"mods":"",
-"generatedAt":"2023-08-25T11:20:00",
-"roomName":"add your room name",
-"canSend":"modonly",
-"whitelisted":"modonly",
-"blacklisted":"empty",
-"locked":"false",
-"messages":[]
-```
-
-```
-"roomid":"zxMhhAPfWOxuZylxwkES",
-"generatedBy":"[SYSTEM]",
-"mods":"",
-"generatedAt":"2023-07-1T21:53:00",
-"roomName":"add your room name",
-"canSend":"everyone",
-"whitelisted":"lockedonly",
-"blacklisted":"empty",
-"locked":"false",
-"messages":[]
-```
 ## No systemd service (easy route)
-#### NOTE: `$sudo shutdown` and `$sudo restart` will NOT work if you do not use systemd!
+#### NOTE: `$sudo shutdown` and `$sudo restart` will NOT work if you do not use systemd! (commands are removed at this time)
 - create a venv (and install packages via poetry inside that venv)
-- Make `Chat-backup.txt`, `chat-rooms_log.txt`, `permission.txt`, `accounts.txt`, and `command_log.txt` inside the folder named backend
 - Add your ssl pem and key into nginx and change them to your domain name
 - Paste this config file into the `sites-enabled` directory where you have nginx installed (usually its somthing like `/etc/nginx`), and name it what your domain name is called:
   - change `yourdomain` to what your domain name is called
@@ -120,7 +71,7 @@ server {
 }
 ```
 - enable and run nginx with this command `sudo systemctl enable --now nginx.service`
-- Run this command while in the venv to start the chat server, after nginx starts: `gunicorn --bind 127.0.0.1:5000 --worker-class eventlet --threads 10 -w 1 main:app`
+- Run this command while in the venv to start the chat server, after nginx starts: `gunicorn --bind 127.0.0.1:5000 --worker-class eventlet --threads 10 -w 1 main:app` (This might no longer work if it fails run directly with python)
 
 
 ## Systemd route (auto restart and other nice features)
