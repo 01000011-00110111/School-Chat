@@ -125,9 +125,8 @@ if __name__ == "__main__":
 def chat_page() -> ResponseReturnValue:
     """Serve the main chat window."""
     user_agent = request.user_agent.string
-
-    return flask.render_template('mobile/chat.html' if 'Mobile' in user_agent \
-        else 'desktop/chat.html')
+    direction = 'mobile/' if "Mobile" in user_agent else 'desktop/'
+    return flask.render_template(f'{direction}/chat.html')
 
 
 @app.route('/chat/<room_name>')
@@ -143,9 +142,11 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
 @login_required
 def admin_page() -> ResponseReturnValue:
     """Get the specific room in the uri."""
+    user_agent = request.user_agent.string
+    direction = 'mobile/' if "Mobile" in user_agent else 'desktop/'
     user = database.find_login_data(request.cookies.get('Userid'), True)
     if "adminpass" in user['SPermission']:
-        return flask.render_template('admin.html')
+        return flask.render_template(f'{direction}/admin.html')
     return flask.redirect(flask.url_for("chat_page"))
 
 
@@ -204,11 +205,11 @@ def login_page() -> ResponseReturnValue:
         user = database.find_login_data(username, False)
         # print(userids)
         if user is None:
-            return flask.render_template(f'{direction}login.html',
+            return flask.render_template(f'{direction}/login.html',
                                          error="That account does not exist!")
         # userid = user["userId"]
         if TOSagree != "on":
-            return flask.render_template(f'{direction}login.html',
+            return flask.render_template(f'{direction}/login.html',
                                          error='You did not agree to the TOS!')
 
         if User.check_username(
@@ -238,9 +239,9 @@ def login_page() -> ResponseReturnValue:
             return resp
         else:
             return flask.render_template(
-                f'{direction}login.html', error="That username or password is incorrect!")
+                f'{direction}/login.html', error="That username or password is incorrect!")
     else:
-        return flask.render_template(f'{direction}login.html', appVersion = application.appVersion)
+        return flask.render_template(f'{direction}/login.html', appVersion = application.appVersion)
 
 
 # @app.route('/changelog')
@@ -261,6 +262,8 @@ def login_page() -> ResponseReturnValue:
 # @limiter.limit("1 per day")
 def signup_post() -> ResponseReturnValue:
     """The creating of an account."""
+    user_agent = request.user_agent.string
+    direction = 'mobile/' if "Mobile" in user_agent else 'desktop/'
     # global verification_code_list
     # global verification_code
     SUsername = request.form.get("SUsername")
@@ -273,18 +276,18 @@ def signup_post() -> ResponseReturnValue:
     result, msg = accounting.run_regex_signup(SUsername, SRole, SDisplayname)
     if result is not False:
         return flask.render_template(
-            "signup-index.html",
+            f"{direction}/signup-index.html",
             error=msg,
         )
     email_check = accounting.check_if_disposable_email(SEmail)
     if email_check == 2:
-        return flask.render_template("signup-index.html",
+        return flask.render_template(f"{direction}/signup-index.html",
                                      error='That email is banned!')
     elif email_check == 1:
-        return flask.render_template("signup-index.html",
+        return flask.render_template(f"{direction}/signup-index.html",
                                      error='That email is not valid!')
     if SPassword != SPassword2:
-        return flask.render_template("signup-index.html",
+        return flask.render_template(f"{direction}/signup-index.html",
                                      error='Password boxes do not match!',
                                      SUsername=SUsername,
                                      SRole=SRole,
@@ -296,12 +299,12 @@ def signup_post() -> ResponseReturnValue:
     if possible_user is not None or possible_dispuser is not None or SUsername in \
         word_lists.banned_usernames or SDisplayname in word_lists.banned_usernames:
         return flask.render_template(
-            "signup-index.html",
+            f"{direction}/signup-index.html",
             error='That Username/Display name is already taken!',
             SRole=SRole)
     possible_email = database.find_account({"email": SEmail}, 'vid')
     if possible_email is not None:
-        return flask.render_template("signup-index.html",
+        return flask.render_template(f"{direction}/signup-index.html",
                                      error='That Email is already used!',
                                      SEmail=SEmail,
                                      SUsername=SUsername,
@@ -400,6 +403,8 @@ def get_logs_page() -> ResponseReturnValue:
 @login_required
 def settings_page() -> ResponseReturnValue:
     """Serve the settings page for the user."""
+    user_agent = request.user_agent.string
+    direction = 'mobile/' if "Mobile" in user_agent else 'desktop/'
     user = database.find_login_data(request.cookies.get('Userid'), True)
     if request.cookies.get('Userid') != user['userId']:
         # someone is trying something funny
@@ -407,7 +412,7 @@ def settings_page() -> ResponseReturnValue:
             "Something funny happened. Try Again (Unauthorized)", status=401)
 
     return flask.render_template(
-        'settings.html',
+        f'{direction}/settings.html',
         user=user['username'],
         passwd='we are not adding password editing just yet',
         email=user["email"],
@@ -424,6 +429,8 @@ def settings_page() -> ResponseReturnValue:
 @login_required
 def customize_accounts() -> ResponseReturnValue:
     """Customize the account."""
+    user_agent = request.user_agent.string
+    direction = 'mobile/' if "Mobile" in user_agent else 'desktop/'
     username = request.form.get("user")
     userid = request.cookies.get('Userid')
     displayname = request.form.get("display")
@@ -455,14 +462,14 @@ def customize_accounts() -> ResponseReturnValue:
     old_path
     
     if theme is None:
-        return flask.render_template("settings.html",
+        return flask.render_template(f"{direction}/settings.html",
                                      error='Pick a theme before updating!',
                                      **return_list)
 
     theme = user.theme if theme == '' else theme
     result, error = accounting.run_regex_signup(username, role, displayname)
     if result is not False:
-        return flask.render_template("settings.html",
+        return flask.render_template(f"{direction}/settings.html",
                                      error=error,
                                      **return_list)
 
@@ -470,7 +477,7 @@ def customize_accounts() -> ResponseReturnValue:
             is not None and user.displayName != displayname
         ) and displayname in word_lists.banned_usernames:
         return flask.render_template(
-            "settings.html",
+            f"{direction}/settings.html",
             error='That Display name is already taken!',
             **return_list)
     email_check = database.find_account({"email": email}, 'vid')
@@ -479,7 +486,7 @@ def customize_accounts() -> ResponseReturnValue:
         accounting.email_var_account(user.username, email,
                                      verification_code, user.uuid)
     elif (email_check is not None and user_email != email):
-        return flask.render_template("settings.html",
+        return flask.render_template(f"{direction}/settings.html",
                                      error='that email is taken',
                                      **return_list)
 
@@ -499,7 +506,7 @@ def customize_accounts() -> ResponseReturnValue:
     else:
         if user_email == email:
             return flask.render_template(
-                'settings.html',
+                f'{direction}/settings.html',
                 error=
                 'You must verify your account before you can change settings',
                 **return_list)
@@ -509,7 +516,7 @@ def customize_accounts() -> ResponseReturnValue:
                                     }})
         error = 'Updated email!'
     log.log_accounts(f'The account {user} has updated some setting(s)')
-    return flask.render_template('settings.html', error=error, **return_list)
+    return flask.render_template(f'{direction}/settings.html', error=error, **return_list)
 
 
 # socketio stuff
@@ -841,4 +848,4 @@ if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
