@@ -47,20 +47,41 @@ const checkbox = document.getElementById('checkBox')
   })
 
   schemeButton.addEventListener('click', (event) => {
-    if (!schemeState) {
-      window.localStorage.setItem("schemeState", "dark")
+    if (event.shiftKey)
+    {
+      if (!window.localStorage.getItem("flatStyle"))
+      {
+        window.localStorage.setItem("flatStyle", "false")
+      }
+      else if (window.localStorage.getItem("flatStyle"))
+      {
+        if (window.localStorage.getItem("flatStyle") == "false")
+        {
+          window.localStorage.setItem("flatStyle", "true")
+        }
+        else if (window.localStorage.getItem("flatStyle") == "true")
+        {
+          window.localStorage.setItem("flatStyle", "false")
+        }
+      }
     }
+    else 
+    {
+      if (!schemeState) 
+      {
+        window.localStorage.setItem("schemeState", "dark")
+      }
 
-    if (schemeState == "light")
-    {
-      window.localStorage.setItem("schemeState", "dark")
-      window.location.reload()
+      if (schemeState == "light")
+      {
+        window.localStorage.setItem("schemeState", "dark")
+      }
+      else if (schemeState == "dark")
+      {
+        window.localStorage.setItem("schemeState", "light")
+      }
     }
-    else if (schemeState == "dark")
-    {
-      window.localStorage.setItem("schemeState", "light")
-      window.location.reload()
-    }
+    window.location.reload()
   })
 
   const retrieveScheme = () => {
@@ -96,30 +117,6 @@ const checkbox = document.getElementById('checkBox')
   socket.on('connect', function () {
     document.getElementById('socket').value = socket.id;
   });
-  // const getschemeState = () => {
-  //   if (schemeState == 'light')
-  //   {
-  //     window.localStorage.setItem('schemeState', 'dark')
-  //     loginContainer.classList.remove('light-mode')
-  //     leftPanel.classList.remove('light-mode')
-  //     innerContainer.classList.remove('light-mode')
-  //     schemeButton.classList.remove('light-mode')
-  //     schemeIcon.classList.add('fa-sun')
-  //     schemeIcon.classList.remove('fa-moon')
-  //     console.log("dark")
-  //   }
-  //   else if (schemeState == 'dark')
-  //   {
-  //     window.localStorage.setItem('schemeState', 'light')
-  //     loginContainer.classList.add('light-mode')
-  //     leftPanel.classList.add('light-mode')
-  //     innerContainer.classList.add('light-mode')
-  //     schemeButton.classList.add('light-mode')
-  //     schemeIcon.classList.add('fa-moon')
-  //     schemeIcon.classList.remove('fa-sun')
-  //     console.log("light")
-  //   }
-  // }
 
   const tosScroll = (x, y) => {
     tos.scrollTo(x, y)
