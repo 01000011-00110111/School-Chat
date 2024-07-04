@@ -48,7 +48,7 @@ function setStyles(
     sidenav.style.backgroundColor = sidenavColor;
     roomText.style.color = roomTextColor;
     roomBar.style.borderColor = roomBarColor;
-    topbarColor.style.backgroundColor = topbarColor;
+    topbar.style.backgroundColor = topbarColor;
     // hrElement.sytle.bordeColor = sidebarborderColor;
 
     for (let i = 0; i < snavText.length; i++) {
