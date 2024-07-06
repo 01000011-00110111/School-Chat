@@ -597,11 +597,18 @@ body, html {
   align-items: center;
 }
 
+#main-settings-body {
+  width: 100%;
+  height: 100%;
+  grid-template-rows: 7.5%;
+  display: grid;
+}
+
 #nav {
   width: 100%;
   height: fit-content;
   border-bottom: 2px gray solid;
-  min-height: 100%;
+  min-height: 56%;
   max-height: 100%;
   grid-template-rows: 0%;
   display: grid;
@@ -644,10 +651,11 @@ body, html {
   display: flex;
   padding: 6px 12px;
   border-top: none;
-  height: 100%;
+  height: 71px;
   border-radius: inherit;
   background: transparent;
   width: 100%;
+  align-content: center;
 }
 
 @keyframes fadeEffect {
@@ -930,6 +938,15 @@ version #arrowContainer {
   justify-content: space-evenly;
   align-items: end;
   padding: 0px 0px 37px 0px;
+}
+
+#linksContainer a {
+  color: white;
+  text-decoration: none;
+}
+
+#linksContainer a:hover {
+  text-decoration: white solid underline 2px;
 }
 
 #topInformation {

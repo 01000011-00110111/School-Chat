@@ -3,138 +3,139 @@
 <script src="static/settings.js" defer></script>
 {% endblock %}
 {% block content %}
-<div id="nav">
-  <div id="ButtonContainer">
-    <button class="SettingsNavItem" onclick="openTab(event, 'My-Profile')">
-      My Profile
-    </button>
+<div id="main-settings-body">
+  <div id="nav">
+    <div id="ButtonContainer">
+      <button class="SettingsNavItem" onclick="openTab(event, 'My-Profile')">
+        My Profile
+      </button>
 
-    <button class="SettingsNavItem" onclick="openTab(event, 'Account')">
-      Account
-    </button>
+      <button class="SettingsNavItem" onclick="openTab(event, 'Account')">
+        Account
+      </button>
 
-    <button class="SettingsNavItem" onclick="openTab(event, 'Notifications')">
-      Notifications
-    </button>
+      <button class="SettingsNavItem" onclick="openTab(event, 'Notifications')">
+        Notifications
+      </button>
 
-    <button class="SettingsNavItem" onclick="openTab(event, 'Preferences')">
-      Preferences
-    </button>
+      <button class="SettingsNavItem" onclick="openTab(event, 'Preferences')">
+        Preferences
+      </button>
 
-    <button class="SettingsNavItem" onclick="openTab(event, 'DeveloperSettings')" hidden>
-      Developer Settings
-    </button>
+      <button class="SettingsNavItem" onclick="openTab(event, 'DeveloperSettings')" hidden>
+        Developer Settings
+      </button>
 
-    <button class="SettingsNavItem" onclick="openTab(event, 'AppInfo')">
-      App
-    </button>
+      <button class="SettingsNavItem" onclick="openTab(event, 'AppInfo')">
+        App
+      </button>
+    </div>
   </div>
-</div>
 
-<form method="post" style="display: grid; height: 49rem; min-height: 100%;">
-    <div id="ProfileDisplay">
-      <div id="MainSettingsBody">
-        <div id="My-Profile" class="tabcontent">
-          <div style="display: flex;">
-            <label for="profile" id="FileClick">
-              <div id="imageContentControl">
-                <div id="ImageHoverPreview">
-                  <p>Click to upload image</p>
+  <form method="post" style="display: grid; height: 49rem; min-height: 100%;">
+      <div id="ProfileDisplay">
+        <div id="MainSettingsBody">
+          <div id="My-Profile" class="tabcontent">
+            <div style="display: flex;">
+              <label for="profile" id="FileClick">
+                <div id="imageContentControl">
+                  <div id="ImageHoverPreview">
+                    <p>Click to upload image</p>
+                  </div>
+                  <img id="PfPdisplay" src="{{profile}}" name="profile">
                 </div>
-                <img id="PfPdisplay" src="{{profile}}" name="profile">
+              </label>
+
+              <div style="align-content: center; display: grid; margin: 18px;">
+                <h1>{{displayName}}</h1>
+                <h6 id="RoleDisplay">{{role}}</h6>
               </div>
-            </label>
+            </div>
 
-            <div style="align-content: center; display: grid; margin: 18px;">
-              <h1>{{displayName}}</h1>
-              <h6 id="RoleDisplay">{{role}}</h6>
+            <p id="user_colorTXT">Displayname: </p>
+            <input type="text" id="username" value='{{displayName}}' placeholder="Display Name" name="display" maxlength="12" class='std_box'><br>
+            <input type="color" value='{{user_color}}' id="user_color" name="user_color"><br>
+            <p id="user_colorTXT">Role: </p>
+            <input type="text" id="role" name="role" placeholder="role" value='{{role}}' maxlength="18" class='std_box'><br>
+            <input type="color" value='{{role_color}}' id="role_color" name="role_color"><br>
+            <p id="user_colorTXT">Message: </p>
+            <input type="color" value='{{message_color}}' id="message_color" name="message_color"><br>
+            <input type="file" id="profile" name="profile">
+
+            <div id="example">
+        
             </div>
           </div>
 
-          <p id="user_colorTXT">Displayname: </p>
-          <input type="text" id="username" value='{{displayName}}' placeholder="Display Name" name="display" maxlength="12" class='std_box'><br>
-          <input type="color" value='{{user_color}}' id="user_color" name="user_color"><br>
-          <p id="user_colorTXT">Role: </p>
-          <input type="text" id="role" name="role" placeholder="role" value='{{role}}' maxlength="18" class='std_box'><br>
-          <input type="color" value='{{role_color}}' id="role_color" name="role_color"><br>
-          <p id="user_colorTXT">Message: </p>
-          <input type="color" value='{{message_color}}' id="message_color" name="message_color"><br>
-          <input type="file" id="profile" name="profile">
+          <div id="Account" class="tabcontent">
+            <h3>Account</h3>
+            <p id="user_colorTXT">Username: </p>
+            <input type="text" id="username" value='{{user}}' placeholder="Username" name="user" maxlength="15" class='std_box'><br>
+            <p id="user_colorTXT">Email</p>
+            <input type="text" id="email" value='{{email}}' placeholder="Email" name="email" class='std_box'>
 
-          <div id="example">
-      
+            <!-- Add an input element to store the selected theme value -->
+            <input type="hidden" name="theme" value="">
+            <!-- Add an input element to store the selected theme value -->
+            <input type="text" id="Ausername" placeholder="login username" maxlength="15" name="user" value='{{user}}' hidden><br>
+            <p id="user_colorTXT">Password:</p><br>
+            <!-- <input type="password" id="Apassword" placeholder="Password" name="password" value='{{passwd}}' hidden><br> -->
+            <h2 style="color:green; pointer-events: none;">{{passwd}}</h2>
           </div>
-        </div>
 
-        <div id="Account" class="tabcontent">
-          <h3>Account</h3>
-          <p id="user_colorTXT">Username: </p>
-          <input type="text" id="username" value='{{user}}' placeholder="Username" name="user" maxlength="15" class='std_box'><br>
-          <p id="user_colorTXT">Email</p>
-          <input type="text" id="email" value='{{email}}' placeholder="Email" name="email" class='std_box'>
+          <div id="Notifications" class="tabcontent">
+            <p>Note: Notifications are still in beta phase.</p>
+            <input type="button" onclick="enableNotifications();" value="Enable Notifications" id="notificationsButton"/>
+          </div>
 
-          <!-- Add an input element to store the selected theme value -->
-          <input type="hidden" name="theme" value="">
-          <!-- Add an input element to store the selected theme value -->
-          <input type="text" id="Ausername" placeholder="login username" maxlength="15" name="user" value='{{user}}' hidden><br>
-          <p id="user_colorTXT">Password:</p><br>
-          <!-- <input type="password" id="Apassword" placeholder="Password" name="password" value='{{passwd}}' hidden><br> -->
-          <h2 style="color:green; pointer-events: none;">{{passwd}}</h2>
-        </div>
-
-        <div id="Notifications" class="tabcontent">
-          <p>Note: Notifications are still in beta phase.</p>
-          <input type="button" onclick="enableNotifications();" value="Enable Notifications" id="notificationsButton"/>
-        </div>
-
-        <div id="Preferences" class="tabcontent">
-          <div class="themeDropdown">
-            <button type="button" class="themeBtn" onclick="toggleDropdown()">Themes</button>
-            <div class="themeContent">
-                <a class="themeOption" id='dark' onclick="setTheme('dark');">Dark</a>
-                <a class="themeOption" id='light' onclick="setTheme('light');">Light</a>
-                <a class="themeOption" id='holiday' onclick="setTheme('holiday');">Holiday</a>>
-             
+          <div id="Preferences" class="tabcontent">
+            <div class="themeDropdown">
+              <button type="button" class="themeBtn" onclick="toggleDropdown()">Themes</button>
+              <div class="themeContent">
+                  <a class="themeOption" id='dark' onclick="setTheme('dark');">Dark</a>
+                  <a class="themeOption" id='light' onclick="setTheme('light');">Light</a>
+                  <a class="themeOption" id='holiday' onclick="setTheme('holiday');">Holiday</a>>
               
-                <!-- <a class="themeOption" onclick="setTheme('special');">Special</a> -->
-                <!-- <a class="themeOption" onclick="setTheme('event');">Event</a> -->
-            </div>
-        </div>
-        </div>
+                
+                  <!-- <a class="themeOption" onclick="setTheme('special');">Special</a> -->
+                  <!-- <a class="themeOption" onclick="setTheme('event');">Event</a> -->
+              </div>
+          </div>
+          </div>
 
-        <div id="DeveloperSettings" class="tabcontent">
+          <div id="DeveloperSettings" class="tabcontent">
 
-        </div>
+          </div>
 
-        <div id="AppInfo" class="tabcontent">
-          <a href="https://github.com/01000011-00110111/School-Chat">Source Code</a>
+          <div id="AppInfo" class="tabcontent">
+            <a href="https://github.com/01000011-00110111/School-Chat">Source Code</a>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div id="StatusContainer">
-      <a href="." id="cancelButton" class="statusButton">Back</a>
-      <button type="submit" id="change" name="u pdate" class="statusButton">Save</button>
-    </div>
-</form>
+      <div id="StatusContainer">
+        <a href="." id="cancelButton" class="statusButton">Back</a>
+        <button type="submit" id="change" name="u pdate" class="statusButton">Save</button>
+      </div>
+  </form>
 
-{% if error %}
-    <h2 style="color:red; pointer-events: none;">{{error}}</h2>
-{% endif %}
-<!-- <div class="activenav" id="activenav">
-    <div class="AccountPopup">
-        <input type="image" id="pfpmenu" src="static/favicon.ico" class="PictureBTN" onclick="OpenAC();"/>
-        <div id="AccControls" class='AccControls'>
-            <a href="/settings">Logout</a>
-            <a href="/">Chat</a>
-            <a href="#">Random</a>
-        </div>
-    </div>
-    <hr id="online_border">
-    <div id="online_users"></div>
-</div> -->
+  {% if error %}
+      <h2 style="color:red; pointer-events: none;">{{error}}</h2>
+  {% endif %}
+  <!-- <div class="activenav" id="activenav">
+      <div class="AccountPopup">
+          <input type="image" id="pfpmenu" src="static/favicon.ico" class="PictureBTN" onclick="OpenAC();"/>
+          <div id="AccControls" class='AccControls'>
+              <a href="/settings">Logout</a>
+              <a href="/">Chat</a>
+              <a href="#">Random</a>
+          </div>
+      </div>
+      <hr id="online_border">
+      <div id="online_users"></div>
+  </div> -->
 
-<!--  <input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
-    <input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br>  -->
-
+  <!--  <input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
+      <input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br>  -->
+</div>
 {% endblock %}
