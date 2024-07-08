@@ -64,7 +64,7 @@ def run_filter_chat(user, room, message, roomid, userid):
             cmds.warn_user(user)
             failed_message(('permission', 11, 'locked'), roomid)
 
-    final_str = compile_message(markdown(message), profile_picture, user, role)
+    final_str = compile_message(format_text(message), profile_picture, user, role)
 
     # check if locked or allowed to send
     if locked and perms not in ["dev", 'admin', "mod"]:
@@ -121,7 +121,7 @@ def run_filter_private(user, message, userid):
     profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
 
 
-    final_str = ('msg' ,compile_message(markdown(message), profile_picture, user, role), 0)
+    final_str = ('msg' ,compile_message(format_text(message), profile_picture, user, role), 0)
     
     limit = user.send_limit()
     if not limit: #and perms != "dev":
@@ -168,52 +168,33 @@ def filter_message(message):
     return profanity.censor(message)
 
 
-def markdown(message):
-    """our own custom markdown code"""
-    compiled_str = message
-
-    formatting_patterns = {
-        "B:": ("<b>", "</b>"),  #Bold
-        "I:": ("<i>", "</i>"),  #italicize 
-        "U:": ("<u>", "</u>"),  #underline 
-        "r:": ('<font color="#ff0000">', '</font>'),  #red
-        "g:": ('<font color="#00ff00">', '</font>'),  #green
-        "lg:": ('<font color="#90EE90">', '</font>'),  #light green
-        "b:": ('<font color="#0000ff">', '</font>'),  #blue
-        "lb:": ('<font color="#ADD8E6">', '</font>'),  #light blue
-        "w:": ('<font color="#ffffff">', '</font>'),  #white 
-        "o:": ('<font color="#FFA500">', '</font>'),  #orange 
-        "p:": ('<font color="#800080">', '</font>'),  #purple 
-        "y:": ('<font color="#FFFF00">', '</font>'),  #yellow 
-        "v:": ('<font color="#7F00FF">', '</font>'),  #violet
-    }
-
-    # so its not something specific to lg and lb,
-    # its that the regex hangs the server on ANY combination of 2 letters - cserver
-    # I have no idea why it does that, it doesen't even matter if the letters are used
-    # anywhere else, it just doesn't like 2 letter ones.
-    def repl(match):
-        text = match.group(0)
-
-        if re.match(r'^[0-9A-Fa-f]{6}:.*?:c$', text):
-            hex_color = text[:6]
-            inner_text = text[7:-2]
-            hex_color = "ffffff" if hex_color == "000000" else hex_color
-            return f'<font color="#{hex_color}">{inner_text}</font>'
-
-        start_tag, end_tag = formatting_patterns.get(text[:2], ("", ""))
-        inner_text = text[2:-2] if start_tag else text
-        return f"{start_tag}{inner_text}{end_tag}" if start_tag else text
-
-    pattern = r'([0-9A-Fa-f]{6}:.*?:c)|(lg:.*?:lg)|(lb:.*?:lb)|([BIUrgbwopvy]:.*?:[BIUrgbwopvy])'
-
-    while True:
-        compiled_str = re.sub(pattern, repl, message)
-        if compiled_str == message:
-            break
-        message = compiled_str
-
-    return compiled_str
+def format_text(message):#this system needs notes do not remove
+    bold_pattern = re.compile(r'\*(.*?)\*', re.DOTALL)
+    italic_pattern = re.compile(r'/(.*?)/', re.DOTALL)
+    underline_pattern = re.compile(r'_(.*?)_', re.DOTALL)
+    color_pattern = re.compile(r'\[([a-zA-Z]+)\](.*?)#')
+    
+    # Check and apply bold formatting: *text*
+    if '*' in message:
+        message = bold_pattern.sub(r'<b>\1</b>', message)
+    
+    # Check and apply italic formatting: <i>text</i>
+    if '/' in message and '__' not in message:
+        message = italic_pattern.sub(r'<i>\1</i>', message)
+    
+    # Check and apply underline formatting: __text__
+    if '_' in message and '__' not in message:
+        message = underline_pattern.sub(r'<u>\1</u>', message)
+    
+    # Check and apply color formatting: [color]text
+    def replace(match):
+        color, text = match.groups()
+        return f'<span style="color: {color}">{text}</span>'
+    
+    if '[' in message:
+        message = color_pattern.sub(replace, message)
+    
+    return message
 
 
 def find_pings(message, dispName, profile_picture, roomid, room):
