@@ -207,7 +207,7 @@ def find_pings(message, dispName, profile_picture, roomid, room):
     for ping in pings:
         # message = message.replace(f"[{ping}", '')
         # print(ping)
-        sid = get_scoketid(User.get_userid(ping))
+        sid = get_scoketid(User.get_userid(ping)) if ping != 'everyone' else None
         emit("ping", {
             "from": dispName,
             # "pfp": profile_picture,

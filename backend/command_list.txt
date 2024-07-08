@@ -39,7 +39,7 @@
     <li>"*(text)*": Will set the text to be bold</li>
     <li>"/(text)/": Will set the text to be italic</li>
     <li>"_(text)_": Will set the text to be underlined</li>
-    <li>"[color](text)&": Will set the text to the color you put.</li>
+    <li>"[color](text)#": Will set the text to the color you put.</li>
 end
 
 <h2>Room Mod commands:</h2>
