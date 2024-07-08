@@ -1,6 +1,7 @@
 {% extends 'index.html' %}
 {% block header %}
 <script src="static/settings.js" defer></script>
+<script src="/static//styles.js"></script>
 {% endblock %}
 {% block content %}
 <div id="main-settings-body">
@@ -100,7 +101,14 @@
                   <!-- <a class="themeOption" onclick="setTheme('special');">Special</a> -->
                   <!-- <a class="themeOption" onclick="setTheme('event');">Event</a> -->
               </div>
-          </div>
+            </div>
+
+            <div class="themes-dropdown">
+              <button type="button" class="themes-dropdown-button" onclick="openThemes();">Choose a Theme</button>
+              <div id="themes-dropdown-content" class="dropdown-content">
+                
+              </div>
+            </div>
           </div>
 
           <div id="DeveloperSettings" class="tabcontent">
@@ -138,4 +146,28 @@
   <!--  <input id="notif" type="button" onclick="NotificationsB()" value='Disable notifications' /><br>
       <input id="pfpbtn" type="button" onclick="ProfilesB()" value='Disable profile pictures' /><br>  -->
 </div>
+
+<script>
+  const contentList = document.getElementById("themes-dropdown-content");
+
+  const themes = {
+      dark: darkTheme,
+      better_dark: betterdarkTheme,
+      light: lightTheme,
+      ogdev: ogDevTheme,
+      dev: devTheme,
+      halloween: halloweenTheme,
+      // winter: winterTheme,
+      white_lavender: whiteLavender,
+      greenish_white: Greenish_white
+  };
+
+  for (const [key, value] of Object.entries(themes)) {
+      const themeButton = document.createElement('a');
+      themeButton.innerHTML = key.toLocaleUpperCase();
+      themeButton.setAttribute("onclick", `setTheme('${key}')`)
+      contentList.appendChild(themeButton);
+  }
+</script>
+
 {% endblock %}

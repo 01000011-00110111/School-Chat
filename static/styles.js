@@ -14,7 +14,6 @@ function setStyles(
     sidenavColor,
     snavLinkColor,
     roomTextColor,
-    roomBarColor,
     topbarColor
 ) {
     const body = document.getElementsByTagName("body")[0];
@@ -28,8 +27,7 @@ function setStyles(
     const online = document.getElementById("online_users");
     const sidenav = document.getElementsByClassName("sidenav")[0];
     const snavText = sidenav.getElementsByTagName("a");
-    const roomText = document.getElementById("room_text");
-    const roomBar = document.getElementById("room_bar");
+    const roomText = document.getElementById("RoomDisplay");
     const topbar = document.getElementById("topbar");
     // const hrElement = document.querySelector("hr");
 
@@ -47,7 +45,6 @@ function setStyles(
     send.style.color = sendTextColor;
     sidenav.style.backgroundColor = sidenavColor;
     roomText.style.color = roomTextColor;
-    roomBar.style.borderColor = roomBarColor;
     topbar.style.backgroundColor = topbarColor;
     // hrElement.sytle.bordeColor = sidebarborderColor;
 
@@ -65,6 +62,8 @@ function setTheme(themeName) {
         dev: devTheme,
         halloween: halloweenTheme,
         // winter: winterTheme,
+        white_lavender: whiteLavender,
+        greenish_white: Greenish_white
     };
 
     setStyles(...themes[themeName]);
@@ -87,7 +86,6 @@ function setTheme(themeName) {
 // Sidenav Color
 // Sidenav Link Color
 // Room Text color
-// Room Line color
 // Topbar Background Color
 
 const darkTheme = [
@@ -105,7 +103,6 @@ const darkTheme = [
     "#ffffff",
     "#111111",
     "#818181",
-    "#000000",
     "#000000",
     "#ffffff"
 ];
@@ -126,7 +123,6 @@ const lightTheme = [
     "#b9c6c9",
     "#192080",
     "#000000",
-    "#000000",
     "#ffffff"
 ];
 
@@ -146,8 +142,7 @@ const ogDevTheme = [
     "#111111",
     "#818181",
     "#000000",
-    "#000000",
-    "ffffff"
+    "#ffffff"
 ];
 
 const devTheme = [
@@ -165,7 +160,6 @@ const devTheme = [
     "#ffffff",
     "#0f0f0f",
     "#8a4e11",
-    "#000000",
     "#000000"
 ];
 
@@ -185,8 +179,7 @@ const halloweenTheme = [
     "#000000",
     "#d65e13",
     "#d65e13",
-    "#111111",
-    "ffffff"
+    "#ffffff"
 ];
 
 const betterdarkTheme = [
@@ -203,8 +196,45 @@ const betterdarkTheme = [
   "#e9e9ed",
   "#000000",
   "#111111",
-  "ffffff",
   "#ffffff",
-  "#ffffff",
+  "#dd7016",
   "#000000"
+];
+
+const whiteLavender = [ 
+	"rgb(245, 245, 245)", 
+	"rgb(0, 0, 0)", 
+	"rgb(141, 129, 203)", 
+	"rgb(255, 255, 255)", 
+	"rgb(255, 255, 255)", 
+	"rgb(255, 255, 255)", 
+	"rgb(130, 117, 191)", 
+	"rgb(0, 0, 0)",
+	"rgb(130, 117, 191)", 
+	"rgb(255, 255, 255)", 
+	"rgb(130, 117, 191)", 
+	"rgb(255, 255, 255)", 
+	"rgb(130, 117, 191)", 
+	"rgb(255, 255, 255)",
+	"rgb(255, 255, 255)", 
+	"rgb(133, 117, 196)"
+];
+
+const Greenish_white = [ 
+	"rgb(0, 216, 12)", 
+	"rgb(255, 255, 255)", 
+	"", 
+	"", 
+	"rgb(0, 249, 0)", 
+	"rgb(0, 216, 12)", 
+	"rgb(255, 255, 255)", 
+	"rgb(255, 255, 255)", 
+	"", 
+	"rgb(25, 32, 128)", 
+	"", 
+	"", 
+	"rgb(254, 255, 255)", 
+	"rgb(0, 249, 0)", 
+	"rgb(0, 216, 12)", 
+	"rgb(255, 255, 255)"
 ];
