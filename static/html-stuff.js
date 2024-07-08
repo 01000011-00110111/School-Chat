@@ -23,7 +23,25 @@ function toggleDropdown() {
     }
 }
 
-// pfp button
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function openThemes() {
+  document.getElementById("themes-dropdown-content").classList.toggle("show");
+}
+
+// Close the dropdown menu if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.themes-dropdown-button')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
 
 function OpenAC() {
     let AC = document.getElementById("AccControls");
@@ -44,6 +62,19 @@ function CloseTOS() {
 
   TOSPopup.style.display = "none";
 }
+
+// bottomButton = document.getElementById("chat-bottom-button");
+// setInterval(bottom_of_chat, 1000)
+
+// function bottom_of_chat() {
+//   if (Math.floor(window.scrollY) !=+ window.scrollMaxY) {
+//       bottomButton.style.display = "inline";
+//   }
+//   else if (Math.floor(window.scrollY) ==+ window.scrollMaxY)
+//   {
+//       bottomButton.style.display = "none";
+//   }
+// }
 
 //Code broken as far as I know
 function Prepare() {

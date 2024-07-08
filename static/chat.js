@@ -135,7 +135,7 @@ function openuserinfo(user) {
 // function BTMLog() {
 //   if (Math.floor(window.scrollY) === window.scrollMaxY) {
 //     console.log("cheese");
-//     setTimeout(ToBtm, 10000)
+//     setTimeout(ToBtm, 10000);
 //   } 
 // }
 
