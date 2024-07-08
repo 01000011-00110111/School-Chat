@@ -82,6 +82,15 @@ class User:
     def get_user_by_id(cls, userid):
         user = cls.Users.get(userid, None)
         return user
+    
+    @classmethod
+    def get_userid(cls, displayname):
+        for _, user in cls.Users.items():
+            # print(user)
+            if user.displayName == displayname:
+                # print(f'e{user}')
+                userid = user.uuid
+        return userid
 
     @classmethod
     def add_user_class(cls, username, user, userid):

@@ -15,6 +15,7 @@ import log
 # import rooms
 import word_lists
 from user import User
+from online import get_scoketid
 
 # old imports, do we still need the markdown package due to us having our own markdown
 # from markdown import markdown
@@ -57,7 +58,7 @@ def run_filter_chat(user, room, message, roomid, userid):
 
     profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
     
-    if "[" in message and not locked:
+    if "@" in message and not locked:
         if user.locked != 'locked':
             find_pings(message, user.displayName, profile_picture, roomid, room)
         else:
@@ -199,21 +200,21 @@ def format_text(message):#this system needs notes do not remove
 
 def find_pings(message, dispName, profile_picture, roomid, room):
     """Gotta catch 'em all! (checks for pings in the users message)"""
-    pings = re.findall(r'(?<=\[).+?(?=\])', message)
+    pings = re.findall(r'@(\w+|"[^"]+")', message)
+    pings = [ping.strip('"') for ping in pings]
     # room = database.find_room({'roomid': roomid}, 'vid')
 
     for ping in pings:
-        message = message.replace(f"[{ping}]", '')
+        # message = message.replace(f"[{ping}", '')
+        # print(ping)
+        sid = get_scoketid(User.get_userid(ping))
         emit("ping", {
-            "who": ping,
             "from": dispName,
-            "pfp": profile_picture,
-            "message": message,
-            "name": room.name,
-            "roomid": room.vid
-        },
-             namespace="/",
-             broadcast=True)
+            # "pfp": profile_picture,
+        }, 
+        namespace="/",
+        to=sid if ping != 'everyone' else None,
+        broadcast=True if ping == 'everyone' else False)
         break  # ez one per message fix lol
 
 

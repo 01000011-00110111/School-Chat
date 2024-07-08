@@ -21,17 +21,6 @@ socket.on("force_room_update", (_statement) => {
     socket.emit("get_rooms", userid);
 });
 
-socket.on("ping", ({ who, from, pfp, message, name, ID}) => {
-    let user_name = getCookie("DisplayName");
-    // room = window.sessionStorage.getItem("ID");
-    // console.log(who, from, message);
-    if (user_name === who) {
-        new Notification("You were pinged by:", { body: from + ` in ${name}: ` + message, icon: pfp});
-    } else if (who === "everyone") {// add a check to see if the user has access and if so then ping them    
-        new Notification("You were pinged by:", { body: from + ` in ${name}: ` + message, icon: pfp});
-    }
-});
-
 socket.on("reset_chat", (who, ID) => {
     if (ID === window.sessionStorage.getItem('ID')) {
         let chatDiv = document.getElementById("chat");

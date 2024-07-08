@@ -4,6 +4,9 @@ import database
 socketids = {}
 users_list = {}
 
+def get_scoketid(uuid):
+    return  socketids[uuid]
+
 def update_userlist(sid, data, uuid):
     for key, value in data.items():
         users_list[uuid][key] = value

@@ -25,7 +25,7 @@ def song(**kwargs):
     room = kwargs['room']
     # song = kwargs['command']
     msg = format_song_msg(' '.join(list(kwargs["commands"].values())[1:]))
-    room.add_message(msg, 'true')
+    room.add_message(msg, roomid)
     # chat.add_message(msg, roomid, 'true')
     emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
     
@@ -37,8 +37,8 @@ def send_admin(**kwargs):
     # song = kwargs['command']
     msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
     # chat.add_message(msg, roomid, 'true')
-    room.add_message(msg, 'true')
-    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+    room.add_message(msg, roomid)
+    # emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
 def send_as_admin(**kwargs):
@@ -48,8 +48,8 @@ def send_as_admin(**kwargs):
     # song = kwargs['command']
     msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
     # chat.add_message(msg, roomid, 'true')
-    room.add_message(msg, 'true')
-    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+    room.add_message(msg, roomid)
+    # emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
 def help(**kwargs):
@@ -140,8 +140,8 @@ def E_count_bacup(**kwargs):
     count = len(re.findall(r'\be\b', text))
     msg = format_system_msg("Current count: " + str(count))
     # chat.add_message(msg, roomid, 'true')
-    room.add_message(msg, 'true')
-    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+    room.add_message(msg, roomid)
+    # emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
 """def most_used_room(**kwargs):
@@ -169,6 +169,6 @@ def end_ping(start, ID):
     msg = '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + str(
         int(difference)) + 'ms RTT</font>'
     # chat.add_message(msg, ID, 'true')
-    room.add_message(msg, 'true')
-    emit("message_chat", (msg, ID), broadcast=True, namespace="/")
+    room.add_message(msg, ID)
+    # emit("message_chat", (msg, ID), broadcast=True, namespace="/")
     
