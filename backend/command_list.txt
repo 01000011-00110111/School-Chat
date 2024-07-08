@@ -34,7 +34,7 @@
 <h2>Message features:</h2>
 <ul>
     <li>"@(username)": Will ping the user.</li>
-    <li>"@("user name")": Will ping the user.</li>
+    <li>"@("user name")": Will ping the user. if the user have spaces in their name add ""</li>
     <li>"@everyone": Will ping everyone online</li>
     <li>"*(text)*": Will set the text to be bold</li>
     <li>"/(text)/": Will set the text to be italic</li>
