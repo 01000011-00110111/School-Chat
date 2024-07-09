@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/static/theme/projects.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="https://kit.fontawesome.com/69e44b2a4c.js" crossorigin="anonymous"></script>
+  <title>Projects</title>
+</head>
+<body>
+  <div class="main">
+    <div class="Header">
+      <div class="HeaderColumn">
+        <img id="TeamIcon">
+        <p id="TeamName"></p>
+      </div>
+
+      <div class="HeaderColumn" style="justify-content: end;">
+        <div class="HeaderBtn" id="ExtensionBtn">Extensions</div>
+        <div class="HeaderBtn"><i class="fa-solid fa-message" style="color: #ffffff;"></i></div>
+        <div class="HeaderBtn"><i class="fa-solid fa-bell" style="color: #ffffff;"></i></div>
+        <div class="HeaderBtn"><i class="fa-solid fa-ellipsis" style="color: #ffffff;"></i></div>
+      </div>
+    </div>
+
+    <div id="contxtNav">
+      <button>Projects</button>
+      <hr>
+      <button>Assignments</button>
+      <button>Calender</button>
+      <button>Tags</button>
+    </div>
+
+    <div id="actionBar">
+      <div id="actionColumn">
+        <h2>Team workspace</h2>
+
+        <button id="NewProjectBtn" onclick="ToPage('/editor')">New Project</button>
+
+        <div id="searchBox">
+          <button class="SearchBtn">+</button>
+          <input type="text" placeholder="search">
+          <button class="SearchBtn">s</button>
+          <button class="SearchBtn">x</button>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div id="AssigneeInfo">
+        <p>My tasks:</p>
+        <p>More</p>  
+    </div>
+
+    <div id="ProjectList" hidden>
+
+    </div>
+  </div>
+  <script src="/static/theme/web.js"></script>
+  <script src="/static/static.js"></script>
+  <script type='text/javascript' defer>Runstartup();</script>
+</body>
+</html>

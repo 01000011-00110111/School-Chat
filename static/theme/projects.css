@@ -1,0 +1,142 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  background: black;
+  color: white;
+}
+
+body {
+  background-image: url("https://images.pexels.com/photos/87223/pexels-photo-87223.jpeg?cs=srgb&dl=pexels-timur-saglambilek-87223.jpg&fm=jpg");
+  background-color: #cccccc;
+  object-position: unset;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 103%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.main {
+  height: 100%;
+}
+
+.Header {
+  display: flex;
+  height: 12%;
+}
+
+.HeaderColumn {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+#TeamIcon {
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  object-fit: cover;
+}
+
+#contxtNav {
+  background: white;
+  width: 100%;
+  height: 9%;
+  justify-content: start;
+  display: flex;
+}
+
+#contxtNav button{
+  background: white;
+  width: 8%;
+  height: 100%;
+  border: 0;
+}
+
+#actionBar {
+  width: 100%;
+  height: 11%;
+  display: flex;
+  align-items: center;
+}
+
+#AssigneeInfo {
+  display: flex;
+  height: 6%;
+  background: #ffffff3d;
+  border-radius: 20px;
+  align-items: center;
+  width: 30%;
+  justify-content: space-around;
+}
+
+#AssigneeInfo p {
+  width: 20%;
+  text-align: center;
+}
+
+#ProjectList {
+  background: white;
+  width: 100%;
+  height: 66%;
+}
+
+#searchBox {
+  background: #ffffff3d;
+  width: 60%;
+  display: flex;
+  justify-content: space-evenly;
+  height: 70%;
+  border: 1px solid white;
+}
+
+#searchBox input{
+  width: 85%;
+  align-self: center;
+  height: 100%;
+  background: transparent;
+  border: 0;
+  color: white;
+  outline: none;
+}
+
+.SearchBtn {
+  background: transparent;
+  border: 0px;
+  color: white;
+}
+
+#actionColumn {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+#NewProjectBtn {
+  height: 70%;
+  border: 0px;
+  width: 9%;
+  background: #32f609;
+}
+
+.HeaderBtn {
+  background: #ffffff57;
+  width: 5.5%;
+  height: 46%;
+  border: 1px solid white;
+  font-size: 21px;
+  text-align: center;
+  align-items: center;
+  display: grid;
+  margin-right: 12px;
+}
+
+#ExtensionBtn {
+  width: 23%;
+}

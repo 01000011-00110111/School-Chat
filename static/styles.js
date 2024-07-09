@@ -58,6 +58,7 @@ function setTheme(themeName) {
         dark: darkTheme,
         better_dark: betterdarkTheme,
         light: lightTheme,
+        better_light: betterlightTheme,
         ogdev: ogDevTheme,
         dev: devTheme,
         halloween: halloweenTheme,
@@ -125,6 +126,25 @@ const lightTheme = [
     "#000000",
     "#ffffff"
 ];
+
+const betterlightTheme = [
+    "rgb(255, 255, 255)",
+    "rgb(0, 0, 0)",
+    "",
+    "",
+    "rgb(255, 255, 255)",
+    "rgb(255, 255, 255)",
+    "rgb(255, 255, 255)",
+    "rgb(0, 0, 0)",
+    "",
+    "rgb(25, 32, 128)",
+    "",
+    "",
+    "rgb(255, 255, 255)",
+    "rgb(0, 0, 0)",
+    "",
+    "rgb(255, 255, 255)"
+    ]; 
 
 const ogDevTheme = [
     "#000000",

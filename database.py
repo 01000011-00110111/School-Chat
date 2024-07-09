@@ -32,7 +32,8 @@ Messages = client.Rooms.Messages
 Private = client.Rooms.Private
 
 #extra
-db = client.Extra
+Themes = client.Extra.Themes
+# db = client.Extra
 
 
 def clear_online():
@@ -825,3 +826,12 @@ def generate_other(name, permission):
     Rooms.insert_one(room_data)
     Access.insert_one(access_data)
     Messages.insert_one(message)
+
+##### theme stuff
+
+def get_projects(uuid, displayname):
+    return Themes.find({'author': [uuid, displayname]})
+
+
+def save_project(projects):
+    Themes.update_one({'author': projects['author']},{"$set": {"key": projects}}, upsert=True)

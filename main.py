@@ -508,6 +508,50 @@ def customize_accounts() -> ResponseReturnValue:
     return flask.render_template('settings.html', error=error, **return_list)
 
 
+##### THEME STUFF #####
+@app.route("/editor")
+@login_required
+def editor():
+    return flask.render_template("theme/editor.html")
+
+@app.route("/projects")
+@login_required
+def projects():
+    return flask.render_template("theme/projects.html")
+
+
+@socketio.on('get_projects')
+def handle_project_requests():
+    socketid = request.sid
+    userid = request.cookies.get('Userid')
+    projects = database.get_projects(userid)
+    projects_fixed = []
+    for project in projects:
+        if 'author' in project and len(project['author']) > 1:
+            project['author'] = project['author'][1:]
+        projects_fixed.append(project)
+    emit('projects', (projects), to=socketid)
+
+
+@socketio.on('get_project')
+def send_project(project_name):
+    project = database.get_project(project_name)
+    if 'author' in project and len(project['author']) > 1:
+        project['author'] = project['author'][1:]
+    emit('set_theme', project)
+
+
+@socketio.on('save_project')
+def handle_save_project(project):
+    user = User.get_user_by_id(request.cookies.get('Userid'))
+    if user.theme_count < 3:
+        database.save_project(project)
+        emit('response', 'Project Saved')
+    if user.theme_count >= 3:
+        emit('response', 'You have hit your project limit')
+
+##### END OF THEME STUFF #####
+
 # socketio stuff
 # @socketio.on('username')
 # def handle_connect(userid, isVisible, location):
@@ -837,4 +881,5 @@ if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5001)
+
