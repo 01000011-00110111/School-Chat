@@ -230,6 +230,10 @@ AllContent.forEach((element) => {
           {
             shadow_user = "10px 20px 17px 16px"
           }
+          else
+          {
+            shadow_user = ""
+          }
 
           document.getElementById(SelectedLayer).style.background = ColorBox.value;
           document.getElementById(SelectedLayer).style.color = textColor.value;

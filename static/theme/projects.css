@@ -6,8 +6,7 @@ html, body {
 }
 
 body {
-  background-image: url("https://images.pexels.com/photos/87223/pexels-photo-87223.jpeg?cs=srgb&dl=pexels-timur-saglambilek-87223.jpg&fm=jpg");
-  background-color: #cccccc;
+  background: black;
   object-position: unset;
   background-position: center;
   background-repeat: no-repeat;
@@ -26,7 +25,8 @@ body {
 
 .Header {
   display: flex;
-  height: 12%;
+  height: 6%;
+  background: black;
 }
 
 .HeaderColumn {
@@ -80,18 +80,19 @@ body {
 }
 
 #ProjectList {
-  background: white;
+  background: rgba(21, 7, 66, 0.51);
   width: 100%;
   height: 66%;
 }
 
 #searchBox {
-  background: #ffffff3d;
-  width: 60%;
+  background: rgba(0, 0, 0, 0.486);
+  width: 40%;
   display: flex;
   justify-content: space-evenly;
-  height: 70%;
-  border: 1px solid white;
+  height: 50%;
+  border: 1px solid rgb(81, 81, 81);
+  border-radius: 13px;
 }
 
 #searchBox input{
@@ -119,16 +120,27 @@ body {
 }
 
 #NewProjectBtn {
-  height: 70%;
+  height: 50%;
   border: 0px;
   width: 9%;
-  background: #32f609;
+  background: #523ff5;
+  border-radius: 13px;
+  color: white;
+}
+
+#ImportButton {
+  height: 50%;
+  border: 0px;
+  width: 6%;
+  background: #363636;
+  border-radius: 13px;
+  color: white;
 }
 
 .HeaderBtn {
   background: #ffffff57;
   width: 5.5%;
-  height: 46%;
+  height: 90%;
   border: 1px solid white;
   font-size: 21px;
   text-align: center;
@@ -139,4 +151,5 @@ body {
 
 #ExtensionBtn {
   width: 23%;
+  font-family: "Wittgenstein";
 }

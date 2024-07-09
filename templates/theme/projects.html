@@ -12,6 +12,7 @@
   <div class="main">
     <div class="Header">
       <div class="HeaderColumn">
+        <h3>Theme Maker</h3>
         <img id="TeamIcon">
         <p id="TeamName"></p>
       </div>
@@ -35,26 +36,28 @@
     <div id="actionBar">
       <div id="actionColumn">
         <h2>Team workspace</h2>
-
-        <button id="NewProjectBtn" onclick="ToPage('/editor')">New Project</button>
-
         <div id="searchBox">
-          <button class="SearchBtn">+</button>
-          <input type="text" placeholder="search">
-          <button class="SearchBtn">s</button>
-          <button class="SearchBtn">x</button>
+          <button class="SearchBtn"><i class="fa-solid fa-filter"></i></button>
+          <input type="text" placeholder="Search">
+          <button class="SearchBtn"><i class="fa-solid fa-magnifying-glass"></i></button>
+          <button class="SearchBtn"><i class="fa-solid fa-xmark"></i></button>
         </div>
+
+        <button id="ImportButton">
+          <i class="fa-solid fa-arrow-down"></i>
+          Import
+        </button>
+
+        <button id="NewProjectBtn" onclick="ToPage('/editor')">
+          <i class="fa-solid fa-plus"></i>
+          New Project
+        </button>
       </div>
     </div>
 
     <hr>
 
-    <div id="AssigneeInfo">
-        <p>My tasks:</p>
-        <p>More</p>  
-    </div>
-
-    <div id="ProjectList" hidden>
+    <div id="ProjectList">
 
     </div>
   </div>
