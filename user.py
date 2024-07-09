@@ -39,6 +39,7 @@ class User:
         self.theme = user['theme']
         self.locked = ['locked']
         self.permission = user['permission']  # temp will go away
+        self.themeCount = user['themeCount']
         # self.warned = user['warned']
 
     @staticmethod

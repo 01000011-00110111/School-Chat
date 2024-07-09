@@ -37,6 +37,11 @@ from flask_login import (
 from flask_socketio import SocketIO, emit
 
 import database
+try:
+    import setup
+    print(False)
+except ModuleNotFoundError:
+    print(True)
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
@@ -73,8 +78,15 @@ def setup_func():
         with open('backend/banned_words.txt', 'w'):
             pass
     database.setup_chatrooms()
-    
-setup_func()
+
+if __name__ == '__main__':
+    setup_func()
+if os.path.exists(os.path.abspath('setup.py')):
+    setup.chcek_if_data_is_missing()
+    setup.self_destruct()
+    print(False)
+else:
+    print(True)
 
 # these are the files that do not import dbm
 import accounting
@@ -222,8 +234,8 @@ def login_page() -> ResponseReturnValue:
             else:
                 if next_page not in word_lists.approved_links:
                     next_page = flask.url_for('chat_page')
-                if "adminpass" in user['SPermission']:
-                    next_page = flask.url_for('admin_page')
+                    if "adminpass" in user['SPermission']:
+                        next_page = flask.url_for('admin_page')
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie('Username', user['username'])
             resp.set_cookie('Theme', user['theme'])
@@ -524,13 +536,17 @@ def projects():
 def handle_project_requests():
     socketid = request.sid
     userid = request.cookies.get('Userid')
-    projects = database.get_projects(userid)
+    displayname = request.cookies.get('DisplayName')
+    projects = database.get_projects(userid, displayname)
     projects_fixed = []
+    print(projects)
     for project in projects:
+        del project['_id']
         if 'author' in project and len(project['author']) > 1:
             project['author'] = project['author'][1:]
         projects_fixed.append(project)
-    emit('projects', (projects), to=socketid)
+    print(projects_fixed)
+    emit('projects', (projects_fixed), to=socketid)
 
 
 @socketio.on('get_project')
@@ -544,10 +560,10 @@ def send_project(project_name):
 @socketio.on('save_project')
 def handle_save_project(project):
     user = User.get_user_by_id(request.cookies.get('Userid'))
-    if user.theme_count < 3:
+    if user.themeCount < 3:
         database.save_project(project)
         emit('response', 'Project Saved')
-    if user.theme_count >= 3:
+    if user.themeCount >= 3:
         emit('response', 'You have hit your project limit')
 
 ##### END OF THEME STUFF #####
