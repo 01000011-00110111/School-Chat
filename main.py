@@ -639,7 +639,6 @@ def get_rooms(userid):
 
     if user_info["locked"] == "locked":
         emit('roomsList', ([{'vid': 'zxMhhAPfWOxuZylxwkES', 'name': ''}], 'locked'), namespace='/', to=request.sid)
-        return
 
     accessible_rooms = []
     for room in room_access:
@@ -881,5 +880,5 @@ if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", debug=True, port=5001)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
 
