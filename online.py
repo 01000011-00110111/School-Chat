@@ -22,9 +22,10 @@ def get_all_offline():
     return offline
 
 for user in database.get_all_offline():
-    perm = 'dev' if user['SPermission'][0] == 'Debugpass' else 'mod' if\
-        user['SPermission'][0] == 'adminpass' else 'mod'\
-            if user['SPermission'][0] == 'modpass' else None
+    print(user)
+    perm = 'dev' if user['perm'][0] == 'Debugpass' else 'mod' if\
+        user['perm'][0] == 'adminpass' else 'mod'\
+            if user['perm'][0] == 'modpass' else None
     
     status = 'offline' if user['status'] != 'offlne-locked' else 'offline-locked'
             

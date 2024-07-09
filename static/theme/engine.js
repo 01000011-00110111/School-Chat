@@ -125,8 +125,8 @@ function saveProject() {
     topbar.style.background,
   ]
   project = {
-    "Name": theme_name1.value,
-    author: [getCookie("Userid"), getCookie("DisplayName")],
+    "name": theme_name1.value,
+    'author': [getCookie("Userid"), getCookie("DisplayName")],
     theme: theme,
     'status': 'private',
   }
@@ -134,7 +134,7 @@ function saveProject() {
   socket.emit('save_project', project)
 }
 
-socket.on()
+// socket.on()
 
 // Controls Sidenav
 function openNav() {
@@ -283,7 +283,7 @@ function isMobile() {
 };
 
 function Runstartup() {
-  socket.emit('get_project', window.sessionStorage.get('editing'))
+  socket.emit('get_project', window.sessionStorage.getitem('editing'))
 }
 
 socket.on('set_theme', (theme) => {
