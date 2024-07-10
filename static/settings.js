@@ -126,8 +126,9 @@ createExamples();
 
 // Update examples every 250 milliseconds (0.25 seconds)
 setInterval(updateExamples, 250);
-socket.emit("get_theme", getCookie('theme'));
+socket.emit("get_theme", getCookie('Theme'));
 socket.emit("get_themes");
+console.log(getCookie('Theme'))
 
 socket.on('set_theme', (theme) => {
   console.log(theme)
@@ -148,9 +149,9 @@ function setTheme(theme, name) {
   // let day = currentDate.getDate().toString().padStart(2, '0');
   // var themeBtn = document.querySelector(".themeBtn");
   // var themeDropdown = document.querySelector(".themeContent");
-  var contentList = document.getElementById("themes-dropdown-content")
+  var selector = document.getElementById("theme-selector")
   var dropdownbutton = document.getElementById("themes-dropdown-button")
-  contentList.name = theme
+  selector.value = theme
   dropdownbutton.innerHTML = name
 }
 

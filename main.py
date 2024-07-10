@@ -447,6 +447,7 @@ def customize_accounts() -> ResponseReturnValue:
     email = request.form.get("email")
     file = request.files.get('profile')# if 'profile' in request.files else None
     theme = request.form.get("theme")
+    # print(theme)
     user = User.get_user_by_id(userid)
     user_email = database.get_email(user.uuid)
     return_list = {
@@ -619,13 +620,15 @@ def handle_project_requests():
 @socketio.on('get_theme')
 def send_theme(theme_id):
     socketid = request.sid
-    project = next(database.get_project(theme_id))
-    del project['_id']
-    del project['author']
+    theme = database.get_project(theme_id)
+    print(theme)
+    del theme['_id']
+    del theme['author']
     # del project['themeID']
-    del project['status']
+    del theme['status']
     # del project['name']
-    emit('set_theme', project, to=socketid)
+    print(theme)
+    emit('set_theme', theme, to=socketid)
 ##### END OF THEME STUFF #####
 
 # socketio stuff

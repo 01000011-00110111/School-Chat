@@ -875,7 +875,8 @@ def create_project(uuid, displayname, code):
     return project
 
 def get_project(theme_id):
-    return Themes.find({'ThemeID': theme_id})
+    print(theme_id)
+    return Themes.find_one({'themeID': theme_id})
 
 
 def save_project(projects):

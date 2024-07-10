@@ -76,7 +76,7 @@
             <input type="text" id="email" value='{{email}}' placeholder="Email" name="email" class='std_box'>
 
             <!-- Add an input element to store the selected theme value -->
-            <input type="hidden" name="theme" value="">
+            <input type="hidden" id="theme-selector" name="theme" value="">
             <!-- Add an input element to store the selected theme value -->
             <input type="text" id="Ausername" placeholder="login username" maxlength="15" name="user" value='{{user}}' hidden><br>
             <p id="user_colorTXT">Password:</p><br>
@@ -90,25 +90,14 @@
           </div>
 
           <div id="Preferences" class="tabcontent">
-            <!-- <div class="themeDropdown">
-              <button type="button" class="themeBtn" onclick="toggleDropdown()">Themes</button>
-              <div class="themeContent">
-                  <a class="themeOption" id='dark' onclick="setTheme('dark');">Dark</a>
-                  <a class="themeOption" id='light' onclick="setTheme('light');">Light</a>
-                  <a class="themeOption" id='holiday' onclick="setTheme('holiday');">Holiday</a>>
-              
-                
-                   <a class="themeOption" onclick="setTheme('special');">Special</a> -->
-                  <!-- <a class="themeOption" onclick="setTheme('event');">Event</a> -->
-             <!-- </div> -->
-            </div>
-
             <div class="themes-dropdown">
               <button id="themes-dropdown-button" type="button" class="themes-dropdown-button" onclick="openThemes();">Choose a Theme</button>
               <div id="themes-dropdown-content" class="dropdown-content">
                 
               </div>
             </div>
+            </div>
+
           </div>
 
           <div id="DeveloperSettings" class="tabcontent">
