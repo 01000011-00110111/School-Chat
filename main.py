@@ -601,16 +601,17 @@ def handle_save_project(project):
 @socketio.on('get_themes')
 def handle_project_requests():
     socketid = request.sid
-    userid = request.cookies.get('Userid')
-    displayname = request.cookies.get('DisplayName').replace('"', '')
-    projects = database.get_projects(userid, displayname)
+    # userid = request.cookies.get('Userid')
+    # displayname = request.cookies.get('DisplayName').replace('"', '')
+    projects = database.get_all_projects()
     projects_fixed = []
-    # print(projects)
+    # print(list(projects))
     for project in projects:
         if project['status'] == 'private':
             continue
         del project['_id']
         del project['theme']
+        del project['status']
         if 'author' in project and len(project['author']) > 1:
             project['author'] = project['author'][1:]
         projects_fixed.append(project)
