@@ -607,8 +607,8 @@ def handle_project_requests():
     projects_fixed = []
     # print(projects)
     for project in projects:
-        # if project['status'] == 'private':
-            # continue
+        if project['status'] == 'private':
+            continue
         del project['_id']
         del project['theme']
         if 'author' in project and len(project['author']) > 1:
