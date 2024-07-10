@@ -621,13 +621,13 @@ def handle_project_requests():
 def send_theme(theme_id):
     socketid = request.sid
     theme = database.get_project(theme_id)
-    print(theme)
+    # print(theme)
     del theme['_id']
     del theme['author']
     # del project['themeID']
     del theme['status']
     # del project['name']
-    print(theme)
+    # print(theme)
     emit('set_theme', theme, to=socketid)
 ##### END OF THEME STUFF #####
 

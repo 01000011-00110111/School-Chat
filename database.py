@@ -734,6 +734,13 @@ def check_roomnames(name):
     return bool(result)
 
 
+def check_themes(name):
+    """checks if the system chat rooms are there"""
+    result = Themes.find_one({"themeID": name})
+    print(bool(result))
+    return bool(result)
+
+
 def setup_chatrooms():
     """sets up the starter chat rooms"""
     if not check_roomids('ilQvQwgOhm9kNAOrRqbr'):
@@ -746,6 +753,8 @@ def setup_chatrooms():
         generate_other('Mod Chat', 'modonly')
     if not check_roomnames('Commands'):
         generate_other('Commands', 'devonly')
+    if not check_themes('dark'):
+        dark()
 
 def generate_main():
     room_data = {
@@ -832,6 +841,36 @@ def generate_other(name, permission):
     Messages.insert_one(message)
     
 
+def dark():
+    theme = {
+        'body': 'rgb(2, 2, 2)',
+        'chat-text': 'rgb(255, 255, 255)',
+        'chat-background': 'rgb(255, 255, 255)',
+        'chatbox-background': 'rgb(23, 23, 23)',
+        'sides-text': 'rgb(0, 0, 0)',
+        'sides-background': 'rgb(23, 23, 23)',
+        'sidebar-background': 'rgb(33 , 33, 33)',
+        'sidebar-boxShadow': 'rgb(33, 33, 33)',
+        'sidebar-border': 'rgb(255, 255, 255)',
+        'sidebar-text': 'rgb(255, 255, 255)',
+        'topleft-background': 'rgb(25, 32, 128)',
+        'topleft-text': 'rgb(255, 255, 255)',
+        'send-background': 'rgb(255, 255, 255)',
+        'send-text': 'rgb(0, 0, 0)',
+        'sidenav-background': 'rgb(0, 0, 0)',
+        'roomText-text': 'rgb(255, 255, 255)',
+        'topbar-background': 'rgb(23, 23, 23)',
+        'topbar-boxShadow': 'rgb(12, 12, 12)',
+        # 'sidenav-color': snavText.style.color,
+    }
+    project = {
+        'name': 'Dark',
+        'themeID': 'dark',
+        'author': [None, '[SYSTEM]'],
+        'status': 'public',
+        'theme': theme
+    }
+    Themes.insert_one(project)
 
 ##### theme stuff
 
