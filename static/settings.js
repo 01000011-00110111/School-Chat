@@ -126,37 +126,58 @@ createExamples();
 
 // Update examples every 250 milliseconds (0.25 seconds)
 setInterval(updateExamples, 250);
-socket.emit("username", getCookie("Userid"), !document.hidden, 'settings');
+socket.emit("get_theme", getCookie('theme'));
+socket.emit("get_themes");
 
-const holidays = {
-  "halloween": {
-    name: "halloween",
-    start: "10-01",
-    end: "10-31"
-  },
-};
+socket.on('set_theme', (theme) => {
+  console.log(theme)
+  setTheme(theme['themeID'], theme['name'])
+})
 
-function setTheme(theme) {
-  let currentDate = new Date();
-  let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-  let day = currentDate.getDate().toString().padStart(2, '0');
-  var themeBtn = document.querySelector(".themeBtn");
-  var themeDropdown = document.querySelector(".themeContent");
+// const holidays = {
+//   "halloween": {
+//     name: "halloween",
+//     start: "10-01",
+//     end: "10-31"
+//   },
+// };
 
-  for (const key in holidays) {
-    const holiday = holidays[key];
-    if (`${month}-${day}` >= holiday.start && `${month}-${day}` <= holiday.end && theme === 'holiday') {
-      theme = holiday.name;
-      break;
-    }
-  }
-
-  console.log(theme);
-
-  themeBtn.innerText = "You picked: " + capitalizeFirstLetter(theme);
-  document.getElementsByName("theme")[0].value = theme;
-  themeDropdown.style.display = "none";
+function setTheme(theme, name) {
+  // let currentDate = new Date();
+  // let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+  // let day = currentDate.getDate().toString().padStart(2, '0');
+  // var themeBtn = document.querySelector(".themeBtn");
+  // var themeDropdown = document.querySelector(".themeContent");
+  var contentList = document.getElementById("themes-dropdown-content")
+  var dropdownbutton = document.getElementById("themes-dropdown-button")
+  contentList.name = theme
+  dropdownbutton.innerHTML = name
 }
+
+//   for (const key in holidays) {
+//     const holiday = holidays[key];
+//     if (`${month}-${day}` >= holiday.start && `${month}-${day}` <= holiday.end && theme === 'holiday') {
+//       theme = holiday.name;
+//       break;
+//     }
+//   }
+
+//   console.log(theme);
+
+//   themeBtn.innerText = "You picked: " + capitalizeFirstLetter(theme);
+//   document.getElementsByName("theme")[0].value = theme;
+//   themeDropdown.style.display = "none";
+// }
+socket.on('receve_themes', (themes) => {
+  const contentList = document.getElementById("themes-dropdown-content")
+  // console.log(themes)
+  for (const theme of themes) {
+      const themeButton = document.createElement('a');
+      themeButton.innerHTML = theme['name'];
+      themeButton.setAttribute("onclick", `setTheme('${theme['themeID']}', '${theme['name']}')`)
+      contentList.appendChild(themeButton);
+  }
+});
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);

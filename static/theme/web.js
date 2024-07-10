@@ -34,7 +34,7 @@ socket.on("projects", (projects_list) => {
   for (let i = 0; i < projects_list.length; i++) {
     const newProject = document.createElement("button");
     newProject.innerHTML = `${projects_list[i].author}'s | ${projects_list[i].name}`
-    newProject.setAttribute("onclick", `set_theme('${projects_list[i].name}');`)
+    newProject.setAttribute("onclick", `set_theme('${projects_list[i].themeID}');`)
     newProject.classList.add("project_panel")
     projectsList.appendChild(newProject)
   }
@@ -54,3 +54,8 @@ function set_theme(theme) {
   sessionStorage.setItem('editing', theme);
   ToPage('/editor')
 }
+
+// socket.on('response', (response) => {
+//   console.log(response)
+//   document.getElementById('response_text').innerHTML = response
+// });

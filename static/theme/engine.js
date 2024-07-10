@@ -1,3 +1,5 @@
+let project = {}
+
 const pushNotification = (sender, message, icon) => {
   createNotification(sender, message, icon);
 
@@ -136,13 +138,14 @@ function saveProject() {
     'topbar-background': topbar.style.background,
     'topbar-boxShadow': topbar.style.boxShadow,
   }
-  project = {
-    "name": theme_name1.value,
-    'author': [getCookie("Userid"), getCookie("DisplayName").replace(/"/g, '')],
-    theme: theme,
-    'status': 'private',
-  }
-
+  // project = {
+  //   "name": theme_name1.value,
+  //   'author': [getCookie("Userid"), getCookie("DisplayName").replace(/"/g, '')],
+  //   theme: theme,
+  //   'status': 'private',
+  // }
+  project['theme'] = theme
+  project['name'] = theme_name1.value
   socket.emit('save_project', project)
 }
 
@@ -302,14 +305,21 @@ function Runstartup() {
   value = sessionStorage.getItem("editing")
   if (value !== '') {
     socket.emit('get_project', value)
+  } else {
+    socket.emit('create_project')
   }
 }
 
 socket.on('set_theme', (theme) => {
+  project = theme
   open_project(theme);
 });
 
-socket.on('response', (response) => {
+socket.on('response', (response, limit) => {
   console.log(response)
+
+  if (limit === true) {
+    window.location.href = '/projects';
+  }
   pushNotification('System:', response, '/static/favicon.ico')
 });

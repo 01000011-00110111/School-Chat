@@ -45,7 +45,8 @@ function runStartup() {
     document.getElementById("pfpmenu").src = getCookie("Profile");
     socket.emit("get_full_list");
     socket.emit("get_rooms", userid);
-    setTheme(getCookie('Theme'))
+    // setTheme(getCookie('Theme'))
+    socket.emit('get_theme', getCookie('theme'))
 }
 
 socket.on("roomsList", (result, permission) => {

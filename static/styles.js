@@ -1,77 +1,81 @@
-// function setStyles(
-//     backgroundColor,
-//     chatColor,
-//     messageColor,
-//     chatboxColor,
-//     sidesColor,
-//     sidebarColor,
-//     sidebarborderColor,
-//     sidebarTextColor,
-//     topleftColor,
-//     topleftTextColor,
-//     sendBgColor,
-//     sendTextColor,
-//     sidenavColor,
-//     snavLinkColor,
-//     roomTextColor,
-//     topbarColor
-// ) {
-//     const body = document.getElementsByTagName("body")[0];
-//     const chat = document.getElementById("chat");
-//     const message = document.getElementById("message");
-//     const chatbox = document.getElementById("chatbox");
-//     const sides = document.getElementById("sides");
-//     const topleft = document.getElementById("topleft");
-//     const send = document.getElementById("send");
-//     const sidebar = document.getElementById("activenav");
-//     const online = document.getElementById("online_users");
-//     const sidenav = document.getElementsByClassName("sidenav")[0];
-//     const snavText = sidenav.getElementsByTagName("a");
-//     const roomText = document.getElementById("RoomDisplay");
-//     const topbar = document.getElementById("topbar");
-//     // const hrElement = document.querySelector("hr");
+function setStyles(
+    backgroundColor,
+    chatColor,
+    messageColor,
+    chatboxColor,
+    sidesColor,
+    sidebarColor,
+    sidebarborderColor,
+    sidebarTextColor,
+    topleftColor,
+    topleftTextColor,
+    sendBgColor,
+    sendTextColor,
+    sidenavColor,
+    snavLinkColor,
+    roomTextColor,
+    topbarColor
+) {
+    const body = document.getElementsByTagName("body")[0];
+    const chat = document.getElementById("chat");
+    const message = document.getElementById("message");
+    const chatbox = document.getElementById("chatbox");
+    const sides = document.getElementById("sides");
+    const topleft = document.getElementById("topleft");
+    const send = document.getElementById("send");
+    const sidebar = document.getElementById("activenav");
+    const online = document.getElementById("online_users");
+    const sidenav = document.getElementsByClassName("sidenav")[0];
+    const snavText = sidenav.getElementsByTagName("a");
+    const roomText = document.getElementById("RoomDisplay");
+    const topbar = document.getElementById("topbar");
+    // const hrElement = document.querySelector("hr");
 
-//     body.style.backgroundColor = backgroundColor;
-//     chat.style.color = chatColor;
-//     message.style.color = messageColor;
-//     chatbox.style.backgroundColor = chatboxColor;
-//     sides.style.backgroundColor = sidesColor;
-//     sidebar.style.backgroundColor = sidebarColor;
-//     sidebar.style.borderLeft = `4px solid ${sidebarborderColor}`;
-//     online.style.color = sidebarTextColor;
-//     topleft.style.backgroundColor = topleftColor;
-//     topleft.style.color = topleftTextColor;
-//     send.style.backgroundColor = sendBgColor;
-//     send.style.color = sendTextColor;
-//     sidenav.style.backgroundColor = sidenavColor;
-//     roomText.style.color = roomTextColor;
-//     topbar.style.backgroundColor = topbarColor;
-//     // hrElement.sytle.bordeColor = sidebarborderColor;
+    body.style.backgroundColor = backgroundColor;
+    chat.style.color = chatColor;
+    message.style.color = messageColor;
+    chatbox.style.backgroundColor = chatboxColor;
+    sides.style.backgroundColor = sidesColor;
+    sidebar.style.backgroundColor = sidebarColor;
+    sidebar.style.borderLeft = `4px solid ${sidebarborderColor}`;
+    online.style.color = sidebarTextColor;
+    topleft.style.backgroundColor = topleftColor;
+    topleft.style.color = topleftTextColor;
+    send.style.backgroundColor = sendBgColor;
+    send.style.color = sendTextColor;
+    sidenav.style.backgroundColor = sidenavColor;
+    roomText.style.color = roomTextColor;
+    topbar.style.backgroundColor = topbarColor;
+    // hrElement.sytle.bordeColor = sidebarborderColor;
 
-//     for (let i = 0; i < snavText.length; i++) {
-//         snavText[i].style.color = snavLinkColor;
-//     }
-// }
-
-
-function setTheme(themeName) {
-    const themes = {
-        dark: darkTheme,
-        better_dark: betterdarkTheme,
-        light: lightTheme,
-        better_light: betterlightTheme,
-        ogdev: ogDevTheme,
-        dev: devTheme,
-        halloween: halloweenTheme,
-        // winter: winterTheme,
-        white_lavender: whiteLavender,
-        greenish_white: Greenish_white,
-        gtesgyuih:gtesgyuih
-
-    };
-
-    setStyles(...themes[themeName]);
+    for (let i = 0; i < snavText.length; i++) {
+        snavText[i].style.color = snavLinkColor;
+    }
 }
+
+socket.on('set_theme', (theme) =>{
+    setStyles(...theme)
+})
+
+
+// function setTheme(themeName) {
+//     const themes = {
+//         dark: darkTheme,
+//         better_dark: betterdarkTheme,
+//         light: lightTheme,
+//         better_light: betterlightTheme,
+//         ogdev: ogDevTheme,
+//         dev: devTheme,
+//         halloween: halloweenTheme,
+//         // winter: winterTheme,
+//         white_lavender: whiteLavender,
+//         greenish_white: Greenish_white,
+//         gtesgyuih:gtesgyuih
+
+//     };
+
+//     setStyles(...themes[themeName]);
+// }
 
 // Note the the code for the themes are arraganged in this order, so if you want the background to be the color black you change the first value of the theme to #000000 or black.
 
@@ -92,24 +96,24 @@ function setTheme(themeName) {
 // Room Text color
 // Topbar Background Color
 
-const darkTheme = [
-    "#000000",
-    "#ffffff",
-    "#000000",
-    "#181616",
-    "#121212",
-    "#171717",
-    "#f5f2f2",
-    "#ffffff",
-    "#c73228",
-    "#192080",
-    "#192080",
-    "#ffffff",
-    "#111111",
-    "#818181",
-    "#000000",
-    "#ffffff"
-];
+// const darkTheme = [
+//     "#000000",
+//     "#ffffff",
+//     "#000000",
+//     "#181616",
+//     "#121212",
+//     "#171717",
+//     "#f5f2f2",
+//     "#ffffff",
+//     "#c73228",
+//     "#192080",
+//     "#192080",
+//     "#ffffff",
+//     "#111111",
+//     "#818181",
+//     "#000000",
+//     "#ffffff"
+// ];
 
 const lightTheme = [
     "#c0bfbc",
