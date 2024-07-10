@@ -800,3 +800,70 @@ html, body {
   box-shadow: 0px -1px 44px 15px #191919;
   z-index: 1;
 }
+
+
+notification {
+  width: 400px;
+  height: 80px;
+  background: #1e1e1e;
+  display: flex;
+  align-items: center;
+  color: white;
+  border-radius: 15px;
+  margin: 0px;
+  justify-content: space-evenly;
+  border: 1.5px solid #dbdbdb;
+  position: fixed;
+  justify-self: end;
+  animation-name: notification_slide_in;
+  animation-duration: .7s;
+  z-index: 20000000000000000000000;
+  top: 1%;
+  right: 0%;
+}
+
+notification img {
+  height: 60px;
+  width: 60px;
+  border-radius: 18px;
+  margin-left: 0px;
+  border: 1px solid red;
+}
+
+notification div {
+  height: 100%;
+  align-content: center;
+  align-items: center;
+}
+
+notification .img_panel {
+  display: flex;
+  justify-content: center;
+  width: 20%;
+}
+
+notification .content_panel {
+  width: 74%;
+}
+
+notification .close_panel {
+  width: 6%;
+}
+
+notification .close_panel button {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+}
+
+@keyframes notification_slide_in {
+  from {right: -34%;}
+  to {right: 0%;}
+}
+
+@keyframes notification_slide_out {
+  from {right: 0%;}
+  to {right: -34%;}
+}
