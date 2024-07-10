@@ -598,6 +598,16 @@ def handle_save_project(project):
     database.save_project(project)
     emit('response', ('Project Saved', False), to=socketid)
 
+
+@socketio.on('delete_project')
+def handle_delete_project(project):
+    socketid = request.sid
+    user = User.get_user_by_id(request.cookies.get('Userid'))
+    user.themeID -= 1
+    database.delete_project(project)
+    emit('response', ('Project Saved', False), to=socketid)
+
+
 @socketio.on('get_themes')
 def handle_project_requests():
     socketid = request.sid

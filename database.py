@@ -755,6 +755,8 @@ def setup_chatrooms():
         generate_other('Commands', 'devonly')
     if not check_themes('dark'):
         dark()
+    if not check_themes('light'):
+        light()
 
 def generate_main():
     room_data = {
@@ -875,6 +877,7 @@ def dark():
     Themes.insert_one(project)
 
 
+def light():
     theme = {
         'body': 'rgb(200, 200, 200)',
         'chat-text': 'rgb(0, 0, 0)',
@@ -898,6 +901,14 @@ def dark():
         'topbar-background': 'rgb(220, 220, 220)',
         'topbar-boxShadow': 'rgb(255, 255, 255)',
     }
+    project = {
+        'name': 'Light',
+        'themeID': 'light',
+        'author': [None, '[SYSTEM]'],
+        'status': 'public',
+        'theme': theme
+    }
+    Themes.insert_one(project)
 
 
 ##### theme stuff
@@ -950,3 +961,7 @@ def get_project(theme_id):
 
 def save_project(projects):
     Themes.update_one({'author': projects['author'], 'themeID': projects['themeID']},{"$set": projects}, upsert=True)
+
+
+def delete_project(themeID):
+    Themes.delete_one({'themeID': themeID})

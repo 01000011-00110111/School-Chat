@@ -128,8 +128,8 @@ function saveProject() {
     // 'sidenav-color': snavText.style.color,
     'sidenav-background': sidenav.style.background,
     'sidenav-text': sidenav.style.color,
-    'sidenav-a-background': snavText.style.background[0],
-    'sidenav-a-color': snavText.style.color[0],
+    // 'sidenav-a-background': snavText.style.background[0],
+    // 'sidenav-a-color': snavText.style.color[0],
     'roomText-text': roomText.style.color,
     'topbar-background': topbar.style.background,
     'topbar-boxShadow': topbar.style.boxShadow,
@@ -165,8 +165,8 @@ function publishProject() {
     // 'sidenav-color': snavText.style.color,
     'sidenav-background': sidenav.style.background,
     'sidenav-text': sidenav.style.color,
-    'sidenav-a-background': snavText.style.background,
-    'sidenav-a-color': snavText.style.color,
+    // 'sidenav-a-background': snavText.style.background,
+    // 'sidenav-a-color': snavText.style.color,
     'roomText-text': roomText.style.color,
     'topbar-background': topbar.style.background,
     'topbar-boxShadow': topbar.style.boxShadow,
@@ -208,7 +208,7 @@ const AllContent = document.querySelectorAll("#ChatMockup");
 const menuOwner = document.getElementById("menuOwner");
 
 // Opens a project
-function setTheme(data) {
+function open_project(data) {
   let colors = data.theme
   let snav_iter = snavText.length;
   body.style.background = colors['body']
