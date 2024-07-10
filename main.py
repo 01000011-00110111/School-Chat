@@ -35,6 +35,8 @@ from flask_login import (
     logout_user,
 )
 from flask_socketio import SocketIO, emit
+import random
+from string import ascii_uppercase
 
 import database
 try:
@@ -552,25 +554,48 @@ def handle_project_requests():
     emit('projects', (projects_fixed), to=socketid)
 
 
-@socketio.on('get_project')
-def send_project(project_name):
+@socketio.on('create_project')
+def handle_projecet_creation():
+    socketid = request.sid
     userid = request.cookies.get('Userid')
-    displayname = request.cookies.get('DisplayName').replace('"', '')
-    project = next(database.get_project(userid, displayname, project_name))
+    user = User.get_user_by_id(userid)
+    if user.themeCount >= 3:
+        emit('response', ('You have hit your project limit', True), to=socketid)
+        return
+    print(user.themeCount)
+    # displayname = request.cookies.get('DisplayName').replace('"', '')
+    while True:
+        code = ""
+        for _ in range(5):
+            code += random.choice(ascii_uppercase)
+
+        if code not in database.get_all_projects():
+            break
+    project = database.create_project(userid, user.displayName, code)
+    user.themeCount += 1
+    del project['_id']
+    emit('set_theme', project, to=socketid)
+
+
+@socketio.on('get_project')
+def send_project(theme_id):
+    socketid = request.sid
+    # userid = request.cookies.get('Userid')
+    # displayname = request.cookies.get('DisplayName').replace('"', '')
+    project = next(database.get_project(theme_id))
     del project['_id']
     if 'author' in project and len(project['author']) > 1:
         project['author'] = project['author'][1:]
-    emit('set_theme', project)
+    emit('set_theme', project, to=socketid)
 
 
 @socketio.on('save_project')
 def handle_save_project(project):
-    user = User.get_user_by_id(request.cookies.get('Userid'))
-    if user.themeCount < 3:
-        database.save_project(project)
-        emit('response', 'Project Saved')
-    if user.themeCount >= 3:
-        emit('response', 'You have hit your project limit')
+    socketid = request.sid
+    # user = User.get_user_by_id(request.cookies.get('Userid'))
+    # if user.themeCount < 3:
+    database.save_project(project)
+    emit('response', ('Project Saved', False), to=socketid)
 
 ##### END OF THEME STUFF #####
 

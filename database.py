@@ -4,8 +4,6 @@
 """
 import configparser
 import hashlib
-import os
-import sys
 import secrets
 from datetime import datetime
 
@@ -837,13 +835,48 @@ def generate_other(name, permission):
 
 ##### theme stuff
 
+def get_all_projects():
+    return Themes.find()
+
 def get_projects(uuid, displayname):
     return Themes.find({'author': [uuid, displayname]})
 
+def create_project(uuid, displayname, code):
+    theme = {
+        'body': 'rgb(2, 2, 2)',
+        'chat-text': 'rgb(255, 255, 255)',
+        'chat-background': 'rgb(255, 255, 255)',
+        'chatbox-background': 'rgb(23, 23, 23)',
+        'sides-text': 'rgb(0, 0, 0)',
+        'sides-background': 'rgb(23, 23, 23)',
+        'sidebar-background': 'rgb(33 , 33, 33)',
+        'sidebar-boxShadow': 'rgb(33, 33, 33)',
+        'sidebar-border': 'rgb(255, 255, 255)',
+        'sidebar-text': 'rgb(255, 255, 255)',
+        'topleft-background': 'rgb(25, 32, 128)',
+        'topleft-text': 'rgb(255, 255, 255)',
+        'send-background': 'rgb(255, 255, 255)',
+        'send-text': 'rgb(0, 0, 0)',
+        'sidenav-background': 'rgb(0, 0, 0)',
+        'roomText-text': 'rgb(255, 255, 255)',
+        'topbar-background': 'rgb(23, 23, 23)',
+        'topbar-boxShadow': 'rgb(12, 12, 12)',
+        # 'sidenav-color': snavText.style.color,
+    }
 
-def get_project(uuid, displayname, name):
-    return Themes.find({'author': [uuid, displayname], 'name': name},)
+    project = {
+        'name': 'Untitled Project',
+        'themeID': code,
+        'author': [uuid, displayname],
+        'status': 'private',
+        'theme': theme
+    }
+    Themes.insert_one(project)
+    return project
+
+def get_project(theme_id):
+    return Themes.find({'ThemeID': theme_id})
 
 
 def save_project(projects):
-    Themes.update_one({'author': projects['author'], 'name': projects['name']},{"$set": projects}, upsert=True)
+    Themes.update_one({'author': projects['author'], 'themeID': projects['themeID']},{"$set": projects}, upsert=True)
