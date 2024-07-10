@@ -11,44 +11,11 @@ function CloseProperties() {
 }
 
 // Document Object Model imports
-let BodyColor = document.getElementById("body-color");
-let SidenavColor = document.getElementById("sn-color");
-let SidesColor = document.getElementById("s-color");
-let TextColor = document.getElementById("t-color");
-let OnlineListColor = document.getElementById("oul-color");
-let OnlineListTextColor = document.getElementById("oult-color");
-let ChatBoxColor = document.getElementById("chb-color");
-let SendButton = document.getElementById("sb-color");
-let TopLeft = document.getElementById("snb-color");
-let SidenavTextColor = document.getElementById("snt-color");
-let BorderColor = document.getElementById("bdr-color");
-let ShadowColor = document.getElementById("shd-color");
-let TopbarColor = document.getElementById("tpb-color");
-let TopbarTextColor = document.getElementById("tpbt-color");
-let DropDownBorderColor = document.getElementById("tpbdr-color");
-let TopbarShadowColor = document.getElementById("tpbs-color");
 let theme_name1 = document.getElementById("n_name");
-let theme_name2 = document.getElementById("themeNL");
-
-let textbox1 = document.getElementById("textbox1");
-let textbox2 = document.getElementById("textbox2");
-let textbox3 = document.getElementById("textbox3");
-let textbox4 = document.getElementById("textbox4");
-let textbox5 = document.getElementById("textbox5");
-let textbox6 = document.getElementById("textbox6");
-
-let infobox = document.getElementById("info");
-
-let Response = document.getElementById("Response");
-
-let snbr = document.getElementById("sn-br");
-let snwd = document.getElementById("sn-wd");
 
 let applyButton = document.getElementById("applyButton");
 let code = document.getElementById("code");
 let editmodeText = document.getElementById("editmodeText");
-
-// Don't be confused
 
 const body = document.getElementsByTagName("body")[0];
 const chat = document.getElementById("chat");
@@ -60,8 +27,8 @@ const send = document.getElementById("send");
 const sidebar = document.getElementById("activenav");
 const online = document.getElementById("online_users");
 const sidenav = document.getElementsByClassName("sidenav")[0];
-const snavText = sidenav.getElementsByTagName("a");
-const roomText = document.getElementById("room_text");
+// const snavText = sidenav.getElementsByTagName("a");
+const roomText = document.getElementById("RoomDisplay");
 const roomBar = document.getElementById("room_bar");
 const topbar = document.getElementById("topbar");
 // const hrElement = document.querySelector("hr");
@@ -78,55 +45,49 @@ const topbar = document.getElementById("topbar");
 // After this is the Theme & CSE code
 
 
-// Fix this later
-// function showcode() {
-//   code.style.display = "grid";
-//  const theme = `
-//   const ${theme_name1.value} = [
-//     "${body.style.background}",
-//     "${chat.style.color}",
-//     "${message.style.color}",
-//     "${chatbox.style.background}",
-//     "${sides.style.background}",
-//     "${sidebar.style.background}",
-//     "${sidebar.style.borderColor}",
-//     "${sidebar.style.color}",
-//     "${topleft.style.background}",
-//     "${topleft.style.color}",
-//     "${send.style.background}",
-//     "${send.style.color}",
-//     "${sidenav.style.background}",
-//     "${sidenav.style.color}",
-//     "",
-//     "${topbar.style.background}"
-//   ];
-//   `
-
-//   code.innerHTML = theme;
-// }
-
 function saveProject() {
-  theme = [
-    body.style.background,
-    chat.style.color,
-    message.style.color,
-    chatbox.style.backgrund,
-    sides.style.background,
-    sidebar.style.background,
-    sidebar.style.borderColor,
-    sidebar.style.color,
-    topleft.style.background,
-    topleft.style.color,
-    send.style.background,
-    send.style.color,
-    sidenav.style.background,
-    sidenav.style.color,
-    "",
-    topbar.style.background,
-  ]
+  // theme = [
+  //   body.style.background,
+  //   chat.style.color,
+  //   message.style.color,
+  //   chatbox.style.background,
+  //   sides.style.background,
+  //   sidebar.style.background,
+  //   sidebar.style.borderColor,
+  //   sidebar.style.color,
+  //   topleft.style.background,
+  //   topleft.style.color,
+  //   send.style.background,
+  //   send.style.color,
+  //   sidenav.style.background,
+  //   sidenav.style.color,
+  //   roomText.style.color,
+  //   topbar.style.background,
+  // ]
+  theme = {
+    'body': body.style.background,
+    'chat-text': chat.style.color,
+    'chat-background': message.style.background,
+    'chatbox-background': chatbox.style.background,
+    'sides-text': sides.style.color,
+    'sides-background': sides.style.background,
+    'sidebar-background': sidebar.style.background,
+    'sidebar-boxShadow': sidebar.style.boxShadow,
+    'sidebar-border': sidebar.style.borderColor,
+    'sidebar-text': sidebar.style.color,
+    'topleft-background': topleft.style.background,
+    'topleft-text': topleft.style.color,
+    'send-background': send.style.background,
+    'send-text': send.style.color,
+    'sidenav-background': sidenav.style.background,
+    // 'sidenav-color': snavText.style.color,
+    'roomText-text': roomText.style.color,
+    'topbar-background': topbar.style.background,
+    'topbar-boxShadow': topbar.style.boxShadow,
+  }
   project = {
     "name": theme_name1.value,
-    'author': [getCookie("Userid"), getCookie("DisplayName")],
+    'author': [getCookie("Userid"), getCookie("DisplayName").replace(/"/g, '')],
     theme: theme,
     'status': 'private',
   }
@@ -167,24 +128,29 @@ const menuOwner = document.getElementById("menuOwner");
 // Opens a project
 function open_project(data) {
   let colors = data.theme
-  BodyColor.style.background = colors[0]
-  chat.style.color = colors[1]
-  message.style.background = colors[2]
-  chatbox.style.color = colors[3]
-  sides.style.color = colors[4]
-  sides.style.background = colors[5]
-  sidebar.style.background = colors[6]
-  sidebar.style.borderColor = colors[7]
-  sidebar.style.color = colors[8]
-  topleft.style.background = colors[9]
-  topleft.style.color = colors[10]
-  SendButton.style.background = colors[11]
-  SendButton.style.color = colors[12]
-  sidenav
-  sidenav
-  roomText.style.color = colors[15]
-  topbar.style.backgrounda = colors[16]
-};
+  console.log(data.theme)
+  theme_name1.value = data.name
+  document.title = data.name + " - Theme Editor"
+  body.style.background = colors['body']
+  chat.style.color = colors['chat-text']
+  message.style.background = colors['chat-background']
+  chatbox.style.background = colors['chatbox-background']
+  sides.style.color = colors['sides-text']
+  sides.style.background = colors['sides-background']
+  sidebar.style.background = colors['sidebar-background']
+  sidebar.style.borderColor = colors['sidebar-border']
+  sidebar.style.color = colors['sidebar-text']
+  sidebar.style.boxShadow = colors['sidebar-boxShadow']
+  topleft.style.background = colors['topleft-background']
+  topleft.style.color = colors['topleft-text']
+  send.style.background = colors['send-background']
+  send.style.color = colors['send-text']
+  sidenav.style.background = colors['sidenav-background']
+  // snavText.style.color = colors['sidenav-link-color]
+  roomText.style.color = colors['roomText-text']
+  topbar.style.background = colors['topbar-background']
+  topbar.style.boxShadow = colors['topbar-boxShadow']
+}
 
 // Work in progress
 const properties = {
@@ -239,7 +205,6 @@ AllContent.forEach((element) => {
           document.getElementById(SelectedLayer).style.color = textColor.value;
           document.getElementById(SelectedLayer).style.borderColor = borderColor.value;
           document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
-          console.log(`${shadow_user} ${shadowColor.value}`)
 
           LayerProperties.addEventListener("click", (event) => {
             document.getElementById(SelectedLayer).style.display = "none";
@@ -283,9 +248,17 @@ function isMobile() {
 };
 
 function Runstartup() {
-  socket.emit('get_project', window.sessionStorage.getitem('editing'))
+  value = sessionStorage.getItem("editing")
+  if (value !== '') {
+    socket.emit('get_project', value)
+  }
 }
 
 socket.on('set_theme', (theme) => {
   open_project(theme);
+});
+
+socket.on('response', (response) => {
+  console.log(response)
+  document.getElementById('response_text').innerHTML = response
 });

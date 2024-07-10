@@ -1,57 +1,58 @@
-function setStyles(
-    backgroundColor,
-    chatColor,
-    messageColor,
-    chatboxColor,
-    sidesColor,
-    sidebarColor,
-    sidebarborderColor,
-    sidebarTextColor,
-    topleftColor,
-    topleftTextColor,
-    sendBgColor,
-    sendTextColor,
-    sidenavColor,
-    snavLinkColor,
-    roomTextColor,
-    topbarColor
-) {
-    const body = document.getElementsByTagName("body")[0];
-    const chat = document.getElementById("chat");
-    const message = document.getElementById("message");
-    const chatbox = document.getElementById("chatbox");
-    const sides = document.getElementById("sides");
-    const topleft = document.getElementById("topleft");
-    const send = document.getElementById("send");
-    const sidebar = document.getElementById("activenav");
-    const online = document.getElementById("online_users");
-    const sidenav = document.getElementsByClassName("sidenav")[0];
-    const snavText = sidenav.getElementsByTagName("a");
-    const roomText = document.getElementById("RoomDisplay");
-    const topbar = document.getElementById("topbar");
-    // const hrElement = document.querySelector("hr");
+// function setStyles(
+//     backgroundColor,
+//     chatColor,
+//     messageColor,
+//     chatboxColor,
+//     sidesColor,
+//     sidebarColor,
+//     sidebarborderColor,
+//     sidebarTextColor,
+//     topleftColor,
+//     topleftTextColor,
+//     sendBgColor,
+//     sendTextColor,
+//     sidenavColor,
+//     snavLinkColor,
+//     roomTextColor,
+//     topbarColor
+// ) {
+//     const body = document.getElementsByTagName("body")[0];
+//     const chat = document.getElementById("chat");
+//     const message = document.getElementById("message");
+//     const chatbox = document.getElementById("chatbox");
+//     const sides = document.getElementById("sides");
+//     const topleft = document.getElementById("topleft");
+//     const send = document.getElementById("send");
+//     const sidebar = document.getElementById("activenav");
+//     const online = document.getElementById("online_users");
+//     const sidenav = document.getElementsByClassName("sidenav")[0];
+//     const snavText = sidenav.getElementsByTagName("a");
+//     const roomText = document.getElementById("RoomDisplay");
+//     const topbar = document.getElementById("topbar");
+//     // const hrElement = document.querySelector("hr");
 
-    body.style.backgroundColor = backgroundColor;
-    chat.style.color = chatColor;
-    message.style.color = messageColor;
-    chatbox.style.backgroundColor = chatboxColor;
-    sides.style.backgroundColor = sidesColor;
-    sidebar.style.backgroundColor = sidebarColor;
-    sidebar.style.borderLeft = `4px solid ${sidebarborderColor}`;
-    online.style.color = sidebarTextColor;
-    topleft.style.backgroundColor = topleftColor;
-    topleft.style.color = topleftTextColor;
-    send.style.backgroundColor = sendBgColor;
-    send.style.color = sendTextColor;
-    sidenav.style.backgroundColor = sidenavColor;
-    roomText.style.color = roomTextColor;
-    topbar.style.backgroundColor = topbarColor;
-    // hrElement.sytle.bordeColor = sidebarborderColor;
+//     body.style.backgroundColor = backgroundColor;
+//     chat.style.color = chatColor;
+//     message.style.color = messageColor;
+//     chatbox.style.backgroundColor = chatboxColor;
+//     sides.style.backgroundColor = sidesColor;
+//     sidebar.style.backgroundColor = sidebarColor;
+//     sidebar.style.borderLeft = `4px solid ${sidebarborderColor}`;
+//     online.style.color = sidebarTextColor;
+//     topleft.style.backgroundColor = topleftColor;
+//     topleft.style.color = topleftTextColor;
+//     send.style.backgroundColor = sendBgColor;
+//     send.style.color = sendTextColor;
+//     sidenav.style.backgroundColor = sidenavColor;
+//     roomText.style.color = roomTextColor;
+//     topbar.style.backgroundColor = topbarColor;
+//     // hrElement.sytle.bordeColor = sidebarborderColor;
 
-    for (let i = 0; i < snavText.length; i++) {
-        snavText[i].style.color = snavLinkColor;
-    }
-}
+//     for (let i = 0; i < snavText.length; i++) {
+//         snavText[i].style.color = snavLinkColor;
+//     }
+// }
+
 
 function setTheme(themeName) {
     const themes = {
@@ -64,7 +65,9 @@ function setTheme(themeName) {
         halloween: halloweenTheme,
         // winter: winterTheme,
         white_lavender: whiteLavender,
-        greenish_white: Greenish_white
+        greenish_white: Greenish_white,
+        gtesgyuih:gtesgyuih
+
     };
 
     setStyles(...themes[themeName]);
@@ -258,3 +261,5 @@ const Greenish_white = [
 	"rgb(0, 216, 12)", 
 	"rgb(255, 255, 255)"
 ];
+
+const gtesgyuih = ["rgb(4, 74, 65)","rgb(46, 194, 126)","rgb(22, 17, 175)","rgb(22, 17, 175)","rgb(5, 136, 113)","rgb(4, 74, 65)","rgb(22, 17, 175)","rgb(46, 194, 126)","rgb(22, 17, 175)","rgb(25, 32, 128)","rgb(0, 0, 0)","rgb(22, 17, 175)","rgb(5, 136, 113)","rgb(22, 17, 175)","rgb(22, 17, 175)","rgb(5, 136, 113)"]

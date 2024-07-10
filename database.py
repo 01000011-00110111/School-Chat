@@ -841,5 +841,9 @@ def get_projects(uuid, displayname):
     return Themes.find({'author': [uuid, displayname]})
 
 
+def get_project(uuid, displayname, name):
+    return Themes.find({'author': [uuid, displayname], 'name': name},)
+
+
 def save_project(projects):
-    Themes.update_one({'author': projects['author']},{"$set": projects}, upsert=True)
+    Themes.update_one({'author': projects['author'], 'name': projects['name']},{"$set": projects}, upsert=True)

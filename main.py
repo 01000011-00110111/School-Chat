@@ -232,6 +232,8 @@ def login_page() -> ResponseReturnValue:
                 else:
                     next_page = flask.url_for('chat_page')
             else:
+                if 'editor' in next_page:
+                    next_page = flask.url_for('projects')
                 if next_page not in word_lists.approved_links:
                     next_page = flask.url_for('chat_page')
                     if "adminpass" in user['SPermission']:
@@ -243,6 +245,7 @@ def login_page() -> ResponseReturnValue:
                 '/static/favicon.ico')
             resp.set_cookie('Userid', user['userId'])
             resp.set_cookie('DisplayName', user["displayName"])
+            resp.set_cookie('test', 'e e')
             return resp
         else:
             return flask.render_template(
@@ -536,7 +539,7 @@ def projects():
 def handle_project_requests():
     socketid = request.sid
     userid = request.cookies.get('Userid')
-    displayname = request.cookies.get('DisplayName')
+    displayname = request.cookies.get('DisplayName').replace('"', '')
     projects = database.get_projects(userid, displayname)
     projects_fixed = []
     print(projects)
@@ -545,13 +548,16 @@ def handle_project_requests():
         if 'author' in project and len(project['author']) > 1:
             project['author'] = project['author'][1:]
         projects_fixed.append(project)
-    print(projects_fixed)
+    # print(projects_fixed)
     emit('projects', (projects_fixed), to=socketid)
 
 
 @socketio.on('get_project')
 def send_project(project_name):
-    project = database.get_project(project_name)
+    userid = request.cookies.get('Userid')
+    displayname = request.cookies.get('DisplayName').replace('"', '')
+    project = next(database.get_project(userid, displayname, project_name))
+    del project['_id']
     if 'author' in project and len(project['author']) > 1:
         project['author'] = project['author'][1:]
     emit('set_theme', project)
