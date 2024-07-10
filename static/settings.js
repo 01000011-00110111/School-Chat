@@ -143,16 +143,16 @@ socket.on('set_theme', (theme) => {
 //   },
 // };
 
-function setTheme(theme, name) {
+function setTheme(theme, name, author) {
   // let currentDate = new Date();
   // let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
   // let day = currentDate.getDate().toString().padStart(2, '0');
   // var themeBtn = document.querySelector(".themeBtn");
   // var themeDropdown = document.querySelector(".themeContent");
   var selector = document.getElementById("theme-selector")
-  var dropdownbutton = document.getElementById("themes-dropdown-button")
+  var info_theme_text = document.getElementById("info_theme_name")
   selector.value = theme
-  dropdownbutton.innerHTML = name
+  info_theme_text.innerHTML = name
 }
 
 //   for (const key in holidays) {
@@ -170,11 +170,13 @@ function setTheme(theme, name) {
 //   themeDropdown.style.display = "none";
 // }
 socket.on('receve_themes', (themes) => {
-  const contentList = document.getElementById("themes-dropdown-content")
+  const contentList = document.getElementById("themes_panel")
   // console.log(themes)
   for (const theme of themes) {
+      const themeAuthor = document.getElementById("info_theme_author")
       const themeButton = document.createElement('a');
       themeButton.innerHTML = theme['name'];
+      themeAuthor.innerHTML = theme['author']
       themeButton.setAttribute("onclick", `setTheme('${theme['themeID']}', '${theme['name']}')`)
       contentList.appendChild(themeButton);
   }

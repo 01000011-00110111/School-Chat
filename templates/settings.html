@@ -20,7 +20,7 @@
       </button>
 
       <button class="SettingsNavItem" onclick="openTab(event, 'Preferences')">
-        Preferences
+        Appearance
       </button>
 
       <button class="SettingsNavItem" onclick="openTab(event, 'DeveloperSettings')" hidden>
@@ -91,9 +91,20 @@
 
           <div id="Preferences" class="tabcontent">
             <div class="themes-dropdown">
-              <button id="themes-dropdown-button" type="button" class="themes-dropdown-button" onclick="openThemes();">Choose a Theme</button>
+              <div id="theme_manager_header">
+                <h2>Themes Manager <h5>v1.0</h5></h2>
+              </div>
               <div id="themes-dropdown-content" class="dropdown-content">
-                
+                <div id="themes_info_panel">
+                  <div id="theme_display">
+                    <h2 id="info_theme_name">Project Name</h2>
+                    <p id="info_theme_author">Creator:</p>
+                  </div>
+                </div>
+
+                <div id="themes_panel">
+
+                </div>
               </div>
             </div>
             </div>
