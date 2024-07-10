@@ -34,7 +34,7 @@ body, html {
 #online_buttons {
   background: none;
   border: none;
-  color: white;
+  /* color: white; */
   font-size: 15px;
 }
 

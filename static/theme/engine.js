@@ -80,20 +80,12 @@ const send = document.getElementById("send");
 const sidebar = document.getElementById("activenav");
 const online = document.getElementById("online_users");
 const sidenav = document.getElementsByClassName("sidenav")[0];
-// const snavText = sidenav.getElementsByTagName("a");
+const snavText = sidenav.getElementsByTagName("a");
 const roomText = document.getElementById("RoomDisplay");
 const roomBar = document.getElementById("room_bar");
 const topbar = document.getElementById("topbar");
 // const hrElement = document.querySelector("hr");
 
-
-//   let sidenav = document.getElementsByClassName("sidenav")[0];
-//   let snav_text = sidenav.getElementsByTagName("a");
-//   let snav_iter = snav_text.length;
-//   for (let i = 0; i < snav_iter; i++) {
-//       snav_text[i].style.color = SidenavTextColor.value;
-//   }
-// }
 
 // After this is the Theme & CSE code
 
@@ -132,8 +124,12 @@ function saveProject() {
     'topleft-text': topleft.style.color,
     'send-background': send.style.background,
     'send-text': send.style.color,
-    'sidenav-background': sidenav.style.background,
+    // 'sidenav-background': sidenav.style.background,
     // 'sidenav-color': snavText.style.color,
+    'sidenav-background': sidenav.style.background,
+    'sidenav-text': sidenav.style.color,
+    'sidenav-a-background': snavText.style.background[0],
+    'sidenav-a-color': snavText.style.color[0],
     'roomText-text': roomText.style.color,
     'topbar-background': topbar.style.background,
     'topbar-boxShadow': topbar.style.boxShadow,
@@ -146,6 +142,38 @@ function saveProject() {
   // }
   project['theme'] = theme
   project['name'] = theme_name1.value
+  socket.emit('save_project', project)
+}
+
+function publishProject() {
+  theme = {
+    'body': body.style.background,
+    'chat-text': chat.style.color,
+    'chat-background': message.style.background,
+    'chatbox-background': chatbox.style.background,
+    'sides-text': sides.style.color,
+    'sides-background': sides.style.background,
+    'sidebar-background': sidebar.style.background,
+    'sidebar-boxShadow': sidebar.style.boxShadow,
+    'sidebar-border': sidebar.style.borderColor,
+    'sidebar-text': sidebar.style.color,
+    'topleft-background': topleft.style.background,
+    'topleft-text': topleft.style.color,
+    'send-background': send.style.background,
+    'send-text': send.style.color,
+    // 'sidenav-background': sidenav.style.background,
+    // 'sidenav-color': snavText.style.color,
+    'sidenav-background': sidenav.style.background,
+    'sidenav-text': sidenav.style.color,
+    'sidenav-a-background': snavText.style.background,
+    'sidenav-a-color': snavText.style.color,
+    'roomText-text': roomText.style.color,
+    'topbar-background': topbar.style.background,
+    'topbar-boxShadow': topbar.style.boxShadow,
+  }
+  project['theme'] = theme
+  project['name'] = theme_name1.value
+  project['status'] = 'public'
   socket.emit('save_project', project)
 }
 
@@ -180,11 +208,9 @@ const AllContent = document.querySelectorAll("#ChatMockup");
 const menuOwner = document.getElementById("menuOwner");
 
 // Opens a project
-function open_project(data) {
+function setTheme(data) {
   let colors = data.theme
-  console.log(data.theme)
-  theme_name1.value = data.name
-  document.title = data.name + " - Theme Editor"
+  let snav_iter = snavText.length;
   body.style.background = colors['body']
   chat.style.color = colors['chat-text']
   message.style.background = colors['chat-background']
@@ -200,7 +226,11 @@ function open_project(data) {
   send.style.background = colors['send-background']
   send.style.color = colors['send-text']
   sidenav.style.background = colors['sidenav-background']
-  // snavText.style.color = colors['sidenav-link-color]
+  sidenav.style.color = colors['sidenav-color']
+  for (let i = 0; i < snav_iter; i++) {
+      snavText[i].style.color = colors['sidenav-a-color']
+      snavText[i].style.background = colors['sidenav-a-background']
+  }
   roomText.style.color = colors['roomText-text']
   topbar.style.background = colors['topbar-background']
   topbar.style.boxShadow = colors['topbar-boxShadow']
@@ -275,7 +305,7 @@ AllContent.forEach((element) => {
           };
 
           Update();
-
+          
           document.getElementsByClassName("ColorDisplay")[0].style.background = document.getElementById(`${SelectedLayer}`).style.background;
           document.getElementsByClassName("ColorDisplay")[1].style.background = document.getElementById(`${SelectedLayer}`).style.color; 
           document.getElementsByClassName("ColorDisplay")[2].style.background = document.getElementById(`${SelectedLayer}`).style.boxShadow;  

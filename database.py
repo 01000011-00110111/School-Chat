@@ -857,11 +857,13 @@ def dark():
         'topleft-text': 'rgb(255, 255, 255)',
         'send-background': 'rgb(255, 255, 255)',
         'send-text': 'rgb(0, 0, 0)',
-        'sidenav-background': 'rgb(0, 0, 0)',
+        'sidenav-background': 'rgb(23, 23, 23)',
+        'sidenav-text': 'rgb(255, 255, 255)',
+        'sidenav-a-background': 'rgb(23, 23, 23)',
+        'sidenav-a-color': 'rgb(255, 255, 255)',
         'roomText-text': 'rgb(255, 255, 255)',
         'topbar-background': 'rgb(23, 23, 23)',
         'topbar-boxShadow': 'rgb(12, 12, 12)',
-        # 'sidenav-color': snavText.style.color,
     }
     project = {
         'name': 'Dark',
@@ -871,6 +873,32 @@ def dark():
         'theme': theme
     }
     Themes.insert_one(project)
+
+
+    theme = {
+        'body': 'rgb(200, 200, 200)',
+        'chat-text': 'rgb(0, 0, 0)',
+        'chat-background': 'rgb(255, 255, 255)',
+        'chatbox-background': 'rgb(240, 240, 240)',
+        'sides-text': 'rgb(100, 100, 100)',
+        'sides-background': 'rgb(230, 230, 230)',
+        'sidebar-background': 'rgb(220, 220, 220)',
+        'sidebar-boxShadow': 'rgb(255, 255, 255)',
+        'sidebar-border': 'rgb(150, 150, 150)',
+        'sidebar-text': 'rgb(0, 102, 153)',
+        'topleft-background': 'rgb(100, 160, 200)',
+        'topleft-text': 'rgb(40, 60, 80)',
+        'send-background': 'rgb(200, 210, 220)',
+        'send-text': 'rgb(0, 51, 102)',
+        'sidenav-background': 'rgb(220, 220, 220)',
+        'sidenav-text': 'rgb(220, 220, 220)',
+        'sidenav-a-background': 'rgb(243, 243, 243)',
+        'sidenav-a-color': 'rgb(0, 0, 0)',
+        'roomText-text': 'rgb(0, 0, 0)',
+        'topbar-background': 'rgb(220, 220, 220)',
+        'topbar-boxShadow': 'rgb(255, 255, 255)',
+    }
+
 
 ##### theme stuff
 
@@ -896,11 +924,13 @@ def create_project(uuid, displayname, code):
         'topleft-text': 'rgb(255, 255, 255)',
         'send-background': 'rgb(255, 255, 255)',
         'send-text': 'rgb(0, 0, 0)',
-        'sidenav-background': 'rgb(0, 0, 0)',
+        'sidenav-background': 'rgb(23, 23, 23)',
+        'sidenav-text': 'rgb(255, 255, 255)',
+        'sidenav-a-background': 'rgb(23, 23, 23)',
+        'sidenav-a-color': 'rgb(255, 255, 255)',
         'roomText-text': 'rgb(255, 255, 255)',
         'topbar-background': 'rgb(23, 23, 23)',
         'topbar-boxShadow': 'rgb(12, 12, 12)',
-        # 'sidenav-color': snavText.style.color,
     }
 
     project = {

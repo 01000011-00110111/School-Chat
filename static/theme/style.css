@@ -447,16 +447,17 @@ html, body {
 }
 
 .sidenav a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #d0c8c8;
-    display: block;
-    transition: 0.3s;
-    background: black;
-    border-radius: 15px;
-    height: 40px;
-    width: 84%;
+  text-decoration: none;
+  font-size: 25px;
+  color: #d0c8c8;
+  display: grid;
+  transition: 0.3s;
+  background: black;
+  height: 70px;
+  width: 100%;
+  text-align: justify;
+  align-content: center;
+  text-indent: 17px;
 }
 
 .sidenav a:hover {
