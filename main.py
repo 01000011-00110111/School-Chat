@@ -583,7 +583,7 @@ def send_project(theme_id):
     socketid = request.sid
     # userid = request.cookies.get('Userid')
     # displayname = request.cookies.get('DisplayName').replace('"', '')
-    project = next(database.get_project(theme_id))
+    project = database.get_project(theme_id)
     del project['_id']
     if 'author' in project and len(project['author']) > 1:
         project['author'] = project['author'][1:]

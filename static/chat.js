@@ -46,7 +46,7 @@ function runStartup() {
     socket.emit("get_full_list");
     socket.emit("get_rooms", userid);
     // setTheme(getCookie('Theme'))
-    socket.emit('get_theme', getCookie('theme'))
+    socket.emit('get_theme', getCookie('Theme'))
 }
 
 socket.on("roomsList", (result, permission) => {
