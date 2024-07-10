@@ -544,7 +544,7 @@ def handle_project_requests():
     displayname = request.cookies.get('DisplayName').replace('"', '')
     projects = database.get_projects(userid, displayname)
     projects_fixed = []
-    print(projects)
+    # print(projects)
     for project in projects:
         del project['_id']
         if 'author' in project and len(project['author']) > 1:
@@ -597,6 +597,35 @@ def handle_save_project(project):
     database.save_project(project)
     emit('response', ('Project Saved', False), to=socketid)
 
+@socketio.on('get_themes')
+def handle_project_requests():
+    socketid = request.sid
+    userid = request.cookies.get('Userid')
+    displayname = request.cookies.get('DisplayName').replace('"', '')
+    projects = database.get_projects(userid, displayname)
+    projects_fixed = []
+    # print(projects)
+    for project in projects:
+        # if project['status'] == 'private':
+            # continue
+        del project['_id']
+        del project['theme']
+        if 'author' in project and len(project['author']) > 1:
+            project['author'] = project['author'][1:]
+        projects_fixed.append(project)
+    # print(projects_fixed)
+    emit('receve_themes', (projects_fixed), to=socketid)
+
+@socketio.on('get_theme')
+def send_theme(theme_id):
+    socketid = request.sid
+    project = next(database.get_project(theme_id))
+    del project['_id']
+    del project['author']
+    # del project['themeID']
+    del project['status']
+    # del project['name']
+    emit('set_theme', project, to=socketid)
 ##### END OF THEME STUFF #####
 
 # socketio stuff
