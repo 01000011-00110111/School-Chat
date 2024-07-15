@@ -152,7 +152,7 @@ function setTheme(theme, name, author) {
   var selector = document.getElementById("theme-selector")
   var info_theme_text = document.getElementById("info_theme_name")
   selector.value = theme
-  info_theme_text.innerHTML = name
+  info_theme_text.innerHTML = `Applied theme: ${name}`
 }
 
 //   for (const key in holidays) {
@@ -175,7 +175,7 @@ socket.on('receve_themes', (themes) => {
   for (const theme of themes) {
       const themeAuthor = document.getElementById("info_theme_author")
       const themeButton = document.createElement('a');
-      themeButton.innerHTML = theme['name'];
+      themeButton.innerHTML = `<i class="fa-regular fa-file-lines" style="color: #ffffff;"></i> ${theme['name']}`;
       themeAuthor.innerHTML = theme['author']
       themeButton.setAttribute("onclick", `setTheme('${theme['themeID']}', '${theme['name']}')`)
       contentList.appendChild(themeButton);
