@@ -3,7 +3,8 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import configparser
-import hashlib
+
+# import hashlib
 import secrets
 from datetime import datetime
 
@@ -389,7 +390,8 @@ def update_account(userid, messageC, roleC, userC, displayname, role, profile,
         "theme": theme,
     }
 
-    Customization.update_one({'userId': userid}, {'$set': customization_data}, upsert=True)
+    Customization.update_one({'userId': userid}, {'$set': customization_data},
+                             upsert=True)
     ID.update_one({'userId': userid}, {'$set': {"email": email}}, upsert=True)
 
 
@@ -410,7 +412,8 @@ def backup_user(user):
         # "warned": user.warned,
     }
 
-    Customization.update_one({'userId': user.uuid}, {'$set': customization_data}, upsert=True)
+    Customization.update_one({'userId': user.uuid}, {'$set': customization_data},
+                             upsert=True)
     Permission.update_one({'userId': user.uuid}, {'$set': permission_data}, upsert=True)
 
 
@@ -422,7 +425,8 @@ def delete_account(user):
 
 #### room db edits ####
 def clear_chat_room(roomid, message):
-    Messages.update_one({"roomid": roomid}, {'$set': {"messages": [message]}}, upsert=True)
+    Messages.update_one({"roomid": roomid}, {'$set': {"messages": [message]}},
+                        upsert=True)
 
 
 def send_message_single(message_text: str, roomid):
@@ -587,7 +591,8 @@ def update_chat(chat):
 
     # Rooms.insert_one(room_data)
     Access.update_one({"roomid": chat.vid}, {"$set": access_data}, upsert=True)
-    Messages.update_one({"roomid": chat.vid}, {"$set": {"messages": chat.messages}}, upsert=True)
+    Messages.update_one({"roomid": chat.vid}, {"$set": {"messages": chat.messages}},
+                        upsert=True)
 
 
 def update_whitelist(vid, message):  #combine whitelist and blacklist
@@ -674,7 +679,8 @@ def find_private_messages(userlist, sender):
     pm_id = Private.find_one({"userIds": userlist})
     if pm_id is not None:
         pm_id['unread'][sender] = 0
-        Private.update_one({"userIds": userlist}, {'$set': {"unread": pm_id['unread']}}, upsert=True)
+        Private.update_one({"userIds": userlist}, {'$set': {"unread": pm_id['unread']}},
+                           upsert=True)
     return pm_id
 
 def send_private_message(message, pmid, userid):
@@ -689,7 +695,8 @@ def send_private_message(message, pmid, userid):
                 {'$push': {
                     "messages": message,
                 }}, upsert=True)
-    Private.update_one({"pmid": pmid}, {'$set': {"unread": unread['unread']}}, upsert=True)
+    Private.update_one({"pmid": pmid}, {'$set': {"unread": unread['unread']}},
+                       upsert=True)
     
     
 def clear_priv_chat(pmid, message):
@@ -755,6 +762,8 @@ def setup_chatrooms():
         generate_other('Commands', 'devonly')
     if not check_themes('dark'):
         dark()
+    if not check_themes('light'):
+        light()
 
 def generate_main():
     room_data = {
@@ -875,6 +884,7 @@ def dark():
     Themes.insert_one(project)
 
 
+def light():
     theme = {
         'body': 'rgb(200, 200, 200)',
         'chat-text': 'rgb(0, 0, 0)',
@@ -898,6 +908,14 @@ def dark():
         'topbar-background': 'rgb(220, 220, 220)',
         'topbar-boxShadow': 'rgb(255, 255, 255)',
     }
+    project = {
+        'name': 'Light',
+        'themeID': 'light',
+        'author': [None, '[SYSTEM]'],
+        'status': 'public',
+        'theme': theme
+    }
+    Themes.insert_one(project)
 
 
 ##### theme stuff
@@ -944,9 +962,14 @@ def create_project(uuid, displayname, code):
     return project
 
 def get_project(theme_id):
-    print(theme_id)
+    # print(theme_id)
     return Themes.find_one({'themeID': theme_id})
 
 
 def save_project(projects):
-    Themes.update_one({'author': projects['author'], 'themeID': projects['themeID']},{"$set": projects}, upsert=True)
+    Themes.update_one({'author': projects['author'], 'themeID': projects['themeID']},
+                      {"$set": projects}, upsert=True)
+
+
+def delete_project(themeID):
+    Themes.delete_one({'themeID': themeID})

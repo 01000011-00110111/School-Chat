@@ -1,16 +1,16 @@
+import platform
+import sys
 from time import time
-from flask_socketio import emit
 from typing import List
-import chat
-import log
+
 # from cmds import other.respond_command, check_if_dev
 import psutil
-import database
-import sys
-import platform
-from user import User
-from commands import other
+from flask_socketio import emit
 
+import database
+import log
+from commands import other
+from user import User
 
 LOGFILE_B = "backend/Chat-backup.txt"
 
@@ -49,7 +49,7 @@ def get_stats(roomid, version, room) -> str:
     # CPU stats
     cpu_percent = psutil.cpu_percent(interval=1)
     cpu_cores = psutil.cpu_count(logical=False)  # physical cores
-    cpu_threads = psutil.cpu_count(logical=True) # logical cores (including hyperthreading)
+    cpu_threads = psutil.cpu_count(logical=True) # logical cores
 
     # Python version
     python_version = sys.version
@@ -100,17 +100,17 @@ def get_stats(roomid, version, room) -> str:
     return partial_stats_text if version == 'partial' else full_stats_text
 
 
-def status(**kwargs):
-    """Send stats into the chat."""
-    roomid = kwargs['roomid']
-    room = kwargs['room']
+# def status(**kwargs):
+    # """Send stats into the chat."""
+    # roomid = kwargs['roomid']
+    # room = kwargs['room']
     # emit("message_chat", (get_stats(roomid, 'full', room), roomid), broadcast=True)
     
 
-def pstats(**kwargs):
-    """Send stats into the chat."""
-    roomid = kwargs['roomid']
-    room = kwargs['room']
+# def pstats(**kwargs):
+    # """Send stats into the chat."""
+    # roomid = kwargs['roomid']
+    # room = kwargs['room']
     # emit("message_chat", (get_stats(roomid, 'partial', room), roomid), broadcast=True)
     
 
@@ -135,13 +135,14 @@ def send_cmd_logs(**kwargs):
     roomid = kwargs['roomid']
     room = kwargs['room']
     msg = log.get_cmd_logs()
-    room.add_private_message(msg, None) if database.check_private(roomid) else room.add_message(msg, 'false')
+    room.add_private_message(msg, None) if database.check_private(roomid) else \
+    room.add_message(msg, 'false')
     # emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 def clear_all_mutes(**kwargs):
     """Clears all mutes from every user."""
     # user = kwargs['user']
-    roomid = kwargs['roomid']
+    # roomid = kwargs['roomid']
     room = kwargs['room']
     for user in User.Users.values():
         user.mutes = []

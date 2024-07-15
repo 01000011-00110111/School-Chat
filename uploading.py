@@ -1,8 +1,7 @@
 import os
 import uuid
-# import pyclamd
 
-import database
+# import pyclamd
 
 allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -12,7 +11,7 @@ def allowed_file(filename):
         '.', 1)[1].lower() in allowed_extensions
 
 
-def scan_for_virus(file_path):
+def scan_for_virus(_file_path):
     return False
     # broken SAY "PLZ NO VIRUS"
 
@@ -33,7 +32,8 @@ def upload_file(file, old):
     if not allowed_file(file.filename):
         return 0
     replace_old_file(old)
-    new_filename = f"static/profiles/{rename_file(old_file)}.{file.filename.rsplit('.', 1)[1].lower()}"
+    new_filename = \
+    f"static/profiles/{rename_file(old_file)}.{file.filename.rsplit('.', 1)[1].lower()}"
     file_path = f"{new_filename.split('.')[0]}.png"
     file.save(file_path)  # saves the file at the location
 

@@ -3,10 +3,8 @@ import hashlib
 from datetime import datetime, timedelta
 
 from flask_login import LoginManager, logout_user
-from flask_socketio import emit
 
 import database
-from private import Private, format_userlist
 
 # inactive_users = []
 
@@ -98,7 +96,7 @@ class User:
         user_class = cls(username, user, userid)
         database.set_online(userid, False)
         cls.Users.update({userid: user_class})
-        tupple = (userid, user['displayName'], user['SPermission'][0])
+        (userid, user['displayName'], user['SPermission'][0])
         # if tupple in inactive_users:
         #     inactive_users.remove(tupple)
         return user_class

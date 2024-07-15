@@ -1,12 +1,13 @@
 from datetime import datetime, timedelta
+
 from flask_socketio import emit
-from chat import Chat
-# from cmds import  other.respond_command, other.check_if_dev, other.format_system_msg, other.check_if_mod
+
 import database
+from chat import Chat
 from commands import other
-from user import User
 from online import get_all_offline
-from word_lists import whitelist_words, blacklist_words
+from user import User
+from word_lists import blacklist_words, whitelist_words
 
 
 def globalock(**kwargs):
@@ -182,7 +183,8 @@ def add_word_to_unban_list(**kwargs):
     whitelist_words.append(word)
     if word in blacklist_words:
         blacklist_words.remove(word)
-    message = other.format_system_msg(f"New unbanned word: {word} was added by an Admin.")
+    message = other.format_system_msg(
+        f"New unbanned word: {word} was added by an Admin.")
     room.add_message(message, roomid)
     # emit("message_chat", (message, roomid), broadcast=True)
 

@@ -1,9 +1,10 @@
 # from datetime import datetime, timedelta
 
-from flask_socketio import emit
+# from flask_socketio import emit
 
 import database
-from commands import other
+
+# from commands import other
 from user import User
 
 

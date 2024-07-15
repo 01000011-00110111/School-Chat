@@ -1,5 +1,6 @@
 # file for excluding files from git repo (dev files)
 backend/Backups/*
+.vscode/*
 
 # chatlog
 backend/webserver.log
