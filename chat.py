@@ -1,10 +1,5 @@
-import sched
-import time
-from datetime import timedelta, datetime
-from typing import List
 import os
-
-import psutil
+from datetime import datetime, timedelta
 
 from flask_socketio import emit
 
@@ -54,7 +49,7 @@ class Chat:
         if os.path.exists("backend/chatlog.txt"):
             with open("backend/chatlog.txt", "a") as logfile:
                 logfile.write(f"{datetime.now()} - Chat log updated\nChats:\n")
-                for key, chat in cls.chats.items():
+                for key, _chat in cls.chats.items():
                     logfile.write(key+'\n')
         
         
@@ -64,12 +59,12 @@ class Chat:
             chat.locked = status
                 
     @classmethod
-    def add_message_to_all(cls, message_text: str, rooms, permission='false'):
+    def add_message_to_all(cls, message_text: str, _rooms, _permission='false'):
         """ads messsages to all chatrooms"""
         for chat in cls.chats:
             # private = self.vid == "all"
             chat.last_message = datetime.now()
-            lines = len(chat.messages)# if not private else 1
+            _lines = len(chat.messages)# if not private else 1
 
             # if ((lines >= 500) and permission != 'true'):
             #     chat.reset_chat(message_text, False)

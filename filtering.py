@@ -3,19 +3,18 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 
 from better_profanity import profanity
 from flask_socketio import emit
 
 import cmds
-import database
 import log
 
 # import rooms
 import word_lists
-from user import User
 from online import get_scoketid
+from user import User
 
 # old imports, do we still need the markdown package due to us having our own markdown
 # from markdown import markdown
@@ -74,10 +73,7 @@ def run_filter_chat(user, room, message, roomid, userid):
     if can_send == "everyone":
         return_str = ('msg', final_str, 0)
     elif can_send == 'mod':
-        if perms == 'mod':
-            return_str = ('msg', final_str, 0)
-        else:
-            return_str = ('permission', 5, 0)
+        return_str = ('msg', final_str, 0) if perms == 'mod' else ('permission', 5, 0)
     else:
         return_str = ('permission', 5, 0)
 
@@ -122,7 +118,8 @@ def run_filter_private(user, message, userid):
     profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
 
 
-    final_str = ('msg' ,compile_message(format_text(message), profile_picture, user, role), 0)
+    final_str = ('msg' ,compile_message(format_text(message),
+                                        profile_picture, user, role), 0)
     
     limit = user.send_limit()
     if not limit: #and perms != "dev":
@@ -145,14 +142,18 @@ def check_mute(user, roomid):
 
 def check_perms(user):
     """Checks if the user has specal perms else return as a user"""
-    return 'dev' if 'Debugpass' in user.perm else 'mod' if 'modpass' in user.perm else 'user'
+    return 'dev' if 'Debugpass' in user.perm else 'mod' if 'modpass' in user.perm else\
+        'user'
 
 
 def to_hyperlink(text: str) -> str:
     """Auto hyperlinks any links we find as common."""
     mails = re.findall(r"mailto:(.+?)[\s?]", text, flags=re.M)
     links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text, flags=re.M | re.I)
-    links1 = re.findall(r"(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])", text, flags=re.I)
+    pattern = \
+        r"(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])"
+    links1 = re.findall(
+    pattern, text, flags=re.I)
 
     # Iterate over the results and replace the strings
     for link in mails:
@@ -160,7 +161,8 @@ def to_hyperlink(text: str) -> str:
     for link in links1:
         text = text.replace(link[0], f'<a href="{link[0]}">{link[0]}</a>')
     for link in links2:
-        text = text.replace(link[1], f'<a target="_blank" href="{link[1]}">{link[1]}</a>')
+        text = text.replace(link[1],
+                            f'<a target="_blank" href="{link[1]}">{link[1]}</a>')
     return text
 
 
@@ -198,7 +200,7 @@ def format_text(message):#this system needs notes do not remove
     return message
 
 
-def find_pings(message, dispName, profile_picture, roomid, room):
+def find_pings(message, dispName, _profile_picture, _roomid, _room):
     """Gotta catch 'em all! (checks for pings in the users message)"""
     pings = re.findall(r'@(\w+|"[^"]+")', message)
     pings = [ping.strip('"') for ping in pings]
@@ -214,7 +216,7 @@ def find_pings(message, dispName, profile_picture, roomid, room):
         }, 
         namespace="/",
         to=sid if ping != 'everyone' else None,
-        broadcast=True if ping == 'everyone' else False)
+        broadcast=ping == 'everyone')
         break  # ez one per message fix lol
 
 
@@ -225,10 +227,10 @@ def find_cmds(message, user, roomid, room):
     """
     command_split = message.split("$sudo")
     command_split.pop(0)
-    command_string = command_split[0]
-    perms = check_perms(user)
+    # command_string = command_split[0]
+    # perms = check_perms(user)
     origin_room = None
-    match = re.findall(r"\(|\)", command_string)
+    # match = re.findall(r"\(|\)", command_string)
 
     # if perms == 'dev' and roomid == 'jN7Ht3giH9EDBvpvnqRB' and match != []:
     #     match_msg = re.findall(r"\((.*?)\)", command_string)
@@ -315,7 +317,8 @@ def failed_message(result, roomid):
         (7):
         "This chat room vid does not exist.",
         (8):
-        "You are not allowed to send more than 15 messages in a row. You have been muted for 5 minutes(Warning)",
+        "You are not allowed to send more than 15 messages in a row.\
+        You have been muted for 5 minutes(Warning)",
         (9):
         "You must verify your account before you can use this command.",
         (10):

@@ -1,8 +1,7 @@
 """this is where all room commands goes"""
-from chat import Chat
-import database
 import rooms
 from commands import other
+
 
 def reset_chat_user(**kwargs):
     """Reset the current chatroom."""
