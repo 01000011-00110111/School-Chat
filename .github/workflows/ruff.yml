@@ -1,4 +1,4 @@
-name: Run python type checking (mypy)
+name: Run python linting (ruff)
 
 on: [push]
 
@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.11.2"]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -16,9 +16,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip poetry
-        poetry install
-        pip install mypy types-psutil
-    - name: Type Checking with mypy
+        python -m pip install --upgrade pip
+        pip install ruff
+    - name: Analysing the code with ruff
       run: |
-        mypy $(git ls-files '*.py')
+        ruff check $(git ls-files '*.py')
