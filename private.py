@@ -1,14 +1,13 @@
 """private.py - Prive Messaging"""
-import sched
-import time
-from datetime import timedelta, datetime
-from typing import List
-from flask_socketio import SocketIO, emit
 import random
+from datetime import datetime, timedelta
 from string import ascii_uppercase
+
+from flask_socketio import emit
+
 import database
-from commands.other import format_system_msg
 import log
+from commands.other import format_system_msg
 
 
 def get_messages_list(sender, receiver):

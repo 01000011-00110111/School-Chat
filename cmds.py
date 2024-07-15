@@ -2,11 +2,12 @@
     Copyright (C) 2023  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
 
-from flask_socketio import emit
+# from flask_socketio import emit
 
-from commands import debug, moderation, online, other, room
+from commands import debug, moderation, other, room
+
 # from main import scheduler
 
 # consts
@@ -91,15 +92,15 @@ def permission(user):
     # in the 1.4 update ill add room mods back modpass
 
 
-def warn_user(user):
-    """adds a new warning to the user"""
-    # warn_count = user.warned.split(' ')
-    current_time = datetime.now()
-    expiration_time = current_time + timedelta(days=30)
-    date = expiration_time.strftime("%Y-%m-%d %H:%M:%S")
-    warn_updated = int(warn_count[0]) + 1
-    dbm.Accounts.update_one(
-        {"username": user.username},
-        {'$set': {
-            'warned': f"{str(warn_updated)} {date}"
-        }})
+# def warn_user(user):
+#     """adds a new warning to the user"""
+#     # warn_count = user.warned.split(' ')
+#     current_time = datetime.now()
+#     expiration_time = current_time + timedelta(days=30)
+#     date = expiration_time.strftime("%Y-%m-%d %H:%M:%S")
+#     warn_updated = int(warn_count[0]) + 1
+#     dbm.Accounts.update_one(
+#         {"username": user.username},
+#         {'$set': {
+#             'warned': f"{str(warn_updated)} {date}"
+#         }})

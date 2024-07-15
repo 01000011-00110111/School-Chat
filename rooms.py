@@ -3,8 +3,10 @@ from datetime import datetime
 from string import ascii_uppercase
 
 from flask_socketio import emit
+
 import database
 from chat import Chat
+
 
 def chat_room_log(message):
     """Logs all deletes, creations, and edits done to chat rooms."""
@@ -19,7 +21,7 @@ def generate_unique_code(length):
         if code not in rooms:
             return code
 
-def create_chat_room(name, username, userinfo):
+def create_chat_room(name, username, _userinfo):
     """Create a chat room and register it in the database."""
     generated_at = datetime().strftime("%Y-%m-%dT%H:%M:%S")
     
@@ -49,8 +51,10 @@ def delete_chat_room(room_name, user):
         if len(rooms.get("roomid", "")) == 20:
             return ("reason", 3, "delete")
         response = delete_room(rooms.get("roomid", ""))
-        logmessage = f"{username} deleted {room_name} at {date_str}" if made_by == user.username \
-                     else f"{username} deleted {room_name} owned by {made_by} at {date_str}"
+        logmessage = f"{username} deleted {room_name} at {date_str}"\
+            if made_by == user.username \
+                else\
+                    f"{username} deleted {room_name} owned by {made_by} at {date_str}"
     else:
         logmessage = f"{username} tried to delete {room_name} at {date_str}"
         response = ("reason", 1, "delete")

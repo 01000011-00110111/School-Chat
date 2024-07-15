@@ -3,8 +3,8 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import configparser
-import hashlib
-import os
+
+# import hashlib
 import secrets
 from datetime import datetime
 
@@ -32,7 +32,8 @@ Messages = client.Rooms.Messages
 Private = client.Rooms.Private
 
 #extra
-db = client.Extra
+Themes = client.Extra.Themes
+# db = client.Extra
 
 
 def clear_online():
@@ -137,7 +138,7 @@ def get_all_offline():
                 "displayName": {
                     "$arrayElemAt": ["$customization.displayName", 0]
                 },
-                "SPermission": {
+                "perm": {
                     "$arrayElemAt": ["$permission.SPermission", 0]
                 },
             }
@@ -204,6 +205,9 @@ def find_login_data(value, login):
             },
             "SPermission": {
                 "$arrayElemAt": ["$permissions.SPermission", 0]
+            },
+            "themeCount": {
+                "$arrayElemAt": ["$permissions.themeCount", 0]
             }
         }
     }]
@@ -328,15 +332,15 @@ def find_all_accounts():
     return ID.find()
 
 def mute_user(user, muted):
-    Permission.update_one({"userId": user}, {"$push": {"mutes": muted}})
+    Permission.update_one({"userId": user}, {"$push": {"mutes": muted}}, upsert=True)
 
 def update_account_set(location, data, data2):
     if location == 'vid':
-        return ID.update_one(data, data2)
+        return ID.update_one(data, data2, upsert=True)
     if location == 'perm':
-        return Permission.update_one(data, data2)
+        return Permission.update_one(data, data2, upsert=True)
     if location == 'customization':
-        return Customization.update_one(data, data2)
+        return Customization.update_one(data, data2, upsert=True)
 
 
 def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
@@ -365,7 +369,8 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
         "mutes": [],
         'locked': locked,
         "warned": '0',
-        "SPermission": [""]
+        "SPermission": [""],
+        "themeCount": 0,
     }
 
     ID.insert_one(id_data)
@@ -385,8 +390,9 @@ def update_account(userid, messageC, roleC, userC, displayname, role, profile,
         "theme": theme,
     }
 
-    Customization.update_one({'userId': userid}, {'$set': customization_data})
-    ID.update_one({'userId': userid}, {'$set': {"email": email}})
+    Customization.update_one({'userId': userid}, {'$set': customization_data},
+                             upsert=True)
+    ID.update_one({'userId': userid}, {'$set': {"email": email}}, upsert=True)
 
 
 def backup_user(user):
@@ -402,11 +408,13 @@ def backup_user(user):
     permission_data = {
         "mutes": user.mutes,
         "SPermission": user.perm,
+        "themeCount": user.themeCount, 
         # "warned": user.warned,
     }
 
-    Customization.update_one({'userId': user.uuid}, {'$set': customization_data})
-    Permission.update_one({'userId': user.uuid}, {'$set': permission_data})
+    Customization.update_one({'userId': user.uuid}, {'$set': customization_data},
+                             upsert=True)
+    Permission.update_one({'userId': user.uuid}, {'$set': permission_data}, upsert=True)
 
 
 def delete_account(user):
@@ -417,18 +425,19 @@ def delete_account(user):
 
 #### room db edits ####
 def clear_chat_room(roomid, message):
-    Messages.update_one({"roomid": roomid}, {'$set': {"messages": [message]}})
+    Messages.update_one({"roomid": roomid}, {'$set': {"messages": [message]}},
+                        upsert=True)
 
 
 def send_message_single(message_text: str, roomid):
     Messages.update_one({"roomid": roomid},
                         {'$push': {
                             "messages": message_text
-                        }})
+                        }}, upsert=True)
 
 
 def send_message_all(message_text: str):
-    Messages.rooms.update_many({}, {'$push': {'messages': message_text}})
+    Messages.rooms.update_many({}, {'$push': {'messages': message_text}}, upsert=True)
 
 
 def find_room(data, location):
@@ -581,18 +590,19 @@ def update_chat(chat):
     }
 
     # Rooms.insert_one(room_data)
-    Access.update_one({"roomid": chat.vid}, {"$set": access_data})
-    Messages.update_one({"roomid": chat.vid}, {"$set": {"messages": chat.messages}})
+    Access.update_one({"roomid": chat.vid}, {"$set": access_data}, upsert=True)
+    Messages.update_one({"roomid": chat.vid}, {"$set": {"messages": chat.messages}},
+                        upsert=True)
 
 
 def update_whitelist(vid, message):  #combine whitelist and blacklist
     """Adds the whitelisted users to the database"""
-    Access.update_one({"roomid": vid}, {"$set": {"whitelisted": message}})
+    Access.update_one({"roomid": vid}, {"$set": {"whitelisted": message}}, upsert=True)
 
 
 def update_blacklist(vid, message):
     """Adds the blacklisted users to the database"""
-    Access.update_one({"roomid": vid}, {"$set": {"blacklisted": message}})
+    Access.update_one({"roomid": vid}, {"$set": {"blacklisted": message}}, upsert=True)
 
 
 def delete_room(data):
@@ -603,12 +613,12 @@ def delete_room(data):
 
 def set_lock_status(roomid, locked: str):
     """Set a room's locked status."""
-    Access.update_one({"roomid": roomid}, {"$set": {"locked": locked}})
+    Access.update_one({"roomid": roomid}, {"$set": {"locked": locked}}, upsert=True)
 
 
 def set_all_lock_status(locked: str):
     """Set all rooms' locked status."""
-    Access.update_many({}, {"locked": locked})
+    Access.update_many({}, {"locked": locked}, upsert=True)
 
 def add_rooms(code, username, generated_at, name):
     room_data = {
@@ -669,7 +679,8 @@ def find_private_messages(userlist, sender):
     pm_id = Private.find_one({"userIds": userlist})
     if pm_id is not None:
         pm_id['unread'][sender] = 0
-        Private.update_one({"userIds": userlist}, {'$set': {"unread": pm_id['unread']}})
+        Private.update_one({"userIds": userlist}, {'$set': {"unread": pm_id['unread']}},
+                           upsert=True)
     return pm_id
 
 def send_private_message(message, pmid, userid):
@@ -683,12 +694,13 @@ def send_private_message(message, pmid, userid):
     Private.update_one({"pmid": pmid},
                 {'$push': {
                     "messages": message,
-                }})
-    Private.update_one({"pmid": pmid}, {'$set': {"unread": unread['unread']}})
+                }}, upsert=True)
+    Private.update_one({"pmid": pmid}, {'$set': {"unread": unread['unread']}},
+                       upsert=True)
     
     
 def clear_priv_chat(pmid, message):
-    Private.update_one({"pmid": pmid}, {'$set': {"messages": [message]}})
+    Private.update_one({"pmid": pmid}, {'$set': {"messages": [message]}}, upsert=True)
 
 def update_private(priv):
     access_data = {
@@ -697,7 +709,7 @@ def update_private(priv):
     }
 
     # Rooms.insert_one(room_data)
-    Private.update_one({"pmid": priv.vid}, {"$set": access_data})
+    Private.update_one({"pmid": priv.vid}, {"$set": access_data}, upsert=True)
     
     
 def create_private_chat(userlist, code):
@@ -729,6 +741,13 @@ def check_roomnames(name):
     return bool(result)
 
 
+def check_themes(name):
+    """checks if the system chat rooms are there"""
+    result = Themes.find_one({"themeID": name})
+    print(bool(result))
+    return bool(result)
+
+
 def setup_chatrooms():
     """sets up the starter chat rooms"""
     if not check_roomids('ilQvQwgOhm9kNAOrRqbr'):
@@ -741,6 +760,10 @@ def setup_chatrooms():
         generate_other('Mod Chat', 'modonly')
     if not check_roomnames('Commands'):
         generate_other('Commands', 'devonly')
+    if not check_themes('dark'):
+        dark()
+    if not check_themes('light'):
+        light()
 
 def generate_main():
     room_data = {
@@ -825,3 +848,128 @@ def generate_other(name, permission):
     Rooms.insert_one(room_data)
     Access.insert_one(access_data)
     Messages.insert_one(message)
+    
+
+def dark():
+    theme = {
+        'body': 'rgb(2, 2, 2)',
+        'chat-text': 'rgb(255, 255, 255)',
+        'chat-background': 'rgb(255, 255, 255)',
+        'chatbox-background': 'rgb(23, 23, 23)',
+        'sides-text': 'rgb(0, 0, 0)',
+        'sides-background': 'rgb(23, 23, 23)',
+        'sidebar-background': 'rgb(33 , 33, 33)',
+        'sidebar-boxShadow': 'rgb(33, 33, 33)',
+        'sidebar-border': 'rgb(255, 255, 255)',
+        'sidebar-text': 'rgb(255, 255, 255)',
+        'topleft-background': 'rgb(25, 32, 128)',
+        'topleft-text': 'rgb(255, 255, 255)',
+        'send-background': 'rgb(255, 255, 255)',
+        'send-text': 'rgb(0, 0, 0)',
+        'sidenav-background': 'rgb(23, 23, 23)',
+        'sidenav-text': 'rgb(255, 255, 255)',
+        'sidenav-a-background': 'rgb(23, 23, 23)',
+        'sidenav-a-color': 'rgb(255, 255, 255)',
+        'roomText-text': 'rgb(255, 255, 255)',
+        'topbar-background': 'rgb(23, 23, 23)',
+        'topbar-boxShadow': 'rgb(12, 12, 12)',
+    }
+    project = {
+        'name': 'Dark',
+        'themeID': 'dark',
+        'author': [None, '[SYSTEM]'],
+        'status': 'public',
+        'theme': theme
+    }
+    Themes.insert_one(project)
+
+
+def light():
+    theme = {
+        'body': 'rgb(200, 200, 200)',
+        'chat-text': 'rgb(0, 0, 0)',
+        'chat-background': 'rgb(255, 255, 255)',
+        'chatbox-background': 'rgb(240, 240, 240)',
+        'sides-text': 'rgb(100, 100, 100)',
+        'sides-background': 'rgb(230, 230, 230)',
+        'sidebar-background': 'rgb(220, 220, 220)',
+        'sidebar-boxShadow': 'rgb(255, 255, 255)',
+        'sidebar-border': 'rgb(150, 150, 150)',
+        'sidebar-text': 'rgb(0, 102, 153)',
+        'topleft-background': 'rgb(100, 160, 200)',
+        'topleft-text': 'rgb(40, 60, 80)',
+        'send-background': 'rgb(200, 210, 220)',
+        'send-text': 'rgb(0, 51, 102)',
+        'sidenav-background': 'rgb(220, 220, 220)',
+        'sidenav-text': 'rgb(220, 220, 220)',
+        'sidenav-a-background': 'rgb(243, 243, 243)',
+        'sidenav-a-color': 'rgb(0, 0, 0)',
+        'roomText-text': 'rgb(0, 0, 0)',
+        'topbar-background': 'rgb(220, 220, 220)',
+        'topbar-boxShadow': 'rgb(255, 255, 255)',
+    }
+    project = {
+        'name': 'Light',
+        'themeID': 'light',
+        'author': [None, '[SYSTEM]'],
+        'status': 'public',
+        'theme': theme
+    }
+    Themes.insert_one(project)
+
+
+##### theme stuff
+
+def get_all_projects():
+    return Themes.find()
+
+def get_projects(uuid, displayname):
+    return Themes.find({'author': [uuid, displayname]})
+
+def create_project(uuid, displayname, code):
+    theme = {
+        'body': 'rgb(2, 2, 2)',
+        'chat-text': 'rgb(255, 255, 255)',
+        'chat-background': 'rgb(255, 255, 255)',
+        'chatbox-background': 'rgb(23, 23, 23)',
+        'sides-text': 'rgb(0, 0, 0)',
+        'sides-background': 'rgb(23, 23, 23)',
+        'sidebar-background': 'rgb(33 , 33, 33)',
+        'sidebar-boxShadow': 'rgb(33, 33, 33)',
+        'sidebar-border': 'rgb(255, 255, 255)',
+        'sidebar-text': 'rgb(255, 255, 255)',
+        'topleft-background': 'rgb(25, 32, 128)',
+        'topleft-text': 'rgb(255, 255, 255)',
+        'send-background': 'rgb(255, 255, 255)',
+        'send-text': 'rgb(0, 0, 0)',
+        'sidenav-background': 'rgb(23, 23, 23)',
+        'sidenav-text': 'rgb(255, 255, 255)',
+        'sidenav-a-background': 'rgb(23, 23, 23)',
+        'sidenav-a-color': 'rgb(255, 255, 255)',
+        'roomText-text': 'rgb(255, 255, 255)',
+        'topbar-background': 'rgb(23, 23, 23)',
+        'topbar-boxShadow': 'rgb(12, 12, 12)',
+    }
+
+    project = {
+        'name': 'Untitled Project',
+        'themeID': code,
+        'author': [uuid, displayname],
+        'status': 'private',
+        'theme': theme
+    }
+    Themes.insert_one(project)
+    return project
+
+def get_project(theme_id):
+    print(theme_id)
+    return Themes.find_one({'themeID': theme_id})
+
+
+def save_project(projects):
+    Themes.update_one({'author': projects['author'], 'themeID': projects['themeID']},
+                      {"$set": projects}, upsert=True)
+
+
+def delete_project(themeID):
+    Themes.delete_one({'themeID': themeID})

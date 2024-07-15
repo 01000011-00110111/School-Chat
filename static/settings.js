@@ -6,16 +6,41 @@ let prevValues = {};
 const numExamples = 1; // Number of examples to create
 
 const responses = [
-    { message: "This is a test response.", rarity: 95 },
+    { message: "This is a test response.", rarity: 90 },
+    { message: "Stay positive and have fun!", rarity: 90 },
+    { message: "Welcome to the chat! Enjoy your stay, if you can.", rarity: 90 },
+    { message: "Remember to be respectful to others, but not me.", rarity: 85 },
+    { message: "Remember to take breaks and stay hydrated!", rarity: 85 },
     { message: "The Devs that made this chat are cserver, and cseven.", rarity: 80 },
+    { message: "Got feedback? We'd love to hear it.", rarity: 80 },
     { message: "The chat is always changing and improving so get ready for the next new change.", rarity: 80 },
     { message: "This is a chat app, what else did you think this is?", rarity: 80 },
+    { message: "Did you know? You can customize your chat nickname in settings, but your real nickname wont leave.", rarity: 75 },
     { message: "Try changing your user and role colors for a more fun experience.", rarity: 70 },
+    { message: "Explore or make different chat themes to personalize your experience!", rarity: 70 },
+    { message: "Did you know? You can use emojis in your messages to express yourself!", rarity: 65 },
     { message: "Try $sudo help in chat to find out all the command you can use.", rarity: 60 },
+    { message: "Did you know you can make a theme, well only if your username doesnt start with a ¿.", rarity: 60 },
+    { message: "Learn new chat commands to enhance your chatting experience.", rarity: 60 },
+    { message: "Keep an eye out for special holiday themes and events!", rarity: 55 },
+    { message: "Invite your friends to join the chat! if you got any.", rarity: 55 },
+    { message: "Feel free to ask for help if you need it, but your better off not trying.", rarity: 50 },
     { message: "Never gonna give you up, never gonna let you down.", rarity: 45 },
+    { message: "How do you organize a space party? You planet.", rarity: 45 },
+    { message: "I told my computer I needed a break, and now it won’t stop sending me to the beach.", rarity: 45 },
+    { message: "Why did the chicken go to the seance? To talk to the other side.", rarity: 40 },
+    { message: "I used to play piano by ear, but now I use my hands.", rarity: 35 },
+    { message: "Did you know if you do $sudo help it will help you.", rarity: 30 },
+    { message: "Keep your chat history clean by deleting old messages. Oh wait you can't too bad.", rarity: 25 },
+    { message: "Curious? Get a random fact to learn something new!", rarity: 10 },
     { message: "This is how the chat was made https://stackoverflow.com.", rarity: 5 },
-    { message: "Challenge if you can the rarest message on 4 messages and show proof to a dev then you rainbow role colors!(This challenge is over new one soon)", rarity: 2 },
+    { message: "Fun fact: This chat was built using cutting-edge technology! Okay sorry I lied.", rarity: 3 },
+    { message: "Parallel lines have so much in common. It’s a shame they’ll never meet.", rarity: 3 },
+    { message: "Guess what? The next big feature drop is just around the corner!", rarity: 2 },
+    { message: "Did you hear? Typing 'wizard' grants you magical chat powers.", rarity: 2 },
+    // { message: "Challenge if you can the rarest message on 4 messages and show proof to a dev then you rainbow role colors!(This challenge is over new one soon)", rarity: 2 },
     { message: "Try $sudo E in chat.", rarity: 1 },
+    { message: "Feeling lucky? Enter the lottery and see what you get!", rarity: 1 },
 ];
 
 function pickRandom(rarities) {
@@ -101,37 +126,61 @@ createExamples();
 
 // Update examples every 250 milliseconds (0.25 seconds)
 setInterval(updateExamples, 250);
-socket.emit("username", getCookie("Userid"), !document.hidden, 'settings');
+socket.emit("get_theme", getCookie('Theme'));
+socket.emit("get_themes");
+console.log(getCookie('Theme'))
 
-const holidays = {
-  "halloween": {
-    name: "halloween",
-    start: "10-01",
-    end: "10-31"
-  },
-};
+socket.on('set_theme', (theme) => {
+  console.log(theme)
+  setTheme(theme['themeID'], theme['name'])
+})
 
-function setTheme(theme) {
-  let currentDate = new Date();
-  let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-  let day = currentDate.getDate().toString().padStart(2, '0');
-  var themeBtn = document.querySelector(".themeBtn");
-  var themeDropdown = document.querySelector(".themeContent");
+// const holidays = {
+//   "halloween": {
+//     name: "halloween",
+//     start: "10-01",
+//     end: "10-31"
+//   },
+// };
 
-  for (const key in holidays) {
-    const holiday = holidays[key];
-    if (`${month}-${day}` >= holiday.start && `${month}-${day}` <= holiday.end && theme === 'holiday') {
-      theme = holiday.name;
-      break;
-    }
-  }
-
-  console.log(theme);
-
-  themeBtn.innerText = "You picked: " + capitalizeFirstLetter(theme);
-  document.getElementsByName("theme")[0].value = theme;
-  themeDropdown.style.display = "none";
+function setTheme(theme, name, author) {
+  // let currentDate = new Date();
+  // let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+  // let day = currentDate.getDate().toString().padStart(2, '0');
+  // var themeBtn = document.querySelector(".themeBtn");
+  // var themeDropdown = document.querySelector(".themeContent");
+  var selector = document.getElementById("theme-selector")
+  var info_theme_text = document.getElementById("info_theme_name")
+  selector.value = theme
+  info_theme_text.innerHTML = name
 }
+
+//   for (const key in holidays) {
+//     const holiday = holidays[key];
+//     if (`${month}-${day}` >= holiday.start && `${month}-${day}` <= holiday.end && theme === 'holiday') {
+//       theme = holiday.name;
+//       break;
+//     }
+//   }
+
+//   console.log(theme);
+
+//   themeBtn.innerText = "You picked: " + capitalizeFirstLetter(theme);
+//   document.getElementsByName("theme")[0].value = theme;
+//   themeDropdown.style.display = "none";
+// }
+socket.on('receve_themes', (themes) => {
+  const contentList = document.getElementById("themes_panel")
+  // console.log(themes)
+  for (const theme of themes) {
+      const themeAuthor = document.getElementById("info_theme_author")
+      const themeButton = document.createElement('a');
+      themeButton.innerHTML = theme['name'];
+      themeAuthor.innerHTML = theme['author']
+      themeButton.setAttribute("onclick", `setTheme('${theme['themeID']}', '${theme['name']}')`)
+      contentList.appendChild(themeButton);
+  }
+});
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);

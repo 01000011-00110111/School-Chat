@@ -1,13 +1,10 @@
 {% extends 'index.html' %}
-{% block header %}
-<script src="static/chat.js"></script>
-<script src="static/online.js"></script>
-<script src="static/styles.js"></script>
-{% endblock %}
+<!-- {% block header %}
+{% endblock %} -->
 {% block content %}
 <div id="topbar">
         
-    <span id="topleft" style="font-size: 50px; cursor: pointer;  color: rgb(25, 32, 128);" onclick="openNav()">☰</span>
+    <span id="topleft" style="font-size: 50px; cursor: pointer;  color: rgb(25, 32, 128);" onclick="openNav()"><i class="fa-solid fa-bars"></i></span>
     <h2 id="RoomDisplay" style="margin: 14.5px 0;">/e</h2>
     {% block panel_button %}{% endblock %}
     <div class="AccountPopup">
@@ -48,5 +45,13 @@
     <!-- {% block panel %}{% endblock %} -->
     <div id="online_users"></div>
 </div>
+
+<button id="chat-bottom-button">
+    <i class="fa-solid fa-arrow-down" style="color: white;"></i>
+</button>
+
+<script src="static/chat.js"></script>
+<script src="static/online.js"></script>
+<script src="static/styles.js"></script>
 <script type='text/javascript' defer>runStartup();</script>
 {% endblock %}

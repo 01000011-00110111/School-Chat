@@ -3,10 +3,8 @@ import hashlib
 from datetime import datetime, timedelta
 
 from flask_login import LoginManager, logout_user
-from flask_socketio import emit
 
 import database
-from private import Private, format_userlist
 
 # inactive_users = []
 
@@ -39,6 +37,7 @@ class User:
         self.theme = user['theme']
         self.locked = ['locked']
         self.permission = user['permission']  # temp will go away
+        self.themeCount = user['themeCount']
         # self.warned = user['warned']
 
     @staticmethod
@@ -82,13 +81,22 @@ class User:
     def get_user_by_id(cls, userid):
         user = cls.Users.get(userid, None)
         return user
+    
+    @classmethod
+    def get_userid(cls, displayname):
+        for _, user in cls.Users.items():
+            # print(user)
+            if user.displayName == displayname:
+                # print(f'e{user}')
+                userid = user.uuid
+        return userid
 
     @classmethod
     def add_user_class(cls, username, user, userid):
         user_class = cls(username, user, userid)
         database.set_online(userid, False)
         cls.Users.update({userid: user_class})
-        tupple = (userid, user['displayName'], user['SPermission'][0])
+        (userid, user['displayName'], user['SPermission'][0])
         # if tupple in inactive_users:
         #     inactive_users.remove(tupple)
         return user_class

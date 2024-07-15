@@ -23,4 +23,4 @@ banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
                     " ", "  ", "   ", "cseven", "cserver", 'system',
                     '[system]', '[System]', 'System')
 
-approved_links = ('/settings', '/backup', "/admin")
+approved_links = ('/settings', '/backup', "/admin", "/projects")

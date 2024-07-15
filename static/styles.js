@@ -1,114 +1,49 @@
-function setStyles(
-    backgroundColor,
-    chatColor,
-    messageColor,
-    chatboxColor,
-    sidesColor,
-    sidebarColor,
-    sidebarborderColor,
-    sidebarTextColor,
-    topleftColor,
-    topleftTextColor,
-    sendBgColor,
-    sendTextColor,
-    sidenavColor,
-    snavLinkColor,
-    roomTextColor,
-    roomBarColor,
-    topbarColor
-) {
-    const body = document.getElementsByTagName("body")[0];
-    const chat = document.getElementById("chat");
-    const message = document.getElementById("message");
-    const chatbox = document.getElementById("chatbox");
-    const sides = document.getElementById("sides");
-    const topleft = document.getElementById("topleft");
-    const send = document.getElementById("send");
-    const sidebar = document.getElementById("activenav");
-    const online = document.getElementById("online_users");
-    const sidenav = document.getElementsByClassName("sidenav")[0];
-    const snavText = sidenav.getElementsByTagName("a");
-    const roomText = document.getElementById("room_text");
-    const roomBar = document.getElementById("room_bar");
-    const topbar = document.getElementById("topbar");
-    // const hrElement = document.querySelector("hr");
+const body = document.getElementsByTagName("body")[0];
+const chat = document.getElementById("chat");
+const message = document.getElementById("message");
+const chatbox = document.getElementById("chatbox");
+const sides = document.getElementById("sides");
+const topleft = document.getElementById("topleft");
+const send = document.getElementById("send");
+const sidebar = document.getElementById("activenav");
+const online = document.getElementById("online_users");
+const sidenav = document.getElementsByClassName("sidenav")[0];
+const snavText = sidenav.getElementsByTagName("a");
+const roomText = document.getElementById("RoomDisplay");
+const roomBar = document.getElementById("room_bar");
+const topbar = document.getElementById("topbar");
 
-    body.style.backgroundColor = backgroundColor;
-    chat.style.color = chatColor;
-    message.style.color = messageColor;
-    chatbox.style.backgroundColor = chatboxColor;
-    sides.style.backgroundColor = sidesColor;
-    sidebar.style.backgroundColor = sidebarColor;
-    sidebar.style.borderLeft = `4px solid ${sidebarborderColor}`;
-    online.style.color = sidebarTextColor;
-    topleft.style.backgroundColor = topleftColor;
-    topleft.style.color = topleftTextColor;
-    send.style.backgroundColor = sendBgColor;
-    send.style.color = sendTextColor;
-    sidenav.style.backgroundColor = sidenavColor;
-    roomText.style.color = roomTextColor;
-    roomBar.style.borderColor = roomBarColor;
-    topbarColor.style.backgroundColor = topbarColor;
-    // hrElement.sytle.bordeColor = sidebarborderColor;
-
-    for (let i = 0; i < snavText.length; i++) {
-        snavText[i].style.color = snavLinkColor;
+function setTheme(data) {
+    let colors = data.theme
+    let snav_iter = snavText.length;
+    body.style.background = colors['body']
+    chat.style.color = colors['chat-text']
+    message.style.background = colors['chat-background']
+    chatbox.style.background = colors['chatbox-background']
+    sides.style.color = colors['sides-text']
+    sides.style.background = colors['sides-background']
+    sidebar.style.background = colors['sidebar-background']
+    sidebar.style.borderColor = colors['sidebar-border']
+    sidebar.style.color = colors['sidebar-text']
+    sidebar.style.boxShadow = colors['sidebar-boxShadow']
+    topleft.style.background = colors['topleft-background']
+    topleft.style.color = colors['topleft-text']
+    send.style.background = colors['send-background']
+    send.style.color = colors['send-text']
+    sidenav.style.background = colors['sidenav-background']
+    sidenav.style.color = colors['sidenav-color']
+    for (let i = 0; i < snav_iter; i++) {
+        snavText[i].style.color = colors['sidenav-a-color']
+        snavText[i].style.background = colors['sidenav-a-background']
     }
-}
+    roomText.style.color = colors['roomText-text']
+    topbar.style.background = colors['topbar-background']
+    topbar.style.boxShadow = colors['topbar-boxShadow']
+  }
 
-function setTheme(themeName) {
-    const themes = {
-        dark: darkTheme,
-        better_dark: betterdarkTheme,
-        light: lightTheme,
-        ogdev: ogDevTheme,
-        dev: devTheme,
-        halloween: halloweenTheme,
-        // winter: winterTheme,
-    };
-
-    setStyles(...themes[themeName]);
-}
-
-// Note the the code for the themes are arraganged in this order, so if you want the background to be the color black you change the first value of the theme to #000000 or black.
-
-// Background Color
-// Chat Color
-// Message Color
-// Chatbox Color
-// Sides Color
-// Sidebar Background Color
-// Sidebar Border Color
-// Sidebar Text Color
-// Topleft Background Color
-// Topleft Text Color
-// Send Button Background Color
-// Send Button Text Color
-// Sidenav Color
-// Sidenav Link Color
-// Room Text color
-// Room Line color
-// Topbar Background Color
-
-const darkTheme = [
-    "#000000",
-    "#ffffff",
-    "#000000",
-    "#181616",
-    "#121212",
-    "#171717",
-    "#f5f2f2",
-    "#ffffff",
-    "#c73228",
-    "#192080",
-    "#192080",
-    "#ffffff",
-    "#111111",
-    "#818181",
-    "#000000",
-    "#000000",
-    "#ffffff"
-];
+socket.on('set_theme', (theme) =>{
+    setTheme(theme)
+})
 
 const lightTheme = [
     "#c0bfbc",
@@ -125,7 +60,6 @@ const lightTheme = [
     "#33575e",
     "#b9c6c9",
     "#192080",
-    "#000000",
     "#000000",
     "#ffffff"
 ];
@@ -146,8 +80,7 @@ const ogDevTheme = [
     "#111111",
     "#818181",
     "#000000",
-    "#000000",
-    "ffffff"
+    "#ffffff"
 ];
 
 const devTheme = [
@@ -165,46 +98,5 @@ const devTheme = [
     "#ffffff",
     "#0f0f0f",
     "#8a4e11",
-    "#000000",
     "#000000"
-];
-
-const halloweenTheme = [
-    "#000000",
-    "#d64304",
-    "#a64903",
-    "#000111",
-    "#000000",
-    "#d65e13",
-    "#bf4a06",
-    "#000000",
-    "#000000",
-    "#d64304",
-    "#d65e13",
-    "#111111",
-    "#000000",
-    "#d65e13",
-    "#d65e13",
-    "#111111",
-    "ffffff"
-];
-
-const betterdarkTheme = [
-  "#000000",
-  "#ffffff",
-  "",
-  "#transparent",
-  "#000000",
-  "#0c0c0c",
-  "#000000",
-  "#ffffff",
-  "#transparent",
-  "192080",
-  "#e9e9ed",
-  "#000000",
-  "#111111",
-  "ffffff",
-  "#ffffff",
-  "#ffffff",
-  "#000000"
 ];

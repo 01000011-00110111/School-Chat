@@ -3,17 +3,17 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 
 from better_profanity import profanity
 from flask_socketio import emit
 
 import cmds
-import database
 import log
 
 # import rooms
 import word_lists
+from online import get_scoketid
 from user import User
 
 # old imports, do we still need the markdown package due to us having our own markdown
@@ -57,14 +57,14 @@ def run_filter_chat(user, room, message, roomid, userid):
 
     profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
     
-    if "[" in message and not locked:
+    if "@" in message and not locked:
         if user.locked != 'locked':
             find_pings(message, user.displayName, profile_picture, roomid, room)
         else:
             cmds.warn_user(user)
             failed_message(('permission', 11, 'locked'), roomid)
 
-    final_str = compile_message(markdown(message), profile_picture, user, role)
+    final_str = compile_message(format_text(message), profile_picture, user, role)
 
     # check if locked or allowed to send
     if locked and perms not in ["dev", 'admin', "mod"]:
@@ -73,10 +73,7 @@ def run_filter_chat(user, room, message, roomid, userid):
     if can_send == "everyone":
         return_str = ('msg', final_str, 0)
     elif can_send == 'mod':
-        if perms == 'mod':
-            return_str = ('msg', final_str, 0)
-        else:
-            return_str = ('permission', 5, 0)
+        return_str = ('msg', final_str, 0) if perms == 'mod' else ('permission', 5, 0)
     else:
         return_str = ('permission', 5, 0)
 
@@ -121,7 +118,8 @@ def run_filter_private(user, message, userid):
     profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
 
 
-    final_str = ('msg' ,compile_message(markdown(message), profile_picture, user, role), 0)
+    final_str = ('msg' ,compile_message(format_text(message),
+                                        profile_picture, user, role), 0)
     
     limit = user.send_limit()
     if not limit: #and perms != "dev":
@@ -144,14 +142,18 @@ def check_mute(user, roomid):
 
 def check_perms(user):
     """Checks if the user has specal perms else return as a user"""
-    return 'dev' if 'Debugpass' in user.perm else 'mod' if 'modpass' in user.perm else 'user'
+    return 'dev' if 'Debugpass' in user.perm else 'mod' if 'modpass' in user.perm else\
+        'user'
 
 
 def to_hyperlink(text: str) -> str:
     """Auto hyperlinks any links we find as common."""
     mails = re.findall(r"mailto:(.+?)[\s?]", text, flags=re.M)
     links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text, flags=re.M | re.I)
-    links1 = re.findall(r"(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])", text, flags=re.I)
+    pattern = \
+        r"(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])"
+    links1 = re.findall(
+    pattern, text, flags=re.I)
 
     # Iterate over the results and replace the strings
     for link in mails:
@@ -159,7 +161,8 @@ def to_hyperlink(text: str) -> str:
     for link in links1:
         text = text.replace(link[0], f'<a href="{link[0]}">{link[0]}</a>')
     for link in links2:
-        text = text.replace(link[1], f'<a target="_blank" href="{link[1]}">{link[1]}</a>')
+        text = text.replace(link[1],
+                            f'<a target="_blank" href="{link[1]}">{link[1]}</a>')
     return text
 
 
@@ -168,71 +171,52 @@ def filter_message(message):
     return profanity.censor(message)
 
 
-def markdown(message):
-    """our own custom markdown code"""
-    compiled_str = message
-
-    formatting_patterns = {
-        "B:": ("<b>", "</b>"),  #Bold
-        "I:": ("<i>", "</i>"),  #italicize 
-        "U:": ("<u>", "</u>"),  #underline 
-        "r:": ('<font color="#ff0000">', '</font>'),  #red
-        "g:": ('<font color="#00ff00">', '</font>'),  #green
-        "lg:": ('<font color="#90EE90">', '</font>'),  #light green
-        "b:": ('<font color="#0000ff">', '</font>'),  #blue
-        "lb:": ('<font color="#ADD8E6">', '</font>'),  #light blue
-        "w:": ('<font color="#ffffff">', '</font>'),  #white 
-        "o:": ('<font color="#FFA500">', '</font>'),  #orange 
-        "p:": ('<font color="#800080">', '</font>'),  #purple 
-        "y:": ('<font color="#FFFF00">', '</font>'),  #yellow 
-        "v:": ('<font color="#7F00FF">', '</font>'),  #violet
-    }
-
-    # so its not something specific to lg and lb,
-    # its that the regex hangs the server on ANY combination of 2 letters - cserver
-    # I have no idea why it does that, it doesen't even matter if the letters are used
-    # anywhere else, it just doesn't like 2 letter ones.
-    def repl(match):
-        text = match.group(0)
-
-        if re.match(r'^[0-9A-Fa-f]{6}:.*?:c$', text):
-            hex_color = text[:6]
-            inner_text = text[7:-2]
-            hex_color = "ffffff" if hex_color == "000000" else hex_color
-            return f'<font color="#{hex_color}">{inner_text}</font>'
-
-        start_tag, end_tag = formatting_patterns.get(text[:2], ("", ""))
-        inner_text = text[2:-2] if start_tag else text
-        return f"{start_tag}{inner_text}{end_tag}" if start_tag else text
-
-    pattern = r'([0-9A-Fa-f]{6}:.*?:c)|(lg:.*?:lg)|(lb:.*?:lb)|([BIUrgbwopvy]:.*?:[BIUrgbwopvy])'
-
-    while True:
-        compiled_str = re.sub(pattern, repl, message)
-        if compiled_str == message:
-            break
-        message = compiled_str
-
-    return compiled_str
+def format_text(message):#this system needs notes do not remove
+    bold_pattern = re.compile(r'\*(.*?)\*', re.DOTALL)
+    italic_pattern = re.compile(r'/(.*?)/', re.DOTALL)
+    underline_pattern = re.compile(r'_(.*?)_', re.DOTALL)
+    color_pattern = re.compile(r'\[([a-zA-Z]+)\](.*?)#')
+    
+    # Check and apply bold formatting: *text*
+    if '*' in message:
+        message = bold_pattern.sub(r'<b>\1</b>', message)
+    
+    # Check and apply italic formatting: <i>text</i>
+    if '/' in message and '__' not in message:
+        message = italic_pattern.sub(r'<i>\1</i>', message)
+    
+    # Check and apply underline formatting: __text__
+    if '_' in message and '__' not in message:
+        message = underline_pattern.sub(r'<u>\1</u>', message)
+    
+    # Check and apply color formatting: [color]text
+    def replace(match):
+        color, text = match.groups()
+        return f'<span style="color: {color}">{text}</span>'
+    
+    if '[' in message:
+        message = color_pattern.sub(replace, message)
+    
+    return message
 
 
-def find_pings(message, dispName, profile_picture, roomid, room):
+def find_pings(message, dispName, _profile_picture, _roomid, _room):
     """Gotta catch 'em all! (checks for pings in the users message)"""
-    pings = re.findall(r'(?<=\[).+?(?=\])', message)
+    pings = re.findall(r'@(\w+|"[^"]+")', message)
+    pings = [ping.strip('"') for ping in pings]
     # room = database.find_room({'roomid': roomid}, 'vid')
 
     for ping in pings:
-        message = message.replace(f"[{ping}]", '')
+        # message = message.replace(f"[{ping}", '')
+        # print(ping)
+        sid = get_scoketid(User.get_userid(ping)) if ping != 'everyone' else None
         emit("ping", {
-            "who": ping,
             "from": dispName,
-            "pfp": profile_picture,
-            "message": message,
-            "name": room.name,
-            "roomid": room.vid
-        },
-             namespace="/",
-             broadcast=True)
+            # "pfp": profile_picture,
+        }, 
+        namespace="/",
+        to=sid if ping != 'everyone' else None,
+        broadcast=ping == 'everyone')
         break  # ez one per message fix lol
 
 
@@ -243,10 +227,10 @@ def find_cmds(message, user, roomid, room):
     """
     command_split = message.split("$sudo")
     command_split.pop(0)
-    command_string = command_split[0]
-    perms = check_perms(user)
+    # command_string = command_split[0]
+    # perms = check_perms(user)
     origin_room = None
-    match = re.findall(r"\(|\)", command_string)
+    # match = re.findall(r"\(|\)", command_string)
 
     # if perms == 'dev' and roomid == 'jN7Ht3giH9EDBvpvnqRB' and match != []:
     #     match_msg = re.findall(r"\((.*?)\)", command_string)
@@ -333,7 +317,8 @@ def failed_message(result, roomid):
         (7):
         "This chat room vid does not exist.",
         (8):
-        "You are not allowed to send more than 15 messages in a row. You have been muted for 5 minutes(Warning)",
+        "You are not allowed to send more than 15 messages in a row.\
+        You have been muted for 5 minutes(Warning)",
         (9):
         "You must verify your account before you can use this command.",
         (10):

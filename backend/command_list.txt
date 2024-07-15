@@ -30,6 +30,16 @@
     <li><code>"$sudo ping"</code>: Tells you how much ping you have.</li>
     <li><code>"$sudo create "room name"</code>: There was once a legendary command that let you own a room but was lost. Thanks verson 1.3 we where able to recode it in.</li>
 </ul>
+
+<h2>Message features:</h2>
+<ul>
+    <li>"@(username)": Will ping the user.</li>
+    <li>"@("user name")": Will ping the user. if the user have spaces in their name add ""</li>
+    <li>"@everyone": Will ping everyone online</li>
+    <li>"*(text)*": Will set the text to be bold</li>
+    <li>"/(text)/": Will set the text to be italic</li>
+    <li>"_(text)_": Will set the text to be underlined</li>
+    <li>"[color](text)#": Will set the text to the color you put.</li>
 end
 
 <h2>Room Mod commands:</h2>

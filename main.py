@@ -16,16 +16,17 @@
 
 """
 # import hashlib
-import json
+import hashlib
 import logging
 import os
-import hashlib
+import random
+from string import ascii_uppercase
 
 # import time
 # import uuid
 # from datetime import datetime, timedelta
 import flask
-from flask import request, make_response
+from flask import make_response, request
 from flask.typing import ResponseReturnValue
 from flask_apscheduler import APScheduler
 from flask_login import (
@@ -36,7 +37,27 @@ from flask_login import (
 )
 from flask_socketio import SocketIO, emit
 
+import accounting
 import database
+
+# these are the files that do not import dbm
+# import appConfig
+import filtering
+import log
+import uploading
+import word_lists
+from appConfig import application
+from chat import Chat
+from commands.other import end_ping, format_system_msg
+from online import socketids, update_userlist, users_list
+from private import Private, get_messages, get_messages_list
+from user import User, login_manager
+
+try:
+    import setup
+    print(False)
+except ModuleNotFoundError:
+    print(True)
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address  #, default_error_responder
@@ -73,22 +94,15 @@ def setup_func():
         with open('backend/banned_words.txt', 'w'):
             pass
     database.setup_chatrooms()
-    
-setup_func()
 
-# these are the files that do not import dbm
-import accounting
-import filtering
-import log
-import uploading
-import word_lists
-from online import socketids, update_userlist, users_list
-import appConfig
-from chat import Chat
-from commands.other import end_ping, format_system_msg
-from private import Private, get_messages, get_messages_list
-from user import User, login_manager
-from appConfig import application
+if __name__ == '__main__':
+    setup_func()
+if os.path.exists(os.path.abspath('setup.py')):
+    setup.chcek_if_data_is_missing()
+    setup.self_destruct()
+    print(False)
+else:
+    print(True)
 
 app = flask.Flask(__name__)
 app.secret_key = os.urandom(9001)  #ITS OVER 9000!!!!!!
@@ -129,7 +143,7 @@ def chat_page() -> ResponseReturnValue:
 
 @app.route('/chat/<room_name>')
 @login_required
-def specific_chat_page(room_name) -> ResponseReturnValue:
+def specific_chat_page(_) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
@@ -148,7 +162,7 @@ def admin_page() -> ResponseReturnValue:
 
 @app.route('/admin/<room_name>')
 @login_required
-def specific_admin_page(room_name) -> ResponseReturnValue:
+def specific_admin_page(_) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
@@ -158,7 +172,7 @@ def specific_admin_page(room_name) -> ResponseReturnValue:
 
 @app.route('/<prefix>/Private/<private_chat>')
 @login_required
-def specific_private_page(prefix, private_chat) -> ResponseReturnValue:
+def specific_private_page(_) -> ResponseReturnValue:
     """Get the specific private chat in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
@@ -173,7 +187,7 @@ def logout():
     """Log out the current user"""
     User.delete_user(request.cookies.get("Userid"))
     logout_user()
-    sid = socketids[request.cookies.get("Userid")]
+    # sid = socketids[request.cookies.get("Userid")]
     del socketids[request.cookies.get("Userid")]
     # update_userlist(sid, {'status': 'offline'}, request.cookies.get("Userid"))
     resp = make_response(flask.redirect(flask.url_for('login_page')))
@@ -220,10 +234,12 @@ def login_page() -> ResponseReturnValue:
                 else:
                     next_page = flask.url_for('chat_page')
             else:
+                if 'editor' in next_page:
+                    next_page = flask.url_for('projects')
                 if next_page not in word_lists.approved_links:
                     next_page = flask.url_for('chat_page')
-                if "adminpass" in user['SPermission']:
-                    next_page = flask.url_for('admin_page')
+                    if "adminpass" in user['SPermission']:
+                        next_page = flask.url_for('admin_page')
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie('Username', user['username'])
             resp.set_cookie('Theme', user['theme'])
@@ -231,6 +247,7 @@ def login_page() -> ResponseReturnValue:
                 '/static/favicon.ico')
             resp.set_cookie('Userid', user['userId'])
             resp.set_cookie('DisplayName', user["displayName"])
+            resp.set_cookie('test', 'e e')
             return resp
         else:
             return flask.render_template(
@@ -430,6 +447,7 @@ def customize_accounts() -> ResponseReturnValue:
     email = request.form.get("email")
     file = request.files.get('profile')# if 'profile' in request.files else None
     theme = request.form.get("theme")
+    # print(theme)
     user = User.get_user_by_id(userid)
     user_email = database.get_email(user.uuid)
     return_list = {
@@ -508,6 +526,124 @@ def customize_accounts() -> ResponseReturnValue:
     return flask.render_template('settings.html', error=error, **return_list)
 
 
+##### THEME STUFF #####
+@app.route("/editor")
+@login_required
+def editor():
+    return flask.render_template("theme/editor.html")
+
+@app.route("/projects")
+@login_required
+def projects():
+    return flask.render_template("theme/projects.html")
+
+
+@socketio.on('get_projects')
+def handle_project_requests():
+    socketid = request.sid
+    userid = request.cookies.get('Userid')
+    displayname = request.cookies.get('DisplayName').replace('"', '')
+    projects = database.get_projects(userid, displayname)
+    projects_fixed = []
+    # print(projects)
+    for project in projects:
+        del project['_id']
+        if 'author' in project and len(project['author']) > 1:
+            project['author'] = project['author'][1:]
+        projects_fixed.append(project)
+    # print(projects_fixed)
+    emit('projects', (projects_fixed), to=socketid)
+
+
+@socketio.on('create_project')
+def handle_projecet_creation():
+    socketid = request.sid
+    userid = request.cookies.get('Userid')
+    user = User.get_user_by_id(userid)
+    if user.themeCount >= 3:
+        emit('response', ('You have hit your project limit', True), to=socketid)
+        return
+    print(user.themeCount)
+    # displayname = request.cookies.get('DisplayName').replace('"', '')
+    while True:
+        code = ""
+        for _ in range(5):
+            code += random.choice(ascii_uppercase)
+
+        if code not in database.get_all_projects():
+            break
+    project = database.create_project(userid, user.displayName, code)
+    user.themeCount += 1
+    del project['_id']
+    emit('set_theme', project, to=socketid)
+
+
+@socketio.on('get_project')
+def send_project(theme_id):
+    socketid = request.sid
+    # userid = request.cookies.get('Userid')
+    # displayname = request.cookies.get('DisplayName').replace('"', '')
+    project = database.get_project(theme_id)
+    del project['_id']
+    if 'author' in project and len(project['author']) > 1:
+        project['author'] = project['author'][1:]
+    emit('set_theme', project, to=socketid)
+
+
+@socketio.on('save_project')
+def handle_save_project(project):
+    socketid = request.sid
+    # user = User.get_user_by_id(request.cookies.get('Userid'))
+    # if user.themeCount < 3:
+    database.save_project(project)
+    emit('response', ('Project Saved', False), to=socketid)
+
+
+@socketio.on('delete_project')
+def handle_delete_project(project):
+    socketid = request.sid
+    user = User.get_user_by_id(request.cookies.get('Userid'))
+    user.themeCount -= 1
+    database.delete_project(project)
+    emit('response', ('Project Saved', False), to=socketid)
+
+
+@socketio.on('get_themes')
+def handle_theme_requests():
+    socketid = request.sid
+    # userid = request.cookies.get('Userid')
+    # displayname = request.cookies.get('DisplayName').replace('"', '')
+    projects = database.get_all_projects()
+    projects_fixed = []
+    # print(list(projects))
+    for project in projects:
+        if project['status'] == 'private':
+            continue
+        del project['_id']
+        del project['theme']
+        del project['status']
+        if 'author' in project and len(project['author']) > 1:
+            project['author'] = project['author'][1:]
+        projects_fixed.append(project)
+    # print(projects_fixed)
+    emit('receve_themes', (projects_fixed), to=socketid)
+
+@socketio.on('get_theme')
+def send_theme(theme_id):
+    socketid = request.sid
+    theme = database.get_project(theme_id)
+    # print(theme)
+    if theme is None:
+        theme = database.get_project('dark')
+    del theme['_id']
+    del theme['author']
+    # del project['themeID']
+    del theme['status']
+    # del project['name']
+    # print(theme)
+    emit('set_theme', theme, to=socketid)
+##### END OF THEME STUFF #####
+
 # socketio stuff
 # @socketio.on('username')
 # def handle_connect(userid, isVisible, location):
@@ -521,7 +657,7 @@ def handle_connect(data):
     """Will be used later for online users."""
     socketid = request.sid
     # user = User.get_user_by_id(request.cookies.get('Userid'))
-    user = update_userlist(socketid, data, request.cookies.get('Userid'))
+    update_userlist(socketid, data, request.cookies.get('Userid'))
     # if user is not None:
     #     user.unique_online_list(userid, isVisible, location, sid)
     
@@ -540,7 +676,8 @@ def handle_disconnect():
     
     active_privates = [
         private for private in Private.chats.values() 
-        if (userid in private.userlist and private.active.get(userid, False)) or socketid in private.sids
+        if (userid in private.userlist and private.active.get(userid, False)) 
+        or socketid in private.sids
     ]
 
     for private in active_privates:
@@ -580,33 +717,44 @@ def get_rooms(userid):
     # print(room_access)
     if "Debugpass" in user_permissions:
         
-        emit('roomsList', ([{'vid': room['vid'], 'name': room['name']} for room in room_access], 'dev'), namespace='/', to=request.sid)
+        emit('roomsList', ([{'vid': room['vid'], 'name': room['name']}
+                            for room in room_access], 'dev'), namespace='/',
+             to=request.sid)
         return
 
     if "adminpass" in user_permissions:
         room_access = [room for room in room_access if room['whitelisted'] != 'devonly']
-        emit('roomsList', ([{'vid': room['vid'], 'name': room['name']} for room in room_access], 'mod'), namespace='/', to=request.sid)
+        emit('roomsList', ([{'vid': room['vid'], 'name': room['name']}
+                            for room in room_access], 'mod'), namespace='/',
+             to=request.sid)
         return
 
     if "modpass" in user_permissions:
-        room_access = [room for room in room_access if 'devonly' not in room['whitelisted'] and 'adminonly' not in room['whitelisted']]
-        emit('roomsList', ([{'vid': room['vid'], 'name': room['name']} for room in room_access], 'mod'), namespace='/', to=request.sid)
+        room_access = [room for room in room_access if 'devonly' not in
+                       room['whitelisted'] and 'adminonly' not in room['whitelisted']]
+        emit('roomsList', ([{'vid': room['vid'], 'name': room['name']} for room in
+                            room_access], 'mod'), namespace='/', to=request.sid)
         return
 
     if user_info["locked"] == "locked":
-        emit('roomsList', ([{'vid': 'zxMhhAPfWOxuZylxwkES', 'name': ''}], 'locked'), namespace='/', to=request.sid)
-        return
+        emit('roomsList', ([{'vid': 'zxMhhAPfWOxuZylxwkES', 'name': ''}], 'locked'),
+             namespace='/', to=request.sid)
 
     accessible_rooms = []
     for room in room_access:
         if (room['blacklisted'] == 'empty' and room['whitelisted'] == 'everyone') or \
-           (room['whitelisted'] != 'everyone' and 'users:' in room['whitelisted'] and user_name in room['whitelisted'].split("users:")[1].split(",")) or \
-           (room['blacklisted'] != 'empty' and 'users:' in room['blacklisted'] and user_name not in room['blacklisted'].split("users:")[1].split(",") and room['whitelisted'] == 'everyone') and \
-           ('devonly' not in room['whitelisted'] and 'modonly' not in room['whitelisted'] and 'lockedonly' not in room['whitelisted']):
+           (room['whitelisted'] != 'everyone' and 'users:' in room['whitelisted'] and
+            user_name in room['whitelisted'].split("users:")[1].split(",")) or \
+           (room['blacklisted'] != 'empty' and 'users:' in room['blacklisted'] and
+            user_name not in room['blacklisted'].split("users:")[1].split(",") and
+            room['whitelisted'] == 'everyone') and \
+           ('devonly' not in room['whitelisted'] and 'modonly' not in
+            room['whitelisted'] and 'lockedonly' not in room['whitelisted']):
             accessible_rooms.append({'vid': room['vid'], 'name': room['name']})
     
     # print(accessible_rooms)
-    emit('roomsList', (accessible_rooms, user_info['locked']), namespace='/', to=request.sid)
+    emit('roomsList', (accessible_rooms, user_info['locked']), namespace='/',
+         to=request.sid)
 
 
 
@@ -621,7 +769,7 @@ def handle_message(_, message, vid, userid, private, hidden):
 def handle_chat_message(message, roomid, userid, hidden):
     """New New chat message handling pipeline."""
     # print(roomid)
-    # later I will check the if the username is the same as the one for the session somehow
+# later I will check the if the username is the same as the one for the session somehow
     
     room = Chat.create_or_get_chat(roomid)
     
@@ -687,7 +835,8 @@ def connect(roomid, sender):
     
     active_privates = [
         private for private in Private.chats.values() 
-        if (sender in private.userlist and private.active.get(sender, False)) or socketid in private.sids
+        if (sender in private.userlist and private.active.get(sender, False)) or
+        socketid in private.sids
     ]
 
     for private in active_privates:
@@ -715,14 +864,15 @@ def private_connect(sender, receiver, roomid):
     receiverid = database.find_userid(receiver)
     if sender == receiverid:
         emit("message_chat", (
-            "[SYSTEM]: <font color='#ff7f00'>Don't be a loaner get some friends.</font>",
+        "[SYSTEM]: <font color='#ff7f00'>Don't be a loaner get some friends.</font>",
             roomid),
              namespace="/")
         return
         
     active_privates = [
         private for private in Private.chats.values() 
-        if (sender in private.userlist and private.active.get(sender, False)) or socketid in private.sids
+        if (sender in private.userlist and private.active.get(sender, False)) or
+        socketid in private.sids
     ]
 
     for private in active_privates:
@@ -766,12 +916,14 @@ def update_permission():
 
         if filtering.is_user_expired(permission):
             print(f"{username} is no longer muted.")
-            database.update_account_set('perm', {"userId": user_info["userId"]}, {'$set': {"permission": "true"}})
+            database.update_account_set('perm', {"userId": user_info["userId"]},
+            {'$set': {"permission": "true"}})
             log.log_mutes(f"{username} is no longer muted.")
 
         elif filtering.is_warned_expired(permission):
             print(f"{username} warnings have been reset.")
-            database.update_account_set('perm', {"userId": user_info["userId"]}, {'$set': {"warned": "0"}})
+            database.update_account_set('perm', {"userId": user_info["userId"]},
+            {'$set': {"warned": "0"}})
             log.log_mutes(f"{username} warnings have been reset.")
         elif accounting.is_account_expired(permission):
             log.log_accounts(
@@ -791,7 +943,8 @@ def emit_on_startup():
     uuid = request.cookies.get('Userid')
     global startup_msg
     if startup_msg:
-        emit("message_chat", (format_system_msg("If you can see this message, please refresh your client"),
+        emit("message_chat", (format_system_msg(
+            "If you can see this message, please refresh your client"),
                               'ilQvQwgOhm9kNAOrRqbr'),
              broadcast=True,
              namespace='/')
@@ -804,14 +957,15 @@ def emit_on_startup():
 
         
 @socketio.on('class_backups')
-def backup_classes(exception=None):
+# def backup_classes(exception=None):
+def backup_classes():
     """Runs after each request."""
     while True:
         chat_chats_copy = dict(Chat.chats)
-        for chat_id, chat_instance in chat_chats_copy.items():
+        for _, chat_instance in chat_chats_copy.items():
             chat_instance.backup_data() 
         private_chats_copy = dict(Private.chats)
-        for private_id, private_instance in private_chats_copy.items():
+        for _, private_instance in private_chats_copy.items():
             private_instance.backup_data() 
         users_copy = dict(User.Users)
         for user in users_copy:
@@ -820,13 +974,14 @@ def backup_classes(exception=None):
         socketio.sleep(900)
 
 @app.teardown_appcontext
-def teardown_request(exception=None):
+# def teardown_request(exception=None):
+def teardown_request():
     """Runs after each request."""
     chat_chats_copy = dict(Chat.chats)
-    for chat_id, chat_instance in chat_chats_copy.items():
+    for _, chat_instance in chat_chats_copy.items():
         chat_instance.backup_data() 
     private_chats_copy = dict(Private.chats)
-    for private_id, private_instance in private_chats_copy.items():
+    for _, private_instance in private_chats_copy.items():
         private_instance.backup_data()
     users_copy = dict(User.Users)
     for user in users_copy:
@@ -837,4 +992,5 @@ if __name__ == "__main__":
     # o = threading.Thread(target=online_refresh)
     # o.start()
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
+

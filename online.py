@@ -1,13 +1,19 @@
 from flask_socketio import emit
+
 import database
+
 # from user import U
 socketids = {}
 users_list = {}
 
-def update_userlist(sid, data, uuid):
+def get_scoketid(uuid):
+    return  socketids[uuid]
+
+def update_userlist(_, data, uuid):
     for key, value in data.items():
         users_list[uuid][key] = value
-    emit('update_list', users_list[uuid], namespace='/', broadcast=True) #later ill advabce ui to be able to send to only one user
+    emit('update_list', users_list[uuid], namespace='/', broadcast=True)
+    #later ill advabce ui to be able to send to only one user
     return users_list[uuid]
 
 
@@ -19,9 +25,10 @@ def get_all_offline():
     return offline
 
 for user in database.get_all_offline():
-    perm = 'dev' if user['SPermission'][0] == 'Debugpass' else 'mod' if\
-        user['SPermission'][0] == 'adminpass' else 'mod'\
-            if user['SPermission'][0] == 'modpass' else None
+    # print(user)
+    perm = 'dev' if user['perm'][0] == 'Debugpass' else 'mod' if\
+        user['perm'][0] == 'adminpass' else 'mod'\
+            if user['perm'][0] == 'modpass' else None
     
     status = 'offline' if user['status'] != 'offlne-locked' else 'offline-locked'
             

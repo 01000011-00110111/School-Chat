@@ -1,0 +1,244 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  background: black;
+  color: white;
+}
+
+body {
+  background: black;
+  object-position: unset;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 103%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.main {
+  height: 100%;
+}
+
+.Header {
+  display: flex;
+  height: 8%;
+  background: black;
+  border-bottom: 1px solid gray;
+}
+
+.HeaderColumn {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+#TeamIcon {
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  object-fit: cover;
+  left: 10px;
+  position: absolute;
+  border: 2px red solid;
+}
+
+#contxtNav {
+  background: white;
+  width: 100%;
+  height: 9%;
+  justify-content: start;
+  display: flex;
+}
+
+#contxtNav button{
+  background: white;
+  width: 8%;
+  height: 100%;
+  border: 0;
+}
+
+#actionBar {
+  width: 100%;
+  height: 11%;
+  display: flex;
+  align-items: center;
+}
+
+#AssigneeInfo {
+  display: flex;
+  height: 6%;
+  background: #ffffff3d;
+  border-radius: 20px;
+  align-items: center;
+  width: 30%;
+  justify-content: space-around;
+}
+
+#AssigneeInfo p {
+  width: 20%;
+  text-align: center;
+}
+
+#ProjectList {
+  background: rgba(21, 7, 66, 0.51);
+  width: 100%;
+  height: 74%;
+  justify-content: center;
+  display: grid;
+  grid-template-columns: 94%;
+  grid-template-rows: auto;
+  row-gap: 4%;
+  align-content: baseline;
+  overflow-y: scroll;
+  margin-top: 20px;
+}
+
+.project_panel {
+  height: 73px;
+  color: white;
+  background: black;
+  border-radius: 17px;
+  border: 1.4px dotted #5f04e3;
+  text-align: left;
+  text-indent: 30px;
+}
+
+#searchBox {
+  background: rgba(0, 0, 0, 0.486);
+  width: 40%;
+  display: flex;
+  justify-content: space-evenly;
+  height: 50%;
+  border: 1px solid rgb(81, 81, 81);
+  border-radius: 13px;
+}
+
+#searchBox input{
+  width: 85%;
+  align-self: center;
+  height: 100%;
+  background: transparent;
+  border: 0;
+  color: white;
+  outline: none;
+}
+
+.SearchBtn {
+  background: transparent;
+  border: 0px;
+  color: white;
+}
+
+#actionColumn {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+#NewProjectBtn {
+  height: 50%;
+  border: 0px;
+  width: 9%;
+  background: #523ff5;
+  border-radius: 13px;
+  color: white;
+}
+
+#ImportButton {
+  height: 50%;
+  border: 0px;
+  width: 6%;
+  background: #363636;
+  border-radius: 13px;
+  color: white;
+}
+
+.HeaderBtn {
+  background: #39393947;
+  width: 5.5%;
+  height: 67%;
+  border: 1px solid rgb(81, 81, 81);
+  font-size: 21px;
+  text-align: center;
+  align-items: center;
+  display: grid;
+  margin-right: 12px;
+  border-radius: 13px;
+}
+
+#ExtensionBtn {
+  width: 23%;
+  font-family: "Wittgenstein";
+}
+
+.hidden {display: none;}
+
+.show {display: block;}
+
+.project_panel_container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+  border: 2px solid #ccc;
+  background-color: #000000;
+  border-radius: 20px;
+}
+
+.project_panel {
+  flex-grow: 1;
+  text-align: left;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown_button {
+  background-color: #000000;
+  color: white;
+  padding: 5px 20px;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 35px;
+}
+
+.dropdown_content {
+  display: none;
+  position: absolute;
+  background-color: #000000;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  right: 0;
+}
+
+.dropdown_content a {
+  color: #ffffff;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  border: 2px solid #ccc;
+}
+
+.dropdown_content a:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown_content {
+  display: block;
+}
+
+/* .dropdown:hover .dropdown_button {
+  background-color: #3e8e41;
+} */

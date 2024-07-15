@@ -1,0 +1,871 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  background: black;
+  color: white;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.nav {
+  display: flex;
+  background: #2C3144;
+  height: 7%;
+  justify-content: space-between;
+}
+
+.nav_btn {
+  width: 100%;
+  background: transparent;
+  color: darkgrey;
+  border: 0;
+}
+
+.main {
+  width: 100%;
+  display: flex;
+  height: 93%;
+}
+
+#controls {
+  background: #1b202c;
+  width: 21.9%;
+  display: inline-grid;
+  align-content: stretch;
+  margin-left: -22%;
+}
+
+.c_div {
+  display: flex;
+  width: 70%;
+  height: 53px;
+  margin-left: 13%;
+}
+
+.c_btn {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  color: white;
+}
+
+#c_hr {
+  height: 0%;
+  width: 100%;
+  border-color: #5d6787;
+}
+
+#c_search {
+  width: 280px;
+  height: 56px;
+  border-radius: 7px;
+  border: 0;
+  background: #272c3c;
+  outline: none;
+  color: white;
+  text-align: center;
+}
+
+#c_fh {
+  width: auto;
+  height: 100%;
+  display: inline-grid;
+  align-content: stretch;
+  overflow-y: auto;
+}
+
+#fh {
+  background: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 7px;
+}
+
+.editor {
+  width: 100%;
+  display: grid;
+  contain: content;
+}
+
+#n_name {
+  background: transparent;
+  border: 0;
+  color: white;
+  outline: none;
+  text-align: center;
+}
+
+.i_h {
+  display: grid;
+}
+
+.c_item {
+  width: 90px;
+  height: 90px;
+  text-align: center;
+  border-radius: 12px;
+  scale: 0.7;
+  color: white;
+}
+
+#ChatMockup {
+  color: #dd7016;
+}
+
+.c_item:hover {
+  background: #65748370;
+  cursor: pointer;
+}
+
+*{
+  font-family: sans-serif;
+  scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+.panel {
+  width: 30pc;
+  height: 17pc;
+  border-radius: 40px;
+  margin: 12px 11px;
+}
+
+.nav_btn2 {
+  width: 100%;
+  background: transparent;
+  border: 0px;
+  height: 68px;
+}
+
+.navH {
+  background: #2C3144;
+  height: 97%;
+  width: 4%;
+  border-radius: 8px;
+  margin: 10px 95.5%;
+  display: grid;
+  position: fixed;
+  align-content: space-evenly;
+}
+
+.nav_btn2:hover {
+  background: #00dbff36;
+  width: 100%;
+  border-radius: 10px;
+}
+
+#imgIcon {
+  width: 30px;
+}
+
+#ShareButton {
+  border: 0;
+  border-radius: 12px;
+  width: 45%;
+  height: 63%;
+  align-self: center;
+  background: #1e1e1e;
+  color: white;
+  margin-right: 3%;
+}
+
+#ExportButton {
+  border: 0;
+  border-radius: 12px;
+  width: 90%;
+  height: 63%;
+  align-self: center;
+  background: blue;
+  color: white;
+  margin-right: 6%;
+}
+
+#NavControlBox {
+  height: 100%;
+  display: flex;
+  width: 12%;
+  justify-content: space-evenly;
+}
+
+#ColorPicker {
+  height: fit-content;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+}
+
+#ColorPicker div {
+  height: 38px;
+  width: 38px;
+  border-radius: 100%;
+  border: 1px #c1c1c1 solid;
+}
+
+.ValueBox {
+  background: transparent;
+  border: 0;
+  outline: none;
+  border-bottom: 2px gray solid;
+  width: 120px;
+  height: 40px;
+  color: white;
+  padding-left: 11px;
+  margin-left: 12px;
+  margin-right: 15px;
+}
+
+#applyButton {
+  width: 71%;
+}
+
+#closeButton {
+  width: 20%;
+}
+
+.PropertiesButton {
+  height: 17%;
+  border-radius: 10px;
+  border: 0px;
+  font-size: 17px;
+}
+
+#code {
+  position: fixed;
+  background: #16151c;
+  z-index: 9;
+  width: 39%;
+  height: 37%;
+  justify-content: center;
+  display: none;
+  align-items: center;
+  border-radius: 15px;
+  border: 4px black solid;
+  box-shadow: 0px 0px 17px 0px aliceblue;
+  margin: calc(21% - 9%) 32%;
+}
+
+#nav_container {
+  display: flex;
+  align-items: center; 
+  justify-content: space-evenly;
+  width: 15%; 
+}
+
+#toolbox {
+  width: 50%;
+  height: 70%;
+  display: flex;
+  background: rgb(65, 60, 106);
+  border-radius: 15px;
+}
+
+#toolbox button {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: 0;
+  font-size: 20px;
+}
+
+#SaveButton {
+  border: 0;
+  border-radius: 12px;
+  width: 50%;
+  height: 63%;
+  align-self: center;
+  background: blue;
+  color: white;
+  margin-right: 6%;
+}
+
+/* After this is the css for the chat mockup */
+
+#LoginContent {
+  padding-bottom: 13%;
+}
+
+#example {
+    line-height: 40px;
+    max-width: 1000px;
+    margin-top: 3%;
+    margin-bottom: 3%;
+}
+
+#border {
+    border: 5px solid grey;
+    rotate: 90deg;
+    margin: 0 auto;
+}
+
+#online_users {
+    padding-left: 0.7%;
+    padding-top: 1.6%;
+    color: #ffffff;
+}
+
+#online_border {
+     border: 5px solid grey;   
+     margin-top: 55px;
+     width: 11.5%;
+     position: fixed;
+}
+
+#notif {
+  font-size: 22px;
+  background-color: red;
+}
+
+#pfpbtn {
+    font-size: 22px;
+    background-color: red;
+}
+
+.pfp {
+    margin: -13px 0;
+    height:30px;
+    width:30px;
+    border-radius:100px;
+    overflow: hidden;
+    border: 2px solid #404040;
+}
+
+#pfpmenu {
+    border-radius: 100px;
+    width: 45px;
+    height: 45px;
+    border: 2px red solid;
+}
+
+#chat {
+  z-index: 0;
+  padding-left: 5%;
+  padding-right: 11%;
+  margin-left: -2.8%;
+  line-height: 40px;
+  padding-bottom: 9%;
+  margin-bottom: 2%;
+  margin-top: -1.1%;
+  padding-top: 9%;
+  word-wrap: break-word;
+  color: #dd7016;
+  width: 200%;
+  height: 91.9%;
+}
+
+#message {
+    font-size: 18px;
+    width: 100%;
+    border-radius: 15px;
+}
+
+/* id start by getting the text above the area the text box is */
+#chatbox {
+    display: flex;
+    width: 50%;
+    height: 100%;
+    align-self: center;
+    background: transparent;
+}
+
+#sides {
+    position: fixed;
+    bottom: 0%;
+    width: 100%;
+    /*border-top: 5px solid black;*/
+    justify-content: center;
+    display: flex;
+    height: 9.6%;
+    margin: 0px -0.7px;
+    background: black;
+}
+
+#activenav {
+  position: fixed;
+  top: 7%;
+  width: 100%;
+  padding-bottom: 60%;
+  margin-left: 88%;
+  border-left: 5px solid #000;
+  color: white;
+  box-shadow: 10px 20px 17px 16px #191919;
+}
+
+.activenav {
+    color: white;
+    text-decoration: none;
+}
+
+#send {
+    font-size: 24px;
+    border-radius: 22%;
+}
+
+#send:hover {
+    color: #787773;
+}
+
+#msg-title {
+    padding-right: 10px;
+}
+
+#img {
+    right: 5%;
+    padding-left: 5%;
+}
+
+#topleft {
+    width: 50px;
+    height: 100%;
+    padding-left: 5px;
+    background: transparent !important;
+}
+
+/* Nav Menu left */
+
+.sidenav {
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 57px;
+  background: black;
+    background-color: black;
+  background-color: black;
+  scrollbar-width: thin;
+  margin: 0 0.2%;
+}
+
+.sidenav a {
+  text-decoration: none;
+  font-size: 25px;
+  color: #d0c8c8;
+  display: grid;
+  transition: 0.3s;
+  background: black;
+  height: 70px;
+  width: 100%;
+  text-align: justify;
+  align-content: center;
+  text-indent: 17px;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.closebtn {
+    position: absolute;
+    margin: -73px 74%;
+    width: 12px !important;
+    font-size: 40px !important;
+    background: transparent !important;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+}
+
+/* Menu options */
+
+#dark {
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 30px;
+    display: flex;
+}
+
+#light {
+    background-color: #9a9996; 
+    color: #ffffff;
+    font-size: 30px;
+    display: flex;
+}
+
+#holiday {
+    background-color: #ffffff; 
+    color: #000000;
+    font-size: 30px;
+    display: flex;
+}
+
+#testing {
+    background-color: #494947; 
+    color: #ffffff;
+    font-size: 30px;
+    display: flex;
+}
+
+#winter {
+    background-color: #040c81; 
+    color: #74ade2;
+    font-size: 30px;
+    display: flex;
+}
+
+
+/* Styling for the theme dropdown container */
+.themeDropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Styling for the "Themes" button */
+.themeBtn {
+    background-color: #333533;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Styling for the dropdown content (hidden by default) */
+.themeContent {
+    display: none;
+    position: absolute;
+    background-color: #1a1919;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+/* Styling for the dropdown links */
+.themeOption {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Styling for the dropdown links on hover */
+.themeOption:hover {
+    background-color: #e66100;
+}
+
+.std_box {
+    background-color:  #000000;
+    color:  #ffffff;
+    font-size: 20px;
+    border-radius: 7px;
+    width: 45%;
+    height: 40px;
+}
+
+.rainbow-text-loop {
+  display: inline-block;
+  text-shadow: 2px 2px 4px #000000;
+  -webkit-animation: rainbow 5s infinite; 
+}
+
+@-webkit-keyframes rainbow{
+  0%{color: orange;}  
+  10%{color: purple;} 
+  20%{color: red;}
+  30%{color: CadetBlue;}
+  40%{color: yellow;}
+  50%{color: coral;}
+  60%{color: green;}
+  70%{color: cyan;}
+  80%{color: DeepPink;}
+  90%{color: DodgerBlue;}
+  100%{color: orange;}
+}
+
+.Dev_colors-loop {
+  display: inline-block;
+  text-shadow: 2px 2px 4px #000000;
+  -webkit-animation: Dev_colors 5s infinite; 
+}
+
+@-webkit-keyframes Dev_colors {
+  0%{color: #f47106;} 
+  25%{color: blue;}
+  50%{color: #00FF00;}
+  100%{color: #f47106;}
+}
+
+
+.PictureBTN {
+    border-radius: 100px;
+    width: 50px;
+    height: 50px;
+}
+
+.AccControls {
+  display: block;
+  position: absolute;
+  background-color: black;
+  min-width: 60px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  top: 55px;
+  border-radius: 15px;
+  margin: 2px -24px;
+  border: 1px #939393 solid;
+}
+
+.AccountPopup {
+  display: grid;
+  text-align: center;
+  margin: 5px 95%;
+  position: fixed;
+}
+
+.AccountPopup a {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.AccountPopup a:hover {
+  border-radius: 10px;
+  background: #2d2d2d;
+  border: #c72b07e5 0.5px solid;
+}
+
+.ChatinfoLP {
+    text-align: center;
+    margin-left: 76px;
+    width: 65%;
+}
+
+.LoginTTL {
+    font-size: 80px;
+}
+
+.LoginTXT {
+    color: white;
+    text-align: left;
+}
+
+
+.version {
+    background: #2d2d2d;
+    color: white;
+    border: 1px solid grey;
+    /* padding: .25em; */
+    position: fixed;
+    bottom: -20px;
+    left: 92.8%;
+    transform-origin: top left;
+    border-radius: 5%;
+}
+
+#PfPdisplay {
+  width: 130px;
+  height: 130px;
+  border-radius: 100%;
+  border: 4px;
+  border-color: red;
+  border-style: solid;
+}
+
+#ProfileDisplay {
+  display: flex;
+}
+
+.StatusBTN {
+  height: 40px;
+}
+
+#Btm-nav {
+  position: fixed;
+  background: #e5dcdc1c;
+  width: 15%;
+  height: 36%;
+  margin: 429px 15px;
+  display: grid;
+  border-radius: 10px;
+}
+
+.btm-pop {
+  background: transparent;
+  font-size: 21px;
+  border-top: 3px solid black;
+  border-bottom: 3px;
+  border-left: 0px;
+  border-right: 0px;
+  color: white;
+}
+
+.SignUpForm {
+  background: #ffffff;
+  height: 81%;
+  width: 33%;
+  border-radius: 12px;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  margin: 68px auto;
+}
+
+
+#tos-btm {
+  position: fixed;
+  align-self: end;
+  width: 35%;
+  justify-content: space-evenly;
+  display: flex;
+  height: 10%;
+  border-top-width: 2px;
+  border-top-style: solid;
+  border-top-color: #00000063;
+  background: white;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+#tos-popup {
+  background: white;
+  position: fixed;
+  z-index: 99;
+  width: 35%;
+  height: 60%;
+  display: none;
+  margin: 123px 44%;
+  border-radius: 12px;
+}
+
+.tos-btn {
+  width: 77%;
+  height: 60%;
+  align-self: center;
+  border-style: double;
+  border-color: #9c58ff;
+  color: #d40ad4;
+  border-radius: 12px;
+}
+
+#tos-accept {
+  background: #561b56;
+}
+
+#tos-decline {
+  background: transparent;
+}
+
+#tos-body {
+  width: 100%;
+  height: 78%;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  align-content: baseline;
+  display: grid;
+}
+
+#tos-header {
+  width: 100%;
+  height: 60%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+#header-2 img {
+  width: 70px;
+  height: 70px;
+  border-radius: 100%;
+}
+#header-2 {
+  margin: 26px -23px;
+  display: grid;
+}
+
+.header-item {
+  width: 100%;
+  justify-content: center;
+}
+
+#topbar {
+  background: black;
+  position: fixed;
+  width: 100%;
+  height: 8.6%;
+  margin: 1.1px 1.3px;
+  padding: 0px;
+  display: flex;
+  box-shadow: 0px -1px 44px 15px #191919;
+  z-index: 1;
+}
+
+
+notification {
+  width: 400px;
+  height: 80px;
+  background: #1e1e1e;
+  display: flex;
+  align-items: center;
+  color: white;
+  border-radius: 15px;
+  margin: 0px;
+  justify-content: space-evenly;
+  border: 1.5px solid #dbdbdb;
+  position: fixed;
+  justify-self: end;
+  animation-name: notification_slide_in;
+  animation-duration: .7s;
+  z-index: 20000000000000000000000;
+  top: 1%;
+  right: 0%;
+}
+
+notification img {
+  height: 60px;
+  width: 60px;
+  border-radius: 18px;
+  margin-left: 0px;
+  border: 1px solid red;
+}
+
+notification div {
+  height: 100%;
+  align-content: center;
+  align-items: center;
+}
+
+notification .img_panel {
+  display: flex;
+  justify-content: center;
+  width: 20%;
+}
+
+notification .content_panel {
+  width: 74%;
+}
+
+notification .close_panel {
+  width: 6%;
+}
+
+notification .close_panel button {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+}
+
+@keyframes notification_slide_in {
+  from {right: -34%;}
+  to {right: 0%;}
+}
+
+@keyframes notification_slide_out {
+  from {right: 0%;}
+  to {right: -34%;}
+}
+
