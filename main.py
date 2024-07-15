@@ -603,13 +603,13 @@ def handle_save_project(project):
 def handle_delete_project(project):
     socketid = request.sid
     user = User.get_user_by_id(request.cookies.get('Userid'))
-    user.themeID -= 1
+    user.themeCount -= 1
     database.delete_project(project)
     emit('response', ('Project Saved', False), to=socketid)
 
 
 @socketio.on('get_themes')
-def handle_project_requests():
+def handle_theme_requests():
     socketid = request.sid
     # userid = request.cookies.get('Userid')
     # displayname = request.cookies.get('DisplayName').replace('"', '')
