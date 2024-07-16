@@ -84,7 +84,6 @@ function updateExamples() {
         "message_color",
         "role_color",
         "user_color",
-        "Apassword",
         "profile"
     ];
     
@@ -128,11 +127,11 @@ createExamples();
 setInterval(updateExamples, 250);
 socket.emit("get_theme", getCookie('Theme'));
 socket.emit("get_themes");
-console.log(getCookie('Theme'))
+// console.log(getCookie('Theme'))
 
 socket.on('set_theme', (theme) => {
   console.log(theme)
-  setTheme(theme['themeID'], theme['name'])
+  setTheme(theme['themeID'], theme['name'], theme['author'])
 })
 
 // const holidays = {
@@ -144,40 +143,22 @@ socket.on('set_theme', (theme) => {
 // };
 
 function setTheme(theme, name, author) {
-  // let currentDate = new Date();
-  // let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-  // let day = currentDate.getDate().toString().padStart(2, '0');
-  // var themeBtn = document.querySelector(".themeBtn");
-  // var themeDropdown = document.querySelector(".themeContent");
+  var themeAuthor = document.getElementById("info_theme_author")
   var selector = document.getElementById("theme-selector")
   var info_theme_text = document.getElementById("info_theme_name")
   selector.value = theme
+  themeAuthor.innerHTML = author
   info_theme_text.innerHTML = `Applied theme: ${name}`
 }
 
-//   for (const key in holidays) {
-//     const holiday = holidays[key];
-//     if (`${month}-${day}` >= holiday.start && `${month}-${day}` <= holiday.end && theme === 'holiday') {
-//       theme = holiday.name;
-//       break;
-//     }
-//   }
 
-//   console.log(theme);
-
-//   themeBtn.innerText = "You picked: " + capitalizeFirstLetter(theme);
-//   document.getElementsByName("theme")[0].value = theme;
-//   themeDropdown.style.display = "none";
-// }
 socket.on('receve_themes', (themes) => {
   const contentList = document.getElementById("themes_panel")
   // console.log(themes)
   for (const theme of themes) {
-      const themeAuthor = document.getElementById("info_theme_author")
       const themeButton = document.createElement('a');
       themeButton.innerHTML = `<i class="fa-regular fa-file-lines" style="color: #ffffff;"></i> ${theme['name']}`;
-      themeAuthor.innerHTML = theme['author']
-      themeButton.setAttribute("onclick", `setTheme('${theme['themeID']}', '${theme['name']}')`)
+      themeButton.setAttribute("onclick", `setTheme('${theme['themeID']}', '${theme['name']}','${theme['author']}')`)
       contentList.appendChild(themeButton);
   }
 });
