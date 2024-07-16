@@ -266,128 +266,116 @@ function open_project(data) {
   topbar.style.boxShadow = colors['topbar-boxShadow']
 }
 
-// Work in progress
-const properties = {
-  "Background Color": "disabled",
-  "Text Color": "disabled",
-  "Border Color": "disabled",
-  "Shadow Color": "disabled",
-};
-
 var shadow_user = "";
 
 AllContent.forEach((element) => {
   element.addEventListener("click", (event) => {
-    if (currentSelection === "Edit") {
-      element.classList.toggle("active");
+    if (event.target.id != "") {
+      if (currentSelection === "Edit") {
+        element.classList.toggle("active");
 
-      menuOwner.innerHTML = event.target.id;
+        menuOwner.innerHTML = event.target.id;
 
-      OpenProperties();
+        OpenProperties();
 
-      var SelectedLayer = event.target.id;
-      const ColorBox = document.getElementById("body-color");
-      const textColor = document.getElementById("text-color");
-      const borderColor = document.getElementById("border-color");
-      const shadowColor = document.getElementById("shadow-color");
-      const LayerProperties = document.getElementById("LayerProperties");
-      const LayerOpacity = document.getElementById("LayerOpacity");
-      const Chat = document.getElementById("ChatMockup");
+        var SelectedLayer = event.target.id;
+        const ColorBox = document.getElementById("body-color");
+        const textColor = document.getElementById("text-color");
+        const borderColor = document.getElementById("border-color");
+        const shadowColor = document.getElementById("shadow-color");
+        const LayerProperties = document.getElementById("LayerProperties");
+        const LayerOpacity = document.getElementById("LayerOpacity");
+        const Chat = document.getElementById("ChatMockup");
 
-      switch(SelectedLayer) {
-        case "topbar":
-          setProperties("enabled", "enabled", "enabled", "enabled");
-          break;
-        case "mySidenav":
-          setProperties("enabled", "enabled", "disabled", "disabled");
-          break;
-        case "activenav":
-          setProperties("enabled", "enabled", "enabled", "enabled");
-          break;
-        case "sides":
-          setProperties("enabled", "disabled", "disabled", "disabled");
-          break;
-        case "room_names":
-          setProperties("enable", "enable", "disabled", "disabled");
-          break;
-        case "online_buttons":
-          setProperties("disabled", "enable", "disabled", "disabled");
-          break;
-        case "RoomDisplay":
-          setProperties("disabled", "enable", "disabled", "disabled");
-          break;
-        case "topleft":
-          setProperties("disabled", "enable", "disabled", "disabled");
-          break;
-        case "send":
-          setProperties("enabled", "enabled", "disabled", "disabled");
-          break;
-        default:
-          setProperties("enabled", "enabled", "enabled", "enabled")
-      } 
+        switch(SelectedLayer) {
+          case "topbar":
+            setProperties("enabled", "enabled", "enabled", "enabled");
+            break;
+          case "mySidenav":
+            setProperties("enabled", "enabled", "disabled", "disabled");
+            break;
+          case "activenav":
+            setProperties("enabled", "enabled", "enabled", "enabled");
+            break;
+          case "sides":
+            setProperties("enabled", "disabled", "disabled", "disabled");
+            break;
+          case "room_names":
+            setProperties("enable", "enable", "disabled", "disabled");
+            break;
+          case "online_buttons":
+            setProperties("disabled", "enable", "disabled", "disabled");
+            break;
+          case "RoomDisplay":
+            setProperties("disabled", "enable", "disabled", "disabled");
+            break;
+          case "topleft":
+            setProperties("disabled", "enable", "disabled", "disabled");
+            break;
+          case "send":
+            setProperties("enabled", "enabled", "disabled", "disabled");
+            break;
+          default:
+            setProperties("enabled", "enabled", "enabled", "enabled");
+        } 
 
-      document.getElementsByClassName("ColorDisplay")[0].style.background = document.getElementById(`${SelectedLayer}`).style.background;
-      document.getElementsByClassName("ColorDisplay")[1].style.background = document.getElementById(`${SelectedLayer}`).style.color;
-      document.getElementsByClassName("ColorDisplay")[2].style.background = document.getElementById(`${SelectedLayer}`).style.shadowColor;
-      document.getElementsByClassName("ColorDisplay")[3].style.background = document.getElementById(`${SelectedLayer}`).style.borderColor;
 
-      applyButton.addEventListener("click", (event) => {
-        if (SelectedLayer == menuOwner.innerHTML) {
-
-          if (SelectedLayer === "topbar") {
-            shadow_user = "0px -1px 44px 15px"
-          }
-          else if (SelectedLayer === "activenav")
-          {
-            shadow_user = "10px 20px 17px 16px"
-          }
-          else
-          {
-            shadow_user = ""
-          }
-
-          if (SelectedLayer === "room_names") {
-            const rooms = document.querySelectorAll('#room_names');
-            for (let index = 0; index < rooms.length; index++) {
-              rooms[index].style.background = ColorBox.value;
-              rooms[index].style.color = textColor.value;        
-            }
-          }
-        
-          if (SelectedLayer === "online_buttons") {
-            const online_buttons = document.querySelectorAll("#online_buttons");
-            for (let index = 0; index < online_buttons.length; index++) {
-              online_buttons[index].style.color = textColor.value;
-            }
-          }
-
-          document.getElementById(SelectedLayer).style.background = ColorBox.value;
-          document.getElementById(SelectedLayer).style.color = textColor.value;
-          document.getElementById(SelectedLayer).style.borderColor = borderColor.value;
-          document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
-
-          LayerProperties.addEventListener("click", (event) => {
-            document.getElementById(SelectedLayer).style.display = "none";
-          });
-
-          setInterval(Update, 100);
-
-          function Update() {
-            // event.target.style.background = ColorBox.value;
-            document.body.style.background = chat.style.background;
-            Chat.style.background = chat.style.background;
-            
-            event.target.style.opacity = LayerOpacity.value + "%";
-          };
-
-          Update();
-          
+        const fetchColors = () => {
           document.getElementsByClassName("ColorDisplay")[0].style.background = document.getElementById(`${SelectedLayer}`).style.background;
-          document.getElementsByClassName("ColorDisplay")[1].style.background = document.getElementById(`${SelectedLayer}`).style.color; 
-          document.getElementsByClassName("ColorDisplay")[2].style.background = document.getElementById(`${SelectedLayer}`).style.boxShadow;  
+          document.getElementsByClassName("ColorDisplay")[1].style.background = document.getElementById(`${SelectedLayer}`).style.color;
+          document.getElementsByClassName("ColorDisplay")[2].style.background = document.getElementById(`${SelectedLayer}`).style.shadowColor;
           document.getElementsByClassName("ColorDisplay")[3].style.background = document.getElementById(`${SelectedLayer}`).style.borderColor;
         };
-      });
+        fetchColors();
+
+        applyButton.addEventListener("click", (event) => {
+          if (SelectedLayer == menuOwner.innerHTML) {
+
+            if (SelectedLayer === "topbar") {
+              shadow_user = "0px -1px 44px 15px"
+            }
+            else if (SelectedLayer === "activenav")
+            {
+              shadow_user = "10px 20px 17px 16px"
+            }
+            else
+            {
+              shadow_user = ""
+            }
+
+            if (SelectedLayer === "room_names") {
+              const rooms = document.querySelectorAll('#room_names');
+              for (let index = 0; index < rooms.length; index++) {
+                rooms[index].style.background = ColorBox.value;
+                rooms[index].style.color = textColor.value;        
+              }
+            }
+          
+            if (SelectedLayer === "online_buttons") {
+              const online_buttons = document.querySelectorAll("#online_buttons");
+              for (let index = 0; index < online_buttons.length; index++) {
+                online_buttons[index].style.color = textColor.value;
+              }
+            }
+
+            document.getElementById(SelectedLayer).style.background = ColorBox.value;
+            document.getElementById(SelectedLayer).style.color = textColor.value;
+            document.getElementById(SelectedLayer).style.borderColor = borderColor.value;
+            document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
+
+            setInterval(Update, 100);
+
+            function Update() {
+              // event.target.style.background = ColorBox.value;
+              document.body.style.background = chat.style.background;
+              Chat.style.background = chat.style.background;
+            };
+
+            Update();
+            fetchColors();
+          };
+        });
+      };
     };
   });
 });

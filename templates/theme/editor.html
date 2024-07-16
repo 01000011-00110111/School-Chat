@@ -14,6 +14,13 @@
 <body>
 
   <div class="nav">
+    <div id="theme_information_container">
+      <div id="theme_project_details">
+        <input type="text" placeholder="Project Name" value="Untitled Project" id="n_name">
+        <i class="fa-solid fa-angle-down"></i>
+      </div>
+      <p>v1.0</p>
+    </div>
     <div id="nav_container">
       <!-- <i class="fa-solid fa-bars fa-xl" style="color: #ffffff; align-self: center; width: 9%; margin-left: 12px; margin-right: 21px;" onclick="OpenProperties();"></i> -->
       <div id="toolbox">
@@ -27,20 +34,10 @@
       </div>
       <h3 id="editmodeText">Selection:</h3>
     </div>
-    <input type="text" placeholder="Project Name" value="Untitled Project" id="n_name">
+
     <div id="NavControlBox">
       <button id="ExportButton" onclick="publishProject();">Publish</button>
       <button type="button" id="SaveButton" onclick="saveProject();" name="save">Save</button>
-    </div>
-  </div>
-
-  <div id="themeBox">
-    <div>
-
-    </div>
-
-    <div id="code">
-
     </div>
   </div>
 
@@ -97,15 +94,6 @@
                 <input type="color" id="text-color" style="display: none">
                 <input type="color" id="border-color" style="display: none">
                 <input type="color" id="shadow-color" style="display: none">
-            </div>
-          </div>
-        </div>
-        <div id="fh">
-          <div>
-            <div class="i_h">
-              <h5>Layers</h5>
-              <input type="number" class="ValueBox" id="LayerOpacity" max="100" min="0" value="100" placeholder="Layer Opacity"/>
-              <button id="LayerProperties">Hide Layer</button>
             </div>
           </div>
         </div>

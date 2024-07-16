@@ -14,7 +14,7 @@ html, body {
 .nav {
   display: flex;
   background: #2C3144;
-  height: 7%;
+  height: 6%;
   justify-content: space-between;
 }
 
@@ -96,7 +96,7 @@ html, body {
   border: 0;
   color: white;
   outline: none;
-  text-align: center;
+  text-indent: 19px;
 }
 
 .i_h {
@@ -231,7 +231,7 @@ html, body {
 }
 
 .PropertiesButton {
-  height: 17%;
+  height: 52px;
   border-radius: 10px;
   border: 0px;
   font-size: 17px;
@@ -876,3 +876,18 @@ notification .close_panel button {
   to {right: -34%;}
 }
 
+#theme_information_container {
+  display: grid;
+  align-content: center;
+}
+
+#theme_information_container p {
+  font-size: 12px;
+  color: gray;
+  text-indent: 19px;
+  padding-top: 1px;
+}
+
+#theme_project_details {
+  display: flex;
+}

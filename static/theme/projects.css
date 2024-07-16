@@ -204,13 +204,13 @@ body {
 }
 
 .dropdown_button {
-  background-color: #000000;
+  background: transparent;
   color: white;
   padding: 5px 20px;
   border: none;
   cursor: pointer;
   margin-left: 10px;
-  font-size: 35px;
+  font-size: 28px;
 }
 
 .dropdown_content {
