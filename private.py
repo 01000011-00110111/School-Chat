@@ -8,6 +8,7 @@ from flask_socketio import emit
 import database
 import log
 from commands.other import format_system_msg
+from online import add_unread, clear_unread
 
 
 def get_messages_list(sender, receiver):
@@ -104,7 +105,7 @@ class Private:
         for receiver in self.unread:
             if receiver != uuid and not self.active[receiver]:
                 self.unread[receiver] += 1
-                
+                add_unread(receiver, uuid)
         # print(self.backups)
                 
         if len(self.messages) >= 250:
@@ -121,6 +122,9 @@ class Private:
         """Sets the active user."""
         self.active[sender] = True
         self.unread[sender] = 0
+        for receiver in self.unread:
+            if receiver != sender and not self.active[receiver]:
+                clear_unread(receiver, sender)
     
     def reset_chat(self):
         """Reset the chat."""
