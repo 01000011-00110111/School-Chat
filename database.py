@@ -906,7 +906,8 @@ def create_project(uuid, displayname, code):
         "themeID": code,
         "author": [uuid, displayname],
         "status": "private",
-        "theme": theme,
+        "theme": {},
+        "project": theme,
     }
     Themes.insert_one(project)
     return project
@@ -923,6 +924,10 @@ def save_project(projects):
         {"$set": projects},
         upsert=True,
     )
+
+
+def update_theme_status(themeID, status):
+    Themes.update_one({'themeID': themeID}, {"$set": {'status': status}})
 
 
 def delete_project(themeID):

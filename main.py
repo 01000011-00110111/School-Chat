@@ -144,7 +144,7 @@ def chat_page() -> ResponseReturnValue:
 
 @app.route("/chat/<room_name>")
 @login_required
-def specific_chat_page(_room_name) -> ResponseReturnValue:
+def specific_chat_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
@@ -164,7 +164,7 @@ def admin_page() -> ResponseReturnValue:
 
 @app.route("/admin/<room_name>")
 @login_required
-def specific_admin_page(_room_name) -> ResponseReturnValue:
+def specific_admin_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
@@ -581,6 +581,7 @@ def handle_project_requests():
     # print(projects)
     for project in projects:
         del project["_id"]
+        del project['theme']
         if "author" in project and len(project["author"]) > 1:
             project["author"] = project["author"][1:]
         projects_fixed.append(project)
@@ -608,6 +609,7 @@ def handle_projecet_creation():
     project = database.create_project(userid, user.displayName, code)
     user.themeCount += 1
     del project["_id"]
+    del project['theme']
     emit("set_theme", project, to=socketid)
 
 
@@ -618,6 +620,7 @@ def send_project(theme_id):
     # displayname = request.cookies.get('DisplayName').replace('"', '')
     project = database.get_project(theme_id)
     del project["_id"]
+    project['project'] = {}
     if "author" in project and len(project["author"]) > 1:
         project["author"] = project["author"][1:]
     emit("set_theme", project, to=socketid)
@@ -626,10 +629,20 @@ def send_project(theme_id):
 @socketio.on("save_project")
 def handle_save_project(project):
     socketid = request.sid
+    project['author'].insert(0, request.cookies.get('Userid'))
     # user = User.get_user_by_id(request.cookies.get('Userid'))
     # if user.themeCount < 3:
     database.save_project(project)
     emit("response", ("Project Saved", False), to=socketid)
+    
+
+@socketio.on("update_theme_status")
+def handel_status_change(themeID, status):
+    # socketid = request.sid
+    # user = User.get_user_by_id(request.cookies.get('Userid'))
+    # if user.themeCount < 3:
+    database.update_theme_status(themeID, status)
+    # emit("response", ("Project Saved", False), to=socketid)
 
 
 @socketio.on("delete_project")
@@ -654,6 +667,7 @@ def handle_theme_requests():
             continue
         del project["_id"]
         del project["theme"]
+        del project['project']
         del project["status"]
         if "author" in project and len(project["author"]) > 1:
             project["author"] = project["author"][1:]
@@ -670,6 +684,7 @@ def send_theme(theme_id):
     if theme is None:
         theme = database.get_project("dark")
     del theme["_id"]
+    del theme['project']
     del theme["author"]
     # del project['themeID']
     del theme["status"]

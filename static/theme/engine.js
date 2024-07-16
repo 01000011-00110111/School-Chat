@@ -141,7 +141,7 @@ function saveProject() {
   //   theme: theme,
   //   'status': 'private',
   // }
-  project['theme'] = theme
+  project['project'] = theme
   project['name'] = theme_name1.value
   socket.emit('save_project', project)
 }
@@ -173,8 +173,9 @@ function publishProject() {
     'topbar-boxShadow': topbar.style.boxShadow,
   }
   project['theme'] = theme
+  project['project'] = theme
   project['name'] = theme_name1.value
-  project['status'] = 'public'
+  // project['status'] = 'public'
   socket.emit('save_project', project)
 }
 
@@ -237,8 +238,9 @@ const menuOwner = document.getElementById("menuOwner");
 
 // Opens a project
 function open_project(data) {
-  let colors = data.theme
+  let colors = data.project
   let snav_iter = snavText.length;
+  theme_name1.value = data.name
   body.style.background = colors['body']
   chat.style.color = colors['chat-text']
   message.style.background = colors['chat-background']
