@@ -90,6 +90,12 @@ class User:
                 # print(f'e{user}')
                 userid = user.uuid
         return userid
+    
+    @classmethod
+    def get_display(cls, uuid):
+        user = cls.Users.get(userid, None)
+        displayname = user.displayName
+        return displayname
 
     @classmethod
     def add_user_class(cls, username, user, userid):
@@ -174,11 +180,11 @@ class User:
         # print(self.mutes)
         return False
 
-    def update_account(self, messageC, roleC, userC, displayname, role, profile, theme):
+    def update_account(self, messageColor, roleColor, userColor, displayname, role, profile, theme):
         """Update the user's account details."""
-        self.Mcolor = messageC
-        self.Rcolor = roleC
-        self.Ucolor = userC
+        self.Mcolor = messageColor
+        self.Rcolor = roleColor
+        self.Ucolor = userColor
         self.displayName = displayname
         self.role = role
         self.profile = profile

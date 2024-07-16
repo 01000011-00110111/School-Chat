@@ -1,7 +1,8 @@
 """Database.py - functions for writing/reading from MongoDB
-    Copyright (C) 2023  cserver45, cseven
-    License info can be viewed in main.py or the LICENSE file.
+Copyright (C) 2023  cserver45, cseven
+License info can be viewed in main.py or the LICENSE file.
 """
+
 import configparser
 
 # import hashlib
@@ -15,23 +16,24 @@ def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
     return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
 
+
 config = configparser.ConfigParser()
-config.read('config/keys.conf')
+config.read("config/keys.conf")
 mongo_pass = config["mongodb"]["passwd"]
 client = pymongo.MongoClient(mongo_pass)
-#accounts/user data
+# accounts/user data
 Accounts = client.Accounts
 Permission = client.Accounts.Permission
 Customization = client.Accounts.Customization
 ID = client.Accounts.Accounts
 
-#chat room data
+# chat room data
 Rooms = client.Rooms.Rooms
 Access = client.Rooms.Permission
 Messages = client.Rooms.Messages
 Private = client.Rooms.Private
 
-#extra
+# extra
 Themes = client.Extra.Themes
 # db = client.Extra
 
@@ -39,19 +41,18 @@ Themes = client.Extra.Themes
 def clear_online():
     """Clears the online list"""
     # db.Online.delete_many({})
-    ID.update_many({"status": "online"}, {"$set": {"status": 'offline'}})
+    ID.update_many({"status": "online"}, {"$set": {"status": "offline"}})
 
 
 def set_offline(userid):
     """Removes a user from the online list"""
-    if ID.find_one({'userId': userid
-                                  })['status'] != 'offline-locked':
-        ID.update_one({"userId": userid}, {'$set': {"status": 'offline'}})
+    if ID.find_one({"userId": userid})["status"] != "offline-locked":
+        ID.update_one({"userId": userid}, {"$set": {"status": "offline"}})
 
 
 def force_set_offline(userid):
     """Removes a user from the online list"""
-    ID.update_one({"userId": userid}, {'$set': {"status": 'offline-locked'}})
+    ID.update_one({"userId": userid}, {"$set": {"status": "offline-locked"}})
 
 
 # def update_user(username, vid):
@@ -65,46 +66,46 @@ def set_online(userid, force):
     #     "location": location
     # })
     # print(userid)
-    if not force and ID.find_one({'userId': userid
-                                  })['status'] != 'offline-locked':
-        ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
+    if not force and ID.find_one({"userId": userid})["status"] != "offline-locked":
+        ID.update_one({"userId": userid}, {"$set": {"status": "online"}})
     if force:
-        ID.update_one({"userId": userid}, {'$set': {"status": 'online'}})
+        ID.update_one({"userId": userid}, {"$set": {"status": "online"}})
 
 
 # accounting
 
+
 def distinct_userids():
-    return ID.distinct('userId')
+    return ID.distinct("userId")
 
 
 def find_data(location):
-    if location == 'vid':
-        return ID.find()    
-    if location == 'perm':
+    if location == "vid":
+        return ID.find()
+    if location == "perm":
         return Permission.find()
-    if location == 'customization':
+    if location == "customization":
         return Customization.find()
 
 
 def find_userid(user):
-    userid = ID.find_one({'username': user})
+    userid = ID.find_one({"username": user})
     if userid is None:
-        userid = Customization.find_one({'displayName': user})
+        userid = Customization.find_one({"displayName": user})
     return None if userid is None else userid["userId"]
 
 
 def get_email(userid):
-    return ID.find_one({'userId': userid})['email']
+    return ID.find_one({"userId": userid})["email"]
 
 
 def find_account(data, location):
-    if location == 'vid':
+    if location == "vid":
         return ID.find_one(data)
-    if location == 'perm':
+    if location == "perm":
         # print(data)
         return Permission.find_one(data)
-    if location == 'customization':
+    if location == "customization":
         return Customization.find_one(data)
 
 
@@ -115,7 +116,7 @@ def get_all_offline():
                 "from": "Customization",
                 "localField": "userId",
                 "foreignField": "userId",
-                "as": "customization"
+                "as": "customization",
             }
         },
         {
@@ -123,7 +124,7 @@ def get_all_offline():
                 "from": "Permission",
                 "localField": "userId",
                 "foreignField": "userId",
-                "as": "permission"
+                "as": "permission",
             }
         },
         {
@@ -132,87 +133,63 @@ def get_all_offline():
                 "userid": "$userId",
                 "username": "$username",
                 "status": "$status",
-                "profile": {
-                    "$arrayElemAt": ["$customization.profile", 0]
-                },
-                "displayName": {
-                    "$arrayElemAt": ["$customization.displayName", 0]
-                },
-                "perm": {
-                    "$arrayElemAt": ["$permission.SPermission", 0]
-                },
+                "profile": {"$arrayElemAt": ["$customization.profile", 0]},
+                "displayName": {"$arrayElemAt": ["$customization.displayName", 0]},
+                "perm": {"$arrayElemAt": ["$permission.SPermission", 0]},
             }
-        }
+        },
     ]
 
     return list(ID.aggregate(pipeline))
 
+
 def find_login_data(value, login):
-    pipeline = [{
-        "$lookup": {
-            "from": "Customization",
-            "localField": "userId",
-            "foreignField": "userId",
-            "as": "customization"
-        }
-    }, {
-        "$lookup": {
-            "from": "Permission",
-            "localField": "userId",
-            "foreignField": "userId",
-            "as": "permissions"
-        }
-    }, {
-        "$project": {
-            "_id": 0,
-            "userId": "$userId",
-            "status": "$status",
-            "username": "$username",
-            "password": "$password",
-            "email": "$email",
-            "role": {
-                "$arrayElemAt": ["$customization.role", 0]
-            },
-            "profile": {
-                "$arrayElemAt": ["$customization.profile", 0]
-            },
-            "displayName": {
-                "$arrayElemAt": ["$customization.displayName", 0]
-            },
-            "messageColor": {
-                "$arrayElemAt": ["$customization.messageColor", 0]
-            },
-            "roleColor": {
-                "$arrayElemAt": ["$customization.roleColor", 0]
-            },
-            "userColor": {
-                "$arrayElemAt": ["$customization.userColor", 0]
-            },
-            "theme": {
-                "$arrayElemAt": ["$customization.theme", 0]
-            },
-            "permission": {
-                "$arrayElemAt": ["$permissions.SPermission", 0]
-            },
-            "mutes": {
-                "$arrayElemAt": ["$permissions.mutes", 0]
-            },
-            "locked": {
-                "$arrayElemAt": ["$permissions.location", 0]
-            },
-            "warned": {
-                "$arrayElemAt": ["$permissions.location", 0]
-            },
-            "SPermission": {
-                "$arrayElemAt": ["$permissions.SPermission", 0]
-            },
-            "themeCount": {
-                "$arrayElemAt": ["$permissions.themeCount", 0]
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "Customization",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "customization",
             }
-        }
-    }]
-    match = [{"$match": {"username": value}}] if not login else \
-        [{"$match": {"userId": value}}]
+        },
+        {
+            "$lookup": {
+                "from": "Permission",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "permissions",
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "userId": "$userId",
+                "status": "$status",
+                "username": "$username",
+                "password": "$password",
+                "email": "$email",
+                "role": {"$arrayElemAt": ["$customization.role", 0]},
+                "profile": {"$arrayElemAt": ["$customization.profile", 0]},
+                "displayName": {"$arrayElemAt": ["$customization.displayName", 0]},
+                "messageColor": {"$arrayElemAt": ["$customization.messageColor", 0]},
+                "roleColor": {"$arrayElemAt": ["$customization.roleColor", 0]},
+                "userColor": {"$arrayElemAt": ["$customization.userColor", 0]},
+                "theme": {"$arrayElemAt": ["$customization.theme", 0]},
+                "permission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
+                "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
+                "locked": {"$arrayElemAt": ["$permissions.location", 0]},
+                "warned": {"$arrayElemAt": ["$permissions.location", 0]},
+                "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
+                "themeCount": {"$arrayElemAt": ["$permissions.themeCount", 0]},
+            }
+        },
+    ]
+    match = (
+        [{"$match": {"username": value}}]
+        if not login
+        else [{"$match": {"userId": value}}]
+    )
     try:
         result = list(ID.aggregate(match + pipeline))[0]
         return result
@@ -221,137 +198,106 @@ def find_login_data(value, login):
 
 
 def find_account_data(userid):
-    pipeline = [{
-        "$match": {
-            "userId": userid
-        }
-    }, {
-        "$lookup": {
-            "from": "Permission",
-            "localField": "userId",
-            "foreignField": "userId",
-            "as": "permissions"
-        }
-    }, {
-        "$lookup": {
-            "from": "Customization",
-            "localField": "userId",
-            "foreignField": "userId",
-            "as": "customization"
-        }
-    }, {
-        "$project": {
-            "_id": 0,
-            "userId": "$userId",
-            "username": "$username",
-            "email": "$email",
-            "role": {
-                "$arrayElemAt": ["$customization.role", 0]
-            },
-            "profile": {
-                "$arrayElemAt": ["$customization.profile", 0]
-            },
-            "theme": {
-                "$arrayElemAt": ["$customization.theme", 0]
-            },
-            "displayName": {
-                "$arrayElemAt": ["$customization.displayName", 0]
-            },
-            "messageColor": {
-                "$arrayElemAt": ["$customization.messageColor", 0]
-            },
-            "roleColor": {
-                "$arrayElemAt": ["$customization.roleColor", 0]
-            },
-            "userColor": {
-                "$arrayElemAt": ["$customization.userColor", 0]
-            },
-            "permission": {
-                "$arrayElemAt": ["$permissions.permission", 0]
-            },
-            "mutes": {
-                "$arrayElemAt": ["$permissions.mutes", 0]
-            },
-            "locked": {
-                "$arrayElemAt": ["$permissions.locked", 0]
-            },
-            "warned": {
-                "$arrayElemAt": ["$permissions.warned", 0]
-            },
-            "SPermission": {
-                "$arrayElemAt": ["$permissions.SPermission", 0]
+    pipeline = [
+        {"$match": {"userId": userid}},
+        {
+            "$lookup": {
+                "from": "Permission",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "permissions",
             }
-        }
-    }]
+        },
+        {
+            "$lookup": {
+                "from": "Customization",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "customization",
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "userId": "$userId",
+                "username": "$username",
+                "email": "$email",
+                "role": {"$arrayElemAt": ["$customization.role", 0]},
+                "profile": {"$arrayElemAt": ["$customization.profile", 0]},
+                "theme": {"$arrayElemAt": ["$customization.theme", 0]},
+                "displayName": {"$arrayElemAt": ["$customization.displayName", 0]},
+                "messageColor": {"$arrayElemAt": ["$customization.messageColor", 0]},
+                "roleColor": {"$arrayElemAt": ["$customization.roleColor", 0]},
+                "userColor": {"$arrayElemAt": ["$customization.userColor", 0]},
+                "permission": {"$arrayElemAt": ["$permissions.permission", 0]},
+                "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
+                "locked": {"$arrayElemAt": ["$permissions.locked", 0]},
+                "warned": {"$arrayElemAt": ["$permissions.warned", 0]},
+                "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
+            }
+        },
+    ]
     return list(ID.aggregate(pipeline))[0]
 
+
 def find_account_room_data(userid):
-    pipeline = [{
-        "$match": {
-            "userId": userid
-        }
-    }, {
-        "$lookup": {
-            "from": "Permission",
-            "localField": "userId",
-            "foreignField": "userId",
-            "as": "permissions"
-        }
-    }, {
-        "$lookup": {
-            "from": "Customization",
-            "localField": "userId",
-            "foreignField": "userId",
-            "as": "customization"
-        }
-    }, {
-        "$project": {
-            "displayName": {
-                "$arrayElemAt": ["$customization.displayName", 0]
-            },
-            "permission": {
-                "$arrayElemAt": ["$permissions.permission", 0]
-            },
-            "mutes": {
-                "$arrayElemAt": ["$permissions.mutes", 0]
-            },
-            "locked": {
-                "$arrayElemAt": ["$permissions.locked", 0]
-            },
-            "warned": {
-                "$arrayElemAt": ["$permissions.warned", 0]
-            },
-            "SPermission": {
-                "$arrayElemAt": ["$permissions.SPermission", 0]
+    pipeline = [
+        {"$match": {"userId": userid}},
+        {
+            "$lookup": {
+                "from": "Permission",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "permissions",
             }
-        }
-    }]
+        },
+        {
+            "$lookup": {
+                "from": "Customization",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "customization",
+            }
+        },
+        {
+            "$project": {
+                "displayName": {"$arrayElemAt": ["$customization.displayName", 0]},
+                "permission": {"$arrayElemAt": ["$permissions.permission", 0]},
+                "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
+                "locked": {"$arrayElemAt": ["$permissions.locked", 0]},
+                "warned": {"$arrayElemAt": ["$permissions.warned", 0]},
+                "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
+            }
+        },
+    ]
     return list(ID.aggregate(pipeline))[0]
+
 
 def find_all_accounts():
     return ID.find()
 
+
 def mute_user(user, muted):
     Permission.update_one({"userId": user}, {"$push": {"mutes": muted}}, upsert=True)
 
+
 def update_account_set(location, data, data2):
-    if location == 'vid':
+    if location == "vid":
         return ID.update_one(data, data2, upsert=True)
-    if location == 'perm':
+    if location == "perm":
         return Permission.update_one(data, data2, upsert=True)
-    if location == 'customization':
+    if location == "customization":
         return Customization.update_one(data, data2, upsert=True)
 
 
-def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
-                 locked):
+def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked):
     """Adds a single account to the database"""
     id_data = {
         "userId": userid,
         "username": SUsername,
         "password": SPassword,
         "email": SEmail,
-        'status': 'offline'
+        "status": "offline",
     }
     customization_data = {
         "userId": userid,
@@ -365,10 +311,10 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
     }
     permission_data = {
         "userId": userid,
-        "permission": 'true',
+        "permission": "true",
         "mutes": [],
-        'locked': locked,
-        "warned": '0',
+        "locked": locked,
+        "warned": "0",
         "SPermission": [""],
         "themeCount": 0,
     }
@@ -378,8 +324,9 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname,
     Permission.insert_one(permission_data)
 
 
-def update_account(userid, messageC, roleC, userC, displayname, role, profile,
-                   theme, email):
+def update_account(
+    userid, messageC, roleC, userC, displayname, role, profile, theme, email
+):
     customization_data = {
         "messageColor": messageC,
         "roleColor": roleC,
@@ -390,9 +337,10 @@ def update_account(userid, messageC, roleC, userC, displayname, role, profile,
         "theme": theme,
     }
 
-    Customization.update_one({'userId': userid}, {'$set': customization_data},
-                             upsert=True)
-    ID.update_one({'userId': userid}, {'$set': {"email": email}}, upsert=True)
+    Customization.update_one(
+        {"userId": userid}, {"$set": customization_data}, upsert=True
+    )
+    ID.update_one({"userId": userid}, {"$set": {"email": email}}, upsert=True)
 
 
 def backup_user(user):
@@ -404,70 +352,71 @@ def backup_user(user):
         "role": user.role,
         "profile": user.profile,
         "theme": user.theme,
-        }
+    }
     permission_data = {
         "mutes": user.mutes,
         "SPermission": user.perm,
-        "themeCount": user.themeCount, 
+        "themeCount": user.themeCount,
         # "warned": user.warned,
     }
 
-    Customization.update_one({'userId': user.uuid}, {'$set': customization_data},
-                             upsert=True)
-    Permission.update_one({'userId': user.uuid}, {'$set': permission_data}, upsert=True)
+    Customization.update_one(
+        {"userId": user.uuid}, {"$set": customization_data}, upsert=True
+    )
+    Permission.update_one({"userId": user.uuid}, {"$set": permission_data}, upsert=True)
 
 
 def delete_account(user):
-    Permission.delete_one({'userId': user["userId"]})
-    Customization.delete_one({'userId': user["userId"]})
-    ID.delete_one({'userId': user["userId"]})
+    Permission.delete_one({"userId": user["userId"]})
+    Customization.delete_one({"userId": user["userId"]})
+    ID.delete_one({"userId": user["userId"]})
 
 
 #### room db edits ####
 def clear_chat_room(roomid, message):
-    Messages.update_one({"roomid": roomid}, {'$set': {"messages": [message]}},
-                        upsert=True)
+    Messages.update_one(
+        {"roomid": roomid}, {"$set": {"messages": [message]}}, upsert=True
+    )
 
 
 def send_message_single(message_text: str, roomid):
-    Messages.update_one({"roomid": roomid},
-                        {'$push': {
-                            "messages": message_text
-                        }}, upsert=True)
+    Messages.update_one(
+        {"roomid": roomid}, {"$push": {"messages": message_text}}, upsert=True
+    )
 
 
 def send_message_all(message_text: str):
-    Messages.rooms.update_many({}, {'$push': {'messages': message_text}}, upsert=True)
+    Messages.rooms.update_many({}, {"$push": {"messages": message_text}}, upsert=True)
 
 
 def find_room(data, location):
-    if location == 'vid':
+    if location == "vid":
         return Rooms.find_one(data)
-    if location == 'acc':
+    if location == "acc":
         return Access.find_one(data)
-    if location == 'msg':
+    if location == "msg":
         return Messages.find_one(data)
 
 
 def find_rooms(location):
-    if location == 'vid':
+    if location == "vid":
         return Rooms.find()
-    if location == 'acc':
+    if location == "acc":
         return Access.find()
-    if location == 'msg':
+    if location == "msg":
         return Messages.find()
 
 
 def distinct_roomids():
-    return Rooms.distinct('roomid')
+    return Rooms.distinct("roomid")
 
 
 def distinct_names():
-    return Rooms.distinct('roomName')
+    return Rooms.distinct("roomName")
 
 
 def distinct_name(roomid):
-    return Rooms.find_one({'roomid': roomid})["roomName"]
+    return Rooms.find_one({"roomid": roomid})["roomName"]
 
 
 def get_rooms():
@@ -477,9 +426,8 @@ def get_rooms():
             "$lookup": {
                 "from": "Permission",  # Target collection
                 "localField": "roomid",  # Field in the 'Rooms' collection
-                "foreignField":
-                "roomid",  # Field in the 'Permission' collection
-                "as": "access"  # Alias for the joined data
+                "foreignField": "roomid",  # Field in the 'Permission' collection
+                "as": "access",  # Alias for the joined data
             }
         },
         {
@@ -489,14 +437,10 @@ def get_rooms():
                 "vid": "$roomid",
                 "generatedBy": "$generatedBy",
                 "mods": "$mods",
-                "whitelisted": {
-                    "$arrayElemAt": ["$access.whitelisted", 0]
-                },
-                "blacklisted": {
-                    "$arrayElemAt": ["$access.blacklisted", 0]
-                }
+                "whitelisted": {"$arrayElemAt": ["$access.whitelisted", 0]},
+                "blacklisted": {"$arrayElemAt": ["$access.blacklisted", 0]},
             }
-        }
+        },
     ]
 
     return list(Rooms.aggregate(pipeline))
@@ -505,43 +449,30 @@ def get_rooms():
 def get_room_data(roomid):
     """Returns all available permission data in that room."""
     pipeline = [
-        {
-            "$match": {
-                "roomid": roomid
-            }
-        },
+        {"$match": {"roomid": roomid}},
         {
             "$lookup": {
                 "from": "Permission",  # Target collection
                 "localField": "roomid",  # Field in the 'Rooms' collection
-                "foreignField":
-                "roomid",  # Field in the 'Permission' collection
-                "as": "access"  # Alias for the joined data
+                "foreignField": "roomid",  # Field in the 'Permission' collection
+                "as": "access",  # Alias for the joined data
             }
         },
         {
             "$project": {
                 "_id": 0,
                 "roomName": "$roomName",
-                "whitelisted": {
-                    "$arrayElemAt": ["$access.whitelisted", 0]
-                },
-                "blacklisted": {
-                    "$arrayElemAt": ["$access.blacklisted", 0]
-                },
-                "canSend": {
-                    "$arrayElemAt": ["$access.canSend", 0]
-                },
-                "locked": {
-                    "$arrayElemAt": ["$access.locked", 0]
-                }
+                "whitelisted": {"$arrayElemAt": ["$access.whitelisted", 0]},
+                "blacklisted": {"$arrayElemAt": ["$access.blacklisted", 0]},
+                "canSend": {"$arrayElemAt": ["$access.canSend", 0]},
+                "locked": {"$arrayElemAt": ["$access.locked", 0]},
             }
-        }
+        },
     ]
 
     result = list(Rooms.aggregate(pipeline))
     if not result:
-        get_room_data('ilQvQwgOhm9kNAOrRqbr')
+        get_room_data("ilQvQwgOhm9kNAOrRqbr")
 
     return result[0]
 
@@ -549,18 +480,13 @@ def get_room_data(roomid):
 def get_room_msg_data(roomid):
     """Returns all available message data in that room."""
     pipeline = [
-        {
-            "$match": {
-                "roomid": roomid
-            }
-        },
+        {"$match": {"roomid": roomid}},
         {
             "$lookup": {
                 "from": "Messages",  # Target collection
                 "localField": "roomid",  # Field in the 'Rooms' collection
-                "foreignField":
-                "roomid",  # Field in the 'Permission' collection
-                "as": "access"  # Alias for the joined data
+                "foreignField": "roomid",  # Field in the 'Permission' collection
+                "as": "access",  # Alias for the joined data
             }
         },
         {
@@ -568,11 +494,9 @@ def get_room_msg_data(roomid):
                 "_id": 0,
                 "roomid": "$roomid",
                 "name": "$roomName",
-                "msg": {
-                    "$arrayElemAt": ["$access.messages", 0]
-                }
+                "msg": {"$arrayElemAt": ["$access.messages", 0]},
             }
-        }
+        },
     ]
     return list(Rooms.aggregate(pipeline))[0]
 
@@ -591,11 +515,12 @@ def update_chat(chat):
 
     # Rooms.insert_one(room_data)
     Access.update_one({"roomid": chat.vid}, {"$set": access_data}, upsert=True)
-    Messages.update_one({"roomid": chat.vid}, {"$set": {"messages": chat.messages}},
-                        upsert=True)
+    Messages.update_one(
+        {"roomid": chat.vid}, {"$set": {"messages": chat.messages}}, upsert=True
+    )
 
 
-def update_whitelist(vid, message):  #combine whitelist and blacklist
+def update_whitelist(vid, message):  # combine whitelist and blacklist
     """Adds the whitelisted users to the database"""
     Access.update_one({"roomid": vid}, {"$set": {"whitelisted": message}}, upsert=True)
 
@@ -620,36 +545,39 @@ def set_all_lock_status(locked: str):
     """Set all rooms' locked status."""
     Access.update_many({}, {"locked": locked}, upsert=True)
 
+
 def add_rooms(code, username, generated_at, name):
     room_data = {
         "roomid": code,
         "generatedBy": username,
-        "mods": '',
+        "mods": "",
         "generatedAt": generated_at,
         "roomName": name,
     }
 
     access_data = {
         "roomid": code,
-        "whitelisted": 'everyone',
+        "whitelisted": "everyone",
         "blacklisted": "empty",
-        "canSend": 'everyone',
+        "canSend": "everyone",
         "locked": False,
     }
-    message = { 
+    message = {
         "roomid": code,
         "messages": [
             format_system_msg(f"<b>{name}</b> created by \
                 <b>{username}</b> at {generated_at}.")
-    ]}
+        ],
+    }
 
     Rooms.insert_one(room_data)
     Access.insert_one(access_data)
     Messages.insert_one(message)
-    
+
+
 def check_private(pmid):
     """looks for a private chat room"""
-    return bool(Private.find_one({'pmid': pmid}))
+    return bool(Private.find_one({"pmid": pmid}))
 
 
 def find_private(pmid):
@@ -663,44 +591,57 @@ def get_unread(list, uuid):
     chat = Private.find_one({"userIds": list})
     if chat is None:
         return 0
-    return chat['unread'][uuid]
+    return chat["unread"][uuid]
+
 
 def get_unread_all():
     return Private.find()
 
+
 def get_private_chat(userlist):
     return Private.find_one({"userIds": userlist})
 
+
 def get_private_messages(list):
-    return Private.find_one({"userIds": list})['messages']
+    return Private.find_one({"userIds": list})["messages"]
+
 
 def find_private_messages(userlist, sender):
     """find the chat with 2 users"""
     pm_id = Private.find_one({"userIds": userlist})
     if pm_id is not None:
-        pm_id['unread'][sender] = 0
-        Private.update_one({"userIds": userlist}, {'$set': {"unread": pm_id['unread']}},
-                           upsert=True)
+        pm_id["unread"][sender] = 0
+        Private.update_one(
+            {"userIds": userlist}, {"$set": {"unread": pm_id["unread"]}}, upsert=True
+        )
     return pm_id
+
 
 def send_private_message(message, pmid, userid):
     """sends the message to the private chat room"""
     unread = Private.find_one({"pmid": pmid})
-    dict = unread['userIds']
+    dict = unread["userIds"]
     dict.remove(userid)
     reciver = dict[0]
-    unread['unread'][reciver] += 1
-    #later i might make better but there fixed
-    Private.update_one({"pmid": pmid},
-                {'$push': {
-                    "messages": message,
-                }}, upsert=True)
-    Private.update_one({"pmid": pmid}, {'$set': {"unread": unread['unread']}},
-                       upsert=True)
-    
-    
+    unread["unread"][reciver] += 1
+    # later i might make better but there fixed
+    Private.update_one(
+        {"pmid": pmid},
+        {
+            "$push": {
+                "messages": message,
+            }
+        },
+        upsert=True,
+    )
+    Private.update_one(
+        {"pmid": pmid}, {"$set": {"unread": unread["unread"]}}, upsert=True
+    )
+
+
 def clear_priv_chat(pmid, message):
-    Private.update_one({"pmid": pmid}, {'$set': {"messages": [message]}}, upsert=True)
+    Private.update_one({"pmid": pmid}, {"$set": {"messages": [message]}}, upsert=True)
+
 
 def update_private(priv):
     access_data = {
@@ -710,29 +651,31 @@ def update_private(priv):
 
     # Rooms.insert_one(room_data)
     Private.update_one({"pmid": priv.vid}, {"$set": access_data}, upsert=True)
-    
-    
+
+
 def create_private_chat(userlist, code):
     """creates a private chat with 2 users"""
     # i = userlist.split(',')
     data = {
         "userIds": userlist,
-        "messages": ['This is a private chat with you and one other user'],
+        "messages": ["This is a private chat with you and one other user"],
         "pmid": code,
-        "unread": {userlist[0]: 0, userlist[1]: 0}
+        "unread": {userlist[0]: 0, userlist[1]: 0},
     }
     Private.insert_one(data)
 
+
 def distinct_pmid():
     """Find all Private Message IDs"""
-    return Private.distinct('pmid')
+    return Private.distinct("pmid")
+
 
 def check_roomids(roomid):
     """checks if the system chat rooms are there"""
     result = Rooms.find_one({"roomid": roomid})
     print(bool(result))
     return bool(result)
-    
+
 
 def check_roomnames(name):
     """checks if the system chat rooms are there"""
@@ -750,26 +693,27 @@ def check_themes(name):
 
 def setup_chatrooms():
     """sets up the starter chat rooms"""
-    if not check_roomids('ilQvQwgOhm9kNAOrRqbr'):
+    if not check_roomids("ilQvQwgOhm9kNAOrRqbr"):
         generate_main()
-    if not check_roomids('zxMhhAPfWOxuZylxwkES'):
+    if not check_roomids("zxMhhAPfWOxuZylxwkES"):
         generate_locked()
-    if not check_roomnames('Dev Chat'):
-        generate_other('Dev Chat', 'devonly')
-    if not check_roomnames('Mod Chat'):
-        generate_other('Mod Chat', 'modonly')
-    if not check_roomnames('Commands'):
-        generate_other('Commands', 'devonly')
-    if not check_themes('dark'):
+    if not check_roomnames("Dev Chat"):
+        generate_other("Dev Chat", "devonly")
+    if not check_roomnames("Mod Chat"):
+        generate_other("Mod Chat", "modonly")
+    if not check_roomnames("Commands"):
+        generate_other("Commands", "devonly")
+    if not check_themes("dark"):
         dark()
-    if not check_themes('light'):
+    if not check_themes("light"):
         light()
+
 
 def generate_main():
     room_data = {
-        "roomid": "ilQvQwgOhm9kNAOrRqbr", #secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
+        "roomid": "ilQvQwgOhm9kNAOrRqbr",  # secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
         "generatedBy": "[SYSTEM]",
-        "mods": '',
+        "mods": "",
         "generatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "roomName": "Main",
     }
@@ -778,15 +722,16 @@ def generate_main():
         "roomid": "ilQvQwgOhm9kNAOrRqbr",
         "whitelisted": "everyone",
         "blacklisted": "empty",
-        "canSend": 'everyone',
-        "locked": 'false',
+        "canSend": "everyone",
+        "locked": "false",
     }
-    message = { 
+    message = {
         "roomid": "ilQvQwgOhm9kNAOrRqbr",
         "messages": [
             format_system_msg(f"""<b>Main</b> created by <b>[SYSTEM]</b> 
             at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.""")
-    ]}
+        ],
+    }
 
     Rooms.insert_one(room_data)
     Access.insert_one(access_data)
@@ -795,9 +740,9 @@ def generate_main():
 
 def generate_locked():
     room_data = {
-        "roomid": "zxMhhAPfWOxuZylxwkES", #secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
+        "roomid": "zxMhhAPfWOxuZylxwkES",  # secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
         "generatedBy": "[SYSTEM]",
-        "mods": '',
+        "mods": "",
         "generatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "roomName": "Locked Chat",
     }
@@ -806,15 +751,16 @@ def generate_locked():
         "roomid": "zxMhhAPfWOxuZylxwkES",
         "whitelisted": "lockedonly",
         "blacklisted": "empty",
-        "canSend": 'everyone',
-        "locked": 'false',
+        "canSend": "everyone",
+        "locked": "false",
     }
-    message = { 
+    message = {
         "roomid": "zxMhhAPfWOxuZylxwkES",
         "messages": [
             format_system_msg(f"""<b>Locked Chat</b> created by
             <b>[SYSTEM]</b> at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.""")
-    ]}
+        ],
+    }
 
     Rooms.insert_one(room_data)
     Access.insert_one(access_data)
@@ -826,7 +772,7 @@ def generate_other(name, permission):
     room_data = {
         "roomid": roomid,
         "generatedBy": "[SYSTEM]",
-        "mods": '',
+        "mods": "",
         "generatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "roomName": name,
     }
@@ -835,141 +781,149 @@ def generate_other(name, permission):
         "roomid": roomid,
         "whitelisted": permission,
         "blacklisted": "empty",
-        "canSend": 'everyone',
-        "locked": 'false',
+        "canSend": "everyone",
+        "locked": "false",
     }
-    message = { 
+    message = {
         "roomid": roomid,
         "messages": [
             format_system_msg(f"""<b>{name}</b> created by <b>[SYSTEM]</b>
             at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.""")
-    ]}
+        ],
+    }
 
     Rooms.insert_one(room_data)
     Access.insert_one(access_data)
     Messages.insert_one(message)
-    
+
 
 def dark():
     theme = {
-        'body': 'rgb(2, 2, 2)',
-        'chat-text': 'rgb(255, 255, 255)',
-        'chat-background': 'rgb(255, 255, 255)',
-        'chatbox-background': 'rgb(23, 23, 23)',
-        'sides-text': 'rgb(0, 0, 0)',
-        'sides-background': 'rgb(23, 23, 23)',
-        'sidebar-background': 'rgb(33 , 33, 33)',
-        'sidebar-boxShadow': 'rgb(33, 33, 33)',
-        'sidebar-border': 'rgb(255, 255, 255)',
-        'sidebar-text': 'rgb(255, 255, 255)',
-        'topleft-background': 'rgb(25, 32, 128)',
-        'topleft-text': 'rgb(255, 255, 255)',
-        'send-background': 'rgb(255, 255, 255)',
-        'send-text': 'rgb(0, 0, 0)',
-        'sidenav-background': 'rgb(23, 23, 23)',
-        'sidenav-text': 'rgb(255, 255, 255)',
-        'sidenav-a-background': 'rgb(23, 23, 23)',
-        'sidenav-a-color': 'rgb(255, 255, 255)',
-        'roomText-text': 'rgb(255, 255, 255)',
-        'topbar-background': 'rgb(23, 23, 23)',
-        'topbar-boxShadow': 'rgb(12, 12, 12)',
+        "body": "rgb(2, 2, 2)",
+        "chat-text": "rgb(255, 255, 255)",
+        "chat-background": "rgb(255, 255, 255)",
+        "chatbox-background": "rgb(23, 23, 23)",
+        "sides-text": "rgb(0, 0, 0)",
+        "sides-background": "rgb(23, 23, 23)",
+        "sidebar-background": "rgb(33 , 33, 33)",
+        "sidebar-boxShadow": "rgb(33, 33, 33)",
+        "sidebar-border": "rgb(255, 255, 255)",
+        "sidebar-text": "rgb(255, 255, 255)",
+        "topleft-background": "rgb(25, 32, 128)",
+        "topleft-text": "rgb(255, 255, 255)",
+        "send-background": "rgb(255, 255, 255)",
+        "send-text": "rgb(0, 0, 0)",
+        "sidenav-background": "rgb(23, 23, 23)",
+        "sidenav-text": "rgb(255, 255, 255)",
+        "sidenav-a-background": "rgb(23, 23, 23)",
+        "sidenav-a-color": "rgb(255, 255, 255)",
+        "roomText-text": "rgb(255, 255, 255)",
+        "topbar-background": "rgb(23, 23, 23)",
+        "topbar-boxShadow": "rgb(12, 12, 12)",
     }
     project = {
-        'name': 'Dark',
-        'themeID': 'dark',
-        'author': [None, '[SYSTEM]'],
-        'status': 'public',
-        'theme': theme
+        "name": "Dark",
+        "themeID": "dark",
+        "author": [None, "[SYSTEM]"],
+        "status": "public",
+        "theme": theme,
     }
     Themes.insert_one(project)
 
 
 def light():
     theme = {
-        'body': 'rgb(200, 200, 200)',
-        'chat-text': 'rgb(0, 0, 0)',
-        'chat-background': 'rgb(255, 255, 255)',
-        'chatbox-background': 'rgb(240, 240, 240)',
-        'sides-text': 'rgb(100, 100, 100)',
-        'sides-background': 'rgb(230, 230, 230)',
-        'sidebar-background': 'rgb(220, 220, 220)',
-        'sidebar-boxShadow': 'rgb(255, 255, 255)',
-        'sidebar-border': 'rgb(150, 150, 150)',
-        'sidebar-text': 'rgb(0, 102, 153)',
-        'topleft-background': 'rgb(100, 160, 200)',
-        'topleft-text': 'rgb(40, 60, 80)',
-        'send-background': 'rgb(200, 210, 220)',
-        'send-text': 'rgb(0, 51, 102)',
-        'sidenav-background': 'rgb(220, 220, 220)',
-        'sidenav-text': 'rgb(220, 220, 220)',
-        'sidenav-a-background': 'rgb(243, 243, 243)',
-        'sidenav-a-color': 'rgb(0, 0, 0)',
-        'roomText-text': 'rgb(0, 0, 0)',
-        'topbar-background': 'rgb(220, 220, 220)',
-        'topbar-boxShadow': 'rgb(255, 255, 255)',
+        "body": "rgb(200, 200, 200)",
+        "chat-text": "rgb(0, 0, 0)",
+        "chat-background": "rgb(255, 255, 255)",
+        "chatbox-background": "rgb(240, 240, 240)",
+        "sides-text": "rgb(100, 100, 100)",
+        "sides-background": "rgb(230, 230, 230)",
+        "sidebar-background": "rgb(220, 220, 220)",
+        "sidebar-boxShadow": "rgb(255, 255, 255)",
+        "sidebar-border": "rgb(150, 150, 150)",
+        "sidebar-text": "rgb(0, 102, 153)",
+        "topleft-background": "rgb(100, 160, 200)",
+        "topleft-text": "rgb(40, 60, 80)",
+        "send-background": "rgb(200, 210, 220)",
+        "send-text": "rgb(0, 51, 102)",
+        "sidenav-background": "rgb(220, 220, 220)",
+        "sidenav-text": "rgb(220, 220, 220)",
+        "sidenav-a-background": "rgb(243, 243, 243)",
+        "sidenav-a-color": "rgb(0, 0, 0)",
+        "roomText-text": "rgb(0, 0, 0)",
+        "topbar-background": "rgb(220, 220, 220)",
+        "topbar-boxShadow": "rgb(255, 255, 255)",
     }
     project = {
-        'name': 'Light',
-        'themeID': 'light',
-        'author': [None, '[SYSTEM]'],
-        'status': 'public',
-        'theme': theme
+        "name": "Light",
+        "themeID": "light",
+        "author": [None, "[SYSTEM]"],
+        "status": "public",
+        "theme": theme,
     }
     Themes.insert_one(project)
 
 
 ##### theme stuff
 
+
 def get_all_projects():
     return Themes.find()
 
+
 def get_projects(uuid, displayname):
-    return Themes.find({'author': [uuid, displayname]})
+    return Themes.find({"author": [uuid, displayname]})
+
 
 def create_project(uuid, displayname, code):
     theme = {
-        'body': 'rgb(2, 2, 2)',
-        'chat-text': 'rgb(255, 255, 255)',
-        'chat-background': 'rgb(255, 255, 255)',
-        'chatbox-background': 'rgb(23, 23, 23)',
-        'sides-text': 'rgb(0, 0, 0)',
-        'sides-background': 'rgb(23, 23, 23)',
-        'sidebar-background': 'rgb(33 , 33, 33)',
-        'sidebar-boxShadow': 'rgb(33, 33, 33)',
-        'sidebar-border': 'rgb(255, 255, 255)',
-        'sidebar-text': 'rgb(255, 255, 255)',
-        'topleft-background': 'rgb(25, 32, 128)',
-        'topleft-text': 'rgb(255, 255, 255)',
-        'send-background': 'rgb(255, 255, 255)',
-        'send-text': 'rgb(0, 0, 0)',
-        'sidenav-background': 'rgb(23, 23, 23)',
-        'sidenav-text': 'rgb(255, 255, 255)',
-        'sidenav-a-background': 'rgb(23, 23, 23)',
-        'sidenav-a-color': 'rgb(255, 255, 255)',
-        'roomText-text': 'rgb(255, 255, 255)',
-        'topbar-background': 'rgb(23, 23, 23)',
-        'topbar-boxShadow': 'rgb(12, 12, 12)',
+        "body": "rgb(2, 2, 2)",
+        "chat-text": "rgb(255, 255, 255)",
+        "chat-background": "rgb(255, 255, 255)",
+        "chatbox-background": "rgb(23, 23, 23)",
+        "sides-text": "rgb(0, 0, 0)",
+        "sides-background": "rgb(23, 23, 23)",
+        "sidebar-background": "rgb(33 , 33, 33)",
+        "sidebar-boxShadow": "rgb(33, 33, 33)",
+        "sidebar-border": "rgb(255, 255, 255)",
+        "sidebar-text": "rgb(255, 255, 255)",
+        "topleft-background": "rgb(25, 32, 128)",
+        "topleft-text": "rgb(255, 255, 255)",
+        "send-background": "rgb(255, 255, 255)",
+        "send-text": "rgb(0, 0, 0)",
+        "sidenav-background": "rgb(23, 23, 23)",
+        "sidenav-text": "rgb(255, 255, 255)",
+        "sidenav-a-background": "rgb(23, 23, 23)",
+        "sidenav-a-color": "rgb(255, 255, 255)",
+        "roomText-text": "rgb(255, 255, 255)",
+        "topbar-background": "rgb(23, 23, 23)",
+        "topbar-boxShadow": "rgb(12, 12, 12)",
     }
 
     project = {
-        'name': 'Untitled Project',
-        'themeID': code,
-        'author': [uuid, displayname],
-        'status': 'private',
-        'theme': theme
+        "name": "Untitled Project",
+        "themeID": code,
+        "author": [uuid, displayname],
+        "status": "private",
+        "theme": theme,
     }
     Themes.insert_one(project)
     return project
 
+
 def get_project(theme_id):
     # print(theme_id)
-    return Themes.find_one({'themeID': theme_id})
+    return Themes.find_one({"themeID": theme_id})
 
 
 def save_project(projects):
-    Themes.update_one({'author': projects['author'], 'themeID': projects['themeID']},
-                      {"$set": projects}, upsert=True)
+    Themes.update_one(
+        {"author": projects["author"], "themeID": projects["themeID"]},
+        {"$set": projects},
+        upsert=True,
+    )
 
 
 def delete_project(themeID):
-    Themes.delete_one({'themeID': themeID})
+    Themes.delete_one({"themeID": themeID})

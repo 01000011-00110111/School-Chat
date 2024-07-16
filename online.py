@@ -2,7 +2,6 @@ from flask_socketio import emit
 
 import database
 
-# from user import U
 socketids = {}
 users_list = {}
 
@@ -12,9 +11,30 @@ def get_scoketid(uuid):
 def update_userlist(_, data, uuid):
     for key, value in data.items():
         users_list[uuid][key] = value
+    # send_users_list = users_list[uuid]
+    # send_users_list.pop('unread', None)
+
     emit('update_list', users_list[uuid], namespace='/', broadcast=True)
     #later ill advabce ui to be able to send to only one user
     return users_list[uuid]
+
+
+def add_unread(recipient, sender):
+    displayName = users_list[recipient]['username']
+    users_list.setdefault(sender, {'unread': {}}).setdefault('unread', {}).setdefault(displayName, 0)
+    users_list[sender]['unread'][displayName] += 1
+    # print(users_list[recipient], '\n', recipient)
+    if 'offline' not in users_list[sender]['status']:
+        emit('update_list', users_list[sender], namespace='/', to=socketids[recipient])
+
+
+def clear_unread(recipient, sender):
+    displayName = users_list[recipient]['username']
+    users_list.setdefault(sender, {'unread': {}}).setdefault('unread', {}).setdefault(displayName, 0)
+    users_list[sender]['unread'][displayName] = 0
+    # print(users_list[recipient], '\n', recipient)
+    if 'offline' not in users_list[sender]['status']:
+        emit('update_list', users_list[sender], namespace='/', to=socketids[recipient])
 
 
 def get_all_offline():
@@ -33,7 +53,7 @@ for user in database.get_all_offline():
     status = 'offline' if user['status'] != 'offlne-locked' else 'offline-locked'
             
     users_list[user['userid']] = {'username': user['displayName'],
-                                  'status': status, 'perm': perm}
+                                  'status': status, 'perm': perm, 'unread': {}}
     
 """
 unread = Private.get_unread(

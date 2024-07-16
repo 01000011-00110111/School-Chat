@@ -32,15 +32,26 @@ function updateUserList(onlineList, offlineList) {
     let onlineDiv = document.getElementById('online_users');
     let online_count = onlineList.length;
     let offline_count = offlineList.length;
+    let DisplayName = getCookie('DisplayName').replace(/"/g, '');
 
     for (let onlineUser of onlineList) {
+        console.log(onlineUser)
         let perm_icon = icon_perm[onlineUser.perm] || '';
         let status_icon = visibility_icon[onlineUser.status] || '';
-        online += `<button id="online_buttons" onclick="openuserinfo('${onlineUser.username}')">${perm_icon}${onlineUser.username}${status_icon}</button><br>`;
+        let unread = '';
+        if (onlineUser?.unread && onlineUser.unread.hasOwnProperty(DisplayName)) {
+            unread = onlineUser.unread[DisplayName];
+        }
+        console.log(unread)
+        online += `<button id="online_buttons" onclick="openuserinfo('${onlineUser.username}')"><font color='red'>${unread}</font>${perm_icon}${onlineUser.username}${status_icon}</button><br>`;
     }
     for (let offlineUser of offlineList) {
         let perm_icon = icon_perm[offlineUser.perm] || '';
-        offline += `<button id="online_buttons" onclick="openuserinfo('${offlineUser.username}')">${perm_icon}${offlineUser.username}</button><br>`;
+        let unread = '';
+        if (offlineUser?.unread && offlineUser.unread.hasOwnProperty(DisplayName)) {
+            unread = offlineUser.unread[DisplayName];
+        }
+        offline += `<button id="online_buttons" onclick="openuserinfo('${unread}${offlineUser.username}')">${perm_icon}${offlineUser.username}</button><br>`;
     }
 
     let final_online = `

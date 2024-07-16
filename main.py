@@ -144,7 +144,7 @@ def chat_page() -> ResponseReturnValue:
 
 @app.route("/chat/<room_name>")
 @login_required
-def specific_chat_page(_) -> ResponseReturnValue:
+def specific_chat_page(_room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
@@ -164,7 +164,7 @@ def admin_page() -> ResponseReturnValue:
 
 @app.route("/admin/<room_name>")
 @login_required
-def specific_admin_page(_) -> ResponseReturnValue:
+def specific_admin_page(_room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
@@ -174,7 +174,7 @@ def specific_admin_page(_) -> ResponseReturnValue:
 
 @app.route("/<prefix>/Private/<private_chat>")
 @login_required
-def specific_private_page(_) -> ResponseReturnValue:
+def specific_private_page(_prefix, _private_chat) -> ResponseReturnValue:
     """Get the specific private chat in the uri."""
     # later we can set this up to get the specific room (with permssions)
     # request.cookies.get('Userid')
