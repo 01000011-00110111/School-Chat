@@ -906,7 +906,8 @@ def create_project(uuid, displayname, code):
         "themeID": code,
         "author": [uuid, displayname],
         "status": "private",
-        "theme": theme,
+        "theme": {},
+        "project": theme,
     }
     Themes.insert_one(project)
     return project
@@ -917,12 +918,24 @@ def get_project(theme_id):
     return Themes.find_one({"themeID": theme_id})
 
 
-def save_project(projects):
+def save_project(themeID, theme, name, publish):
+    update_fields = {
+        "name": name,
+        "project": theme,
+    }
+
+    if publish:
+        update_fields["theme"] = theme
+
     Themes.update_one(
-        {"author": projects["author"], "themeID": projects["themeID"]},
-        {"$set": projects},
-        upsert=True,
+        {"themeID": themeID},
+        {"$set": update_fields},
+        # upsert=True
     )
+
+
+def update_theme_status(themeID, status):
+    Themes.update_one({'themeID': themeID}, {"$set": {'status': status}})
 
 
 def delete_project(themeID):

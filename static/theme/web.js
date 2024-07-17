@@ -55,7 +55,7 @@ socket.on("projects", (projects_list) => {
     newProjectContainer.setAttribute("data-id", projects_list[i].themeID);
 
     const projectButton = document.createElement("button");
-    projectButton.innerHTML = `${projects_list[i].author}'s | ${projects_list[i].name}`;
+    projectButton.innerHTML = `${projects_list[i].author}'s | ${projects_list[i].name}| status: ${projects_list[i].status}`;
     projectButton.setAttribute("onclick", `set_theme('${projects_list[i].themeID}');`);
     projectButton.classList.add("project_panel");
     newProjectContainer.appendChild(projectButton);
@@ -73,8 +73,9 @@ socket.on("projects", (projects_list) => {
 
     const option1 = document.createElement("a");
     option1.href = "#";
-    option1.innerHTML = "status(later)";
-    option1.setAttribute("onclick", `update_status('${projects_list[i].themeID}');`);
+    let view = projects_list[i].status === 'private' ? 'public' : 'private';
+    option1.innerHTML = `Set to ${view}`;
+    option1.setAttribute("onclick", `update_status('${projects_list[i].themeID}', '${projects_list[i].status}');`);
     dropdownContent.appendChild(option1);
 
     const option2 = document.createElement("a");
@@ -105,6 +106,28 @@ function set_theme(theme) {
   sessionStorage.setItem('editing', theme);
   ToPage('/editor');
 }
+
+
+function update_status(themeID, currentStatus) {
+  let newStatus = currentStatus === 'private' ? 'public' : 'private';
+  socket.emit('update_theme_status', themeID, newStatus);
+
+  // Update the main project button text
+  const buttonToUpdate = document.querySelector(`[data-id="${themeID}"] button.project_panel`);
+  // if (buttonToUpdate) {
+    const currentText = buttonToUpdate.innerHTML;
+    const newText = currentText.replace(`status: ${currentStatus}`, `status: ${newStatus}`);
+    buttonToUpdate.innerHTML = newText;
+  // }
+
+  // Update the dropdown option text
+  const optionToUpdate = document.querySelector(`[onclick="update_status('${themeID}', '${currentStatus}');"]`);
+  if (optionToUpdate) {
+    optionToUpdate.innerHTML = `Set to ${currentStatus}`;
+    optionToUpdate.setAttribute("onclick", `update_status('${themeID}', '${newStatus}');`);
+  }
+}
+
 
 
 function delete_project(themeID) {

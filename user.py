@@ -93,7 +93,7 @@ class User:
     
     @classmethod
     def get_display(cls, uuid):
-        user = cls.Users.get(userid, None)
+        user = cls.Users.get(uuid, None)
         displayname = user.displayName
         return displayname
 

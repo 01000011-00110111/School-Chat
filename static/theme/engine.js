@@ -95,24 +95,6 @@ const ColorPickers = document.querySelectorAll("#ColorPicker");
 
 
 function saveProject() {
-  // theme = [
-  //   body.style.background,
-  //   chat.style.color,
-  //   message.style.color,
-  //   chatbox.style.background,
-  //   sides.style.background,
-  //   sidebar.style.background,
-  //   sidebar.style.borderColor,
-  //   sidebar.style.color,
-  //   topleft.style.background,
-  //   topleft.style.color,
-  //   send.style.background,
-  //   send.style.color,
-  //   sidenav.style.background,
-  //   sidenav.style.color,
-  //   roomText.style.color,
-  //   topbar.style.background,
-  // ]
   theme = {
     'body': body.style.background,
     'chat-text': chat.style.color,
@@ -144,9 +126,9 @@ function saveProject() {
   //   theme: theme,
   //   'status': 'private',
   // }
-  project['theme'] = theme
-  project['name'] = theme_name1.value
-  socket.emit('save_project', project)
+  // project.project = theme
+  // project.name = theme_name1.value
+  socket.emit('save_project', project['themeID'], theme, theme_name1.value, false)
 }
 
 function publishProject() {
@@ -189,10 +171,11 @@ function publishProject() {
     'topbar-background': topbar.style.background,
     'topbar-boxShadow': topbar.style.boxShadow,
   }
-  project['theme'] = theme
-  project['name'] = theme_name1.value
-  project['status'] = 'public'
-  socket.emit('save_project', project)
+  // project.theme = theme
+  // project.project = theme
+  // project.name = theme_name1.value
+  // project['status'] = 'public'
+  socket.emit('save_project', project['themeID'], theme, theme_name1.value, true)
 }
 
 // socket.on()
@@ -254,8 +237,9 @@ const menuOwner = document.getElementById("menuOwner");
 
 // Opens a project
 function open_project(data) {
-  let colors = data.theme
+  let colors = data.project
   let snav_iter = snavText.length;
+  theme_name1.value = data.name
   body.style.background = colors['body']
   chat.style.color = colors['chat-text']
   message.style.background = colors['chat-background']
