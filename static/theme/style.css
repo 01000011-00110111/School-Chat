@@ -13,9 +13,10 @@ html, body {
 
 .nav {
   display: flex;
-  background: #2C3144;
+  background: #000;
   height: 6%;
   justify-content: space-between;
+  border-bottom: 1px solid gray;
 }
 
 .nav_btn {
@@ -32,11 +33,12 @@ html, body {
 }
 
 #controls {
-  background: #1b202c;
+  background: #000;
   width: 21.9%;
   display: inline-grid;
   align-content: stretch;
   margin-left: -22%;
+  border-right: 1px solid gray;
 }
 
 .c_div {
@@ -191,8 +193,9 @@ html, body {
 #NavControlBox {
   height: 100%;
   display: flex;
-  width: 12%;
+  width: 16%;
   justify-content: space-evenly;
+  align-items: center;
 }
 
 #ColorPicker {
@@ -231,10 +234,17 @@ html, body {
 }
 
 .PropertiesButton {
-  height: 52px;
+  height: 43px;
   border-radius: 10px;
-  border: 0px;
   font-size: 17px;
+  border: 1px solid #919191;
+  background: transparent;
+  color: white;
+  box-shadow: 2px 2px 5px 1px #5e5e5e;
+}
+
+.PropertiesButton:hover {
+  box-shadow: 0px 0px 0px 0px;
 }
 
 #code {
@@ -260,30 +270,36 @@ html, body {
 }
 
 #toolbox {
-  width: 50%;
-  height: 70%;
+  width: 75%;
+  height: 88%;
   display: flex;
-  background: rgb(65, 60, 106);
-  border-radius: 15px;
+  border-radius: 12px;
+  align-items: center;
+  border: 1px solid gray;
+  justify-content: space-evenly;
 }
 
 #toolbox button {
-  width: 100%;
-  height: 100%;
+  width: 38px;
+  height: 38px;
   background: transparent;
-  border: 0;
+  border: 1px solid gray;
   font-size: 20px;
+  border-radius: 12px;
+}
+
+#editmodeText {
+  font-size: 17px;
 }
 
 #SaveButton {
-  border: 0;
-  border-radius: 12px;
-  width: 50%;
-  height: 63%;
+  border-radius: 9px;
+  width: 84px;
+  height: 71%;
   align-self: center;
-  background: blue;
+  background: transparent;
   color: white;
-  margin-right: 6%;
+  border: 1px solid gray;
 }
 
 /* After this is the css for the chat mockup */
@@ -890,4 +906,70 @@ notification .close_panel button {
 
 #theme_project_details {
   display: flex;
+}
+
+#editor_dropdown {
+  display: none;
+  position: fixed;
+  text-align: left;
+  z-index: 3;
+  height: fit-content;
+  top: 6%;
+  left: 0px;
+  background: black;
+  width: 173px;
+  border-radius: 12px;
+  border: 0.4px solid gray;
+  box-shadow: 2px 2px 7px -1px #4d4d4d;
+}
+
+#editor_dropdown button {
+  text-align: left;
+  text-indent: 3px;
+  width: 100%;
+  height: 33px;
+  background: transparent;
+  border: 0px;
+  color: white;
+}
+
+#editor_dropdown_button {
+  background: transparent;
+  border: 0px;
+  color: white;
+}
+
+#editor_dropdown button:hover {
+  color: #aeaeae;
+}
+
+#deployment_container {
+  width: 128px;
+  height: 71%;
+  border: 1px solid gray;
+  background: transparent;
+  border-radius: 9px;
+  align-items: center;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+#deployment_indicator {
+  width: 9px;
+  height: 9px;
+  background: red;
+  border-radius: 100px;
+}
+
+#help_button {
+  border: 1px solid gray;
+  background: transparent;
+  color: white;
+  border-radius: 9px;
+  width: 41px;
+  height: 71%;
+  align-content: center;
+  justify-content: center;
+  display: grid;
+  font-size: 20px;
 }

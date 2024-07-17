@@ -17,27 +17,64 @@
     <div id="theme_information_container">
       <div id="theme_project_details">
         <input type="text" placeholder="Project Name" value="Untitled Project" id="n_name">
-        <i class="fa-solid fa-angle-down"></i>
+        <button id="editor_dropdown_button">
+          <i class="fa-solid fa-angle-down"></i>
+        </button>
       </div>
       <p>v1.0</p>
+
+      <div id="editor_dropdown">
+        <button>
+          <i class="fa-solid fa-gear"></i>
+          Settings
+        </button>
+
+        <button>
+          <i class="fa-solid fa-user-group"></i>
+          Collaborators
+        </button>
+
+        <button onclick="publishProject();" id="ExportButton">
+          <i class="fa-solid fa-upload"></i>
+          Publish
+        </button>
+
+        <button id="exit_editor_button">
+          <i class="fa-solid fa-right-from-bracket" style="color: #ff2600;"></i>
+          Exit Editor
+        </button>
+      </div>
     </div>
     <div id="nav_container">
       <!-- <i class="fa-solid fa-bars fa-xl" style="color: #ffffff; align-self: center; width: 9%; margin-left: 12px; margin-right: 21px;" onclick="OpenProperties();"></i> -->
       <div id="toolbox">
-        <button onclick="setSelectionMode(0); CloseProperties();">
-          <i class="fa-solid fa-arrow-pointer" style="color: #feffff;"></i>
-        </button>
+        <h3 id="editmodeText">Selection:</h3>
+        <div>
+          <button onclick="setSelectionMode(0); CloseProperties();">
+            <i class="fa-solid fa-arrow-pointer" style="color: #feffff;"></i>
+          </button>
 
-        <button onclick="setSelectionMode(1);">
-          <i class="fa-solid fa-pencil" style="color: #feffff;"></i>
-        </button>
+          <button onclick="setSelectionMode(1);">
+            <i class="fa-solid fa-pencil" style="color: #feffff;"></i>
+          </button>
+        </div>
       </div>
-      <h3 id="editmodeText">Selection:</h3>
     </div>
 
     <div id="NavControlBox">
-      <button id="ExportButton" onclick="publishProject();">Publish</button>
-      <button type="button" id="SaveButton" onclick="saveProject();" name="save">Save</button>
+      <div id="help_button">
+        <i class="fa-regular fa-circle-question" style="color: #feffff;"></i>
+      </div>
+
+      <div id="deployment_container">
+        <div id="deployment_indicator"></div>
+        <p>Undeployed</p>
+      </div>
+
+      <button type="button" id="SaveButton" onclick="saveProject();" name="save">
+        <i class="fa-solid fa-floppy-disk" style="color: #feffff;"></i>
+        Save
+      </button>
     </div>
   </div>
 
@@ -130,9 +167,9 @@
                   <hr id="room_bar"><a id="room_names">/example3</a><hr id="room_bar">
                 </div><br><br>
                 <div id="extratext" style="align-self: baseline;">
-                  <h6 style="padding: 0 0 15px 0;"><a href="/changelog" style="color: rgb(129, 129, 129);">Update log</a></h6>
-                  <h6 style="padding: 0 0 15px 0;"><a href="#TELL-THE-OWNERS-TO-GET-YOUR-OWN-CONTACT-FOR-YOU-AND-LET-THEM-CONTACT-US" style="color: rgb(129, 129, 129);">Contact us</a></h6>
-                  <h6 style="padding: 0 0 15px 0;"><a href="https://github.com/01000011-00110111/School-Chat" style="color: rgb(129, 129, 129);">Source Code</a></h6>
+                  <h6 style="padding: 0 0 15px 0;"><a style="color: rgb(129, 129, 129);">Update log</a></h6>
+                  <h6 style="padding: 0 0 15px 0;"><a style="color: rgb(129, 129, 129);">Contact us</a></h6>
+                  <h6 style="padding: 0 0 15px 0;"><a style="color: rgb(129, 129, 129);">Source Code</a></h6>
               </div>
               <br>
               <br>

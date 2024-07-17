@@ -69,6 +69,9 @@ let theme_name1 = document.getElementById("n_name");
 let applyButton = document.getElementById("applyButton");
 let code = document.getElementById("code");
 let editmodeText = document.getElementById("editmodeText");
+const exit_button = document.getElementById("exit_editor_button");
+const editor_dropdown = document.getElementById("editor_dropdown");
+const editor_dropdown_button = document.getElementById("editor_dropdown_button");
 
 const body = document.getElementsByTagName("body")[0];
 const chat = document.getElementById("chat");
@@ -125,12 +128,12 @@ function saveProject() {
     'topleft-text': topleft.style.color,
     'send-background': send.style.background,
     'send-text': send.style.color,
-    // 'sidenav-background': sidenav.style.background,
-    // 'sidenav-color': snavText.style.color,
+    'sidenav-background': sidenav.style.background,
+    'sidenav-color': snavText.style.color,
     'sidenav-background': sidenav.style.background,
     'sidenav-text': sidenav.style.color,
-    // 'sidenav-a-background': snavText.style.background[0],
-    // 'sidenav-a-color': snavText.style.color[0],
+    'sidenav-a-background': snavText.style.background[0],
+    'sidenav-a-color': snavText.style.color[0],
     'roomText-text': roomText.style.color,
     'topbar-background': topbar.style.background,
     'topbar-boxShadow': topbar.style.boxShadow,
@@ -147,6 +150,20 @@ function saveProject() {
 }
 
 function publishProject() {
+  const room_names = document.querySelectorAll("#room_names");
+  const online_users = document.querySelectorAll("#online_buttons");
+  var room_names_background = "";
+  var room_names_color = "";
+  var online_users_color = "";
+  for (let index = 0; index < room_names.length; index++) {
+    room_names_background = room_names[index].style.background;
+    room_names_color = room_names[index].style.color;
+  }
+
+  for (let index = 0; index < online_users.length; index++) {
+    online_users_color = online_users[index].style.color;
+  }
+
   theme = {
     'body': body.style.background,
     'chat-text': chat.style.color,
@@ -157,17 +174,17 @@ function publishProject() {
     'sidebar-background': sidebar.style.background,
     'sidebar-boxShadow': sidebar.style.boxShadow,
     'sidebar-border': sidebar.style.borderColor,
-    'sidebar-text': sidebar.style.color,
+    'sidebar-text': online_users_color,
     'topleft-background': topleft.style.background,
     'topleft-text': topleft.style.color,
     'send-background': send.style.background,
     'send-text': send.style.color,
-    // 'sidenav-background': sidenav.style.background,
-    // 'sidenav-color': snavText.style.color,
+    'sidenav-background': sidenav.style.background,
+    'sidenav-color': snavText.style.color,
     'sidenav-background': sidenav.style.background,
     'sidenav-text': sidenav.style.color,
-    // 'sidenav-a-background': snavText.style.background,
-    // 'sidenav-a-color': snavText.style.color,
+    'sidenav-a-background': room_names_background,
+    'sidenav-a-color': room_names_color,
     'roomText-text': roomText.style.color,
     'topbar-background': topbar.style.background,
     'topbar-boxShadow': topbar.style.boxShadow,
@@ -382,6 +399,18 @@ document.title = theme_name1.value + " - Theme Editor";
 
 theme_name1.addEventListener("focusout", (event) => {
   document.title = theme_name1.value + " - Theme Editor";
+});
+
+exit_button.addEventListener('click', (event) => {
+  window.location.href = "/projects";
+});
+
+editor_dropdown_button.addEventListener('click', (event) => {
+  if (editor_dropdown.style.display != "grid") {
+    editor_dropdown.style.display = "grid";
+  } else {
+    editor_dropdown.style.display = "none";
+  }
 });
 
 function Runstartup() {

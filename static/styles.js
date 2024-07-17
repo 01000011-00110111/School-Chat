@@ -7,6 +7,7 @@ const topleft = document.getElementById("topleft");
 const send = document.getElementById("send");
 const sidebar = document.getElementById("activenav");
 const online = document.getElementById("online_users");
+const online_users = sidebar.getElementsByTagName('button');
 const sidenav = document.getElementsByClassName("sidenav")[0];
 const snavText = sidenav.getElementsByTagName("a");
 const roomText = document.getElementById("RoomDisplay");
@@ -24,7 +25,10 @@ function setTheme(data) {
     sides.style.background = colors['sides-background']
     sidebar.style.background = colors['sidebar-background']
     sidebar.style.borderColor = colors['sidebar-border']
-    sidebar.style.color = colors['sidebar-text']
+    for (let i = 0; i < online_users.length; i++) {
+        online_users[i].style.color = colors['sidebar-text']
+    }
+    //online_buttons.style.color = colors['sidebar-text']
     sidebar.style.boxShadow = colors['sidebar-boxShadow']
     topleft.style.background = colors['topleft-background']
     topleft.style.color = colors['topleft-text']
