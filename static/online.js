@@ -41,7 +41,7 @@ function updateUserList(onlineList, offlineList) {
         if (onlineUser?.unread && onlineUser.unread.hasOwnProperty(DisplayName)) {
             unread = onlineUser.unread[DisplayName];
         }
-        online += `<button id="online_buttons" onclick="openuserinfo('${onlineUser.username}')"><font color='red'>${unread}</font>${perm_icon}${onlineUser.username}${status_icon}</button><br>`;
+        online += `<button id="online_buttons" onclick="openuserinfo('${onlineUser.username}')" style="color: ${theme['sidebar-text']};"><font color='red'>${unread}</font>${perm_icon}${onlineUser.username}${status_icon}</button><br>`;
     }
     for (let offlineUser of offlineList) {
         let perm_icon = icon_perm[offlineUser.perm] || '';
@@ -49,7 +49,7 @@ function updateUserList(onlineList, offlineList) {
         if (offlineUser?.unread && offlineUser.unread.hasOwnProperty(DisplayName)) {
             unread = offlineUser.unread[DisplayName];
         }
-        offline += `<button id="online_buttons" onclick="openuserinfo('${unread}${offlineUser.username}')">${perm_icon}${offlineUser.username}</button><br>`;
+        offline += `<button id="online_buttons" onclick="openuserinfo('${unread}${offlineUser.username}')" style="color: ${theme['sidebar-text']};">${perm_icon}${offlineUser.username}</button><br>`;
     }
 
     let final_online = `

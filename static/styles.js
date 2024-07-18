@@ -1,4 +1,4 @@
-const theme = {}
+let theme = {}
 
 const body = document.getElementsByTagName("body")[0];
 const chat = document.getElementById("chat");
