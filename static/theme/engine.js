@@ -239,7 +239,8 @@ const menuOwner = document.getElementById("menuOwner");
 function open_project(data) {
   let colors = data.project
   let snav_iter = snavText.length;
-  theme_name1.value = data.name
+  theme_name1.value = data.name;
+  document.title = `${data.name} - Theme Editor`;
   body.style.background = colors['body']
   chat.style.color = colors['chat-text']
   message.style.background = colors['chat-background']
@@ -263,6 +264,16 @@ function open_project(data) {
   roomText.style.color = colors['roomText-text']
   topbar.style.background = colors['topbar-background']
   topbar.style.boxShadow = colors['topbar-boxShadow']
+
+  const deployment_indicator = document.getElementById("deployment_indicator");
+  const deployment_text = document.getElementById("deployment_text");
+  if (data.status === "public") {
+    deployment_indicator.style.background = "lime";
+    deployment_text.innerHTML = "Deployed";
+  } else {
+    deployment_indicator.style.background = "red";
+    deployment_text.innerHTML = "Undeployed";
+  }
 }
 
 var shadow_user = "";

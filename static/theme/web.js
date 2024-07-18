@@ -55,7 +55,7 @@ socket.on("projects", (projects_list) => {
     newProjectContainer.setAttribute("data-id", projects_list[i].themeID);
 
     const projectButton = document.createElement("button");
-    projectButton.innerHTML = `${projects_list[i].author}'s | ${projects_list[i].name}| status: ${projects_list[i].status}`;
+    projectButton.innerHTML = `${projects_list[i].author}'s | ${projects_list[i].name} | status: ${projects_list[i].status}`;
     projectButton.setAttribute("onclick", `set_theme('${projects_list[i].themeID}');`);
     projectButton.classList.add("project_panel");
     newProjectContainer.appendChild(projectButton);
