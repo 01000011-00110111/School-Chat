@@ -31,7 +31,6 @@ function setTheme(data) {
     for (let i = 0; i < online_users.length; i++) {
         online_users[i].style.color = colors['sidebar-text']
     }
-    //online_buttons.style.color = colors['sidebar-text']
     sidebar.style.boxShadow = colors['sidebar-boxShadow']
     topleft.style.background = colors['topleft-background']
     topleft.style.color = colors['topleft-text']
@@ -46,10 +45,11 @@ function setTheme(data) {
     roomText.style.color = colors['roomText-text']
     topbar.style.background = colors['topbar-background']
     topbar.style.boxShadow = colors['topbar-boxShadow']
-  }
+}
 
 socket.on('set_theme', (theme) =>{
     setTheme(theme)
+    console.log(theme)
 })
 
 const lightTheme = [

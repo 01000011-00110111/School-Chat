@@ -82,7 +82,7 @@ const send = document.getElementById("send");
 const sidebar = document.getElementById("activenav");
 const online = document.getElementById("online_users");
 const sidenav = document.getElementsByClassName("sidenav")[0];
-const snavText = document.getElementById("room_names");
+const snavText = document.querySelectorAll("#room_names");
 const roomText = document.getElementById("RoomDisplay");
 const roomBar = document.getElementById("room_bar");
 const topbar = document.getElementById("topbar");
@@ -93,6 +93,7 @@ const ColorPickers = document.querySelectorAll("#ColorPicker");
 // After this is the Theme & CSE code
 
 function saveProject() {
+  const online_users = document.querySelectorAll("#online_buttons");
   theme = {
     'body': body.style.background,
     'chat-text': chat.style.color,
@@ -103,17 +104,17 @@ function saveProject() {
     'sidebar-background': sidebar.style.background,
     'sidebar-boxShadow': sidebar.style.boxShadow,
     'sidebar-border': sidebar.style.borderColor,
-    'sidebar-text': sidebar.style.color,
+    'sidebar-text': online_users[0].style.color,
     'topleft-background': topleft.style.background,
     'topleft-text': topleft.style.color,
     'send-background': send.style.background,
     'send-text': send.style.color,
     'sidenav-background': sidenav.style.background,
-    'sidenav-color': snavText.style.color,
+    'sidenav-color': snavText[0].style.color,
     'sidenav-background': sidenav.style.background,
     'sidenav-text': sidenav.style.color,
-    'sidenav-a-background': snavText.style.background[0],
-    'sidenav-a-color': snavText.style.color[0],
+    'sidenav-a-background': snavText[0].style.background,
+    'sidenav-a-color': snavText[0].style.color,
     'roomText-text': roomText.style.color,
     'topbar-background': topbar.style.background,
     'topbar-boxShadow': topbar.style.boxShadow,
@@ -160,7 +161,7 @@ function publishProject() {
     'send-background': send.style.background,
     'send-text': send.style.color,
     'sidenav-background': sidenav.style.background,
-    'sidenav-color': snavText.style.color,
+    'sidenav-color': sidenav.style.color,
     'sidenav-background': sidenav.style.background,
     'sidenav-text': sidenav.style.color,
     'sidenav-a-background': room_names_background,
@@ -233,6 +234,8 @@ const menuOwner = document.getElementById("menuOwner");
 
 // Opens a project
 function open_project(data) {
+  const online_users = document.querySelectorAll("#online_buttons");
+
   let colors = data.project
   let snav_iter = snavText.length;
   theme_name1.value = data.name;
@@ -245,7 +248,9 @@ function open_project(data) {
   sides.style.background = colors['sides-background']
   sidebar.style.background = colors['sidebar-background']
   sidebar.style.borderColor = colors['sidebar-border']
-  sidebar.style.color = colors['sidebar-text']
+  for (let i = 0; i < online_users.length; i++) {
+    online_users[i].style.color = colors['sidebar-text']
+  }
   sidebar.style.boxShadow = colors['sidebar-boxShadow']
   topleft.style.background = colors['topleft-background']
   topleft.style.color = colors['topleft-text']
@@ -270,6 +275,7 @@ function open_project(data) {
     deployment_indicator.style.background = "red";
     deployment_text.innerHTML = "Undeployed";
   }
+  console.log(colors)
 }
 
 var shadow_user = "";
