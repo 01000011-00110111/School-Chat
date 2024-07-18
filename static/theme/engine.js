@@ -67,7 +67,6 @@ function CloseProperties() {
 let theme_name1 = document.getElementById("n_name");
 
 let applyButton = document.getElementById("applyButton");
-let code = document.getElementById("code");
 let editmodeText = document.getElementById("editmodeText");
 const exit_button = document.getElementById("exit_editor_button");
 const editor_dropdown = document.getElementById("editor_dropdown");
@@ -92,7 +91,6 @@ const topbar = document.getElementById("topbar");
 const ColorPickers = document.querySelectorAll("#ColorPicker");
 
 // After this is the Theme & CSE code
-
 
 function saveProject() {
   theme = {
@@ -178,8 +176,6 @@ function publishProject() {
   socket.emit('save_project', project['themeID'], theme, theme_name1.value, true)
 }
 
-// socket.on()
-
 // Controls Sidenav
 function openNav() {
   if (currentSelection != "Edit") {
@@ -204,7 +200,7 @@ const setProperties = (background, text, shadow, border) => {
   }
 
   if (text === propertyStates[0]) {
-    ColorPickers[1].style.dsplay = "none";
+    ColorPickers[1].style.display = "none";
   } else if (border === propertyStates[1]) {
     ColorPickers[1].style.display = "flex";
   }
@@ -293,8 +289,6 @@ AllContent.forEach((element) => {
         const textColor = document.getElementById("text-color");
         const borderColor = document.getElementById("border-color");
         const shadowColor = document.getElementById("shadow-color");
-        const LayerProperties = document.getElementById("LayerProperties");
-        const LayerOpacity = document.getElementById("LayerOpacity");
         const Chat = document.getElementById("ChatMockup");
 
         switch(SelectedLayer) {
@@ -325,9 +319,12 @@ AllContent.forEach((element) => {
           case "send":
             setProperties("enabled", "enabled", "disabled", "disabled");
             break;
+          case "pfpmenu":
+            setProperties("disabled", "disabled", "disabled", "enabled");
+            break;
           default:
             setProperties("enabled", "enabled", "enabled", "enabled");
-        } 
+        }
 
 
         const fetchColors = () => {
@@ -373,10 +370,7 @@ AllContent.forEach((element) => {
             document.getElementById(SelectedLayer).style.borderColor = borderColor.value;
             document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
 
-            setInterval(Update, 100);
-
             function Update() {
-              // event.target.style.background = ColorBox.value;
               document.body.style.background = chat.style.background;
               Chat.style.background = chat.style.background;
             };
