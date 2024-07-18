@@ -1,3 +1,5 @@
+const theme = {}
+
 const body = document.getElementsByTagName("body")[0];
 const chat = document.getElementById("chat");
 const message = document.getElementById("message");
@@ -16,6 +18,7 @@ const topbar = document.getElementById("topbar");
 
 function setTheme(data) {
     let colors = data.theme
+    theme = data.theme
     let snav_iter = snavText.length;
     body.style.background = colors['body']
     chat.style.color = colors['chat-text']
