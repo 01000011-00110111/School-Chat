@@ -72,8 +72,8 @@
 
 <div id="loginContainer">
         <div id="leftPanel">
+          <h1 id="Title" style="justify-self: center;">School Chat</h1>
           <div id="topInformation">
-            <h1>Login</h1>
             <p>Don't have an account yet? <a href="/signup" style="text-decoration: none;">Sign up</a></p>
           </div>
           
@@ -86,18 +86,13 @@
             <div class="wrapperPanel">
               <div id="leftsubDiv">
                 <p>Password</p>
-                <a href="/change-password" target="_blank" style="text-decoration: none;padding-top: 80px;" tabindex="-1">Forgot Password?</a>
+                <a href="/change-password" target="_blank" style="text-decoration: none;padding-top: 40px;" tabindex="-1">Forgot Password?</a>
               </div>
-              <div class="loginInput">
-                <input type="password" name="password" id="pswInput" placeholder="Enter your account password" autocomplete="off">
-                <button id="showPswButton" type="button" onclick="showPassword()">
-                  <i class="fa-regular fa-eye fa-2xl" style="color: black;" id="re" aria-hidden="true"></i>
-                </button>
-              </div>
+              <input type="password" name="password" placeholder="Enter your account password" autocomplete="off" class="loginInput">
             </div>
             <div class="wrapperPanel">
               <span>
-                <input type="checkbox" name="TOSagree" id="checkBox" style="margin: 0px 8px 0px 0px;">
+                <input type="checkbox" name="TOSagree" id="checkBox" style="margin: 0px 8px 0px 0px; width: 29px; height: 29px;">
                 <p>    
                   Accept 
                   <a style="text-decoration: none; color: #7c0ed7; cursor: pointer;" onclick="OpenTOS()">Terms &amp; Conditions</a>
@@ -117,10 +112,6 @@
             <a href="https://github.com/01000011-00110111/School-Chat" target="_blank"><p>Github</p></a>
           </div>
         </div>
-
-      <button id="schemeButton">
-        <i class="fa-regular fa-sun fa-2xl" id="schemeIcon"></i>
-      </button>
 
 </div>
 <script src="static/login.js"></script>
