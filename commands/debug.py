@@ -100,18 +100,18 @@ def get_stats(roomid, version, room) -> str:
     return partial_stats_text if version == 'partial' else full_stats_text
 
 
-# def status(**kwargs):
-    # """Send stats into the chat."""
-    # roomid = kwargs['roomid']
-    # room = kwargs['room']
-    # emit("message_chat", (get_stats(roomid, 'full', room), roomid), broadcast=True)
+def status(**kwargs):
+    """Send stats into the chat."""
+    roomid = kwargs['roomid']
+    room = kwargs['room']
+    emit("message_chat", (get_stats(roomid, 'full', room), roomid), broadcast=True)
     
 
-# def pstats(**kwargs):
-    # """Send stats into the chat."""
-    # roomid = kwargs['roomid']
-    # room = kwargs['room']
-    # emit("message_chat", (get_stats(roomid, 'partial', room), roomid), broadcast=True)
+def pstats(**kwargs):
+    """Send stats into the chat."""
+    roomid = kwargs['roomid']
+    room = kwargs['room']
+    emit("message_chat", (get_stats(roomid, 'partial', room), roomid), broadcast=True)
     
 
 def line_count(**kwargs):
