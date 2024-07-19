@@ -19,13 +19,16 @@
     <div id="mySidenav" class="sidenav" style="background-color: rgb(17, 17, 17); width: 0px;">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="color: rgb(129, 129, 129);">×</a>
         <hr style="border: 5px solid grey;">
-        <div>
+        <div id="activenav">
+            <div id="online_users"></div>
+        </div>
+        <div style="margin-right: 40%;">
             <p>change the chat room you are in</p>
             <div class="ChatRoomS">
                 <div id="ChatRoomls"><hr></div>
             </div>
         </div>
-            <div id="extratext">
+            <div id="extratext" style="margin-right: 40%;">
                 <h6><a href="/changelog" style="color: rgb(129, 129, 129);">Update log</a></h6>
                 <h6><a href="#TELL-THE-OWNERS-TO-GET-YOUR-OWN-CONTACT-FOR-YOU-AND-LET-THEM-CONTACT-US" style="color: rgb(129, 129, 129);">Contact us</a></h6>
                 <h6><a href="https://github.com/01000011-00110111/School-Chat" style="color: rgb(129, 129, 129);">Source Code</a></h6>
@@ -42,10 +45,10 @@
     </div>
 </div><br>
 
-<div class="activenav" id="activenav" style="background-color: rgb(12, 12, 12);">
-    <!-- <hr id="online_border"> -->
+<!-- <div class="activenav" id="activenav" style="background-color: rgb(12, 12, 12);">
+    <hr id="online_border">
     <div id="online_users"></div>
-</div>
+</div> -->
 
 <script type='text/javascript' defer>runStartup();</script>
 {% endblock %}
