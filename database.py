@@ -885,7 +885,7 @@ def create_project(uuid, displayname, code):
         "body": "rgb(2, 2, 2)",
         "chat-text": "rgb(255, 255, 255)",
         "chat-background": "rgb(255, 255, 255)",
-        "chatbox-background": "rgb(23, 23, 23)",
+        'chat-color': 'rgb(0, 0, 0)',
         "sides-text": "rgb(0, 0, 0)",
         "sides-background": "rgb(23, 23, 23)",
         "sidebar-background": "rgb(33 , 33, 33)",
@@ -903,6 +903,8 @@ def create_project(uuid, displayname, code):
         "roomText-text": "rgb(255, 255, 255)",
         "topbar-background": "rgb(23, 23, 23)",
         "topbar-boxShadow": "rgb(12, 12, 12)",
+        'online-color': 'rgb(255, 255, 255)',
+        'offline-color': 'rgb(255, 255, 255)',
     }
 
     project = {
