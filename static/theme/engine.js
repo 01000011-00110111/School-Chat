@@ -80,13 +80,17 @@ const sides = document.getElementById("sides");
 const topleft = document.getElementById("topleft");
 const send = document.getElementById("send");
 const sidebar = document.getElementById("activenav");
-const online = document.getElementById("online_users");
 const sidenav = document.getElementsByClassName("sidenav")[0];
+const extratext = document.getElementById('extratext');
+const extrabutton = document.getElementsByClassName("extrabuttons");
 const snavText = document.querySelectorAll("#room_names");
 const roomText = document.getElementById("RoomDisplay");
 const roomBar = document.getElementById("room_bar");
 const topbar = document.getElementById("topbar");
+const online = document.getElementById("online");
+const offline = document.getElementById("offline");
 // const hrElement = document.querySelector("hr");
+// const online = document.getElementById("online_users");
 
 const ColorPickers = document.querySelectorAll("#ColorPicker");
 
@@ -98,7 +102,8 @@ function saveProject() {
     'body': body.style.background,
     'chat-text': chat.style.color,
     'chat-background': message.style.background,
-    'chatbox-background': chatbox.style.background,
+    'chat-color': message.style.color,
+    // 'chatbox-background': chatbox.style.background,
     'sides-text': sides.style.color,
     'sides-background': sides.style.background,
     'sidebar-background': sidebar.style.background,
@@ -111,13 +116,14 @@ function saveProject() {
     'send-text': send.style.color,
     'sidenav-background': sidenav.style.background,
     'sidenav-color': snavText[0].style.color,
-    'sidenav-background': sidenav.style.background,
     'sidenav-text': sidenav.style.color,
     'sidenav-a-background': snavText[0].style.background,
     'sidenav-a-color': snavText[0].style.color,
     'roomText-text': roomText.style.color,
     'topbar-background': topbar.style.background,
     'topbar-boxShadow': topbar.style.boxShadow,
+    'online-color': online.style.color,
+    'offline-color': offline.style.color,
   }
   // project = {
   //   "name": theme_name1.value,
@@ -149,26 +155,28 @@ function publishProject() {
     'body': body.style.background,
     'chat-text': chat.style.color,
     'chat-background': message.style.background,
-    'chatbox-background': chatbox.style.background,
+    'chat-color': message.style.color,
+    // 'chatbox-background': chatbox.style.background,
     'sides-text': sides.style.color,
     'sides-background': sides.style.background,
     'sidebar-background': sidebar.style.background,
     'sidebar-boxShadow': sidebar.style.boxShadow,
     'sidebar-border': sidebar.style.borderColor,
-    'sidebar-text': online_users_color,
+    'sidebar-text': online_users[0].style.color,
     'topleft-background': topleft.style.background,
     'topleft-text': topleft.style.color,
     'send-background': send.style.background,
     'send-text': send.style.color,
     'sidenav-background': sidenav.style.background,
-    'sidenav-color': sidenav.style.color,
-    'sidenav-background': sidenav.style.background,
-    'sidenav-text': sidenav.style.color,
-    'sidenav-a-background': room_names_background,
-    'sidenav-a-color': room_names_color,
+    'sidenav-color': snavText[0].style.color,
+    // 'sidenav-text': sidenav.style.color,
+    'sidenav-a-background': snavText[0].style.background,
+    'sidenav-a-color': snavText[0].style.color,
     'roomText-text': roomText.style.color,
     'topbar-background': topbar.style.background,
     'topbar-boxShadow': topbar.style.boxShadow,
+    'online-color': online.style.color,
+    'offline-color': offline.style.color,
   }
   // project.theme = theme
   // project.project = theme
@@ -238,12 +246,14 @@ function open_project(data) {
 
   let colors = data.project
   let snav_iter = snavText.length;
+  let extra_iter = extrabutton.length;
   theme_name1.value = data.name;
   document.title = `${data.name} - Theme Editor`;
   body.style.background = colors['body']
   chat.style.color = colors['chat-text']
   message.style.background = colors['chat-background']
-  chatbox.style.background = colors['chatbox-background']
+  message.style.background = colors['chat-color']
+  // chatbox.style.background = colors['chatbox-background']
   sides.style.color = colors['sides-text']
   sides.style.background = colors['sides-background']
   sidebar.style.background = colors['sidebar-background']
@@ -262,9 +272,15 @@ function open_project(data) {
       snavText[i].style.color = colors['sidenav-a-color']
       snavText[i].style.background = colors['sidenav-a-background']
   }
+  for (var i = 0; i < extra_iter; i++) {
+    extrabutton[i].style.color = colors['sidenav-a-color']
+    extrabutton[i].style.background = colors['sidenav-a-background']
+  }
   roomText.style.color = colors['roomText-text']
   topbar.style.background = colors['topbar-background']
   topbar.style.boxShadow = colors['topbar-boxShadow']
+  online.style.color = colors['online-color']
+  offline.style.color = colors['offline-color']
 
   const deployment_indicator = document.getElementById("deployment_indicator");
   const deployment_text = document.getElementById("deployment_text");
@@ -275,7 +291,7 @@ function open_project(data) {
     deployment_indicator.style.background = "red";
     deployment_text.innerHTML = "Undeployed";
   }
-  console.log(colors)
+  // console.log(colors)
 }
 
 var shadow_user = "";
@@ -328,6 +344,12 @@ AllContent.forEach((element) => {
           case "pfpmenu":
             setProperties("disabled", "disabled", "disabled", "enabled");
             break;
+          case "online":
+            setProperties("disabled", "enabled", "disabled", "disabled");
+          break;
+          case "offline":
+            setProperties("disabled", "enabled", "disabled", "disabled");
+          break;
           default:
             setProperties("enabled", "enabled", "enabled", "enabled");
         }

@@ -802,7 +802,7 @@ def dark():
         "body": "rgb(2, 2, 2)",
         "chat-text": "rgb(255, 255, 255)",
         "chat-background": "rgb(255, 255, 255)",
-        "chatbox-background": "rgb(23, 23, 23)",
+        'chat-color': 'rgb(0, 0, 0)',
         "sides-text": "rgb(0, 0, 0)",
         "sides-background": "rgb(23, 23, 23)",
         "sidebar-background": "rgb(33 , 33, 33)",
@@ -820,6 +820,8 @@ def dark():
         "roomText-text": "rgb(255, 255, 255)",
         "topbar-background": "rgb(23, 23, 23)",
         "topbar-boxShadow": "rgb(12, 12, 12)",
+        'online-color': 'rgb(255, 255, 255)',
+        'offline-color': 'rgb(255, 255, 255)',
     }
     project = {
         "name": "Dark",
@@ -836,7 +838,7 @@ def light():
         "body": "rgb(200, 200, 200)",
         "chat-text": "rgb(0, 0, 0)",
         "chat-background": "rgb(255, 255, 255)",
-        "chatbox-background": "rgb(240, 240, 240)",
+        'chat-color': 'rgb(0, 0, 0)',
         "sides-text": "rgb(100, 100, 100)",
         "sides-background": "rgb(230, 230, 230)",
         "sidebar-background": "rgb(220, 220, 220)",
@@ -854,6 +856,8 @@ def light():
         "roomText-text": "rgb(0, 0, 0)",
         "topbar-background": "rgb(220, 220, 220)",
         "topbar-boxShadow": "rgb(255, 255, 255)",
+        'online-color': 'rgb(0, 0, 0)',
+        'offline-color': 'rgb(0, 0, 0)',
     }
     project = {
         "name": "Light",

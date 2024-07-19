@@ -54,11 +54,11 @@ function updateUserList(onlineList, offlineList) {
 
     let final_online = `
         <div>
-            <font size=5%>Online: ${online_count}</font>
+            <font id="online" size=5%>Online: ${online_count}</font>
             <br><br>
             ${online}
             <br><br>
-            <font size=5%>Offline: ${offline_count}</font>
+            <font id="offline" size=5%>Offline: ${offline_count}</font>
             <br><br>
             ${offline}
         </div>`;

@@ -39,6 +39,7 @@ socket.on("reset_chat", (who, ID) => {
   
 
 function runStartup() {
+    socket.emit('get_theme', getCookie('Theme'))
     window.sessionStorage.setItem("ID", 'ilQvQwgOhm9kNAOrRqbr');
     changeRoom('ilQvQwgOhm9kNAOrRqbr')
     userid = getCookie("Userid")
@@ -46,7 +47,6 @@ function runStartup() {
     socket.emit("get_full_list");
     socket.emit("get_rooms", userid);
     // setTheme(getCookie('Theme'))
-    socket.emit('get_theme', getCookie('Theme'))
 }
 
 socket.on("roomsList", (result, permission) => {
@@ -55,7 +55,7 @@ socket.on("roomsList", (result, permission) => {
     let RoomDiv = document.getElementById("ChatRoomls");
     for (room of result) {
         if (permission != 'locked') {
-        rooms = rooms + `<hr id="room_bar"><a id="room_names" onclick=changeRoom("${room.vid}")>/` + room.name + '</a><hr id="room_bar">';
+        rooms = rooms + `<hr id="room_bar"><a id="room_names" style="color: ${theme['sidenav-a-color']}; background: ${theme['sidenav-a-background']}" onclick=changeRoom("${room.vid}")>/` + room.name + '</a><hr id="room_bar">';
         } else {
             rooms = '<hr id="room_bar">verify to have access to chat rooms<hr id="room_bar">'
             changeRoom('zxMhhAPfWOxuZylxwkES')
