@@ -19,6 +19,7 @@ const online = document.getElementById("online");
 const offline = document.getElementById("offline");
 
 function setTheme(data) {
+    const online_users = document.querySelectorAll("#online_buttons");
     let colors = data.theme
     theme = data.theme
     // let snav_iter = snavText.length;
@@ -26,7 +27,7 @@ function setTheme(data) {
     body.style.background = colors['body']
     chat.style.color = colors['chat-text']
     message.style.background = colors['chat-background']
-    message.style.background = colors['chat-color']
+    message.style.color = colors['chat-color']
     // chatbox.style.background = colors['chatbox-background']
     sides.style.color = colors['sides-text']
     sides.style.background = colors['sides-background']
@@ -42,6 +43,7 @@ function setTheme(data) {
     send.style.color = colors['send-text']
     sidenav.style.background = colors['sidenav-background']
     sidenav.style.color = colors['sidenav-color']
+    sidenav.style.color = colors['sidenav-color']
     // for (let i = 0; i < snav_iter; i++) {
     //     snavText[i].style.color = colors['sidenav-a-color']
     //     snavText[i].style.background = colors['sidenav-a-background']
@@ -55,6 +57,8 @@ function setTheme(data) {
     topbar.style.boxShadow = colors['topbar-boxShadow']
     online.style.color = colors['online-color']
     offline.style.color = colors['offline-color']
+    console.log('done theme')
+    socket.emit("get_full_list");
 }
 
 socket.on('set_theme', (theme) =>{

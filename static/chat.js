@@ -44,7 +44,6 @@ function runStartup() {
     changeRoom('ilQvQwgOhm9kNAOrRqbr')
     userid = getCookie("Userid")
     document.getElementById("pfpmenu").src = getCookie("Profile");
-    socket.emit("get_full_list");
     socket.emit("get_rooms", userid);
     // setTheme(getCookie('Theme'))
 }

@@ -54,15 +54,16 @@ function updateUserList(onlineList, offlineList) {
 
     let final_online = `
         <div>
-            <font id="online" size=5%>Online: ${online_count}</font>
+            <font id="online" style="color: ${theme['online-color']};" size=5%>Online: ${online_count}</font>
             <br><br>
             ${online}
             <br><br>
-            <font id="offline" size=5%>Offline: ${offline_count}</font>
+            <font id="offline" style="color: ${theme['offline-color']};" size=5%>Offline: ${offline_count}</font>
             <br><br>
             ${offline}
         </div>`;
     onlineDiv.innerHTML = final_online;
+    console.log('done online')
 }
 
 function getCurrentUserLists() {

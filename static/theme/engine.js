@@ -252,7 +252,7 @@ function open_project(data) {
   body.style.background = colors['body']
   chat.style.color = colors['chat-text']
   message.style.background = colors['chat-background']
-  message.style.background = colors['chat-color']
+  message.style.color = colors['chat-color']
   // chatbox.style.background = colors['chatbox-background']
   sides.style.color = colors['sides-text']
   sides.style.background = colors['sides-background']
