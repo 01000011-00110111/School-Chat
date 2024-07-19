@@ -937,7 +937,7 @@ def connect(roomid, sender):
 
     room.sids.append(socketid)
     # print(room.sids)
-    emit("room_data", (list, roomid), to=socketid, namespace="/")
+    emit("room_data", (list), to=socketid, namespace="/")
 
 
 @socketio.on("private_connect")

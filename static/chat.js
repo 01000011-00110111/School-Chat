@@ -2,8 +2,7 @@
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 
-socket.on("message_chat", (message, ID) => {
-    window.sessionStorage.setItem("ID", ID);
+socket.on("message_chat", (message) => {
     renderChat((message));
 });
 
@@ -112,7 +111,7 @@ socket.on("private_data", (data) => {
 });
 
 function changeRoom(room) {
-    // window.sessionStorage.setItem("ID", room);
+    window.sessionStorage.setItem("ID", room);
     closeNav();
     socket.emit('room_connect', room, getCookie("Userid"))
 }
