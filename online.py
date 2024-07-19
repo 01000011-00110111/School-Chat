@@ -46,7 +46,7 @@ def get_all_offline():
 
 for user in database.get_all_offline():
     # print(user)
-    perm = 'dev' if user['perm'][0] == 'Debugpass' else 'mod' if\
+    perm = 'dev' if user['perm'][0] == 'Debugpass' else 'admin' if\
         user['perm'][0] == 'adminpass' else 'mod'\
             if user['perm'][0] == 'modpass' else None
     
