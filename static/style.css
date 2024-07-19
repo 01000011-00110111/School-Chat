@@ -802,11 +802,11 @@ version {
   display: flex;
   background: #151515;
   align-items: center;
-  width: 194px;
+  width: 214px;
   height: 52px;
   min-width: 194px;
   border-radius: 10px;
-  margin: 66px;
+  margin: 32px;
   justify-content: space-around;
   color: white;
   position: fixed;

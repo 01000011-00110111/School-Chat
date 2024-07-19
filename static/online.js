@@ -63,7 +63,7 @@ function updateUserList(onlineList, offlineList) {
             ${offline}
         </div>`;
     onlineDiv.innerHTML = final_online;
-    console.log('done online')
+    // console.log('done online')
 }
 
 function getCurrentUserLists() {

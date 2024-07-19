@@ -57,67 +57,11 @@ function setTheme(data) {
     topbar.style.boxShadow = colors['topbar-boxShadow']
     online.style.color = colors['online-color']
     offline.style.color = colors['offline-color']
-    console.log('done theme')
+    // console.log('done theme')
     socket.emit("get_full_list");
 }
 
 socket.on('set_theme', (theme) =>{
     setTheme(theme)
-    console.log(theme)
+    // console.log(theme)
 })
-
-const lightTheme = [
-    "#c0bfbc",
-    "#000000",
-    "#000000",
-    "#deddda",
-    "#c0bfbc",
-    "#000000",
-    "#3b3b3b",
-    "#ffffff",
-    "#5A5A5A",
-    "#1b0670",
-    "#3daec4",
-    "#33575e",
-    "#b9c6c9",
-    "#192080",
-    "#000000",
-    "#ffffff"
-];
-
-const ogDevTheme = [
-    "#000000",
-    "#228e3d",
-    "#000000",
-    "#181616",
-    "#121212",
-    "#171717",
-    "#3b3b3b",
-    "#ffffff",
-    "#121212",
-    "#696969",
-    "#192080",
-    "#ffffff",
-    "#111111",
-    "#818181",
-    "#000000",
-    "#ffffff"
-];
-
-const devTheme = [
-    "#000000",
-    "#18691f",
-    "#000000",
-    "#0d0d0d",
-    "#080808",
-    "#080808",
-    "#0d0d0d",
-    "#ffffff",
-    "#ffffff",
-    "#ffffff",
-    "#006600",
-    "#ffffff",
-    "#0f0f0f",
-    "#8a4e11",
-    "#000000"
-];
