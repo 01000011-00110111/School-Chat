@@ -442,6 +442,7 @@ function Runstartup() {
 socket.on('set_theme', (theme) => {
   project = theme
   open_project(theme);
+  sessionStorage.setItem('editing', theme['themeID']);
 });
 
 socket.on('response', (response, limit) => {
