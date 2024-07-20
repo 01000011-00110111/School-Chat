@@ -1,5 +1,9 @@
 const clearSearchButton = document.getElementById("clearSearchButton");
 const searchInput = document.getElementById("searchInput");
+const ellipsis_button = document.getElementById("ellipsis_button");
+const ellipsis_dropdown = document.getElementById("ellipsis_dropdown");
+const logout_button = document.getElementById("logout_button");
+const back_button = document.getElementById("back_button");
 
 function ToPage(URL) {
   window.location.href = URL;
@@ -159,3 +163,19 @@ function updateProjectCount() {
 //   console.log(response)
 //   document.getElementById('response_text').innerHTML = response
 // });
+
+ellipsis_button.addEventListener('click', (event) => {
+  if (ellipsis_dropdown.style.display != "grid") {
+    ellipsis_dropdown.style.display = "grid";
+  } else {
+    ellipsis_dropdown.style.display = "none";
+  }
+});
+
+logout_button.addEventListener('click', (event) => {
+  window.location.href = "/logout";
+});
+
+back_button.addEventListener('click', (event) => {
+  window.location.href = ".";
+});

@@ -20,7 +20,23 @@
         <div class="HeaderBtn" id="ExtensionBtn">Extensions</div>
         <div class="HeaderBtn"><i class="fa-solid fa-message" style="color: #ffffff;"></i></div>
         <div class="HeaderBtn"><i class="fa-solid fa-bell" style="color: #ffffff;"></i></div>
-        <div class="HeaderBtn"><i class="fa-solid fa-ellipsis" style="color: #ffffff;"></i></div>
+        <div class="HeaderBtn" id="ellipsis_button"><i class="fa-solid fa-ellipsis" style="color: #ffffff;"></i></div>
+        <div id="ellipsis_dropdown">
+          <button id="settings_button">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+          </button>
+
+          <button id="back_button">
+            <i class="fa-solid fa-angle-left"></i>
+            Back to chat
+          </button>
+
+          <button id="logout_button">
+            <i class="fa-solid fa-right-from-bracket" style="color: #ff2600;"></i>
+            Logout
+          </button>
+        </div>
       </div>
     </div>
 
@@ -41,7 +57,9 @@
           <button class="SearchBtn"><i class="fa-solid fa-magnifying-glass"></i></button>
           <button class="SearchBtn hidden" id="clearSearchButton"><i class="fa-solid fa-x"></i></button>
         </div>
+      </div>
 
+      <div id="actionBar_container">
         <button id="ImportButton">
           <i class="fa-solid fa-arrow-down"></i>
           Import
