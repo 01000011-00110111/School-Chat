@@ -55,7 +55,7 @@ socket.on("projects", (projects_list) => {
     newProjectContainer.setAttribute("data-id", projects_list[i].themeID);
 
     const projectButton = document.createElement("button");
-    projectButton.innerHTML = `${projects_list[i].author}'s | ${projects_list[i].name} | status: ${projects_list[i].status}`;
+    projectButton.innerHTML = `${projects_list[i].author}'s | ${projects_list[i].name} | Status: ${capitalize(projects_list[i].status)}`;
     projectButton.setAttribute("onclick", `set_theme('${projects_list[i].themeID}');`);
     projectButton.classList.add("project_panel");
     newProjectContainer.appendChild(projectButton);
@@ -72,15 +72,13 @@ socket.on("projects", (projects_list) => {
     dropdownContent.classList.add("dropdown_content");
 
     const option1 = document.createElement("a");
-    option1.href = "#";
     let view = projects_list[i].status === 'private' ? 'public' : 'private';
-    option1.innerHTML = `Set to ${view}`;
+    option1.innerHTML = `<i class="fa-regular fa-eye"></i> Set to ${capitalize(view)}`;
     option1.setAttribute("onclick", `update_status('${projects_list[i].themeID}', '${projects_list[i].status}');`);
     dropdownContent.appendChild(option1);
 
     const option2 = document.createElement("a");
-    option2.href = "#";
-    option2.innerHTML = "Delete";
+    option2.innerHTML = `<i class="fa-solid fa-trash" style="color: #ff2600;"></i> Delete`;
     option2.setAttribute("onclick", `delete_project('${projects_list[i].themeID}');`);
     dropdownContent.appendChild(option2);
 
@@ -107,6 +105,11 @@ function set_theme(theme) {
   ToPage('/editor');
 }
 
+function capitalize(string) {
+  if (string.length === 0) return string;
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 
 function update_status(themeID, currentStatus) {
   let newStatus = currentStatus === 'private' ? 'public' : 'private';
@@ -116,14 +119,14 @@ function update_status(themeID, currentStatus) {
   const buttonToUpdate = document.querySelector(`[data-id="${themeID}"] button.project_panel`);
   // if (buttonToUpdate) {
     const currentText = buttonToUpdate.innerHTML;
-    const newText = currentText.replace(`status: ${currentStatus}`, `status: ${newStatus}`);
+    const newText = currentText.replace(`status: ${currentStatus}`, `Status: ${capitalize(newStatus)}`);
     buttonToUpdate.innerHTML = newText;
   // }
 
   // Update the dropdown option text
   const optionToUpdate = document.querySelector(`[onclick="update_status('${themeID}', '${currentStatus}');"]`);
   if (optionToUpdate) {
-    optionToUpdate.innerHTML = `Set to ${currentStatus}`;
+    optionToUpdate.innerHTML = `<i class="fa-regular fa-eye"></i> Set to ${capitalize(currentStatus)}`;
     optionToUpdate.setAttribute("onclick", `update_status('${themeID}', '${newStatus}');`);
   }
 }

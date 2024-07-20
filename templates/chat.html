@@ -10,14 +10,23 @@
     <div class="AccountPopup">
     <input type="image" id="pfpmenu" class="PictureBTN" onclick="OpenAC();" name="pfpmenu" src="static/favicon.ico">
     <div id="AccControls" class="AccControls" style="display: none;">
-            <a href="/logout">Logout</a>
-            <a href="/settings">Settings</a>
-            <a href="/#">Soon</a>
+            <a href="/settings">
+                <i class="fa-solid fa-gear"></i>
+                Settings
+            </a>
+            <a href="/projects">
+                <i class="fa-solid fa-diagram-project"></i>
+                Projects
+            </a>
+            <a href="/logout">
+                <i class="fa-solid fa-right-from-bracket" style="color: #ff2600;"></i>
+                Logout
+            </a>
         </div>
     </div></div>
     {% block panel_menu %}{% endblock %}
     <div id="mySidenav" class="sidenav" style="background-color: rgb(17, 17, 17); width: 0px;">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="color: rgb(129, 129, 129);">×</a>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="color: rgb(129, 129, 129);"><i class="fa-solid fa-x"></i></a>
         <div style="align-self: baseline;">
             <div class="ChatRoomS">
                 <div id="ChatRoomls"><hr></div>

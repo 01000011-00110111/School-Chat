@@ -629,7 +629,8 @@ def send_project(theme_id):
 def handle_save_project(themeID, theme, name, publish):
     socketid = request.sid
     database.save_project(themeID, theme, name, publish)
-    emit("response", ("Project Saved", False), to=socketid)
+    message = 'Project Published' if publish else 'Project Saved'
+    emit("response", (message, False), to=socketid)
     
 
 @socketio.on("update_theme_status")
@@ -643,7 +644,7 @@ def handle_delete_project(project):
     user = User.get_user_by_id(request.cookies.get("Userid"))
     user.themeCount -= 1
     database.delete_project(project)
-    emit("response", ("Project Saved", False), to=socketid)
+    emit("response", ("Project deleted", False), to=socketid)
 
 
 @socketio.on("get_themes")
@@ -654,15 +655,17 @@ def handle_theme_requests():
     themes_fixed = []
     # print(list(projects))
     for theme in themes:
+        if theme['theme'] == {}:
+            continue
         if theme["status"] == "private" and theme['author'][0] != uuid:
             continue
         if theme['name'] == 'Untitled Project':
             continue
         del theme["_id"]
-        del theme["theme"]
         if 'project' in theme:
             del theme['project']
         del theme["status"]
+        del theme["theme"]
         # if "author" in project and len(project["author"]) > 1:
         theme["author"] = theme["author"][1:]
         themes_fixed.append(theme)
