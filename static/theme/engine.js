@@ -291,7 +291,6 @@ function open_project(data) {
     deployment_indicator.style.background = "red";
     deployment_text.innerHTML = "Undeployed";
   }
-  // console.log(colors)
 }
 
 var shadow_user = "";
@@ -301,9 +300,6 @@ AllContent.forEach((element) => {
     if (event.target.id != "") {
       if (currentSelection === "Edit") {
         element.classList.toggle("active");
-
-        menuOwner.innerHTML = event.target.id;
-
         OpenProperties();
 
         var SelectedLayer = event.target.id;
@@ -312,6 +308,7 @@ AllContent.forEach((element) => {
         const borderColor = document.getElementById("border-color");
         const shadowColor = document.getElementById("shadow-color");
         const Chat = document.getElementById("ChatMockup");
+        menuOwner.innerHTML = SelectedLayer;
 
         switch(SelectedLayer) {
           case "topbar":
@@ -354,7 +351,6 @@ AllContent.forEach((element) => {
             setProperties("enabled", "enabled", "enabled", "enabled");
         }
 
-
         const fetchColors = () => {
           document.getElementsByClassName("ColorDisplay")[0].style.background = document.getElementById(`${SelectedLayer}`).style.background;
           document.getElementsByClassName("ColorDisplay")[1].style.background = document.getElementById(`${SelectedLayer}`).style.color;
@@ -393,9 +389,9 @@ AllContent.forEach((element) => {
               }
             }
 
-            document.getElementById(SelectedLayer).style.background = ColorBox.value;
-            document.getElementById(SelectedLayer).style.color = textColor.value;
-            document.getElementById(SelectedLayer).style.borderColor = borderColor.value;
+            document.getElementById(SelectedLayer).style.setProperty('background', ColorBox.value)
+            document.getElementById(SelectedLayer).style.setProperty('color', textColor.value)
+            document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value)
             document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
 
             function Update() {
