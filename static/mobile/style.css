@@ -1,18 +1,17 @@
-* {
-  font-family: sans-serif;
-  scrollbar-color: orange black;
-}
-
-body {
+body, html {
   background-color: #000000;
   color: #dd7016;
   height: 100%;
-  font-size: 30px;
+  width: 100%;
+  display: grid;
 }
 
-html {
-  width: 100%;
-  height: 100%;
+* {
+  font-family: sans-serif;
+  scrollbar-color: orange black;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 #LoginContent {
@@ -61,56 +60,57 @@ html {
     height:30px;
     width:30px;
     border-radius:100px;
-    overflow: hidden
-    dragable: false;
+    overflow: hidden;
     border: 2px solid #404040;
 }
 
 #pfpmenu {
     border-radius: 100px;
-    width: 45px;
-    height: 45px;
+    width: 81px;
+    height: 81px;
     border: 2px red solid;
+    margin-right: 13px;
 }
 
 #chat {
-    z-index: 0;
-    padding-left: 5%;
-    padding-right: 12%;
-    margin-left: 1.5%;
-    line-height: 70px;
-    padding-bottom: calc(15pc + env(safe-area-inset-bottom));
-    margin-bottom: 2%;
-    margin-top: 1%;
-    padding-top: calc(10pc + env(safe-area-inset-top));
-    word-wrap: break-word;
+  z-index: 0;
+  padding-left: 5%;
+  padding-right: 12%;
+  margin-left: 1.5%;
+  line-height: 35px;
+  padding-bottom: calc(12pc + env(safe-area-inset-bottom));
+  margin-bottom: 2%;
+  margin-top: 1%;
+  padding-top: calc(12pc + env(safe-area-inset-top));
+  word-wrap: break-word;
 }
 
 #message {
-    font-size: 36px;
-    width: 100%;
-    border-radius: 15px;
+  font-size: 36px;
+  width: 79%;
+  border-radius: 23px;
 }
 
 /* id start by getting the text above the area the text box is */
 #chatbox {
     display: flex;
     width: 86%;
-    height: 79%;
+    height: 94%;
     align-self: center;
+    justify-content: space-evenly;
 }
 
 #sides {
-    position: fixed;
-    bottom: 0%;
-    width: 100%;
-    /* border-top: 5px solid black; */
-    justify-content: center;
-    display: flex;
-    height: 9%;
-    margin: 0px -7.7px;
-    background: black;
-    padding: 1pc 1pc calc(3pc + env(safe-area-inset-bottom));
+  position: fixed;
+  bottom: 0%;
+  width: 100%;
+  /* border-top: 5px solid black; */
+  justify-content: center;
+  display: flex;
+  height: 11%;
+  background: black;
+  padding: 2pc 0pc calc(2pc + env(safe-area-inset-bottom));
+  border-top: 1px gray solid;
 }
 
 #activenav {
@@ -126,8 +126,9 @@ html {
 }
 
 #send {
-    font-size: 28px;
-    border-radius: 25%;
+  font-size: 28px;
+  border-radius: 25%;
+  width: 13%;
 }
 
 #send:hover {
@@ -153,41 +154,78 @@ html {
 /* Nav Menu left */
 
 .sidenav {
-    height: 100%;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 57px;
-    background: black;
-    scrollbar-width: thin;
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  transition: 0.5s;
+  background: black;
+  display: grid;
+  grid-template-rows: 367px;
 }
 
 .sidenav a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #d0c8c8;
-    display: block;
-    transition: 0.3s;
-    background: black;
-    border-radius: 15px;
-    height: 40px;
-    width: 84%;
+  text-decoration: none;
+  font-size: 25px;
+  color: #d0c8c8;
+  display: grid;
+  transition: 0.3s;
+  background: black;
+  height: 70px;
+  width: 100%;
+  text-align: justify;
+  align-content: center;
+  text-indent: 17px;
 }
 
 .sidenav a:hover {
     color: #f1f1f1;
 }
 
+#sidenav_bottom_button_container {
+  display: flex;
+  width: 100%;
+  background: transparent;
+  color: white;
+  height: 120px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 17px 0px 0px;
+  align-self: flex-end;
+}
+
+#sidenav_top_container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  height: 145px;
+  border-bottom: 0.5px solid white;
+  align-items: center;
+}
+
+#sidenav_bottom_button_container a {
+  background: transparent;
+  color: white;
+  height: initial;
+  align-content: center;
+  font-size: 40px;
+  width: fit-content;
+  text-align: left;
+  display: block;
+}
+
+#sidenav_bottom_button_container p {
+  font-size: 26px;
+}
+
 .closebtn {
-    position: absolute;
-    margin: -73px 74%;
-    width: 12px !important;
-    font-size: 40px !important;
-    background: transparent !important;
+  width: fit-content!important;
+  font-size: 53px !important;
+  background: transparent !important;
+  height: initial !important;
+  align-content: center;
 }
 
 @media screen and (max-height: 450px) {
@@ -400,18 +438,18 @@ html {
   min-width: 60px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
-  top: 55px;
+  top: 109px;
   border-radius: 15px;
-  margin: 2px -24px;
   border: 1px #939393 solid;
+  left: -92px;
 }
 
 .AccountPopup {
   display: grid;
   text-align: center;
-  margin: 5px 91%;
+  margin: 5px 89%;
   position: fixed;
-  scale: 1.9;
+  scale: 1;
 }
 
 .AccountPopup a {
@@ -586,8 +624,7 @@ html {
   background: black;
   position: fixed;
   width: 100%;
-  height: 8%;
-  margin: -14.9px -7.7px;
+  height: 9%;
   padding: 0px;
   display: flex;
   box-shadow: 0px -1px 44px 15px #191919;

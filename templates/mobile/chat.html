@@ -7,7 +7,6 @@
 <div id="topbar">
     <h2 id="RoomDisplay" style="margin: 14.5px 0; padding-left: 22px;" onclick="openNav();">/e</h2>
     <div class="AccountPopup">
-    <input type="image" id="pfpmenu" class="PictureBTN" onclick="OpenAC();" name="pfpmenu" src="static/favicon.ico">
     <div id="AccControls" class="AccControls" style="display: none;">
             <a href="/logout">Logout</a>
             <a href="/settings">Settings</a>
@@ -17,13 +16,17 @@
 </div>
 
     <div id="mySidenav" class="sidenav" style="background-color: rgb(17, 17, 17); width: 0px;">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="color: rgb(129, 129, 129);">×</a>
-        <hr style="border: 5px solid grey;">
+        <div id="sidenav_top_container">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="color: rgb(129, 129, 129);">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <input type="image" id="pfpmenu" class="PictureBTN" onclick="OpenAC();" name="pfpmenu" src="static/favicon.ico">
+        </div>
+
         <div id="activenav">
             <div id="online_users"></div>
         </div>
         <div style="margin-right: 40%;">
-            <p>change the chat room you are in</p>
             <div class="ChatRoomS">
                 <div id="ChatRoomls"><hr></div>
             </div>
@@ -32,9 +35,17 @@
                 <h6><a href="/changelog" style="color: rgb(129, 129, 129);">Update log</a></h6>
                 <h6><a href="#TELL-THE-OWNERS-TO-GET-YOUR-OWN-CONTACT-FOR-YOU-AND-LET-THEM-CONTACT-US" style="color: rgb(129, 129, 129);">Contact us</a></h6>
                 <h6><a href="https://github.com/01000011-00110111/School-Chat" style="color: rgb(129, 129, 129);">Source Code</a></h6>
+                <h6><a href="/settings" style="color: rgb(129, 129, 129);">Settings</a></h6>
             </div>
             <br>
             <br>
+            <div id="sidenav_bottom_button_container">
+                <a href="/logout">
+                    <i class="fa-solid fa-right-from-bracket" style="color: #ff2600;"></i>
+                    Logout
+                </a>
+                <p>{App Version}</p>
+            </div>
     </div>
 <div id="chat"></div>
 
