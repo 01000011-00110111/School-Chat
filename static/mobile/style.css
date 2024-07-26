@@ -69,7 +69,7 @@ body, html {
     width: 81px;
     height: 81px;
     border: 2px red solid;
-    margin-right: 13px;
+    margin-right: 24px;
 }
 
 #chat {
@@ -163,7 +163,7 @@ body, html {
   transition: 0.5s;
   background: black;
   display: grid;
-  grid-template-rows: 367px;
+  grid-template-rows: 200px;
 }
 
 .sidenav a {
@@ -173,7 +173,7 @@ body, html {
   display: grid;
   transition: 0.3s;
   background: black;
-  height: 70px;
+  height: 100px;
   width: 100%;
   text-align: justify;
   align-content: center;
@@ -189,9 +189,9 @@ body, html {
   width: 100%;
   background: transparent;
   color: white;
-  height: 120px;
+  height: calc(95% + env(safe-area-inset-bottom));
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   padding: 0px 17px 0px 0px;
   align-self: flex-end;
 }
@@ -893,6 +893,7 @@ version #arrowContainer {
   display: grid;
   justify-content: center;
   grid-template-columns: 100%;
+  height: 112%;
 }
 
 .wrapperPanel {
@@ -919,7 +920,7 @@ version #arrowContainer {
 
 .loginInput {
   width: 100%;
-  height: 87px;
+  height: 112px;
   outline: none;
   border-radius: 18px;
   display: flex;
