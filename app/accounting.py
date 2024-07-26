@@ -3,20 +3,20 @@ Stuff to handle accounts
 Copyright (C) 2023  cserver45, cseven
 License info can be viewed in main.py or the LICENSE file.
 """
+import configparser
 import hashlib
 import os
 import re
 import smtplib
 import uuid
 from datetime import datetime, timedelta
-from better_profanity import profanity
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import word_lists
-import database
-# from user import inactive_users
-from online import users_list
-import configparser
+from email.mime.text import MIMEText
+
+from better_profanity import profanity
+
+from app import database, word_lists
+from app.online import users_list
 
 config = configparser.ConfigParser()
 config.read('config/keys.conf')
