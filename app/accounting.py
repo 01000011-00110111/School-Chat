@@ -5,7 +5,6 @@ License info can be viewed in main.py or the LICENSE file.
 """
 import configparser
 import hashlib
-import os
 import re
 import smtplib
 import uuid
@@ -149,11 +148,13 @@ def check_if_disposable_email(email):
 def create_verification_code(user):
     username_hash = hashlib.sha224(bytes(user['username'], 'utf-8')).hexdigest()
     email_hash = hashlib.sha224(bytes(user['email'], 'utf-8')).hexdigest()
-    combined_hashes = username_hash + email_hash + user['password'] + config["backend"]['secret_key']
+    combined_hashes = username_hash + email_hash + user['password'] + (
+        config["backend"]['secret_key'])
     verification_code = hashlib.sha224(bytes(combined_hashes, 'utf-8')).hexdigest()
     return verification_code
 
-def create_user(SUsername: str, SPassword: str, SEmail: str, SRole: str, SDisplayname: str):
+def create_user(SUsername: str, SPassword: str, SEmail: str, SRole: str,
+                SDisplayname: str):
     while True:
         userid = str(uuid.uuid4())
         if userid not in database.distinct_userids():
@@ -181,4 +182,5 @@ def create_user(SUsername: str, SPassword: str, SEmail: str, SRole: str, SDispla
 
 def password(user):
     reset_code = create_verification_code(user)
-    send_password_reset_email(user['username'], user["email"], reset_code, user['userId'])
+    send_password_reset_email(user['username'], user["email"], reset_code,
+                              user['userId'])

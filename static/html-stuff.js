@@ -23,8 +23,6 @@ function toggleDropdown() {
     }
 }
 
-// pfp button
-
 function OpenAC() {
     let AC = document.getElementById("AccControls");
     if (AC.style.display === "grid") {
@@ -44,6 +42,19 @@ function CloseTOS() {
 
   TOSPopup.style.display = "none";
 }
+
+// bottomButton = document.getElementById("chat-bottom-button");
+// setInterval(bottom_of_chat, 1000)
+
+// function bottom_of_chat() {
+//   if (Math.floor(window.scrollY) !=+ window.scrollMaxY) {
+//       bottomButton.style.display = "inline";
+//   }
+//   else if (Math.floor(window.scrollY) ==+ window.scrollMaxY)
+//   {
+//       bottomButton.style.display = "none";
+//   }
+// }
 
 //Code broken as far as I know
 function Prepare() {

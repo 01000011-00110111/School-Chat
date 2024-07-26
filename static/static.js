@@ -11,3 +11,7 @@ function getCookie(name) {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
+
+socket.on("ping", ({from}) => {
+    new Notification(`${from} pinged you`, { icon: 'static/favicon.ico' });
+});

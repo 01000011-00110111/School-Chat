@@ -3,10 +3,8 @@ import hashlib
 from datetime import datetime, timedelta
 
 from flask_login import LoginManager, logout_user
-from flask_socketio import emit
 
 import database
-from private import Private, format_userlist
 
 # inactive_users = []
 
@@ -39,6 +37,7 @@ class User:
         self.theme = user['theme']
         self.locked = ['locked']
         self.permission = user['permission']  # temp will go away
+        self.themeCount = user['themeCount']
         # self.warned = user['warned']
 
     @staticmethod
@@ -82,13 +81,28 @@ class User:
     def get_user_by_id(cls, userid):
         user = cls.Users.get(userid, None)
         return user
+    
+    @classmethod
+    def get_userid(cls, displayname):
+        for _, user in cls.Users.items():
+            # print(user)
+            if user.displayName == displayname:
+                # print(f'e{user}')
+                userid = user.uuid
+        return userid
+    
+    @classmethod
+    def get_display(cls, uuid):
+        user = cls.Users.get(uuid, None)
+        displayname = user.displayName
+        return displayname
 
     @classmethod
     def add_user_class(cls, username, user, userid):
         user_class = cls(username, user, userid)
         database.set_online(userid, False)
         cls.Users.update({userid: user_class})
-        tupple = (userid, user['displayName'], user['SPermission'][0])
+        (userid, user['displayName'], user['SPermission'][0])
         # if tupple in inactive_users:
         #     inactive_users.remove(tupple)
         return user_class
@@ -166,11 +180,11 @@ class User:
         # print(self.mutes)
         return False
 
-    def update_account(self, messageC, roleC, userC, displayname, role, profile, theme):
+    def update_account(self, messageColor, roleColor, userColor, displayname, role, profile, theme):
         """Update the user's account details."""
-        self.Mcolor = messageC
-        self.Rcolor = roleC
-        self.Ucolor = userC
+        self.Mcolor = messageColor
+        self.Rcolor = roleColor
+        self.Ucolor = userColor
         self.displayName = displayname
         self.role = role
         self.profile = profile
