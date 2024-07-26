@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 from flask_login import LoginManager, logout_user
 
-import database
+import app.database as database
 
 # inactive_users = []
 

@@ -1,6 +1,6 @@
 """this is where all room commands goes"""
-import rooms
-from commands import other
+import app.rooms as rooms
+from app.commands import other
 
 
 def reset_chat_user(**kwargs):

@@ -5,10 +5,9 @@ from string import ascii_uppercase
 
 from flask_socketio import emit
 
-import database
-import log
-from commands.other import format_system_msg
-from online import add_unread, clear_unread
+from app import database, log
+from app.commands.other import format_system_msg
+from app.online import add_unread, clear_unread
 
 
 def get_messages_list(sender, receiver):

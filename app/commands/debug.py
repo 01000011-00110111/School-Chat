@@ -7,10 +7,10 @@ from typing import List
 import psutil
 from flask_socketio import emit
 
-import database
-import log
-from commands import other
-from user import User
+import app.database as database
+import app.log as log
+from app.commands import other
+from app.user import User
 
 LOGFILE_B = "backend/Chat-backup.txt"
 

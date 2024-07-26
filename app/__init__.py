@@ -1,6 +1,5 @@
-# app/__init__.py
-
 import os
+import logging
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_apscheduler import APScheduler
@@ -55,4 +54,4 @@ def create_app():
     return app
 
 # Import models and commands to attach to the app
-from app import accounting, filtering, log, uploading, word_lists, appConfig, chat, online, private, rooms, theme, user
+# from app import accounting, filtering, log, uploading, word_lists, appConfig, chat, online, private, rooms, user

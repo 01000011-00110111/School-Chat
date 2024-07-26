@@ -17,7 +17,7 @@ static/profiles
 
 # running files
 __pycache__/*
-commands/__pycache__/*
+app/commands/__pycache__/*
 venv/*
 .mypy_cache/*
 node_modules/*

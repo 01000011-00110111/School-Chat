@@ -6,7 +6,7 @@
 
 # from flask_socketio import emit
 
-from commands import debug, moderation, other, room
+from app.commands import debug, moderation, other, room
 
 # from main import scheduler
 

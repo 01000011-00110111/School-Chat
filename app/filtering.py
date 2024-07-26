@@ -8,13 +8,11 @@ from datetime import datetime
 from better_profanity import profanity
 from flask_socketio import emit
 
-import cmds
-import log
+import app.cmds as cmds
 
-# import rooms
-import word_lists
-from online import get_scoketid
-from user import User
+from app import word_lists, log
+from app.online import get_scoketid
+from app.user import User
 
 # old imports, do we still need the markdown package due to us having our own markdown
 # from markdown import markdown

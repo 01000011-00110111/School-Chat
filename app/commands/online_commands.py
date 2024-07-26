@@ -2,10 +2,10 @@
 
 # from flask_socketio import emit
 
-import database
+import app.database as database
 
 # from commands import other
-from user import User
+from app.user import User
 
 
 def appear_offline(**kwargs):

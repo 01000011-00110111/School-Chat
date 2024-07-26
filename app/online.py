@@ -1,6 +1,6 @@
 from flask_socketio import emit
 
-import database
+import app.database as database
 
 socketids = {}
 users_list = {}

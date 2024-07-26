@@ -14,7 +14,6 @@ def register_routes(app):
         online,
         private,
         rooms,
-        theme,
         uploading,
         user,
         word_lists,
@@ -22,7 +21,7 @@ def register_routes(app):
 
     modules = [
         accounting, appConfig, chat, cmds, database, filtering, log, online,
-        private, rooms, theme, uploading, user, word_lists
+        private, rooms, uploading, user, word_lists
     ]
 
     for module in modules:
@@ -32,7 +31,3 @@ def register_routes(app):
             app.register_blueprint(module.bp)
     
     app.register_blueprint(bp)
-
-@bp.route('/')
-def index():
-    return "Hello, World!"

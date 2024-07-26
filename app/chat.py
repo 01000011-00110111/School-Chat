@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 
 from flask_socketio import emit
 
-import database
-import log
+import app.database as database
+import app.log as log
 
 
 def format_system_msg(msg):

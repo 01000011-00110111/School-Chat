@@ -5,7 +5,7 @@ import time
 
 from flask_socketio import emit
 
-from chat import Chat
+from app.chat import Chat
 
 # import chat
 

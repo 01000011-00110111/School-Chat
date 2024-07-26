@@ -2,12 +2,12 @@ from datetime import datetime, timedelta
 
 from flask_socketio import emit
 
-import database
-from chat import Chat
-from commands import other
-from online import get_all_offline
-from user import User
-from word_lists import blacklist_words, whitelist_words
+import app.database as database
+from app.chat import Chat
+from app.commands import other
+from app.online import get_all_offline
+from app.user import User
+from app.word_lists import blacklist_words, whitelist_words
 
 
 def globalock(**kwargs):

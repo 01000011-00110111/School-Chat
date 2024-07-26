@@ -4,8 +4,8 @@ from string import ascii_uppercase
 
 from flask_socketio import emit
 
-import database
-from chat import Chat
+import app.database as database
+from app.chat import Chat
 
 
 def chat_room_log(message):

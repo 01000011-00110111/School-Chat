@@ -5,7 +5,7 @@
 from collections import deque
 from datetime import datetime
 
-import database
+import app.database as database
 
 
 def format_system_msg(msg):
