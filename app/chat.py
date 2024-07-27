@@ -1,11 +1,220 @@
 import os
 from datetime import datetime, timedelta
+import flask
+from flask import request
+from flask.typing import ResponseReturnValue
 
 from flask_socketio import emit
+from flask_login import (
+    # current_user,
+    login_required,
+    # login_user,
+    # logout_user,
+)
 
-import app.database as database
-import app.log as log
+from app import database, log, filtering
+from app.user import User
+# import app.log as log
 
+##### chat route code #####
+
+
+@app.route("/chat")
+@login_required
+def chat_page() -> ResponseReturnValue:
+    """Serve the main chat window."""
+    return flask.render_template("chat.html")
+
+
+@app.route("/chat/<room_name>")
+@login_required
+def specific_chat_page(room_name) -> ResponseReturnValue:
+    """Get the specific room in the uri."""
+    # later we can set this up to get the specific room (with permssions)
+    # request.cookies.get('Userid')
+    # print(room_name)
+    return flask.redirect(flask.url_for("chat_page"))
+
+
+@app.route("/admin")
+@login_required
+def admin_page() -> ResponseReturnValue:
+    """Get the specific room in the uri."""
+    user = database.find_login_data(request.cookies.get("Userid"), True)
+    if "adminpass" in user["SPermission"]:
+        return flask.render_template("admin.html")
+    return flask.redirect(flask.url_for("chat_page"))
+
+
+@app.route("/admin/<room_name>")
+@login_required
+def specific_admin_page(room_name) -> ResponseReturnValue:
+    """Get the specific room in the uri."""
+    # later we can set this up to get the specific room (with permssions)
+    # request.cookies.get('Userid')
+    # print(room_name)
+    return flask.redirect(flask.url_for("admin_page"))
+
+
+##### chat code ######
+
+
+def handle_chat_message(message, roomid, userid, hidden):
+    """New New chat message handling pipeline."""
+    # print(roomid)
+    # later I will check the if the username is the same as the one for the session somehow
+
+    room = Chat.create_or_get_chat(roomid)
+
+    # print(room)
+    # user = database.find_account_data(userid)
+    user = User.get_user_by_id(userid)
+    result = filtering.run_filter_chat(user, room, message, roomid, userid)
+    if result[0] == "msg":
+        if room is not None and not hidden:
+            room.add_message(result[1])
+            # emit("message_chat", (result[1], roomid), broadcast=True)
+            # addons.message_addons(message, user, roomid, room)
+            # above is not offical again, so commented out
+            if "$sudo" in message and result[2] != 3:
+                filtering.find_cmds(message, user, roomid, room)
+            elif "$sudo" in message and result[2] == 3:
+                filtering.failed_message(("permission", 9), roomid)
+        elif room is not None and hidden:
+            if "$sudo" in message and result[2] != 3:
+                filtering.find_cmds(message, user, roomid, room)
+        else:
+            filtering.failed_message(7, roomid)
+    else:
+        filtering.failed_message(result, roomid)
+
+
+@socketio.on("room_connect")
+def connect(roomid, sender):
+    """Switch rooms for the user"""
+    socketid = request.sid
+    try:
+        room = Chat.create_or_get_chat(roomid)
+        list = {"roomid": room.vid, "name": room.name, "msg": room.messages}
+    except TypeError:
+        emit("room_data", "failed", namespace="/", to=socketid)
+        return
+
+    active_privates = [
+        private
+        for private in Private.chats.values()
+        if (sender in private.userlist and private.active.get(sender, False))
+        or socketid in private.sids
+    ]
+
+    for private in active_privates:
+        private.active[sender] = False
+        if socketid in private.sids:
+            private.sids.remove(socketid)
+
+    active_chats = [chat for chat in Chat.chats.values() if socketid in chat.sids]
+
+    for chat in active_chats:
+        chat.sids.remove(socketid)
+
+    room.sids.append(socketid)
+    # print(room.sids)
+    emit("room_data", (list), to=socketid, namespace="/")
+
+
+@socketio.on("get_rooms")
+def get_rooms(userid):
+    """Grabs the chat rooms."""
+    user_info = database.find_account_room_data(userid)
+    user_name = user_info["displayName"]
+    user_permissions = user_info["SPermission"]
+
+    room_access = database.get_rooms()
+    # print(room_access)
+    if "Debugpass" in user_permissions:
+        emit(
+            "roomsList",
+            (
+                [{"vid": room["vid"], "name": room["name"]} for room in room_access],
+                "dev",
+            ),
+            namespace="/",
+            to=request.sid,
+        )
+        return
+
+    if "adminpass" in user_permissions:
+        room_access = [room for room in room_access if room["whitelisted"] != "devonly"]
+        emit(
+            "roomsList",
+            (
+                [{"vid": room["vid"], "name": room["name"]} for room in room_access],
+                "mod",
+            ),
+            namespace="/",
+            to=request.sid,
+        )
+        return
+
+    if "modpass" in user_permissions:
+        room_access = [
+            room
+            for room in room_access
+            if "devonly" not in room["whitelisted"]
+            and "adminonly" not in room["whitelisted"]
+        ]
+        emit(
+            "roomsList",
+            (
+                [{"vid": room["vid"], "name": room["name"]} for room in room_access],
+                "mod",
+            ),
+            namespace="/",
+            to=request.sid,
+        )
+        return
+
+    if user_info["locked"] == "locked":
+        emit(
+            "roomsList",
+            ([{"vid": "zxMhhAPfWOxuZylxwkES", "name": ""}], "locked"),
+            namespace="/",
+            to=request.sid,
+        )
+
+    accessible_rooms = []
+    for room in room_access:
+        if (
+            (room["blacklisted"] == "empty" and room["whitelisted"] == "everyone")
+            or (
+                room["whitelisted"] != "everyone"
+                and "users:" in room["whitelisted"]
+                and user_name in room["whitelisted"].split("users:")[1].split(",")
+            )
+            or (
+                room["blacklisted"] != "empty"
+                and "users:" in room["blacklisted"]
+                and user_name not in room["blacklisted"].split("users:")[1].split(",")
+                and room["whitelisted"] == "everyone"
+            )
+            and (
+                "devonly" not in room["whitelisted"]
+                and "modonly" not in room["whitelisted"]
+                and "lockedonly" not in room["whitelisted"]
+            )
+        ):
+            accessible_rooms.append({"vid": room["vid"], "name": room["name"]})
+
+    # print(accessible_rooms)
+    emit(
+        "roomsList",
+        (accessible_rooms, user_info["locked"]),
+        namespace="/",
+        to=request.sid,
+    )
+
+
+##### chat class code #####
 
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""

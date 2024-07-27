@@ -4,7 +4,7 @@ from flask import Flask
 from flask_socketio import SocketIO
 from flask_apscheduler import APScheduler
 from flask_login import LoginManager
-import app.database as database
+from app.database import setup_chatrooms, clear_online
 
 scheduler = APScheduler()
 socketio = SocketIO()
@@ -27,7 +27,7 @@ def setup_func():
         if not os.path.exists(filename):
             with open(filename, 'w'):
                 pass
-    database.setup_chatrooms()
+    setup_chatrooms()
 
 setup_func()
 
@@ -45,13 +45,12 @@ def create_app():
     scheduler.api_enabled = True
     login_manager.init_app(app)
     login_manager.login_view = 'login_page'
-    database.clear_online()
+    clear_online()
 
-    # Register Blueprints (routes)
-    from app import routes
-    routes.register_routes(app)
-    
+    # Register Blueprints and SocketIO Namespaces
+    from app.routes import register_routes
+    register_routes(app)
+
     return app
 
-# Import models and commands to attach to the app
-# from app import accounting, filtering, log, uploading, word_lists, appConfig, chat, online, private, rooms, user
+# from app import accounting, filtering, log, uploading, word_lists, appConfig, chat, online, private, rooms, theme, user

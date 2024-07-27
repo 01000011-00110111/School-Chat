@@ -20,7 +20,7 @@ from app.user import User
 
 # get our custom whitelist words (that shouldnot be banned in the first place)
 profanity.load_censor_words(whitelist_words=word_lists.whitelist_words)
-profanity.add_censor_words(word_lists.censored)
+profanity.add_censor_words(word_lists.blacklist_words)
 
 
 def run_filter_chat(user, room, message, roomid, userid):

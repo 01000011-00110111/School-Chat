@@ -12,10 +12,7 @@ with open('backend/unbanned_words.txt', 'r') as file:
 
 with open('backend/banned_words.txt', 'r') as file:
     blacklist_words = list(file.read().splitlines())
-
-censored = [
-    'sh!t',
-]
+    
 
 banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
                     '[URL]', 'mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD',

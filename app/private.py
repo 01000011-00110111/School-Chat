@@ -5,9 +5,85 @@ from string import ascii_uppercase
 
 from flask_socketio import emit
 
-from app import database, log
+from app import database, log, filtering
+from app.user import User
 from app.commands.other import format_system_msg
 from app.online import add_unread, clear_unread
+
+
+@app.route("/<prefix>/Private/<private_chat>")
+@login_required
+def specific_private_page(prefix, private_chat) -> ResponseReturnValue:
+    """Get the specific private chat in the uri."""
+    # later we can set this up to get the specific room (with permssions)
+    # request.cookies.get('Userid')
+    # print(prefix)
+    # print(private_chat)
+    return flask.redirect(flask.url_for("chat_page"))
+
+
+def handle_private_message(message, pmid, userid):
+    """New New chat message handling pipeline."""
+    # user = database.find_account_data(userid)
+    user = User.get_user_by_id(userid)
+    result = filtering.run_filter_private(user, message, userid)
+    private = get_messages(pmid, userid)
+    if result[0] == "msg":
+        # print(private.sids)
+        private.add_message(result[1], userid)
+        # emit("message_chat", (result[1], pmid), broadcast=True)
+        if "$sudo" in message and result[2] != 3:
+            filtering.find_cmds(message, user, pmid, private)
+        # if "$sudo" in message and result[2] != 3:
+        #     filtering.find_cmds(message, user, roomid)
+        # elif '$sudo' in message and result[2] == 3:
+        #     filtering.failed_message(('permission', 9), roomid)
+    # else:
+    #     filtering.failed_message(result, roomid)
+
+
+@socketio.on("private_connect")
+def private_connect(sender, receiver, roomid):
+    """Switch rooms for the user"""
+    socketid = request.sid
+    receiverid = database.find_userid(receiver)
+    if sender == receiverid:
+        emit(
+            "message_chat",
+            (
+                "[SYSTEM]: <font color='#ff7f00'>Don't be a loaner get some friends.</font>",
+                roomid,
+            ),
+            namespace="/",
+        )
+        return
+
+    active_privates = [
+        private
+        for private in Private.chats.values()
+        if (sender in private.userlist and private.active.get(sender, False))
+        or socketid in private.sids
+    ]
+
+    for private in active_privates:
+        private.active[sender] = False
+        if socketid in private.sids:
+            private.sids.remove(socketid)
+
+    active_chats = [chat for chat in Chat.chats.values() if socketid in chat.sids]
+
+    for chat in active_chats:
+        chat.sids.remove(socketid)
+
+    try:
+        chat = get_messages_list(sender, receiverid)
+        list = {"message": chat.messages, "pmid": chat.vid, "name": receiver}
+    except TypeError:
+        emit("room_data", "failed", namespace="/", to=socketid)
+        return
+
+    chat.sids.append(socketid)
+    emit("private_data", list, to=socketid, namespace="/")
 
 
 def get_messages_list(sender, receiver):

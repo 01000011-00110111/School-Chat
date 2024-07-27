@@ -5,6 +5,83 @@ import app.database as database
 socketids = {}
 users_list = {}
 
+
+@socketio.on("status_change")
+def handle_connect(data):
+    """Will be used later for online users."""
+    socketid = request.sid
+    # user = User.get_user_by_id(request.cookies.get('Userid'))
+    update_userlist(socketid, data, request.cookies.get("Userid"))
+    # if user is not None:
+    #     user.unique_online_list(userid, isVisible, location, sid)
+
+
+@socketio.on("get_full_list")
+def handle_full_list_request():
+    socketid = request.sid
+    emit("update_list_full", (list(users_list.values())), namespace="/", to=socketid)
+
+
+@socketio.on("connect")
+def emit_on_startup():
+    socketid = request.sid
+    uuid = request.cookies.get("Userid")
+    global startup_msg
+    if startup_msg:
+        emit(
+            "message_chat",
+            (
+                format_system_msg(
+                    "If you can see this message, please refresh your client"
+                ),
+                "ilQvQwgOhm9kNAOrRqbr",
+            ),
+            broadcast=True,
+            namespace="/",
+        )
+        startup_msg = False
+    if uuid in socketids:
+        socketids[uuid] = socketid
+    if uuid is not None:
+        update_userlist(socketid, {"status": "active"}, uuid)
+
+
+@socketio.on("disconnect")
+def handle_disconnect():
+    """Remove the user from the online user db on disconnect."""
+    socketid = request.sid
+    userid = request.cookies.get("Userid")
+
+    active_privates = [
+        private
+        for private in Private.chats.values()
+        if (userid in private.userlist and private.active.get(userid, False))
+        or socketid in private.sids
+    ]
+
+    for private in active_privates:
+        private.active[userid] = False
+        if socketid in private.sids:
+            private.sids.remove(socketid)
+
+    active_chats = [chat for chat in Chat.chats.values() if socketid in chat.sids]
+
+    for chat in active_chats:
+        chat.sids.remove(socketid)
+
+    try:
+        user = User.get_user_by_id(userid)
+        if user is not None and user.status != "offline-locked":
+            user.status = "offline"
+        database.set_offline(userid)
+        # emit('update_list', (list(users_list.values())), brodcast=True)
+        if userid is not None:
+            update_userlist(socketid, {"status": "offline"}, userid)
+        # del socketids[request.cookies.get("Userid")]
+    except TypeError:
+        pass
+
+
 def get_scoketid(uuid):
     return  socketids[uuid]
 
