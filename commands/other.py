@@ -7,8 +7,6 @@ from flask_socketio import emit
 
 from chat import Chat
 
-# import chat
-
 
 def check_if_dev(user):
     """Return if a user is a dev or not."""
@@ -24,33 +22,24 @@ def song(**kwargs):
     """Send a song to the chat."""
     roomid = kwargs['roomid']
     room = kwargs['room']
-    # song = kwargs['command']
     msg = format_song_msg(' '.join(list(kwargs["commands"].values())[1:]))
     room.add_message(msg, roomid)
-    # chat.add_message(msg, roomid, 'true')
-    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
     
     
 def send_admin(**kwargs):
     """Send a song to the chat."""
     roomid = kwargs['roomid']
     room = kwargs['room']
-    # song = kwargs['command']
     msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
-    # chat.add_message(msg, roomid, 'true')
     room.add_message(msg, roomid)
-    # emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
 def send_as_admin(**kwargs):
     """Send as admin to the chat."""
     roomid = kwargs['roomid']
     room = kwargs['room']
-    # song = kwargs['command']
     msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
-    # chat.add_message(msg, roomid, 'true')
     room.add_message(msg, roomid)
-    # emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
 def help(**kwargs):
@@ -108,11 +97,6 @@ def format_admin_msg(msg):
     return f'<font color="#e0790b">[ADMIN]: {msg}</font>'
 
 
-# def format_admin_msg(msg):
-#     """Format a message [SONG] would send."""
-#     return f'<font color="#00FF00">[ADMIN]: {msg}</font>'
-
-
 def respond_command(result, roomid):
     """Tell the client that can't run this command for what reason."""
 
@@ -141,9 +125,7 @@ def E_count_bacup(**kwargs):
         text = file.read()
     count = len(re.findall(r'\be\b', text))
     msg = format_system_msg("Current count: " + str(count))
-    # chat.add_message(msg, roomid, 'true')
     room.add_message(msg, roomid)
-    # emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
 
 
 """def most_used_room(**kwargs):
@@ -171,7 +153,4 @@ def end_ping(start, ID):
     difference = end - start
     msg = '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + str(
         int(difference)) + 'ms RTT</font>'
-    # chat.add_message(msg, ID, 'true')
     room.add_message(msg, ID)
-    # emit("message_chat", (msg, ID), broadcast=True, namespace="/")
-    
