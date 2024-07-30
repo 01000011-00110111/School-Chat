@@ -193,7 +193,7 @@ html, body {
 #NavControlBox {
   height: 100%;
   display: flex;
-  width: 16%;
+  width: 273.6px;
   justify-content: space-evenly;
   align-items: center;
 }
@@ -406,7 +406,6 @@ html, body {
     justify-content: center;
     display: flex;
     height: 71px;
-    margin: 0px -0.7px;
     background: black;
 }
 
@@ -918,7 +917,7 @@ notification .close_panel button {
   text-align: left;
   z-index: 3;
   height: fit-content;
-  top: 53px;
+  top: 57px;
   left: 0px;
   background: black;
   width: 173px;
