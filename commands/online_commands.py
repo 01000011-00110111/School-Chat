@@ -1,3 +1,4 @@
+"""All online commands for the chat."""
 import database
 
 from user import User
@@ -8,7 +9,7 @@ def appear_offline(**kwargs):
     database.force_set_offline(kwargs["user"].uuid)
     User.get_user_by_id(kwargs["user"].uuid).status = 'offline-locked'
     # emit("force_username", ("", None), broadcast=True)
-    
+
 
 def appear_online(**kwargs):
     """sets the user to appear online"""

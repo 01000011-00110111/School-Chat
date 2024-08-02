@@ -1,9 +1,11 @@
+"""Setup file (might rework)."""
 import os
 
 from database import Permission
 
 
 def chcek_if_data_is_missing():
+    """checks if a certain value is there."""
     users = Permission.find()
     for user in users:
         if 'themeCount' not in user or user['themeCount'] is None:
@@ -11,9 +13,10 @@ def chcek_if_data_is_missing():
 
 
 def self_destruct():
+    """Deletes this file"""
     script_path = os.path.abspath(__file__)
     try:
         os.remove(script_path)
         print(f'Script {script_path} has been deleted.')
-    except Exception as e:
+    except TypeError as e:
         print(f'Error deleting script {script_path}: {e}')

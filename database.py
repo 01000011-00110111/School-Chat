@@ -1,4 +1,6 @@
 """Database.py - functions for writing/reading from MongoDB
+(All function docstrings are AI generated)
+
 Copyright (C) 2023  cserver45, cseven
 License info can be viewed in main.py or the LICENSE file.
 """
@@ -60,6 +62,7 @@ def force_set_offline(userid):
 
 
 def set_online(userid, force):
+    """sets the user online"""
     # db.Online.insert_one({
     #     "username": username,
     #     "socketid": socketid,
@@ -76,10 +79,12 @@ def set_online(userid, force):
 
 
 def distinct_userids():
+    """Returns all userids"""
     return ID.distinct("userId")
 
 
 def find_data(location):
+    """Finds all user data in a specific database."""
     if location == "vid":
         return ID.find()
     if location == "perm":
@@ -89,6 +94,7 @@ def find_data(location):
 
 
 def find_userid(user):
+    """Finds a userid of a user."""
     userid = ID.find_one({"username": user})
     if userid is None:
         userid = Customization.find_one({"displayName": user})
@@ -96,10 +102,12 @@ def find_userid(user):
 
 
 def get_email(userid):
+    """Gets the email of a specific user."""
     return ID.find_one({"userId": userid})["email"]
 
 
 def find_account(data, location):
+    """Finds a user's data in a specific database."""
     if location == "vid":
         return ID.find_one(data)
     if location == "perm":
@@ -110,6 +118,7 @@ def find_account(data, location):
 
 
 def get_all_offline():
+    """gets all offline users"""
     pipeline = [
         {
             "$lookup": {
@@ -144,6 +153,7 @@ def get_all_offline():
 
 
 def find_login_data(value, login):
+    """Retrieves all data required to login."""
     pipeline = [
         {
             "$lookup": {
@@ -198,6 +208,7 @@ def find_login_data(value, login):
 
 
 def find_account_data(userid):
+    """Retrieves account data of a user."""
     pipeline = [
         {"$match": {"userId": userid}},
         {
@@ -241,6 +252,7 @@ def find_account_data(userid):
 
 
 def find_account_room_data(userid):
+    """Retrieves room's data."""
     pipeline = [
         {"$match": {"userId": userid}},
         {
@@ -274,14 +286,12 @@ def find_account_room_data(userid):
 
 
 def find_all_accounts():
+    """finds all accounts"""
     return ID.find()
 
 
-def mute_user(user, muted):
-    Permission.update_one({"userId": user}, {"$push": {"mutes": muted}}, upsert=True)
-
-
 def update_account_set(location, data, data2):
+    """Updates a account data in a specific location."""
     if location == "vid":
         return ID.update_one(data, data2, upsert=True)
     if location == "perm":
@@ -290,21 +300,21 @@ def update_account_set(location, data, data2):
         return Customization.update_one(data, data2, upsert=True)
 
 
-def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, locked):
+def add_accounts(username, password, userid, email, role, displayname, locked):
     """Adds a single account to the database"""
     id_data = {
         "userId": userid,
-        "username": SUsername,
-        "password": SPassword,
-        "email": SEmail,
+        "username": username,
+        "password": password,
+        "email": email,
         "status": "offline",
     }
     customization_data = {
         "userId": userid,
-        "role": SRole,
+        "role": role,
         "profile": "",
         "theme": "dark",
-        "displayName": SDisplayname,
+        "displayName": displayname,
         "messageColor": "#ffffff",
         "roleColor": "#ffffff",
         "userColor": "#ffffff",
@@ -325,12 +335,13 @@ def add_accounts(SUsername, SPassword, userid, SEmail, SRole, SDisplayname, lock
 
 
 def update_account(
-    userid, messageC, roleC, userC, displayname, role, profile, theme, email
+    userid, messagec, rolec, userc, displayname, role, profile, theme, email
 ):
+    """Updates a users account."""
     customization_data = {
-        "messageColor": messageC,
-        "roleColor": roleC,
-        "userColor": userC,
+        "messageColor": messagec,
+        "roleColor": rolec,
+        "userColor": userc,
         "displayName": displayname,
         "role": role,
         "profile": profile,
@@ -344,6 +355,7 @@ def update_account(
 
 
 def backup_user(user):
+    """Saves a users data."""
     customization_data = {
         "messageColor": user.Mcolor,
         "roleColor": user.Rcolor,
@@ -367,29 +379,15 @@ def backup_user(user):
 
 
 def delete_account(user):
+    """deletes a users account."""
     Permission.delete_one({"userId": user["userId"]})
     Customization.delete_one({"userId": user["userId"]})
     ID.delete_one({"userId": user["userId"]})
 
 
 #### room db edits ####
-def clear_chat_room(roomid, message):
-    Messages.update_one(
-        {"roomid": roomid}, {"$set": {"messages": [message]}}, upsert=True
-    )
-
-
-def send_message_single(message_text: str, roomid):
-    Messages.update_one(
-        {"roomid": roomid}, {"$push": {"messages": message_text}}, upsert=True
-    )
-
-
-def send_message_all(message_text: str):
-    Messages.rooms.update_many({}, {"$push": {"messages": message_text}}, upsert=True)
-
-
 def find_room(data, location):
+    """Finds room data in a specific location."""
     if location == "vid":
         return Rooms.find_one(data)
     if location == "acc":
@@ -399,6 +397,7 @@ def find_room(data, location):
 
 
 def find_rooms(location):
+    """Finds all rooms in a specific location."""
     if location == "vid":
         return Rooms.find()
     if location == "acc":
@@ -408,14 +407,17 @@ def find_rooms(location):
 
 
 def distinct_roomids():
+    """Gets all room id's."""
     return Rooms.distinct("roomid")
 
 
 def distinct_names():
+    """Gets all room names."""
     return Rooms.distinct("roomName")
 
 
 def distinct_name(roomid):
+    """Gets a specific room's name."""
     return Rooms.find_one({"roomid": roomid})["roomName"]
 
 
@@ -501,11 +503,8 @@ def get_room_msg_data(roomid):
     return list(Rooms.aggregate(pipeline))[0]
 
 
-def get_messages(roomid):
-    return Messages.find_one({"roomid": roomid})["messages"]
-
-
 def update_chat(chat):
+    """Updates a chatrooms data."""
     access_data = {
         "whitelisted": chat.whitelisted,
         "blacklisted": chat.banned,
@@ -531,6 +530,7 @@ def update_blacklist(vid, message):
 
 
 def delete_room(data):
+    """Deletes a room."""
     Rooms.find_one_and_delete(data)
     Access.find_one_and_delete(data)
     Messages.find_one_and_delete(data)
@@ -547,6 +547,7 @@ def set_all_lock_status(locked: str):
 
 
 def add_rooms(code, username, generated_at, name):
+    """Creates a new chatroom."""
     room_data = {
         "roomid": code,
         "generatedBy": username,
@@ -586,24 +587,27 @@ def find_private(pmid):
     return pm_id
 
 
-def get_unread(list, uuid):
+def get_unread(ulist, uuid):
     """find the chat with 2 users"""
-    chat = Private.find_one({"userIds": list})
+    chat = Private.find_one({"userIds": ulist})
     if chat is None:
         return 0
     return chat["unread"][uuid]
 
 
 def get_unread_all():
+    """Gets all private chats."""
     return Private.find()
 
 
 def get_private_chat(userlist):
+    """Gets a private chat."""
     return Private.find_one({"userIds": userlist})
 
 
-def get_private_messages(list):
-    return Private.find_one({"userIds": list})["messages"]
+def get_private_messages(ulist):
+    """Gets private chat messages."""
+    return Private.find_one({"userIds": ulist})["messages"]
 
 
 def find_private_messages(userlist, sender):
@@ -617,33 +621,8 @@ def find_private_messages(userlist, sender):
     return pm_id
 
 
-def send_private_message(message, pmid, userid):
-    """sends the message to the private chat room"""
-    unread = Private.find_one({"pmid": pmid})
-    dict = unread["userIds"]
-    dict.remove(userid)
-    reciver = dict[0]
-    unread["unread"][reciver] += 1
-    # later i might make better but there fixed
-    Private.update_one(
-        {"pmid": pmid},
-        {
-            "$push": {
-                "messages": message,
-            }
-        },
-        upsert=True,
-    )
-    Private.update_one(
-        {"pmid": pmid}, {"$set": {"unread": unread["unread"]}}, upsert=True
-    )
-
-
-def clear_priv_chat(pmid, message):
-    Private.update_one({"pmid": pmid}, {"$set": {"messages": [message]}}, upsert=True)
-
-
 def update_private(priv):
+    """Updates a private chat's data."""
     access_data = {
         "messages": priv.messages,
         "unread": priv.unread,
@@ -663,6 +642,7 @@ def create_private_chat(userlist, code):
         "unread": {userlist[0]: 0, userlist[1]: 0},
     }
     Private.insert_one(data)
+    return data
 
 
 def distinct_pmid():
@@ -710,6 +690,7 @@ def setup_chatrooms():
 
 
 def generate_main():
+    """Generates the Main chat room"""
     room_data = {
         "roomid": "ilQvQwgOhm9kNAOrRqbr",  # secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
         "generatedBy": "[SYSTEM]",
@@ -728,7 +709,7 @@ def generate_main():
     message = {
         "roomid": "ilQvQwgOhm9kNAOrRqbr",
         "messages": [
-            format_system_msg(f"""<b>Main</b> created by <b>[SYSTEM]</b> 
+            format_system_msg(f"""<b>Main</b> created by <b>[SYSTEM]</b>
             at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.""")
         ],
     }
@@ -739,6 +720,7 @@ def generate_main():
 
 
 def generate_locked():
+    """Generates the Locked chat room"""
     room_data = {
         "roomid": "zxMhhAPfWOxuZylxwkES",  # secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
         "generatedBy": "[SYSTEM]",
@@ -768,6 +750,7 @@ def generate_locked():
 
 
 def generate_other(name, permission):
+    """Generates a chat room"""
     roomid = secrets.token_hex(10)
     room_data = {
         "roomid": roomid,
@@ -798,6 +781,7 @@ def generate_other(name, permission):
 
 
 def dark():
+    """Creates the Dark theme."""
     theme = {
         "body": "rgb(2, 2, 2)",
         "chat-text": "rgb(255, 255, 255)",
@@ -834,6 +818,7 @@ def dark():
 
 
 def light():
+    """Creates the Light theme."""
     theme = {
         "body": "rgb(200, 200, 200)",
         "chat-text": "rgb(0, 0, 0)",
@@ -873,14 +858,17 @@ def light():
 
 
 def get_all_projects():
+    """Returns all projects."""
     return Themes.find()
 
 
 def get_projects(uuid, displayname):
+    """returns a specific project."""
     return Themes.find({"author": [uuid, displayname]})
 
 
 def create_project(uuid, displayname, code):
+    """Creates a Project."""
     theme = {
         "body": "rgb(2, 2, 2)",
         "chat-text": "rgb(255, 255, 255)",
@@ -920,11 +908,13 @@ def create_project(uuid, displayname, code):
 
 
 def get_project(theme_id):
+    """Returns a project."""
     # print(theme_id)
     return Themes.find_one({"themeID": theme_id})
 
 
-def save_project(themeID, theme, name, publish):
+def save_project(theme_id, theme, name, publish):
+    """Saves a project."""
     update_fields = {
         "name": name,
         "project": theme,
@@ -934,15 +924,17 @@ def save_project(themeID, theme, name, publish):
         update_fields["theme"] = theme
 
     Themes.update_one(
-        {"themeID": themeID},
+        {"themeID": theme_id},
         {"$set": update_fields},
         # upsert=True
     )
 
 
-def update_theme_status(themeID, status):
-    Themes.update_one({'themeID': themeID}, {"$set": {'status': status}})
+def update_theme_status(theme_id, status):
+    """Changes the theme status in the database."""
+    Themes.update_one({'themeID': theme_id}, {"$set": {'status': status}})
 
 
-def delete_project(themeID):
-    Themes.delete_one({"themeID": themeID})
+def delete_project(theme_id):
+    """Deletes a project."""
+    Themes.delete_one({"themeID": theme_id})

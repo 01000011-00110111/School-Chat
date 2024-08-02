@@ -6,11 +6,11 @@
 # with open('backend/unbanned_words.txt', 'r') as file:
 #     whitelist_words = [word.rstrip() for word in file]
 
-with open('backend/unbanned_words.txt', 'r') as file:
+with open('backend/unbanned_words.txt', 'r', encoding="utf-8") as file:
     whitelist_words = list(file.read().splitlines())
 
 
-with open('backend/banned_words.txt', 'r') as file:
+with open('backend/banned_words.txt', 'r', encoding="utf-8") as file:
     blacklist_words = list(file.read().splitlines())
 
 censored = [

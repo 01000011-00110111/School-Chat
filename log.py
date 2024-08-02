@@ -31,7 +31,7 @@ def log_mutes(message) -> None:
 
 def get_room_logs() -> str:
     """Return a sendable str with the last 10 Room Log Entries."""
-    with open("backend/chat-rooms_log.txt", "r") as f:
+    with open("backend/chat-rooms_log.txt", "r", encoding="utf-8") as f:
         cmds_log = deque(f, 10)
     cmd_log_txt = ""
     for cmd in cmds_log:
@@ -41,7 +41,7 @@ def get_room_logs() -> str:
 
 def get_cmd_logs() -> str:
     """Return a sendable str with the last 10 Command Log Entries."""
-    with open("backend/command_log.txt", "r") as f:
+    with open("backend/command_log.txt", "r", encoding="utf-8") as f:
         cmds_log = deque(f, 10)
     cmd_log_txt = ""
     for cmd in cmds_log:

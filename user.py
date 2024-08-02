@@ -17,7 +17,7 @@ class User:
     def __init__(self, username, user, uuid):
         """Initialize the user."""
         self.username = username
-        self.displayName = user['displayName']
+        self.display_name = user['displayName']
         self.perm = user['SPermission']
         self.uuid = uuid
         self.status = user['status']
@@ -28,15 +28,15 @@ class User:
         self.mutes = user['mutes'] #later ill add a mute db value # user['mute_time']
         self.online_list = []
         #other user values
-        self.Rcolor = user['roleColor']
-        self.Mcolor = user['messageColor']
-        self.Ucolor = user['userColor']
+        self.r_color = user['roleColor']
+        self.m_color = user['messageColor']
+        self.u_color = user['userColor']
         self.role = user['role']
         self.profile = user['profile']
         self.theme = user['theme']
         self.locked = ['locked']
         self.permission = user['permission']  # temp will go away
-        self.themeCount = user['themeCount']
+        self.theme_count = user['themeCount']
         # self.warned = user['warned']
 
     @staticmethod
@@ -63,6 +63,7 @@ class User:
         return self.username
 
     def remove_user(self):
+        """logout out the user."""
         logout_user()
 
     @staticmethod
@@ -78,26 +79,30 @@ class User:
 
     @classmethod
     def get_user_by_id(cls, userid):
+        """Returns the user's class by the uuid."""
         user = cls.Users.get(userid, None)
         return user
-    
+
     @classmethod
     def get_userid(cls, displayname):
+        """Returns the user id of a user by its display name (unsecured need a better method)."""
         for _, user in cls.Users.items():
             # print(user)
             if user.displayName == displayname:
                 # print(f'e{user}')
                 userid = user.uuid
         return userid
-    
+
     @classmethod
     def get_display(cls, uuid):
+        """Returns the user's display name."""
         user = cls.Users.get(uuid, None)
         displayname = user.displayName
         return displayname
 
     @classmethod
     def add_user_class(cls, username, user, userid):
+        """Creates and retunrns the user's class."""
         user_class = cls(username, user, userid)
         database.set_online(userid, False)
         cls.Users.update({userid: user_class})
@@ -105,6 +110,7 @@ class User:
 
     @classmethod
     def delete_user(cls, userid):
+        """Deletes the user's class."""
         if userid in cls.Users:
             u = cls.Users[userid]
             del cls.Users[userid]
@@ -123,6 +129,7 @@ class User:
         return obj
 
     def send_limit(self):
+        """Prevent the user from sending if they have a status saying too."""
         difference = datetime.now() - self.last_message
         if self.limit <= 15 and difference.total_seconds() < 5:
             self.limit += 1
@@ -133,13 +140,14 @@ class User:
                 self.pause = True
                 self.mutes.append({'spam': datetime.now() + timedelta(minutes=5)})
             return False
-        
+
         self.limit = 0
         self.last_message = datetime.now()
         return True
 
 
     def check_mute(self):
+        """Checks the mute/ban status."""
         current_time = datetime.now()
         to_remove = []
 
@@ -153,10 +161,11 @@ class User:
 
         if not self.mutes:
             self.pause = False
-            
+
         return bool(to_remove)
 
     def get_perm(self, roomid):
+        """Retuns permission to send if the user is not muted/banned."""
         mute_list = self.mutes
         current_time = datetime.now()
 
@@ -166,26 +175,26 @@ class User:
                     return True
                 else:
                     self.check_mute()
-                    
+
                 if roomid in mute_entry and mute_entry[roomid] >= current_time:
                     return True
                 else:
                     self.check_mute()
-                
+
         # print(self.mutes)
         return False
 
-    def update_account(self, messageColor, roleColor, userColor, displayname, role, profile, theme):
+    def update_account(self, message_color, role_color, user_color, displayname,
+                       role, profile, theme):
         """Update the user's account details."""
-        self.Mcolor = messageColor
-        self.Rcolor = roleColor
-        self.Ucolor = userColor
-        self.displayName = displayname
+        self.m_color = message_color
+        self.r_color = role_color
+        self.u_color = user_color
+        self.display_name = displayname
         self.role = role
         self.profile = profile
         self.theme = theme
-        
+
     def backup(self):
         """Backup the user's data."""
         database.backup_user(self)
-        

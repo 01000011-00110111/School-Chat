@@ -11,11 +11,10 @@ from commands import debug, moderation, other, room
 # from main import scheduler
 
 # consts
-troll_str = """
+TROLL_STR = """
                 [SYSTEM]: <font color='#ff7f00'>YOUVE BEEN TROLOLOLOLLED</font>
                 <img src='static/troll-face.jpeg'>
             """
-            
 
 def find_command(**kwargs):
     """Send whatever sudo command is issued to its respective function."""
@@ -45,33 +44,38 @@ def find_command(**kwargs):
         'unmute': moderation.unmute,
     }
     basic_commands = {
-        'help': other.help,
+        'help': other.help_command,
         'song': other.song,
         # 'refresh': online.refresh_online,
         # 'offline': online.appear_offline,
         # 'online': online.appear_online,
         'ping': debug.ping,
-        'ecount': other.E_count_bacup,
+        'ecount': other.e_count_bacup,
         'create': room.create_room,
         # 'popular': other.most_used_room,
     }
     command = kwargs['commands']['v0']
     perm = permission(kwargs['user'])
     if command in dev_commands:
-        # print('dev')
-        dev_commands[command](**kwargs) if perm in ['dev'] else \
+        if perm in ['dev']:
+            dev_commands[command](**kwargs)
+        else:
             other.respond_command((0, 'dev'), vid)
+
     if command in admin_commands:
-        # print('admin')
-        admin_commands[command](**kwargs) if perm in ['dev', 'admin'] else \
+        if perm in ['dev', 'admin']:
+            admin_commands[command](**kwargs)
+        else:
             other.respond_command((0, 'admin'), vid)
     if command in mod_commands:
-        mod_commands[command](**kwargs) if perm in ['dev', 'admin', 'mod'] else \
+        if perm in ['dev', 'admin', 'mod']:
+            mod_commands[command](**kwargs)
+        else:
             other.respond_command((0, 'mod'), vid)
     if command in basic_commands:
         try:
             basic_commands[command](**kwargs)
-        except Exception:
+        except EnvironmentError:
             other.respond_command((0, None), vid)
     # try:
     #     response_strings[(kwargs['commands']['v0'], permission(kwargs['user']))] \

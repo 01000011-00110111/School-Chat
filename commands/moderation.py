@@ -1,3 +1,4 @@
+"""All moderation commands for the chat."""
 from datetime import datetime, timedelta
 
 from flask_socketio import emit
@@ -15,8 +16,8 @@ def globalock(**kwargs):
     # user = kwargs['user']
     roomid = kwargs['roomid']
     confirm = kwargs['commands']['v1']
-    other.respond_command((0, 'priv'), roomid) if database.check_private(roomid) \
-    else None
+    if database.check_private(roomid):
+        other.respond_command((0, 'priv'), roomid)
 
     if confirm != "yes":
         other.respond_command((0, "not_confirmed"), roomid)
@@ -31,8 +32,8 @@ def lock(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     room = kwargs['room']
-    other.respond_command((0, 'priv'), roomid) if database.check_private(roomid) \
-    else None
+    if database.check_private(roomid):
+        other.respond_command((0, 'priv'), roomid)
     if other.check_if_dev(user) == 1:
         message = other.format_system_msg("Chat Locked by Admin.")
         room.add_message(message, roomid)
@@ -48,8 +49,8 @@ def unlock(**kwargs):
     user = kwargs['user']
     roomid = kwargs['roomid']
     room = kwargs['room']
-    other.respond_command((0, 'priv'), roomid) if database.check_private(roomid) \
-    else None
+    if database.check_private(roomid):
+        other.respond_command((0, 'priv'), roomid)
     if other.check_if_dev(user) == 1:
         message = other.format_system_msg("Chat Unlocked by Admin.")
         room.add_message(message, roomid)
@@ -137,7 +138,7 @@ def unmute(**kwargs):
         message = other.format_system_msg(
             "you can only unmute users who have recently been online")
         emit("message_chat", (message, roomid), broadcast=True)
-        
+
     message = other.format_system_msg("User Unmuted by Admin.")
     room.add_message(message, roomid)
 
@@ -162,13 +163,14 @@ def unban(**kwargs):
 
     message = other.format_system_msg("User Unbanned by Admin.")
     room.add_message(message, roomid)
-    
-        
+
+
 def add_word_to_unban_list(**kwargs):
+    """Adds a word to the list of unbanned words."""
     word = kwargs["commands"]["v1"]
     room = kwargs['room']
     roomid = kwargs['roomid']
-    with open('backend/unbanned_words.txt', 'a') as file:
+    with open('backend/unbanned_words.txt', 'a', encoding="utf-8") as file:
         if word not in whitelist_words:
             file.write(word + '\n')
     whitelist_words.append(word)
@@ -178,29 +180,28 @@ def add_word_to_unban_list(**kwargs):
         f"New unbanned word: {word} was added by an Admin.")
     room.add_message(message, roomid)
 
+
 def remove_word_from_unban_list(**kwargs):
+    """Adds a word to the list of banned words."""
     word = kwargs["commands"]["v1"]
     room = kwargs['room']
     roomid = kwargs['roomid']
     try:
-        with open("backend/unbanned_words.txt", "r") as file:
+        with open("backend/unbanned_words.txt", "r", encoding="utf-8") as file:
             lines = file.readlines()
-        with open("backend/unbanned_words.txt", "w") as file:
+        with open("backend/unbanned_words.txt", "w", encoding="utf-8") as file:
             for line in lines:
                 if line.strip("\n") != word:
                     file.write(line)
                     if word in whitelist_words:
                         whitelist_words.remove(word)
         # Add the removed word to banned_words.txt
-        with open("backend/banned_words.txt", "a") as banned_file:
+        with open("backend/banned_words.txt", "a", encoding="utf-8") as banned_file:
             banned_file.write(word + "\n")
             blacklist_words.append(word)
-        
+
         message = other.format_system_msg(
             f"An Admin banned the word: {word}")
         room.add_message(message, roomid)
     except FileNotFoundError:
         pass
-        
-
-    

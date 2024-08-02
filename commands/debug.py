@@ -1,3 +1,4 @@
+"""All debug/devolpent commands for checking status or for testing the server."""
 import platform
 import sys
 from time import time
@@ -23,7 +24,7 @@ def get_line_count(file, vid) -> List:
         lines = len(room["messages"])
         return lines
     elif file == "backup":
-        with open(LOGFILE_B, "r", encoding="utf8") as f_in: 
+        with open(LOGFILE_B, "r", encoding="utf8") as f_in:
             lines_b = len(f_in.readlines())
             return lines_b
 
@@ -44,8 +45,8 @@ def get_stats(roomid, version, room) -> str:
         mem_info = p_in.memory_full_info()
         mem_virt = mem_info.vms / (1024 ** 3)
         mem_res = mem_info.rss / (1024 ** 3)
-        
-    
+
+
     # CPU stats
     cpu_percent = psutil.cpu_percent(interval=1)
     cpu_cores = psutil.cpu_count(logical=False)  # physical cores
@@ -56,7 +57,7 @@ def get_stats(roomid, version, room) -> str:
 
     # disk usage
     disk_usage = psutil.disk_usage('/')
-    
+
     # nework usage
     net_io = psutil.net_io_counters()
 
@@ -81,7 +82,7 @@ def get_stats(roomid, version, room) -> str:
             {platform.platform()}<br>"
         f"Python Version: {python_version}"
     )
-    
+
     partial_stats_text = (
         "[SYSTEM]: <font color='#ff7f00'>Partial Server Stats:</font><br>"
         f"Temp logfile: {lines_main} lines.<br>"
@@ -105,14 +106,14 @@ def status(**kwargs):
     roomid = kwargs['roomid']
     room = kwargs['room']
     emit("message_chat", (get_stats(roomid, 'full', room), roomid), broadcast=True)
-    
+
 
 def pstats(**kwargs):
     """Send stats into the chat."""
     roomid = kwargs['roomid']
     room = kwargs['room']
     emit("message_chat", (get_stats(roomid, 'partial', room), roomid), broadcast=True)
-    
+
 
 def line_count(**kwargs):
     """Respond with the current line count for the room (TBD)"""
@@ -136,8 +137,10 @@ def send_cmd_logs(**kwargs):
     roomid = kwargs['roomid']
     room = kwargs['room']
     msg = log.get_cmd_logs()
-    room.add_private_message(msg, None) if database.check_private(roomid) else \
-    room.add_message(msg, 'false')
+    if database.check_private(roomid):
+        room.add_private_message(msg, None)
+    else:
+        room.add_message(msg, 'false')
 
 
 def clear_all_mutes(**kwargs):
