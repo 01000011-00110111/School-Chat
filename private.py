@@ -57,8 +57,10 @@ class Private:
         self.vid = vid
         self.messages = database.get_private_messages(userlist)
         self.unread = private['unread']
-        self.backups = [0, 0] # 1st is total and 2nd is total sense last message
-        self.last_message = datetime.now()
+        self.backup_values = [
+            [0, 0], # 1st is total and 2nd is total sense last message
+            datetime.now()
+        ]
         self.sids = []
 
     @classmethod
@@ -98,19 +100,17 @@ class Private:
         userlist = (userlist[0], userlist[1])
         if userlist in cls.chats_userlist:
             return cls.chats_userlist[userlist].unread
-        else:
-            return 0
+        return 0
 
 
     def add_message(self, message_text: str, uuid) -> None:
         """Handler for messages so they get logged."""
-        self.last_message = datetime.now()
+        self.backup_values[1] = datetime.now()
 
         for receiver in self.unread:
             if receiver != uuid and not self.active[receiver]:
                 self.unread[receiver] += 1
                 add_unread(receiver, uuid)
-        # print(self.backups)
 
         if len(self.messages) >= 250:
             self.reset_chat()
@@ -141,10 +141,10 @@ class Private:
     def backup_data(self):
         """Backups the private chat data."""
         database.update_private(self)
-        self.backups[0] += 1
-        if self.last_message > datetime.now() + timedelta(minutes=30):
-            self.backups[1] += 1
-            if self.backups[1] > 3:
+        self.backup_values[0][0] += 1
+        if self.backup_values[1] > datetime.now() + timedelta(minutes=30):
+            self.backup_values[0][1] += 1
+            if self.backup_values[0][1] > 3:
                 self.delete()
 
     def delete(self):

@@ -63,7 +63,7 @@ def unlock(**kwargs):
 
 def mute(**kwargs):
     """mutes the user"""
-    # user = kwargs['user']
+    expiration = None
     roomid = kwargs['roomid']
     room = kwargs['room']
     target = kwargs["commands"]["v1"]
@@ -73,12 +73,12 @@ def mute(**kwargs):
             user = users
     duration = int(time[:-1])
     if time[-1] == 'm':
-        expiration_time = datetime.now() + timedelta(minutes=duration)
+        expiration = datetime.now() + timedelta(minutes=duration)
     elif time[-1] == 'h':
-        expiration_time = datetime.now() + timedelta(hours=duration)
+        expiration = datetime.now() + timedelta(hours=duration)
     elif time[-1] == 'd':
-        expiration_time = datetime.now() + timedelta(days=duration)
-    muted = {str(roomid): expiration_time}
+        expiration = datetime.now() + timedelta(days=duration)
+    muted = {str(roomid): expiration}
     if target not in get_all_offline():# [user[1] for user in inactive_users]:
         for users in User.Users.values():
             if users.displayName == target:
@@ -94,20 +94,20 @@ def mute(**kwargs):
 
 def ban(**kwargs):
     """mutes the user in all chat rooms"""
-    # user = kwargs['user']
+    expiration = None
     roomid = kwargs['roomid']
     room = kwargs['room']
     target = kwargs["commands"]["v1"]
     time = kwargs["commands"]["v2"] if kwargs["commands"]["v2"] else "5m"
     duration = int(time[:-1])
     if time[-1] == 'm':
-        expiration_time = datetime.now() + timedelta(minutes=duration)
+        expiration = datetime.now() + timedelta(minutes=duration)
     elif time[-1] == 'h':
-        expiration_time = datetime.now() + timedelta(hours=duration)
+        expiration = datetime.now() + timedelta(hours=duration)
     elif time[-1] == 'd':
-        expiration_time = datetime.now() + timedelta(days=duration)
+        expiration = datetime.now() + timedelta(days=duration)
     # if True:  # add check later
-    muted = {'all': expiration_time}
+    muted = {'all': expiration}
     if target not in get_all_offline():# [user[1] for user in inactive_users]:
         for users in User.Users.values():
             if users.displayName == target:

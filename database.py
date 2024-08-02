@@ -85,12 +85,14 @@ def distinct_userids():
 
 def find_data(location):
     """Finds all user data in a specific database."""
+    data = None
     if location == "vid":
-        return ID.find()
+        data = ID.find()
     if location == "perm":
-        return Permission.find()
+        data = Permission.find()
     if location == "customization":
-        return Customization.find()
+        data = Customization.find()
+    return data
 
 
 def find_userid(user):
@@ -108,13 +110,14 @@ def get_email(userid):
 
 def find_account(data, location):
     """Finds a user's data in a specific database."""
+    values = None
     if location == "vid":
-        return ID.find_one(data)
+        values = ID.find_one(data)
     if location == "perm":
-        # print(data)
-        return Permission.find_one(data)
+        values = Permission.find_one(data)
     if location == "customization":
-        return Customization.find_one(data)
+        values = Customization.find_one(data)
+    return values
 
 
 def get_all_offline():
@@ -292,16 +295,26 @@ def find_all_accounts():
 
 def update_account_set(location, data, data2):
     """Updates a account data in a specific location."""
+    values = None
     if location == "vid":
-        return ID.update_one(data, data2, upsert=True)
+        values = ID.update_one(data, data2, upsert=True)
     if location == "perm":
-        return Permission.update_one(data, data2, upsert=True)
+        values = Permission.update_one(data, data2, upsert=True)
     if location == "customization":
-        return Customization.update_one(data, data2, upsert=True)
+        values = Customization.update_one(data, data2, upsert=True)
+    return values
 
 
-def add_accounts(username, password, userid, email, role, displayname, locked):
-    """Adds a single account to the database"""
+def add_accounts(data):
+    """Adds a single account to the database."""
+    username = data["username"]
+    password = data["password"]
+    userid = data["userid"]
+    email = data["email"]
+    role = data["role"]
+    displayname = data["displayname"]
+    locked = data["locked"]
+
     id_data = {
         "userId": userid,
         "username": username,
@@ -334,24 +347,23 @@ def add_accounts(username, password, userid, email, role, displayname, locked):
     Permission.insert_one(permission_data)
 
 
-def update_account(
-    userid, messagec, rolec, userc, displayname, role, profile, theme, email
-):
-    """Updates a users account."""
+def update_account(user_data):
+    """Updates a user's account."""
+    userid = user_data["userid"]
     customization_data = {
-        "messageColor": messagec,
-        "roleColor": rolec,
-        "userColor": userc,
-        "displayName": displayname,
-        "role": role,
-        "profile": profile,
-        "theme": theme,
+        "messageColor": user_data["message_color"],
+        "roleColor": user_data["role_color"],
+        "userColor": user_data["user_color"],
+        "displayName": user_data["displayname"],
+        "role": user_data["role"],
+        "profile": user_data["profile"],
+        "theme": user_data["theme"],
     }
 
     Customization.update_one(
         {"userId": userid}, {"$set": customization_data}, upsert=True
     )
-    ID.update_one({"userId": userid}, {"$set": {"email": email}}, upsert=True)
+    ID.update_one({"userId": userid}, {"$set": {"email": user_data["email"]}}, upsert=True)
 
 
 def backup_user(user):
@@ -388,22 +400,26 @@ def delete_account(user):
 #### room db edits ####
 def find_room(data, location):
     """Finds room data in a specific location."""
+    values = None
     if location == "vid":
-        return Rooms.find_one(data)
+        values = Rooms.find_one(data)
     if location == "acc":
-        return Access.find_one(data)
+        values = Access.find_one(data)
     if location == "msg":
-        return Messages.find_one(data)
+        values = Messages.find_one(data)
+    return values
 
 
 def find_rooms(location):
     """Finds all rooms in a specific location."""
+    values = None
     if location == "vid":
-        return Rooms.find()
+        values = Rooms.find()
     if location == "acc":
-        return Access.find()
+        values = Access.find()
     if location == "msg":
-        return Messages.find()
+        values = Messages.find()
+    return values
 
 
 def distinct_roomids():
@@ -503,13 +519,18 @@ def get_room_msg_data(roomid):
     return list(Rooms.aggregate(pipeline))[0]
 
 
+def get_messages(roomid):
+    """Gets messages."""
+    return Messages.find_one({"roomid": roomid})["messages"]
+
+
 def update_chat(chat):
     """Updates a chatrooms data."""
     access_data = {
-        "whitelisted": chat.whitelisted,
-        "blacklisted": chat.banned,
-        "canSend": chat.canSend,
-        "locked": chat.locked,
+        "whitelisted": chat.config.whitelisted,
+        "blacklisted": chat.config.banned,
+        "canSend": chat.config.can_send,
+        "locked": chat.config.locked,
     }
 
     # Rooms.insert_one(room_data)

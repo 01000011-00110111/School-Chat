@@ -27,9 +27,9 @@ profanity.add_censor_words(word_lists.censored)
 
 def run_filter_chat(user, room, message, roomid, userid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
-    locked = room.locked
+    locked = room.config.locked
     perms = check_perms(user)
-    can_send = room.canSend
+    can_send = room.config.can_send
     user_muted = check_mute(user, roomid)
     limit = user.send_limit()
 
@@ -57,11 +57,7 @@ def run_filter_chat(user, room, message, roomid, userid):
 
     profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
     if "@" in message and not locked:
-        if user.locked != 'locked':
-            find_pings(message, user.displayName, profile_picture, roomid, room)
-        else:
-            # cmds.warn_user(user)
-            failed_message(('permission', 11, 'locked'), roomid)
+        find_pings(message, user.displayName, user, roomid, room)
 
     final_str = compile_message(format_text(message), profile_picture, user, role)
 
@@ -72,13 +68,12 @@ def run_filter_chat(user, room, message, roomid, userid):
     if can_send == "everyone":
         return_str = ('msg', final_str, 0)
     elif can_send == 'mod':
-        return_str = ('msg', final_str, 0) if perms == 'mod' else ('permission', 5, 0)
+        return_str = ('msg', final_str, 0)
     else:
         return_str = ('permission', 5, 0)
 
     #check for spam then update message count and prev user
-    if not limit: #and perms != "dev":
-        # cmds.warn_user(user)
+    if not limit:
         return ('permission', 8, 0)
 
 
@@ -193,8 +188,11 @@ def format_text(message):#this system needs notes do not remove
     return message
 
 
-def find_pings(message, disp_name, _profile_picture, _roomid, _room):
+def find_pings(message, disp_name, user, roomid, _room):
     """Gotta catch 'em all! (checks for pings in the users message)"""
+    if user.locked == 'locked':
+        failed_message(('permission', 11, 'locked'), roomid)
+        return
     pings = re.findall(r'@(\w+|"[^"]+")', message)
     pings = [ping.strip('"') for ping in pings]
     # room = database.find_room({'roomid': roomid}, 'vid')
@@ -267,8 +265,8 @@ def compile_message(message, profile_picture, user, role):
     """Taken from old methold of making messages"""
     to_hyperlink(message)
     profile = f"<img class='pfp' src='{profile_picture}'></img>"
-    user_string = f"<font color='{user.Ucolor}'>{user.displayName}</font>"
-    message_string = f"<font color='{user.Mcolor}'>{message}</font>"
+    user_string = f"<font color='{user.u_color}'>{user.display_name}</font>"
+    message_string = f"<font color='{user.m_color}'>{message}</font>"
     role_string = do_dev_easter_egg(role, user)
     date_str = datetime.now().strftime("[%a %I:%M %p] ")
     message_string_h = to_hyperlink(message_string)
@@ -279,7 +277,7 @@ def compile_message(message, profile_picture, user, role):
 
 def do_dev_easter_egg(role, user):
     """Because we want RAINBOW changing role names."""
-    role_color = user.Rcolor
+    role_color = user.r_color
     if role_color == "#00ff00":
         role_string = "<font class='Dev_colors-loop'>" + role + "</font>"
     elif role_color == "rainbow":
@@ -342,6 +340,7 @@ def is_user_expired(permission_str):
                                             "%Y-%m-%d %H:%M:%S")
         current_time = datetime.now()
         return current_time >= expiration_time
+    return None
 
 
 def is_warned_expired(warned_str):
@@ -353,3 +352,4 @@ def is_warned_expired(warned_str):
                                             "%Y-%m-%d %H:%M:%S")
         current_time = datetime.now()
         return current_time >= expiration_time
+    return None

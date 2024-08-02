@@ -12,6 +12,7 @@ login_manager = LoginManager()
 
 class User:
     """Represents a logged in user."""
+    # pylint: disable=too-many-instance-attributes
     Users = {}
 
     def __init__(self, username, user, uuid):
@@ -86,6 +87,7 @@ class User:
     @classmethod
     def get_userid(cls, displayname):
         """Returns the user id of a user by its display name (unsecured need a better method)."""
+        userid = None
         for _, user in cls.Users.items():
             # print(user)
             if user.displayName == displayname:
@@ -173,27 +175,24 @@ class User:
             if isinstance(mute_entry, dict):
                 if "all" in mute_entry and mute_entry["all"] >= current_time:
                     return True
-                else:
-                    self.check_mute()
+                self.check_mute()
 
                 if roomid in mute_entry and mute_entry[roomid] >= current_time:
                     return True
-                else:
-                    self.check_mute()
+                self.check_mute()
 
         # print(self.mutes)
         return False
 
-    def update_account(self, message_color, role_color, user_color, displayname,
-                       role, profile, theme):
+    def update_account(self, account_details):
         """Update the user's account details."""
-        self.m_color = message_color
-        self.r_color = role_color
-        self.u_color = user_color
-        self.display_name = displayname
-        self.role = role
-        self.profile = profile
-        self.theme = theme
+        self.m_color = account_details['message_color']
+        self.r_color = account_details['role_color']
+        self.u_color = account_details['user_color']
+        self.display_name = account_details['displayname']
+        self.role = account_details['role']
+        self.profile = account_details['profile']
+        self.theme = account_details['theme']
 
     def backup(self):
         """Backup the user's data."""

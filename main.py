@@ -99,7 +99,7 @@ else:
     print(True)
 
 app = flask.Flask(__name__)
-app.secret_key = os.urandom(9001)  # ITS OVER 9000!!!!!!
+app.secret_key = os.urandom(900)  # ITS OVER 900!!!!!!
 
 logging.basicConfig(filename="backend/webserver.log", filemode="a", level=logging.ERROR)
 root = logging.getLogger().setLevel(logging.ERROR)
@@ -214,10 +214,8 @@ def login_page() -> ResponseReturnValue:
             socketids[user["userId"]] = socketid
             update_userlist(socketid, {"status": "active"}, user["userId"])
             if next_page is None:
-                if "adminpass" in user["SPermission"]:
-                    next_page = flask.url_for("admin_page")
-                else:
-                    next_page = flask.url_for("chat_page")
+                next_page = flask.url_for("admin_page") if "adminpass" in \
+                    user["SPermission"] else flask.url_for("chat_page")
             else:
                 if "editor" in next_page:
                     next_page = flask.url_for("projects")
@@ -236,12 +234,12 @@ def login_page() -> ResponseReturnValue:
             resp.set_cookie("DisplayName", user["displayName"])
             resp.set_cookie("test", "e e")
             return resp
-        else:
-            return flask.render_template(
-                "login.html", error="That username or password is incorrect!"
-            )
-    else:
-        return flask.render_template("login.html", appVersion=application.app_version)
+        # else:
+        return flask.render_template(
+            "login.html", error="That username or password is incorrect!"
+        )
+    # else:
+    return flask.render_template("login.html", appVersion=application.app_version)
 
 
 @app.route("/signup", methods=["POST"])
@@ -254,6 +252,7 @@ def signup_post() -> ResponseReturnValue:
     role = request.form.get("SRole")
     displayname = request.form.get("SDisplayname")
     email = request.form.get("SEmail")
+    error_message = None
 
     result, msg = accounting.run_regex_signup(username, role, displayname)
     if result is not False:
@@ -262,12 +261,15 @@ def signup_post() -> ResponseReturnValue:
             error=msg,
         )
     email_check = accounting.check_if_disposable_email(email)
+
     if email_check == 2:
-        return flask.render_template("signup-index.html", error="That email is banned!")
-    elif email_check == 1:
-        return flask.render_template(
-            "signup-index.html", error="That email is not valid!"
-        )
+        error_message = "That email is banned!"
+    if email_check == 1:
+        error_message = "That email is not valid!"
+
+    if error_message:
+        return flask.render_template("signup-index.html", error=error_message)
+
     if password != password2:
         return flask.render_template(
             "signup-index.html",
@@ -343,6 +345,7 @@ def change_password() -> ResponseReturnValue:
         if user:
             accounting.password(user)
         return "check the email you used to make the account for a password reset link"
+    return None
 
 
 @app.route("/reset/<userid>/<verification_code>", methods=["POST", "GET"])
@@ -424,99 +427,101 @@ def settings_page() -> ResponseReturnValue:
 @login_required
 def customize_accounts() -> ResponseReturnValue:
     """Customize the account."""
-    username = request.form.get("user")
-    userid = request.cookies.get("Userid")
-    displayname = request.form.get("display")
-    role = request.form.get("role")
-    message_c = request.form.get("message_color")
-    role_c = request.form.get("role_color")
-    user_c = request.form.get("user_color")
-    email = request.form.get("email")
-    file = request.files.get("profile")
-    theme = request.form.get("theme")
-    user = User.get_user_by_id(userid)
-    user_email = database.get_email(user.uuid)
-    return_list = {
-        "user": username,
-        "passwd": "we are not adding password editing just yet",
-        "displayName": displayname,
-        "role": role,
-        "user_color": user_c,
-        "role_color": role_c,
-        "message_color": message_c,
-        "profile": file,
-        "theme": theme,
-        "email": email,
+    return_val = None
+    # Gather form and cookie data into a single dictionary
+    data = {
+        "username": request.form.get("user"),
+        "userid": request.cookies.get("Userid"),
+        "displayname": request.form.get("display"),
+        "role": request.form.get("role"),
+        "message_color": request.form.get("message_color"),
+        "role_color": request.form.get("role_color"),
+        "user_color": request.form.get("user_color"),
+        "email": request.form.get("email"),
+        "file": request.files.get("profile"),
+        "theme": request.form.get("theme"),
     }
+
+    user = User.get_user_by_id(data["userid"])
+    user_email = database.get_email(user.uuid)
     old_path = user.profile
+
+    # Handle file upload
     profile_location = (
-        uploading.upload_file(file, old_path) if file is not None else old_path
+        uploading.upload_file(data["file"], old_path) if data["file"] is not None else old_path
     )
 
-    if theme is None:
+    # Check theme
+    if data["theme"] is None:
         return flask.render_template(
-            "settings.html", error="Pick a theme before updating!", **return_list
+            "settings.html", error="Pick a theme before updating!", **data
         )
 
-    theme = user.theme if theme == "" else theme
-    result, error = accounting.run_regex_signup(username, role, displayname)
+    # Validate username and other inputs
+    theme = user.theme if data["theme"] == "" else data["theme"]
+    result, error = accounting.run_regex_signup(data["username"], data["role"], data["displayname"])
     if result is not False:
-        return flask.render_template("settings.html", error=error, **return_list)
+        return flask.render_template("settings.html", error=error, **data)
 
+    # Check display name
     if (
-        database.find_account({"displayName": displayname}, "customization") is not None
-        and user.displayName != displayname
-    ) and displayname in word_lists.banned_usernames:
+        database.find_account({"displayName": data["displayname"]}, "customization") is not None
+        and user.display_name != data["displayname"]
+    ) and data["displayname"] in word_lists.banned_usernames:
         return flask.render_template(
-            "settings.html", error="That Display name is already taken!", **return_list
+            "settings.html", error="That Display name is already taken!", **data
         )
-    email_check = database.find_account({"email": email}, "vid")
-    if email_check is None and user_email != email:
+
+    # Check email
+    email_check = database.find_account({"email": data["email"]}, "vid")
+    if email_check is None and user_email != data["email"]:
         verification_code = accounting.create_verification_code(user)
         accounting.send_verification_email(
-            user.username, email, verification_code, user.uuid
+            user.username, data["email"], verification_code, user.uuid
         )
-    elif email_check is not None and user_email != email:
+    elif email_check is not None and user_email != data["email"]:
         return flask.render_template(
-            "settings.html", error="that email is taken", **return_list
+            "settings.html", error="That email is taken", **data
         )
-
+    print(data["email"])
+    # Update account details
     if user.locked != "locked":
-        database.update_account(
-            user.uuid,
-            message_c,
-            role_c,
-            user_c,
-            displayname,
-            role,
-            profile_location,
-            theme,
-            email,
-        )
-        user.update_account(
-            message_c, role_c, user_c, displayname, role, profile_location, theme
-        )
+        account_update_data = {
+            "userid": user.uuid,
+            "message_color": data["message_color"],
+            "role_color": data["role_color"],
+            "user_color": data["user_color"],
+            "displayname": data["displayname"],
+            "role": data["role"],
+            "profile": profile_location,
+            "theme": theme,
+            "email": data["email"]
+        }
 
+        database.update_account(account_update_data)
+        user.update_account(account_update_data)
         resp = flask.make_response(flask.redirect(flask.url_for("chat_page")))
         resp.set_cookie("Username", user.username)
         resp.set_cookie("Theme", theme)
         resp.set_cookie("Profile", profile_location)
         resp.set_cookie("Userid", user.uuid)
         error = "Updated account!"
-        return resp
+        return_val = resp
     else:
-        if user_email == email:
-            return flask.render_template(
+        if user_email == data["email"]:
+            return_val = flask.render_template(
                 "settings.html",
                 error="You must verify your account before you can change settings",
-                **return_list,
+                **data,
             )
         database.update_account_set(
-            "vid", {"username": username}, {"$set": {"email": email}}
+            "vid", {"username": data["username"]}, {"$set": {"email": data["email"]}}
         )
         error = "Updated email!"
+
     log.log_accounts(f"The account {user} has updated some setting(s)")
-    return flask.render_template("settings.html", error=error, **return_list)
+    return return_val
+
 
 
 ##### THEME STUFF #####
@@ -707,47 +712,34 @@ def get_rooms(userid):
     user_permissions = user_info["SPermission"]
 
     room_access = database.get_rooms()
-    if "Debugpass" in user_permissions:
+
+    def emit_rooms(rooms, access_level):
         emit(
             "roomsList",
             (
-                [{"vid": room["vid"], "name": room["name"]} for room in room_access],
-                "dev",
+                [{"vid": room["vid"], "name": room["name"]} for room in rooms],
+                access_level,
             ),
             namespace="/",
             to=request.sid,
         )
+
+    if "Debugpass" in user_permissions:
+        emit_rooms(room_access, "dev")
         return
 
     if "adminpass" in user_permissions:
         room_access = [room for room in room_access if room["whitelisted"] != "devonly"]
-        emit(
-            "roomsList",
-            (
-                [{"vid": room["vid"], "name": room["name"]} for room in room_access],
-                "mod",
-            ),
-            namespace="/",
-            to=request.sid,
-        )
+        emit_rooms(room_access, "mod")
         return
 
     if "modpass" in user_permissions:
         room_access = [
-            room
-            for room in room_access
+            room for room in room_access
             if "devonly" not in room["whitelisted"]
             and "adminonly" not in room["whitelisted"]
         ]
-        emit(
-            "roomsList",
-            (
-                [{"vid": room["vid"], "name": room["name"]} for room in room_access],
-                "mod",
-            ),
-            namespace="/",
-            to=request.sid,
-        )
+        emit_rooms(room_access, "mod")
         return
 
     if user_info["locked"] == "locked":
@@ -757,10 +749,10 @@ def get_rooms(userid):
             namespace="/",
             to=request.sid,
         )
+        return
 
-    accessible_rooms = []
-    for room in room_access:
-        if (
+    def is_accessible(room, user_name):
+        return (
             (room["blacklisted"] == "empty" and room["whitelisted"] == "everyone")
             or (
                 room["whitelisted"] != "everyone"
@@ -778,14 +770,15 @@ def get_rooms(userid):
                 and "modonly" not in room["whitelisted"]
                 and "lockedonly" not in room["whitelisted"]
             )
-        ):
-            accessible_rooms.append({"vid": room["vid"], "name": room["name"]})
-    emit(
-        "roomsList",
-        (accessible_rooms, user_info["locked"]),
-        namespace="/",
-        to=request.sid,
-    )
+        )
+
+    accessible_rooms = [
+        {"vid": room["vid"], "name": room["name"]}
+        for room in room_access
+        if is_accessible(room, user_name)
+    ]
+
+    emit_rooms(accessible_rooms, user_info["locked"])
 
 
 @socketio.on("message_chat")
@@ -973,4 +966,4 @@ def teardown_request(_exception=None):
 
 if __name__ == "__main__":
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)

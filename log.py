@@ -34,8 +34,7 @@ def get_room_logs() -> str:
     with open("backend/chat-rooms_log.txt", "r", encoding="utf-8") as f:
         cmds_log = deque(f, 10)
     cmd_log_txt = ""
-    for cmd in cmds_log:
-        cmd_log_txt += f"{cmd}<br>"
+    cmd_log_txt = "<br>".join(f"{cmd}" for cmd in cmds_log)
     return format_system_msg(f"Last 10 Room Log Entries:<br>{cmd_log_txt}\n")
 
 
@@ -44,8 +43,7 @@ def get_cmd_logs() -> str:
     with open("backend/command_log.txt", "r", encoding="utf-8") as f:
         cmds_log = deque(f, 10)
     cmd_log_txt = ""
-    for cmd in cmds_log:
-        cmd_log_txt += f"{cmd}<br>"
+    cmd_log_txt = "<br>".join(f"{cmd}" for cmd in cmds_log)
     return format_system_msg(f"Last 10 Command Log Entries:<br>{cmd_log_txt}\n")
 
 def backup_log(message_text: str, roomid: str, private: bool) -> None:

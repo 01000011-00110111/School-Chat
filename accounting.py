@@ -25,7 +25,7 @@ config.read('config/keys.conf')
 
 # Get our custom whitelist words (that should not be banned in the first place)
 profanity.load_censor_words(whitelist_words=word_lists.whitelist_words)
-profanity.add_censor_words(word_lists.censored)
+profanity.add_censor_words(word_lists.blacklist_words)
 
 def send_email(receiver_email, subject, message_body):
     """Sends a email to the user."""
@@ -81,15 +81,16 @@ def send_password_reset_email(username, email, reset_code, userid):
     )
     send_email(email, subject, message_body)
 
-def is_account_expired(permission_str):
-    """Checks if the account is expired."""
-    parts = permission_str.split(' ')
-    if len(parts) == 3 and parts[0] == 'locked':
-        expiration_time_str = ' '.join(parts[1:])
-        expiration_time = datetime.strptime(expiration_time_str,
-                                            "%Y-%m-%d %H:%M:%S")
-        current_time = datetime.now()
-        return current_time >= expiration_time
+# def is_account_expired(permission_str):
+#     """Checks if the account is expired."""
+#     parts = permission_str.split(' ')
+#     if len(parts) == 3 and parts[0] == 'locked':
+#         expiration_time_str = ' '.join(parts[1:])
+#         expiration_time = datetime.strptime(expiration_time_str,
+#                                             "%Y-%m-%d %H:%M:%S")
+#         current_time = datetime.now()
+#         return current_time >= expiration_time
+    # return False
 
 def run_regex_signup(username, role, displayname):
     """Runs all the regex checks for the signup page."""
@@ -153,8 +154,7 @@ def check_if_disposable_email(email):
 
     if email_domain in disposable_domains:
         return 2
-    else:
-        return 0
+    return 0
 
 def create_verification_code(user):
     """Creates and returns a verification code."""
@@ -176,13 +176,14 @@ def create_user(username: str, passwd: str, email: str, role: str,
     time = current_time + timedelta(hours=10)
     formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
     database.add_accounts(
-        username,
-        hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest(),
-        userid,
-        email,
-        role,
-        displayname,
-        f"locked {formatted_time}",
+    {"username": username,
+    "password": passwd,
+    "userid": userid,
+    "email": email,
+    "role": role,
+    "displayname": displayname,
+    "locked": True,
+    "formatted_time": formatted_time}
     )
     send_verification_email(
         username, email,

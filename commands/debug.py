@@ -18,87 +18,71 @@ LOGFILE_B = "backend/Chat-backup.txt"
 
 def get_line_count(file, vid) -> List:
     """Return the line count in the logfile."""
+    lines = 0
     if file == "main":
         room = database.find_room({'roomid': vid}, 'msg')
         room = database.find_private(vid) if room is None else room
         lines = len(room["messages"])
-        return lines
-    elif file == "backup":
+    if file == "backup":
         with open(LOGFILE_B, "r", encoding="utf8") as f_in:
-            lines_b = len(f_in.readlines())
-            return lines_b
+            lines = len(f_in.readlines())
+    return lines
 
 
 def get_stats(roomid, version, room) -> str:
     """Return extended stats list to chat."""
-    lines_main = get_line_count('main', roomid)
-    lines_backup = get_line_count('backup', None)
-
     # System stats
     p_in = psutil.Process()
     with p_in.oneshot():
         uptime_seconds = time() - p_in.create_time()
         days, seconds = divmod(int(uptime_seconds), 86400)
         hours, minutes = divmod(seconds, 3600)
-        minutes, seconds = divmod(seconds, 60)
-        # thread_count = p_in.num_threads()
+        minutes, seconds = divmod(minutes, 60)
+
         mem_info = p_in.memory_full_info()
         mem_virt = mem_info.vms / (1024 ** 3)
         mem_res = mem_info.rss / (1024 ** 3)
 
+    # Define full and partial helper functions
+    def full():
+        return (
+            "[SYSTEM]: <font color='#ff7f00'>Server Stats:</font><br>"
+            f"Temp logfile: {get_line_count('main', roomid)} lines.<br>"
+            f"Backup logfile: {get_line_count('backup', None)} lines.<br>"
+            f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds.<br>"
+            f"CPU Usage: {psutil.cpu_percent(interval=1)}%<br>"
+            f"CPU Cores: {psutil.cpu_count(logical=False)} (Physical), \
+                {psutil.cpu_count(logical=True)} (Logical)<br>"
+            f"Disk Usage: Total: {psutil.disk_usage('/').total / (1024 ** 3):.2f}\
+                GB, Used: {psutil.disk_usage('/').used / (1024 ** 3):.2f} GB<br>"
+            f"Virtual Memory: {mem_virt:.2f} GB<br>"
+            f"Resident Memory: {mem_res:.2f} GB<br>"
+            f"Network Usage: Sent: {psutil.net_io_counters().bytes_sent / (1024 ** 2):.2f} MB, \
+                Received: {psutil.net_io_counters().bytes_recv / (1024 ** 2):.2f} MB<br>"
+            f"Operating System: {platform.system()} {platform.version()},\
+                Platform: {platform.platform()}<br>"
+            f"Python Version: {sys.version}"
+        )
 
-    # CPU stats
-    cpu_percent = psutil.cpu_percent(interval=1)
-    cpu_cores = psutil.cpu_count(logical=False)  # physical cores
-    cpu_threads = psutil.cpu_count(logical=True) # logical cores
-
-    # Python version
-    python_version = sys.version
-
-    # disk usage
-    disk_usage = psutil.disk_usage('/')
-
-    # nework usage
-    net_io = psutil.net_io_counters()
-
-
-    # Formatting stats for display
-    full_stats_text = (
-        "[SYSTEM]: <font color='#ff7f00'>Server Stats:</font><br>"
-        f"Temp logfile: {lines_main} lines.<br>"
-        f"Backup logfile: {lines_backup} lines.<br>"
-        f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s),\
-            {seconds} seconds.<br>"
-        f"CPU Usage: {cpu_percent}%<br>"
-        f"CPU Cores: {cpu_cores} (Physical), {cpu_threads} (Logical)<br>"
-        # f"Threads: {thread_count}<br>"
-        f"Disk Usage: Total: {disk_usage.total / (1024 ** 3):.2f} GB, Used:\
-            {disk_usage.used / (1024 ** 3):.2f} GB<br>"
-        f"Virtual Memory: {mem_virt:.2f} GB<br>"
-        f"Resident Memory: {mem_res:.2f} GB<br>"
-        f"Network Usage: Sent: {net_io.bytes_sent / (1024 ** 2):.2f} MB, Received:\
-            {net_io.bytes_recv / (1024 ** 2):.2f} MB<br>"
-        f"Operating System: {platform.system()} {platform.version()}, Platform: \
-            {platform.platform()}<br>"
-        f"Python Version: {python_version}"
-    )
-
-    partial_stats_text = (
-        "[SYSTEM]: <font color='#ff7f00'>Partial Server Stats:</font><br>"
-        f"Temp logfile: {lines_main} lines.<br>"
-        f"Backup logfile: {lines_backup} lines.<br>"
-        f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s),\
-            {seconds} seconds.<br>"
-        f"CPU Usage: {cpu_percent}%<br>"
-        f"CPU Cores: {cpu_cores} (Physical), {cpu_threads} (Logical)<br>"
-        f"Virtual Memory: {mem_virt:.2f} GB<br>"
-        f"Resident Memory: {mem_res:.2f} GB<br>"
-    )
+    def partial():
+        return (
+            "[SYSTEM]: <font color='#ff7f00'>Partial Server Stats:</font><br>"
+            f"Temp logfile: {get_line_count('main', roomid)} lines.<br>"
+            f"Backup logfile: {get_line_count('backup', None)} lines.<br>"
+            f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds.<br>"
+            f"CPU Usage: {psutil.cpu_percent(interval=1)}%<br>"
+            f"CPU Cores: {psutil.cpu_count(logical=False)} (Physical), \
+                {psutil.cpu_count(logical=True)} (Logical)<br>"
+            f"Virtual Memory: {mem_virt:.2f} GB<br>"
+            f"Resident Memory: {mem_res:.2f} GB<br>"
+        )
 
     # Displaying formatted stats
-    room.add_message( \
-        partial_stats_text if version == 'partial' else full_stats_text, 'true')
-    return partial_stats_text if version == 'partial' else full_stats_text
+    stats_text = partial() if version == 'partial' else full()
+    room.add_message(stats_text, 'true')
+
+    return stats_text
+
 
 
 def status(**kwargs):
