@@ -670,7 +670,7 @@ def handle_theme_requests():
         theme["author"] = theme["author"][1:]
         themes_fixed.append(theme)
     # print(projects_fixed)
-    emit("receve_themes", (themes_fixed), to=socketid)
+    emit("receive_themes", (themes_fixed), to=socketid)
 
 
 @socketio.on("get_theme")

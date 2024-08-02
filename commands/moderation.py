@@ -24,7 +24,6 @@ def globalock(**kwargs):
         message = other.format_system_msg("All Chatrooms locked by Admin.")
         Chat.add_message_to_all(message, "all", None)
         Chat.set_all_lock_status(True)
-        # emit("message_chat", (message, "all"), broadcast=True)
 
 
 def lock(**kwargs):
@@ -38,12 +37,10 @@ def lock(**kwargs):
         message = other.format_system_msg("Chat Locked by Admin.")
         room.add_message(message, roomid)
         room.set_lock_status(True)
-        # emit("message_chat", (message, roomid), broadcast=True)
     elif other.check_if_mod(user) == 1:
         message = other.format_system_msg("Chat Locked by Moderator.")
         room.add_message(message, roomid)
         room.set_lock_status(True)
-        # emit("message_chat", (message, roomid), broadcast=True)
 
 
 def unlock(**kwargs):
@@ -57,12 +54,10 @@ def unlock(**kwargs):
         message = other.format_system_msg("Chat Unlocked by Admin.")
         room.add_message(message, roomid)
         room.set_lock_status(False)
-        # emit("message_chat", (message, roomid), broadcast=True)
     elif other.check_if_mod(user) == 1:
         message = other.format_system_msg("Chat Unlocked by Moderator.")
         room.add_message(message, roomid)
         room.set_lock_status(False)
-        # emit("message_chat", (message, roomid), broadcast=True)
 
 
 def mute(**kwargs):
@@ -70,7 +65,7 @@ def mute(**kwargs):
     # user = kwargs['user']
     roomid = kwargs['roomid']
     room = kwargs['room']
-    target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
+    target = kwargs["commands"]["v1"]
     time = kwargs["commands"]["v2"] if kwargs["commands"]["v2"] else "5m"
     for users in User.Users.values():
         if users.displayName == target:
@@ -94,7 +89,6 @@ def mute(**kwargs):
     #             database.mute_user(user_data[0], muted)
     message = other.format_system_msg("User Muted by Admin.")
     room.add_message(message, roomid)
-    # emit("message_chat", (message, roomid), broadcast=True)
 
 
 def ban(**kwargs):
@@ -102,7 +96,7 @@ def ban(**kwargs):
     # user = kwargs['user']
     roomid = kwargs['roomid']
     room = kwargs['room']
-    target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
+    target = kwargs["commands"]["v1"]
     time = kwargs["commands"]["v2"] if kwargs["commands"]["v2"] else "5m"
     duration = int(time[:-1])
     if time[-1] == 'm':
@@ -124,7 +118,6 @@ def ban(**kwargs):
     #             database.mute_user(user_data[0], muted)
     message = other.format_system_msg("User Banned by Admin.")
     room.add_message(message, roomid)
-    # emit("message_chat", (message, roomid), broadcast=True)
 
 
 def unmute(**kwargs):
@@ -132,7 +125,7 @@ def unmute(**kwargs):
     # user = kwargs['user']
     roomid = kwargs['roomid']
     room = kwargs['room']
-    target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
+    target = kwargs["commands"]["v1"]
     # time = kwargs["commands"]["v2"]
     if target not in get_all_offline():#[user[1] for user in inactive_users]:
         for user in User.Users.values():
@@ -147,7 +140,6 @@ def unmute(**kwargs):
         
     message = other.format_system_msg("User Unmuted by Admin.")
     room.add_message(message, roomid)
-    # emit("message_chat", (message, roomid), broadcast=True)
 
 
 def unban(**kwargs):
@@ -170,7 +162,6 @@ def unban(**kwargs):
 
     message = other.format_system_msg("User Unbanned by Admin.")
     room.add_message(message, roomid)
-    # emit("message_chat", (message, roomid), broadcast=True)
     
         
 def add_word_to_unban_list(**kwargs):
@@ -186,7 +177,6 @@ def add_word_to_unban_list(**kwargs):
     message = other.format_system_msg(
         f"New unbanned word: {word} was added by an Admin.")
     room.add_message(message, roomid)
-    # emit("message_chat", (message, roomid), broadcast=True)
 
 def remove_word_from_unban_list(**kwargs):
     word = kwargs["commands"]["v1"]
@@ -209,7 +199,6 @@ def remove_word_from_unban_list(**kwargs):
         message = other.format_system_msg(
             f"An Admin banned the word: {word}")
         room.add_message(message, roomid)
-        # emit("message_chat", (message, roomid), broadcast=True)
     except FileNotFoundError:
         pass
         

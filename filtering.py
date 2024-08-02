@@ -332,7 +332,7 @@ def failed_message(result, roomid):
     #     if result[1] == 6: fail_str = fail_strings.get((result[1]), "")
     #     else: return
     # if result[0] == "return": emit("message_chat", ('', roomid), namespace="/")
-    # ^^^^ what is this?
+    # ^^^^ what is this? no clue
 
     fail_str = fail_strings.get((result[1]), "")  # result[2]), "")
     # I love fstrings

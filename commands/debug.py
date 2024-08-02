@@ -121,13 +121,14 @@ def line_count(**kwargs):
     lines = get_line_count("main", roomid)
     msg = other.format_system_msg(f"Line count is {lines}\n")
     room.add_message(msg, 'true')
-    # emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+
 
 def ping(**kwargs):
     """Send the RTT of a message, used for debugging."""
     roomid = kwargs['roomid']
     start = time() * 1000.0
     emit("pingTime", (start, roomid), namespace="/")
+
 
 def send_cmd_logs(**kwargs):
     """Send the last 10 lines in command_log.txt"""
@@ -137,7 +138,7 @@ def send_cmd_logs(**kwargs):
     msg = log.get_cmd_logs()
     room.add_private_message(msg, None) if database.check_private(roomid) else \
     room.add_message(msg, 'false')
-    # emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+
 
 def clear_all_mutes(**kwargs):
     """Clears all mutes from every user."""
@@ -148,4 +149,3 @@ def clear_all_mutes(**kwargs):
         user.mutes = []
     message = other.format_system_msg("All mutes cleared by a Dev.")
     room.add_message(message, None)
-    # emit("message_chat", (message, roomid), broadcast=True)

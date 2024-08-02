@@ -6,7 +6,6 @@ from flask_login import LoginManager, logout_user
 
 import database
 
-# inactive_users = []
 
 login_manager = LoginManager()
 
@@ -102,18 +101,14 @@ class User:
         user_class = cls(username, user, userid)
         database.set_online(userid, False)
         cls.Users.update({userid: user_class})
-        (userid, user['displayName'], user['SPermission'][0])
-        # if tupple in inactive_users:
-        #     inactive_users.remove(tupple)
         return user_class
 
     @classmethod
     def delete_user(cls, userid):
         if userid in cls.Users:
             u = cls.Users[userid]
-            u.backup()
-            # inactive_users.append((u.uuid, u.displayName, u.perm[0]))
             del cls.Users[userid]
+            u.backup()
             u.remove_user()
 
     # pylint: disable=E0213

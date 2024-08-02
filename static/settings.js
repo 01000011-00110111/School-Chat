@@ -38,7 +38,6 @@ const responses = [
     { message: "Parallel lines have so much in common. It’s a shame they’ll never meet.", rarity: 3 },
     { message: "Guess what? The next big feature drop is just around the corner!", rarity: 2 },
     { message: "Did you hear? Typing 'wizard' grants you magical chat powers.", rarity: 2 },
-    // { message: "Challenge if you can the rarest message on 4 messages and show proof to a dev then you rainbow role colors!(This challenge is over new one soon)", rarity: 2 },
     { message: "Try $sudo E in chat.", rarity: 1 },
     { message: "Feeling lucky? Enter the lottery and see what you get!", rarity: 1 },
 ];
@@ -152,7 +151,7 @@ function setTheme(theme, name, author) {
 }
 
 
-socket.on('receve_themes', (themes) => {
+socket.on('receive_themes', (themes) => {
   const contentList = document.getElementById("themes_panel")
   // console.log(themes)
   for (const theme of themes) {

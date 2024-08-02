@@ -11,11 +11,9 @@ def get_scoketid(uuid):
 def update_userlist(_, data, uuid):
     for key, value in data.items():
         users_list[uuid][key] = value
-    # send_users_list = users_list[uuid]
-    # send_users_list.pop('unread', None)
 
     emit('update_list', users_list[uuid], namespace='/', broadcast=True)
-    #later ill advabce ui to be able to send to only one user
+    #later ill advance the code to be able to send to only one user and not just everyone online
     return users_list[uuid]
 
 
@@ -45,7 +43,6 @@ def get_all_offline():
     return offline
 
 for user in database.get_all_offline():
-    # print(user)
     perm = 'dev' if user['perm'][0] == 'Debugpass' else 'admin' if\
         user['perm'][0] == 'adminpass' else 'mod'\
             if user['perm'][0] == 'modpass' else None
@@ -54,12 +51,3 @@ for user in database.get_all_offline():
             
     users_list[user['userid']] = {'username': user['displayName'],
                                   'status': status, 'perm': perm, 'unread': {}}
-    
-"""
-unread = Private.get_unread(
-    format_userlist(self.uuid, key.uuid))
-if isinstance(unread, dict):
-    unread = 0 if key.uuid == self.uuid else unread.get(self.uuid, 0)
-else:
-    unread = 0    
-"""# for future us will rework
