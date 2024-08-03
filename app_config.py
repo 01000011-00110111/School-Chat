@@ -2,7 +2,9 @@
     Copyright (C) 2023  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
+from dataclasses import dataclass
 
+@dataclass
 class Appconfiguration:
     """The app configclass"""
 
@@ -12,14 +14,6 @@ class Appconfiguration:
         self.app_description = kwargs["app_desciption"]
         self.contributers = kwargs["contributers"]
         self.source = kwargs["source"]
-
-    def dummy_method(self):
-        """Dummy method to satisfy pylint."""
-        return
-
-    def another_dummy_method(self):
-        """Another dummy method to satisfy pylint."""
-        return
 
 
 application = Appconfiguration(
