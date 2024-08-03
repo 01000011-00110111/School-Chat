@@ -3,6 +3,7 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import os
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 
 from flask_socketio import emit
@@ -16,6 +17,7 @@ def format_system_msg(msg):
     return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
 
 # import cmds
+@dataclass
 class ChatConfig:
     """Config stuff for chats."""
     def __init__(self, config):
@@ -26,13 +28,7 @@ class ChatConfig:
         self.backups = [0, 0]
         self.last_message =  datetime.now()
 
-    def dummy_method(self):
-        """Dummy method to satisfy pylint."""
-        return
 
-    def another_dummy_method(self):
-        """Another dummy method to satisfy pylint."""
-        return
 
 class Chat:
     """Chat class."""
