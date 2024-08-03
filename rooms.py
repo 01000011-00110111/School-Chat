@@ -1,4 +1,7 @@
-"""Creates or deletes a chat room."""
+"""Creates or deletes a chat room
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 import random
 from datetime import datetime
 from string import ascii_uppercase

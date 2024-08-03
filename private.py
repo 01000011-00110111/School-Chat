@@ -1,4 +1,7 @@
-"""private.py - Prive Messaging"""
+"""private.py - Prive Messaging
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 import random
 from datetime import datetime, timedelta
 from string import ascii_uppercase

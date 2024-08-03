@@ -1,4 +1,7 @@
-"""Handles the userlist of the chat."""
+"""Handles the userlist of the chat
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 from flask_socketio import emit
 
 import database

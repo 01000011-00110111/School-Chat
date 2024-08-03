@@ -1,4 +1,7 @@
-"""This is the app config file (will change)"""
+"""This is the app config file (will change)
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 
 class Appconfiguration:
     """The app configclass"""

@@ -1,4 +1,7 @@
-"""user.py: User class for the chat app"""
+"""user.py: User class for the chat app
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 import hashlib
 from datetime import datetime, timedelta
 

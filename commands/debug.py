@@ -1,4 +1,7 @@
-"""All debug/devolpent commands for checking status or for testing the server."""
+"""All debug/devolpent commands for checking status or for testing the server
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 import platform
 import sys
 from time import time

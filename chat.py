@@ -18,6 +18,8 @@ def format_system_msg(msg):
 # import cmds
 class ChatConfig:
     """Config stuff for chats."""
+    # pylint: disable=too-few-public-methods
+
     def __init__(self, config):
         self.whitelisted = config["whitelisted"]
         self.banned = config["blacklisted"]
@@ -26,13 +28,6 @@ class ChatConfig:
         self.backups = [0, 0]
         self.last_message =  datetime.now()
 
-    def dummy_method(self):
-        """Dummy method to satisfy pylint."""
-        return
-
-    def another_dummy_method(self):
-        """Another dummy method to satisfy pylint."""
-        return
 
 class Chat:
     """Chat class."""
@@ -87,6 +82,11 @@ class Chat:
 
             log.backup_log(message_text, chat.vid, False)
             return ('room', 1)
+
+
+    def send_message(self, message_text: str):
+        """Emits the message to the chat"""
+        emit("message_chat", (message_text), broadcast=True, namespace="/")
 
 
     def add_message(self, message_text: str, permission='false') -> None:

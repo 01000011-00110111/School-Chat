@@ -1,4 +1,7 @@
-"""this is where all room commands goes"""
+"""this is where all room commands goes
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 import rooms
 from commands import other
 
