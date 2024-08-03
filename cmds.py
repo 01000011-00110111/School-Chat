@@ -79,34 +79,11 @@ def find_command(**kwargs):
             basic_commands[command](**kwargs)
         except EnvironmentError:
             other.respond_command((0, None), vid)
-    # try:
-    #     response_strings[(kwargs['commands']['v0'], permission(kwargs['user']))] \
-    #         (**kwargs)
-    # except KeyError:
-    #     other.respond_command(("result", 1, None), kwargs['roomid'])#, None)
-    # key = (kwargs['commands']['v0'], permission(kwargs['user']))
-    # if key in response_strings and callable(response_strings[key]):
-    #     response_strings[key](**kwargs)
-    # else:
-    #     print("Invalid action or permission level")
+
 
 def permission(user):
     """get the users permission"""
     return 'dev' if 'Debugpass' in user.perm else 'admin' \
         if 'adminpass' in user.perm else 'mod' \
         if 'modpass' in user.perm else None
-    # in the 1.4 update ill add room mods back modpass
-
-
-# def warn_user(user):
-#     """adds a new warning to the user"""
-#     # warn_count = user.warned.split(' ')
-#     current_time = datetime.now()
-#     expiration_time = current_time + timedelta(days=30)
-#     date = expiration_time.strftime("%Y-%m-%d %H:%M:%S")
-#     warn_updated = int(warn_count[0]) + 1
-#     dbm.Accounts.update_one(
-#         {"username": user.username},
-#         {'$set': {
-#             'warned': f"{str(warn_updated)} {date}"
-#         }})
+    # in the 1.5 update ill add room mods back modpass

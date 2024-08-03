@@ -121,17 +121,6 @@ function openuserinfo(user) {
     socket.emit('private_connect', getCookie('Userid'), user, window.sessionStorage.getItem('ID'))
 }
 
-// function BTMLog() {
-//   if (Math.floor(window.scrollY) === window.scrollMaxY) {
-//     console.log("cheese");
-//     setTimeout(ToBtm, 10000);
-//   } 
-// }
-
-// function ToBtm() {
-//   window.scrollTo(0, chatDiv.scrollHeight);
-// }
-
 function getMessage() {
     let messageElement = document.getElementById("message");
     let message = messageElement["value"];

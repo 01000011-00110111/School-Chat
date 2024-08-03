@@ -37,7 +37,6 @@ Private = client.Rooms.Private
 
 # extra
 Themes = client.Extra.Themes
-# db = client.Extra
 
 
 def clear_online():
@@ -63,12 +62,6 @@ def force_set_offline(userid):
 
 def set_online(userid, force):
     """sets the user online"""
-    # db.Online.insert_one({
-    #     "username": username,
-    #     "socketid": socketid,
-    #     "location": location
-    # })
-    # print(userid)
     if not force and ID.find_one({"userId": userid})["status"] != "offline-locked":
         ID.update_one({"userId": userid}, {"$set": {"status": "online"}})
     if force:
@@ -713,7 +706,7 @@ def setup_chatrooms():
 def generate_main():
     """Generates the Main chat room"""
     room_data = {
-        "roomid": "ilQvQwgOhm9kNAOrRqbr",  # secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
+        "roomid": "ilQvQwgOhm9kNAOrRqbr",
         "generatedBy": "[SYSTEM]",
         "mods": "",
         "generatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
@@ -743,7 +736,7 @@ def generate_main():
 def generate_locked():
     """Generates the Locked chat room"""
     room_data = {
-        "roomid": "zxMhhAPfWOxuZylxwkES",  # secrets.token_hex(10) "ilQvQwgOhm9kNAOrRqbr",
+        "roomid": "zxMhhAPfWOxuZylxwkES",
         "generatedBy": "[SYSTEM]",
         "mods": "",
         "generatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),

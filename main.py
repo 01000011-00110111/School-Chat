@@ -99,7 +99,7 @@ else:
     print(True)
 
 app = flask.Flask(__name__)
-app.secret_key = os.urandom(900)  # ITS OVER 900!!!!!!
+app.secret_key = os.urandom(500)  # ITS ONLY AT 500!!!!!!
 
 logging.basicConfig(filename="backend/webserver.log", filemode="a", level=logging.ERROR)
 root = logging.getLogger().setLevel(logging.ERROR)
@@ -232,7 +232,6 @@ def login_page() -> ResponseReturnValue:
             )
             resp.set_cookie("Userid", user["userId"])
             resp.set_cookie("DisplayName", user["displayName"])
-            resp.set_cookie("test", "e e")
             return resp
         # else:
         return flask.render_template(
@@ -243,7 +242,6 @@ def login_page() -> ResponseReturnValue:
 
 
 @app.route("/signup", methods=["POST"])
-# @limiter.limit("1 per day")
 def signup_post() -> ResponseReturnValue:
     """The creating of an account."""
     username = request.form.get("SUsername")
@@ -252,7 +250,6 @@ def signup_post() -> ResponseReturnValue:
     role = request.form.get("SRole")
     displayname = request.form.get("SDisplayname")
     email = request.form.get("SEmail")
-    error_message = None
 
     result, msg = accounting.run_regex_signup(username, role, displayname)
     if result is not False:
@@ -262,13 +259,8 @@ def signup_post() -> ResponseReturnValue:
         )
     email_check = accounting.check_if_disposable_email(email)
 
-    if email_check == 2:
-        error_message = "That email is banned!"
-    if email_check == 1:
-        error_message = "That email is not valid!"
-
-    if error_message:
-        return flask.render_template("signup-index.html", error=error_message)
+    if email_check in [1,2]:
+        return flask.render_template("signup-index.html", error="That email is not valid!")
 
     if password != password2:
         return flask.render_template(
@@ -282,7 +274,6 @@ def signup_post() -> ResponseReturnValue:
     possible_dispuser = database.find_account(
         {"displayName": displayname}, "customization"
     )
-    # print("again")
     if (
         possible_user is not None
         or possible_dispuser is not None
@@ -469,7 +460,7 @@ def customize_accounts() -> ResponseReturnValue:
         and user.display_name != data["displayname"]
     ) and data["displayname"] in word_lists.banned_usernames:
         return flask.render_template(
-            "settings.html", error="That Display name is already taken!", **data
+            "settings.html", error="That display name is already taken!", **data
         )
 
     # Check email
@@ -483,7 +474,6 @@ def customize_accounts() -> ResponseReturnValue:
         return flask.render_template(
             "settings.html", error="That email is taken", **data
         )
-    print(data["email"])
     # Update account details
     if user.locked != "locked":
         account_update_data = {
@@ -859,7 +849,6 @@ def connect(roomid, sender):
         chat.sids.remove(socketid)
 
     room.sids.append(socketid)
-    # print(room.sids)
     emit("room_data", (lst), to=socketid, namespace="/")
 
 

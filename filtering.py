@@ -35,7 +35,7 @@ def run_filter_chat(user, room, message, roomid, userid):
 
     # we must check if the current user is acutally them, good idea for this to be first
     if userid != user.uuid:
-        # idea lock account if they fail 3 times useing the normal lock
+        # idea lock account if they fail 3 times using the normal lock
         # or a lock version that doesnt let you login at all
         # without dev help of email fix
         return ('permission', 12, user_muted)
@@ -218,22 +218,7 @@ def find_cmds(message, user, roomid, room):
     """
     command_split = message.split("$sudo")
     command_split.pop(0)
-    # command_string = command_split[0]
-    # perms = check_perms(user)
     origin_room = None
-    # match = re.findall(r"\(|\)", command_string)
-
-    # if perms == 'dev' and roomid == 'jN7Ht3giH9EDBvpvnqRB' and match != []:
-    #     match_msg = re.findall(r"\((.*?)\)", command_string)
-    #     find_roomid = re.sub(r"\([^()]+\)", "", command_string).strip()
-    #     room_check = rooms.check_roomids(find_roomid)
-    #     if room_check is False:
-    #         failed_message(('permission', 7), roomid)
-    #         return
-    #     if len(match) == 2:
-    #         origin_room = roomid
-    #         roomid = find_roomid
-    #         command_split = [match_msg[0]]
 
     if origin_room is None:
         origin_room = roomid
@@ -308,8 +293,8 @@ def failed_message(result, roomid):
         (7):
         "This chat room vid does not exist.",
         (8):
-        "You are not allowed to send more than 15 messages in a row.\
-        You have been muted for 5 minutes(Warning)",
+        """You are not allowed to send more than 15 messages in a row.
+        You have been muted for 5 minutes(Warning)""",
         (9):
         "You must verify your account before you can use this command.",
         (10):
@@ -319,11 +304,6 @@ def failed_message(result, roomid):
         (12):
         "Are you trying to do some funny business? (You failed lol)",
     }
-    # if result[0] == "dev/mod":
-    #     if result[1] == 6: fail_str = fail_strings.get((result[1]), "")
-    #     else: return
-    # if result[0] == "return": emit("message_chat", ('', roomid), namespace="/")
-    # ^^^^ what is this? no clue
 
     fail_str = fail_strings.get((result[1]), "")  # result[2]), "")
     # I love fstrings
