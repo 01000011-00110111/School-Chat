@@ -1,8 +1,6 @@
 """Database.py - functions for writing/reading from MongoDB
-(All function docstrings are AI generated)
-
-Copyright (C) 2023  cserver45, cseven
-License info can be viewed in main.py or the LICENSE file.
+    Copyright (C) 2023  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
 """
 
 import configparser
