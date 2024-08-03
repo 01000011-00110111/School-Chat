@@ -57,7 +57,7 @@ def run_filter_chat(user, room, message, roomid, userid):
 
     profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
     if "@" in message and not locked:
-        find_pings(message, user.displayName, user, roomid, room)
+        find_pings(message, user.display_name, user, roomid, room)
 
     final_str = compile_message(format_text(message), profile_picture, user, role)
 

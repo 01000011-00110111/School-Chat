@@ -42,6 +42,7 @@ def find_command(**kwargs):
         'reset': room.reset_chat_user,
         'mute': moderation.mute,
         'unmute': moderation.unmute,
+        'report_list': moderation.list_reports,
     }
     basic_commands = {
         'help': other.help_command,
@@ -52,6 +53,7 @@ def find_command(**kwargs):
         'ping': debug.ping,
         'ecount': other.e_count_bacup,
         'create': room.create_room,
+        'report': moderation.report_user,
         # 'popular': other.most_used_room,
     }
     command = kwargs['commands']['v0']

@@ -90,7 +90,7 @@ class User:
         userid = None
         for _, user in cls.Users.items():
             # print(user)
-            if user.displayName == displayname:
+            if user.display_name == displayname:
                 # print(f'e{user}')
                 userid = user.uuid
         return userid
@@ -99,7 +99,7 @@ class User:
     def get_display(cls, uuid):
         """Returns the user's display name."""
         user = cls.Users.get(uuid, None)
-        displayname = user.displayName
+        displayname = user.display_name
         return displayname
 
     @classmethod

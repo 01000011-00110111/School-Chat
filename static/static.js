@@ -15,3 +15,7 @@ function getCookie(name) {
 socket.on("ping", ({from}) => {
     new Notification(`${from} pinged you`, { icon: 'static/favicon.ico' });
 });
+
+socket.on("system_pings", (message) => {
+    new Notification(message, { icon: 'static/favicon.ico' });
+});

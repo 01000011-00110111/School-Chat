@@ -15,5 +15,5 @@ def create_room(**kwargs):
     user = kwargs['user']
     name = kwargs['commands']["v1"]
     roomid = kwargs['roomid']
-    result = rooms.create_chat_room(name, user.displayName, user)
+    result = rooms.create_chat_room(name, user.display_name, user)
     other.respond_command(result, roomid)

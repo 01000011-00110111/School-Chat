@@ -6,9 +6,11 @@ from flask_socketio import emit
 import database
 from chat import Chat
 from commands import other
-from online import get_all_offline
+from online import get_all_offline, get_scoketid
 from user import User
 from word_lists import blacklist_words, whitelist_words
+
+REPORTS = []
 
 
 def globalock(**kwargs):
@@ -130,7 +132,7 @@ def unmute(**kwargs):
     # time = kwargs["commands"]["v2"]
     if target not in get_all_offline():#[user[1] for user in inactive_users]:
         for user in User.Users.values():
-            if user.displayName == target:
+            if user.display_name == target:
                 for remove in list(user.mutes):
                     if remove.get(str(roomid)):
                         user.mutes.remove(remove)
@@ -152,7 +154,7 @@ def unban(**kwargs):
     # time = kwargs["commands"]["v2"]
     if target not in get_all_offline():#[user[1] for user in inactive_users]:
         for user in User.Users.values():
-            if user.displayName == target:
+            if user.display_name == target:
                 for remove in list(user.mutes):
                     if remove.get(str('all')):
                         user.mutes.remove(remove)
@@ -205,3 +207,27 @@ def remove_word_from_unban_list(**kwargs):
         room.add_message(message, roomid)
     except FileNotFoundError:
         pass
+
+
+def report_user(**kwargs):
+    """Reports a user."""
+    roomid = kwargs['roomid']
+    user = kwargs['user']
+    reported_user = kwargs["commands"]["v1"]
+    reason = ' '.join(list(kwargs["commands"].values())[2:])
+    REPORTS.append([reported_user, reason])
+    emit("message_chat",
+         (other.format_system_msg(f"You reported {reported_user} with the reason, {reason}"),
+          roomid),
+        to=get_scoketid(user.uuid))
+    emit('system_pings', f"The user {reported_user} was reported for the reason: {reason}")
+
+
+def list_reports(**kwargs):
+    """List all reported users."""
+    # user = kwargs['user']
+    room = kwargs['room']
+    roomid = kwargs['roomid']
+    reports_list = "<br>".join(
+        [f'{report[0]} was reported with the reason, {report[1]}' for report in REPORTS])
+    room.add_message(other.format_system_msg(('<br>'+reports_list)), roomid)

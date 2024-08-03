@@ -372,7 +372,7 @@ def backup_user(user):
         "messageColor": user.Mcolor,
         "roleColor": user.Rcolor,
         "userColor": user.Ucolor,
-        "displayName": user.displayName,
+        "displayName": user.display_name,
         "role": user.role,
         "profile": user.profile,
         "theme": user.theme,

@@ -571,7 +571,7 @@ def handle_projecet_creation():
 
         if code not in database.get_all_projects():
             break
-    project = database.create_project(userid, user.displayName, code)
+    project = database.create_project(userid, user.display_name, code)
     user.themeCount += 1
     del project["_id"]
     project['theme'] = {}
