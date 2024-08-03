@@ -590,7 +590,7 @@ def handle_save_project(theme_id, theme, name, publish):
 
 
 @socketio.on("update_theme_status")
-def handel_status_change(theme_id, status):
+def handle_status_change(theme_id, status):
     """Changes the themes status"""
     database.update_theme_status(theme_id, status)
 

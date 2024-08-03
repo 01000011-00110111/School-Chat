@@ -117,7 +117,7 @@ def respond_command(result, roomid):
     emit("message_chat", (response_str, roomid), namespace="/")
 
 
-def e_count_bacup(**kwargs):
+def e_count_backup(**kwargs):
     """E_count_bacup"""
     roomid = kwargs['roomid']
     room = kwargs['room']

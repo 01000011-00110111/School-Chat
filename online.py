@@ -35,7 +35,7 @@ def add_unread(recipient, sender):
 
 
 def clear_unread(recipient, sender):
-    "Resets a user's unread count."
+    """Resets a user's unread count."""
     display_name = users_list[sender]["username"]
     users_list.setdefault(recipient, {"unread": {}}).setdefault(
         "unread", {}

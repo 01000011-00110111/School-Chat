@@ -51,7 +51,7 @@ def find_command(**kwargs):
         # 'offline': online.appear_offline,
         # 'online': online.appear_online,
         'ping': debug.ping,
-        'ecount': other.e_count_bacup,
+        'ecount': other.e_count_backup,
         'create': room.create_room,
         'report': moderation.report_user,
         # 'popular': other.most_used_room,
