@@ -1,0 +1,7 @@
+flask
+flask_socketio
+flask_login
+flask_apscheduler
+pymongo
+better_profanity
+psutil

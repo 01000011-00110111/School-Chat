@@ -27,26 +27,26 @@ profanity.add_censor_words(word_lists.censored)
 
 def run_filter_chat(user, room, message, roomid, userid):
     """Its simple now, but when chat rooms come this will be more convoluted."""
-    locked = room.locked
+    locked = room.config.locked
     perms = check_perms(user)
-    can_send = room.canSend
+    can_send = room.config.can_send
     user_muted = check_mute(user, roomid)
     limit = user.send_limit()
 
     # we must check if the current user is acutally them, good idea for this to be first
     if userid != user.uuid:
-        # idea lock account if they fail 3 times useing the normal lock
+        # idea lock account if they fail 3 times using the normal lock
         # or a lock version that doesnt let you login at all
         # without dev help of email fix
         return ('permission', 12, user_muted)
 
     # userobj = User.get_user_by_id(userid)
-    
+
     if user_muted:
         return ('permission', 1)
 
     if bool(re.search(r'[<>]', message)) is True and perms != 'dev':
-        cmds.warn_user(user)
+        # cmds.warn_user(user)
         return ('permission', 10, 0)
 
     if perms != "dev":
@@ -56,13 +56,8 @@ def run_filter_chat(user, room, message, roomid, userid):
         role = user.role
 
     profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
-    
     if "@" in message and not locked:
-        if user.locked != 'locked':
-            find_pings(message, user.displayName, profile_picture, roomid, room)
-        else:
-            cmds.warn_user(user)
-            failed_message(('permission', 11, 'locked'), roomid)
+        find_pings(message, user.display_name, user, roomid, room)
 
     final_str = compile_message(format_text(message), profile_picture, user, role)
 
@@ -73,13 +68,12 @@ def run_filter_chat(user, room, message, roomid, userid):
     if can_send == "everyone":
         return_str = ('msg', final_str, 0)
     elif can_send == 'mod':
-        return_str = ('msg', final_str, 0) if perms == 'mod' else ('permission', 5, 0)
+        return_str = ('msg', final_str, 0)
     else:
         return_str = ('permission', 5, 0)
 
     #check for spam then update message count and prev user
-    if not limit: #and perms != "dev":
-        # cmds.warn_user(user)
+    if not limit:
         return ('permission', 8, 0)
 
 
@@ -99,14 +93,14 @@ def run_filter_private(user, message, userid):
         # or a lock version that doesnt let you login at all
         # without dev help of email fix
         return ('permission', 12, user_muted)
-    
+
     # userobj = User.get_user_by_id(userid)
 
     if user_muted:
         return ('permission', 1)
 
     if bool(re.search(r'[<>]', message)) is True and perms != 'dev':
-        cmds.warn_user(user)
+        # cmds.warn_user(user)
         return ('permission', 10, 0)
 
     if perms != "dev":
@@ -120,7 +114,7 @@ def run_filter_private(user, message, userid):
 
     final_str = ('msg' ,compile_message(format_text(message),
                                         profile_picture, user, role), 0)
-    
+
     limit = user.send_limit()
     if not limit: #and perms != "dev":
         # cmds.warn_user(user)
@@ -130,13 +124,6 @@ def run_filter_private(user, message, userid):
 
 def check_mute(user, roomid):
     """Checks if the user is muted or banned."""
-    # permission = muteuser.mute_time 
-    # if permission[0] == "muted":
-        # return 1
-    # elif user.permission == "banned":
-        # return 2
-    # elif user.locked.split(' ')[0] == "locked":
-        # return 3
     return user.get_perm(roomid)
 
 
@@ -172,36 +159,40 @@ def filter_message(message):
 
 
 def format_text(message):#this system needs notes do not remove
+    """Adds the message styling the user requested."""
     bold_pattern = re.compile(r'\*(.*?)\*', re.DOTALL)
     italic_pattern = re.compile(r'/(.*?)/', re.DOTALL)
     underline_pattern = re.compile(r'_(.*?)_', re.DOTALL)
     color_pattern = re.compile(r'\[([a-zA-Z]+)\](.*?)#')
-    
+
     # Check and apply bold formatting: *text*
     if '*' in message:
         message = bold_pattern.sub(r'<b>\1</b>', message)
-    
+
     # Check and apply italic formatting: <i>text</i>
     if '/' in message and '__' not in message:
         message = italic_pattern.sub(r'<i>\1</i>', message)
-    
+
     # Check and apply underline formatting: __text__
     if '_' in message and '__' not in message:
         message = underline_pattern.sub(r'<u>\1</u>', message)
-    
+
     # Check and apply color formatting: [color]text
     def replace(match):
         color, text = match.groups()
         return f'<span style="color: {color}">{text}</span>'
-    
+
     if '[' in message:
         message = color_pattern.sub(replace, message)
-    
+
     return message
 
 
-def find_pings(message, dispName, _profile_picture, _roomid, _room):
+def find_pings(message, disp_name, user, roomid, _room):
     """Gotta catch 'em all! (checks for pings in the users message)"""
+    if user.locked == 'locked':
+        failed_message(('permission', 11, 'locked'), roomid)
+        return
     pings = re.findall(r'@(\w+|"[^"]+")', message)
     pings = [ping.strip('"') for ping in pings]
     # room = database.find_room({'roomid': roomid}, 'vid')
@@ -211,9 +202,9 @@ def find_pings(message, dispName, _profile_picture, _roomid, _room):
         # print(ping)
         sid = get_scoketid(User.get_userid(ping)) if ping != 'everyone' else None
         emit("ping", {
-            "from": dispName,
+            "from": disp_name,
             # "pfp": profile_picture,
-        }, 
+        },
         namespace="/",
         to=sid if ping != 'everyone' else None,
         broadcast=ping == 'everyone')
@@ -227,22 +218,7 @@ def find_cmds(message, user, roomid, room):
     """
     command_split = message.split("$sudo")
     command_split.pop(0)
-    # command_string = command_split[0]
-    # perms = check_perms(user)
     origin_room = None
-    # match = re.findall(r"\(|\)", command_string)
-
-    # if perms == 'dev' and roomid == 'jN7Ht3giH9EDBvpvnqRB' and match != []:
-    #     match_msg = re.findall(r"\((.*?)\)", command_string)
-    #     find_roomid = re.sub(r"\([^()]+\)", "", command_string).strip()
-    #     room_check = rooms.check_roomids(find_roomid)
-    #     if room_check is False:
-    #         failed_message(('permission', 7), roomid)
-    #         return
-    #     if len(match) == 2:
-    #         origin_room = roomid
-    #         roomid = find_roomid
-    #         command_split = [match_msg[0]]
 
     if origin_room is None:
         origin_room = roomid
@@ -252,14 +228,14 @@ def find_cmds(message, user, roomid, room):
     # we should be the only ones that can do that (devs)
     for cmd in command_split:
         date_str = datetime.now().strftime("[%a %H:%M] ")
-        Lmessage = date_str + user.username + ":" + cmd
-        log.log_commands(Lmessage)
+        l_message = date_str + user.username + ":" + cmd
+        log.log_commands(l_message)
 
         command = cmd.split()
         commands = {}
 
         for index, comm in enumerate(command):
-            var_name = "v%d" % index
+            var_name = ("v" + "%d") % index
             commands[var_name] = comm
         if 'v0' in commands:
             cmds.find_command(commands=commands,
@@ -274,19 +250,19 @@ def compile_message(message, profile_picture, user, role):
     """Taken from old methold of making messages"""
     to_hyperlink(message)
     profile = f"<img class='pfp' src='{profile_picture}'></img>"
-    user_string = f"<font color='{user.Ucolor}'>{user.displayName}</font>"
-    message_string = f"<font color='{user.Mcolor}'>{message}</font>"
+    user_string = f"<font color='{user.u_color}'>{user.display_name}</font>"
+    message_string = f"<font color='{user.m_color}'>{message}</font>"
     role_string = do_dev_easter_egg(role, user)
     date_str = datetime.now().strftime("[%a %I:%M %p] ")
     message_string_h = to_hyperlink(message_string)
-  
+
     message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string_h}"
     return message
 
 
 def do_dev_easter_egg(role, user):
     """Because we want RAINBOW changing role names."""
-    role_color = user.Rcolor
+    role_color = user.r_color
     if role_color == "#00ff00":
         role_string = "<font class='Dev_colors-loop'>" + role + "</font>"
     elif role_color == "rainbow":
@@ -317,8 +293,8 @@ def failed_message(result, roomid):
         (7):
         "This chat room vid does not exist.",
         (8):
-        "You are not allowed to send more than 15 messages in a row.\
-        You have been muted for 5 minutes(Warning)",
+        """You are not allowed to send more than 15 messages in a row.
+        You have been muted for 5 minutes(Warning)""",
         (9):
         "You must verify your account before you can use this command.",
         (10):
@@ -328,11 +304,6 @@ def failed_message(result, roomid):
         (12):
         "Are you trying to do some funny business? (You failed lol)",
     }
-    # if result[0] == "dev/mod":
-    #     if result[1] == 6: fail_str = fail_strings.get((result[1]), "")
-    #     else: return
-    # if result[0] == "return": emit("message_chat", ('', roomid), namespace="/")
-    # ^^^^ what is this?
 
     fail_str = fail_strings.get((result[1]), "")  # result[2]), "")
     # I love fstrings
@@ -349,6 +320,7 @@ def is_user_expired(permission_str):
                                             "%Y-%m-%d %H:%M:%S")
         current_time = datetime.now()
         return current_time >= expiration_time
+    return None
 
 
 def is_warned_expired(warned_str):
@@ -360,3 +332,4 @@ def is_warned_expired(warned_str):
                                             "%Y-%m-%d %H:%M:%S")
         current_time = datetime.now()
         return current_time >= expiration_time
+    return None
