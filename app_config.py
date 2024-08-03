@@ -1,5 +1,7 @@
 """This is the app config file (will change)"""
+from dataclasses import dataclass
 
+@dataclass
 class Appconfiguration:
     """The app configclass"""
 
@@ -9,14 +11,6 @@ class Appconfiguration:
         self.app_description = kwargs["app_desciption"]
         self.contributers = kwargs["contributers"]
         self.source = kwargs["source"]
-
-    def dummy_method(self):
-        """Dummy method to satisfy pylint."""
-        return
-
-    def another_dummy_method(self):
-        """Another dummy method to satisfy pylint."""
-        return
 
 
 application = Appconfiguration(
