@@ -1,5 +1,5 @@
-"""All of the backend logging functions.
-    Copyright (C) 2023  cserver45, cseven
+"""log.py: All of the backend logging functions.
+    Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
 import os

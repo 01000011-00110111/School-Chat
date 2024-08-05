@@ -1,5 +1,5 @@
-"""user.py: User class for the chat app
-    Copyright (C) 2023  cserver45, cseven
+"""user.py: User class defnitions and functions relating to users.
+    Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
 import hashlib
