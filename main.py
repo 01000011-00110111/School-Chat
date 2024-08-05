@@ -816,7 +816,7 @@ def get_rooms(userid):
 @socketio.on("message_chat")
 def handle_message(_, message, vid, userid, private, hidden):
     """sends mesage data to the proper function."""
-    if private == False:
+    if not private:
         handle_chat_message(
             message, vid, userid, hidden
         )
@@ -895,7 +895,7 @@ def connect(roomid, sender):
 
 
 @socketio.on("private_connect")
-def private_connect(sender, receiver, roomid):
+def private_connect(sender, receiver, roomid):# rework the connect code later
     """Switch rooms for the user"""
     socketid = request.sid
     receiverid = database.find_userid(receiver)
