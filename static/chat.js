@@ -40,12 +40,13 @@ socket.on("reset_chat", (who, ID) => {
 
 function runStartup() {
     socket.emit('get_theme', getCookie('Theme'))
-    window.sessionStorage.setItem("ID", 'ilQvQwgOhm9kNAOrRqbr');
-    changeRoom('ilQvQwgOhm9kNAOrRqbr')
+    if (!window.sessionStorage.getItem("ID")) {
+        window.sessionStorage.setItem("ID", 'ilQvQwgOhm9kNAOrRqbr');
+    }
+    changeRoom(window.sessionStorage.getItem("ID"))
     userid = getCookie("Userid")
     document.getElementById("pfpmenu").src = getCookie("Profile");
     socket.emit("get_rooms", userid);
-    // setTheme(getCookie('Theme'))
 }
 
 socket.on("roomsList", (result, permission) => {
