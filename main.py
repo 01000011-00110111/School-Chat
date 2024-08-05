@@ -323,15 +323,22 @@ def verify(userid, verification_code):
             )
             page_title = "Account Verified"
             verifiedicon = 'fa-solid fa-check success'
-            verifiedText = "You are now verified!"
-            verifiedsubText1 = "Thank you for using School Chat"
-            verifiedsubText2 = "You can close this page when you're ready"
-            return flask.render_template(template_string, icon = verifiedicon, verifiedsubText1 = verifiedsubText1, verifiedsubText2 = verifiedsubText2)
+            verified_text = "You are now verified!"
+            verified_sub_text1 = "Thank you for using School Chat"
+            verified_sub_text2 = "You can close this page when you're ready"
+            return flask.render_template(template_string, icon = verifiedicon,
+                                            verifiedText = verified_text,
+                                            verifiedsubText1 = verified_sub_text1,
+                                            verifiedsubText2 = verified_sub_text2,
+                                            page_title = page_title)
     page_title = "Account Verification Failed"
     unverifiedicon = 'fa-solid fa-x failed'
-    verifiedText = "Verification Failed"
-    verifiedsubText = "Sorry but we failed to verify your School Chat account, please try again"
-    return flask.render_template(template_string, icon = unverifiedicon, verifiedText = verifiedText, verifiedsubText1 = verifiedsubText, page_title = page_title)#"Invalid verification code."
+    verified_text = "Verification Failed"
+    verified_sub_text = "Sorry but we failed to verify your School Chat account, please try again"
+    return flask.render_template(template_string, icon = unverifiedicon,
+                                 verifiedText = verified_text,
+                                 verifiedsubText1 = verified_sub_text,
+                                 page_title = page_title)
 
 
 @app.route("/change-password", methods=["POST", "GET"])
