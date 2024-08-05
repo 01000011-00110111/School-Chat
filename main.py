@@ -309,6 +309,7 @@ def signup_get() -> ResponseReturnValue:
 @app.route("/verify/<userid>/<verification_code>")
 def verify(userid, verification_code):
     """Verify a user."""
+    template_string = "verified.html"
     user_id = database.find_account({"userId": userid}, "vid")
     if user_id is not None:
         user_code = accounting.create_verification_code(user_id)
@@ -320,8 +321,17 @@ def verify(userid, verification_code):
             log.log_accounts(
                 f"The account {user} is now verified and may now chat in any chat room."
             )
-            return f"{user} has been verified. You may now chat in other chat rooms."
-    return "Invalid verification code."
+            page_title = "Account Verified"
+            verifiedicon = 'fa-solid fa-check success'
+            verifiedText = "You are now verified!"
+            verifiedsubText1 = "Thank you for using School Chat"
+            verifiedsubText2 = "You can close this page when you're ready"
+            return flask.render_template(template_string, icon = verifiedicon, verifiedsubText1 = verifiedsubText1, verifiedsubText2 = verifiedsubText2)
+    page_title = "Account Verification Failed"
+    unverifiedicon = 'fa-solid fa-x failed'
+    verifiedText = "Verification Failed"
+    verifiedsubText = "Sorry but we failed to verify your School Chat account, please try again"
+    return flask.render_template(template_string, icon = unverifiedicon, verifiedText = verifiedText, verifiedsubText1 = verifiedsubText, page_title = page_title)#"Invalid verification code."
 
 
 @app.route("/change-password", methods=["POST", "GET"])
