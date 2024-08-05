@@ -390,12 +390,30 @@ def reset_password(userid, verification_code) -> ResponseReturnValue:
     return "Invalid reset code."
 
 
+##### Backup file code ######
+
 @app.route("/backup")
 @login_required
 def get_logs_page() -> ResponseReturnValue:
     """Serve the chat logs (backup)"""
     html_file = flask.render_template("Backup-chat.html")
     return html_file
+
+
+@socketio.on("change_chunk")
+def handle_chunk_change(direction):
+    """Sends a chunk of the backup file to the backup page"""
+    uuid = request.cookies.get('Userid')
+    backup_sesson = log.FileHandler.get_handler(uuid)
+    lines = None
+    if direction == 'next':
+        lines = backup_sesson.read_chunk()
+    if direction == 'prev':
+        lines = backup_sesson.read_chunk_reverse()
+    if direction == 'reset':
+        lines = backup_sesson.read_chunk()
+
+    emit('load_chunk', lines)
 
 
 @app.route("/settings", methods=["GET"])
