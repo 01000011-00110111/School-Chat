@@ -2,15 +2,26 @@
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 
-function loadBackupChat(jsonString) {
+
+socket.on('load_chunk', (messages) => {
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     let chat = "";
-    let messages = JSON.parse(jsonString);
-    for (let messageObj of messages) {
-        chat = chat + messageObj["message"] + newline;
+    for (let message of messages) {
+        chat += message + newline;
     }
-
-    chatDiv["innerHTML"] = chat;
+    chatDiv.innerHTML = chat;
     window.scrollTo(0, document.body.scrollHeight);
+});
+
+function loadPrevious() {
+    socket.emit('change_chunk', 'prev');
+}
+
+function loadNext() {
+    socket.emit('change_chunk', 'next');
+}
+
+function resetPosition() {
+    socket.emit('change_chunk', 'reset');
 }
