@@ -408,7 +408,7 @@ def get_logs_page() -> ResponseReturnValue:
     uuid = request.cookies.get('Userid')
     user = User.get_user_by_id(uuid)
 
-    if 'Debugpass' in user.perm:
+    if 'adminpass' in user.perm:
         return flask.render_template("Backup-chat.html")
 
     return flask.redirect(flask.url_for("chat_page"))
