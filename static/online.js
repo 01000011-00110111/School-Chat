@@ -110,8 +110,9 @@ socket.on("update_list", (updatedUser) => {
         }
     } else {
         if (isInOfflineList) {
+            // Update user in offline list
             offlineList = offlineList.map(user => user.username === updatedUser.username ? updatedUser : user);
-        }else if (isInOfflineList) {
+        } else {
             // Move to offline list
             onlineList = onlineList.filter(user => user.username !== updatedUser.username);
             offlineList.push(updatedUser);
@@ -123,3 +124,4 @@ socket.on("update_list", (updatedUser) => {
 
     updateUserList(onlineList, offlineList);
 });
+

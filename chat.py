@@ -20,7 +20,6 @@ def format_system_msg(msg):
 @dataclass
 class ChatConfig:
     """Config stuff for chats."""
-    # pylint: disable=too-few-public-methods
 
     def __init__(self, config):
         self.whitelisted = config["whitelisted"]

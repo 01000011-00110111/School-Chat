@@ -18,10 +18,12 @@ def get_scoketid(uuid):
 def update_userlist(_, data, uuid):
     """Updates a user in the users list."""
     for key, value in data.items():
+        if key == 'status' and users_list[uuid]['status'] == 'offline-locked':
+            continue
         users_list[uuid][key] = value
 
     emit("update_list", users_list[uuid], namespace="/", broadcast=True)
-    # later ill advance the code to be able to send to only one user and not just everyone online
+    # later ill improve the code to be able to send to only one user and not just everyone online
     return users_list[uuid]
 
 
