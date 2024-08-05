@@ -239,7 +239,6 @@ const setSelectionMode = (modeInt) => {
 }
 setSelectionMode(0)
 
-
 const AllContent = document.querySelectorAll("#ChatMockup");
 const menuOwner = document.getElementById("menuOwner");
 

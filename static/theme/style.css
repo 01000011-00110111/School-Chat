@@ -14,7 +14,7 @@ html, body {
 .nav {
   display: flex;
   background: #000;
-  height: 53px;
+  height: 6%;
   justify-content: space-between;
   border-bottom: 1px solid gray;
 }
@@ -463,12 +463,11 @@ html, body {
   left: 0;
   overflow-x: hidden;
   transition: 0.5s;
-  padding-top: 57px;
   background: black;
     background-color: black;
-  background-color: black;
   scrollbar-width: thin;
-  margin: 0 0.2%;
+  display: grid;
+  grid-template-rows: 85px;
 }
 
 .sidenav a {
@@ -490,11 +489,11 @@ html, body {
 }
 
 .closebtn {
-    position: absolute;
-    margin: -73px 74%;
-    width: 12px !important;
-    font-size: 40px !important;
-    background: transparent !important;
+  width: 56px !important;
+  font-size: 27px !important;
+  background: transparent !important;
+  position: static;
+  justify-self: flex-end;
 }
 
 @media screen and (max-height: 450px) {
