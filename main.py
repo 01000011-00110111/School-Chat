@@ -322,6 +322,7 @@ def verify(userid, verification_code):
                 f"The account {user} is now verified and may now chat in any chat room."
             )
             page_title = "Account Verified"
+            background = "success"
             verifiedicon = 'fa-solid fa-check success'
             verified_text = "You are now verified!"
             verified_sub_text1 = "Thank you for using School Chat"
@@ -330,15 +331,16 @@ def verify(userid, verification_code):
                                             verifiedText = verified_text,
                                             verifiedsubText1 = verified_sub_text1,
                                             verifiedsubText2 = verified_sub_text2,
-                                            page_title = page_title)
+                                            page_title = page_title, background = background)
     page_title = "Account Verification Failed"
+    background = "failed"
     unverifiedicon = 'fa-solid fa-x failed'
     verified_text = "Verification Failed"
     verified_sub_text = "Sorry but we failed to verify your School Chat account, please try again"
     return flask.render_template(template_string, icon = unverifiedicon,
                                  verifiedText = verified_text,
                                  verifiedsubText1 = verified_sub_text,
-                                 page_title = page_title)
+                                 page_title = page_title, background = background)
 
 
 @app.route("/change-password", methods=["POST", "GET"])
@@ -995,4 +997,4 @@ def teardown_request(_exception=None):
 
 if __name__ == "__main__":
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", debug=True, port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000)
