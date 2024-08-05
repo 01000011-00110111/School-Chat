@@ -117,7 +117,7 @@ login_manager.login_view = "login_page"
 
 # license stuff
 if __name__ == "__main__":
-    print("Copyright (C) 2023  cserver45, cseven")
+    print("Copyright (C) 2023, 2024  cserver45, cseven")
     print("License info can be viewed in main.py or the LICENSE file.")
 
 

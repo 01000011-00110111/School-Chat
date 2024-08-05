@@ -34,7 +34,6 @@ def add_unread(recipient, sender):
         display_name, 0
     )
     users_list[sender]["unread"][display_name] += 1
-    # print(users_list[recipient], '\n', recipient)
     if "offline" not in users_list[recipient]["status"]:
         emit("update_list", users_list[sender], namespace="/", to=socketids[recipient])
 
@@ -46,7 +45,6 @@ def clear_unread(recipient, sender):
         "unread", {}
     ).setdefault(display_name, 0)
     users_list[recipient]["unread"][display_name] = 0
-    # print(users_list[recipient], '\n', recipient)
     if "offline" not in users_list[sender]["status"]:
         emit("update_list", users_list[recipient], namespace="/", to=socketids[sender])
 

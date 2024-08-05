@@ -921,7 +921,6 @@ def create_project(uuid, displayname, code):
 
 def get_project(theme_id):
     """Returns a project."""
-    # print(theme_id)
     return Themes.find_one({"themeID": theme_id})
 
 
