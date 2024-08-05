@@ -386,13 +386,18 @@ def reset_password(userid, verification_code) -> ResponseReturnValue:
 @login_required
 def get_logs_page() -> ResponseReturnValue:
     """Serve the chat logs (backup)"""
-    html_file = flask.render_template("Backup-chat.html")
-    return html_file
+    uuid = request.cookies.get('Userid')
+    user = User.get_user_by_id(uuid)
+
+    if 'Debugpass' in user.perm:
+        return flask.render_template("Backup-chat.html")
+
+    return flask.redirect(flask.url_for("chat_page"))
 
 
 @socketio.on("change_chunk")
 def handle_chunk_change(direction):
-    """Sends a chunk of the backup file to the backup page"""
+    """Sends a chunk of the backup file to the backup page."""
     uuid = request.cookies.get('Userid')
     backup_sesson = log.FileHandler.get_handler(uuid)
     lines = None

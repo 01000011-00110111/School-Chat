@@ -177,7 +177,7 @@ def create_user(username: str, passwd: str, email: str, role: str,
     formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
     database.add_accounts(
     {"username": username,
-    "password": passwd,
+    "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest(),
     "userid": userid,
     "email": email,
     "role": role,
