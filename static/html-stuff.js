@@ -1,4 +1,4 @@
-// Copyright (C) 2023  cserver45, cseven
+// Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 
@@ -23,8 +23,6 @@ function toggleDropdown() {
     }
 }
 
-// pfp button
-
 function OpenAC() {
     let AC = document.getElementById("AccControls");
     if (AC.style.display === "grid") {
@@ -44,60 +42,3 @@ function CloseTOS() {
 
   TOSPopup.style.display = "none";
 }
-
-//Code broken as far as I know
-function Prepare() {
-  let ActiveNav = document.getElementById("activenav");
-  let Chat = document.getElementById("chat");
-  Chat.addEventListener("touchstart", startTouch, false);
-  Chat.addEventListener("touchmove", moveTouch, false);
-}
-// Swipe Up / Down / Left / Right
-var initialX = null;
-var initialY = null;
- 
-function startTouch(e) {
-  initialX = e.touches[0].clientX;
-  initialY = e.touches[0].clientY;
-};
- 
-function moveTouch(e) {
-  if (initialX === null) {
-    return;
-  }
- 
-  if (initialY === null) {
-    return;
-  }
- 
-  var currentX = e.touches[0].clientX;
-  var currentY = e.touches[0].clientY;
- 
-  var diffX = initialX - currentX;
-  var diffY = initialY - currentY;
- 
-  if (Math.abs(diffX) > Math.abs(diffY)) {
-    // sliding horizontally
-    if (diffX > 0) {
-      // swiped left
-      ActiveNav.style.marginLeft = "61%";
-    } else {
-      // swiped right
-      console.log("swiped right");
-    }  
-  } else {
-    // sliding vertically
-    if (diffY > 0) {
-      // swiped up
-      
-    } else {
-      // swiped down
-      
-    }  
-  }
- 
-  initialX = null;
-  initialY = null;
-   
-  e.preventDefault();
-};

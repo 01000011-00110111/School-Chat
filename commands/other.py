@@ -1,12 +1,14 @@
-"""other.py: functions that need to be imported in multiple places."""
+"""other.py: Functions that need to be imported in multiple places by other commands
+    Copyright (C) 2023, 2024  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 
-import time
 import re
-from chat import Chat
+import time
 
 from flask_socketio import emit
 
-# import chat
+from chat import Chat
 
 
 def check_if_dev(user):
@@ -23,36 +25,27 @@ def song(**kwargs):
     """Send a song to the chat."""
     roomid = kwargs['roomid']
     room = kwargs['room']
-    # song = kwargs['command']
     msg = format_song_msg(' '.join(list(kwargs["commands"].values())[1:]))
-    room.add_message(msg, 'true')
-    # chat.add_message(msg, roomid, 'true')
-    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
-    
-    
+    room.add_message(msg, roomid)
+
+
 def send_admin(**kwargs):
     """Send a song to the chat."""
     roomid = kwargs['roomid']
     room = kwargs['room']
-    # song = kwargs['command']
     msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
-    # chat.add_message(msg, roomid, 'true')
-    room.add_message(msg, 'true')
-    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+    room.add_message(msg, roomid)
 
 
 def send_as_admin(**kwargs):
     """Send as admin to the chat."""
     roomid = kwargs['roomid']
     room = kwargs['room']
-    # song = kwargs['command']
     msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
-    # chat.add_message(msg, roomid, 'true')
-    room.add_message(msg, 'true')
-    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+    room.add_message(msg, roomid)
 
 
-def help(**kwargs):
+def help_command(**kwargs):
     """sends a message with a file full of commands that the user can use."""
     roomid = kwargs['roomid']
     issuer = kwargs['user']
@@ -91,7 +84,7 @@ def help(**kwargs):
     command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(
         line.strip() for line in lines[start_index:end_index + 1]) + "</font>"
     emit("message_chat", (command_line, roomid), namespace="/")
-    
+
 
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
@@ -107,11 +100,6 @@ def format_admin_msg(msg):
     return f'<font color="#e0790b">[ADMIN]: {msg}</font>'
 
 
-def format_admin_msg(msg):
-    """Format a message [SONG] would send."""
-    return f'<font color="#00FF00">[ADMIN]: {msg}</font>'
-
-
 def respond_command(result, roomid):
     """Tell the client that can't run this command for what reason."""
 
@@ -122,7 +110,8 @@ def respond_command(result, roomid):
         (0, None): "Try '$sudo help' to see what commands are available to you.",
         (0, 'priv'): "Sorry that command is not available wile in private chats.",
         (0, 'chat'): "chat room made(this is temp)",
-        (1, 'chat'): "Your chat name is too long. (less them 10 letters long)(this is temp)",
+        (1, 'chat'):
+            "Your chat name is too long. (less them 10 letters long)(this is temp)",
         (2, 'chat'): "you can not make another chat room(this is temp)",
         (3, 'chat'): "you must have a chat name and not ''(this is temp)",
         (4, 'chat'): "that name was taken(this is temp)",
@@ -131,44 +120,22 @@ def respond_command(result, roomid):
     emit("message_chat", (response_str, roomid), namespace="/")
 
 
-def E_count_bacup(**kwargs):
+def e_count_backup(**kwargs):
     """E_count_bacup"""
     roomid = kwargs['roomid']
     room = kwargs['room']
-    file = open('backend/Chat-backup.txt', 'r')
-    text = file.read()
+    with open('backend/Chat-backup.txt', 'r', encoding="utf-8") as file:
+        text = file.read()
     count = len(re.findall(r'\be\b', text))
     msg = format_system_msg("Current count: " + str(count))
-    # chat.add_message(msg, roomid, 'true')
-    room.add_message(msg, 'true')
-    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")
+    room.add_message(msg, roomid)
 
 
-"""def most_used_room(**kwargs):
-    roomid = kwargs['roomid']
- *  History restored 
-    
-    count_dict = {}
-    for name in names:
-        count_dict[name] = count_dict.get(name, 0) + 1
-    
-    if count_dict:
-        most_common_name = max(count_dict, key=count_dict.get)
-        msg = format_system_msg(f"Current most used chat room: {most_common_name}")
-    else:
-        msg = format_system_msg("No data available to determine the most used chat room")
-    
-    emit("message_chat", (msg, roomid), broadcast=True, namespace="/")"""
-    
-
-def end_ping(start, ID):
+def end_ping(start, roomid):
     """The end of the ping comamnd."""
-    room = Chat.create_or_get_chat(ID)
+    room = Chat.create_or_get_chat(roomid)
     end = time.time() * 1000.0
     difference = end - start
     msg = '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + str(
         int(difference)) + 'ms RTT</font>'
-    # chat.add_message(msg, ID, 'true')
-    room.add_message(msg, 'true')
-    emit("message_chat", (msg, ID), broadcast=True, namespace="/")
-    
+    room.add_message(msg, roomid)

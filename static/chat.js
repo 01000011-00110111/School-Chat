@@ -1,4 +1,4 @@
-// Copyright (C) 2023  cserver45, cseven
+// Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 
@@ -21,17 +21,6 @@ socket.on("force_room_update", (_statement) => {
     socket.emit("get_rooms", userid);
 });
 
-socket.on("ping", ({ who, from, pfp, message, name, ID}) => {
-    let user_name = getCookie("DisplayName");
-    // room = window.sessionStorage.getItem("ID");
-    // console.log(who, from, message);
-    if (user_name === who) {
-        new Notification("You were pinged by:", { body: from + ` in ${name}: ` + message, icon: pfp});
-    } else if (who === "everyone") {// add a check to see if the user has access and if so then ping them    
-        new Notification("You were pinged by:", { body: from + ` in ${name}: ` + message, icon: pfp});
-    }
-});
-
 socket.on("reset_chat", (who, ID) => {
     if (ID === window.sessionStorage.getItem('ID')) {
         let chatDiv = document.getElementById("chat");
@@ -50,13 +39,19 @@ socket.on("reset_chat", (who, ID) => {
   
 
 function runStartup() {
-    window.sessionStorage.setItem("ID", 'ilQvQwgOhm9kNAOrRqbr');
-    changeRoom('ilQvQwgOhm9kNAOrRqbr')
+    socket.emit('get_theme', getCookie('Theme'))
+    if (!window.sessionStorage.getItem("ID")) {
+        window.sessionStorage.setItem("ID", 'ilQvQwgOhm9kNAOrRqbr');
+    }
+    if (!window.sessionStorage.getItem('private')) {
+        changeRoom(window.sessionStorage.getItem("ID"))
+    } else {
+        // socket.emit('private_connect', getCookie('Userid'), user, window.sessionStorage.getItem('ID'))
+        changeRoom('ilQvQwgOhm9kNAOrRqbr')
+    }
     userid = getCookie("Userid")
     document.getElementById("pfpmenu").src = getCookie("Profile");
-    socket.emit("get_full_list");
     socket.emit("get_rooms", userid);
-    setTheme(getCookie('Theme'))
 }
 
 socket.on("roomsList", (result, permission) => {
@@ -65,7 +60,7 @@ socket.on("roomsList", (result, permission) => {
     let RoomDiv = document.getElementById("ChatRoomls");
     for (room of result) {
         if (permission != 'locked') {
-        rooms = rooms + `<hr id="room_bar"><a id="room_names" onclick=changeRoom("${room.vid}")>/` + room.name + '</a><hr id="room_bar">';
+        rooms = rooms + `<hr id="room_bar"><a id="room_names" style="color: ${theme['sidenav-a-color']}; background: ${theme['sidenav-a-background']}" onclick=changeRoom("${room.vid}")>/` + room.name + '</a><hr id="room_bar">';
         } else {
             rooms = '<hr id="room_bar">verify to have access to chat rooms<hr id="room_bar">'
             changeRoom('zxMhhAPfWOxuZylxwkES')
@@ -84,7 +79,7 @@ function CheckIfExist(_params) {
 socket.on("room_data", (data) => {
     // console.log(data)
     window.sessionStorage.setItem("ID", data['roomid']);
-    window.sessionStorage.setItem("private", 'false')
+    window.sessionStorage.setItem("private", false)
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
@@ -104,7 +99,7 @@ socket.on("room_data", (data) => {
 socket.on("private_data", (data) => {
     // console.log(data)
     window.sessionStorage.setItem("ID", data['pmid'])
-    window.sessionStorage.setItem("private", 'true');
+    window.sessionStorage.setItem("private", true);
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
@@ -131,17 +126,6 @@ function changeRoom(room) {
 function openuserinfo(user) {
     socket.emit('private_connect', getCookie('Userid'), user, window.sessionStorage.getItem('ID'))
 }
-
-// function BTMLog() {
-//   if (Math.floor(window.scrollY) === window.scrollMaxY) {
-//     console.log("cheese");
-//     setTimeout(ToBtm, 10000)
-//   } 
-// }
-
-// function ToBtm() {
-//   window.scrollTo(0, chatDiv.scrollHeight);
-// }
 
 function getMessage() {
     let messageElement = document.getElementById("message");

@@ -1,26 +1,27 @@
-"""user.py: User class for the chat app"""
+"""user.py: User class defnitions and functions relating to users.
+    Copyright (C) 2023, 2024  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
+"""
 import hashlib
 from datetime import datetime, timedelta
 
 from flask_login import LoginManager, logout_user
-from flask_socketio import emit
 
 import database
-from private import Private, format_userlist
 
-# inactive_users = []
 
 login_manager = LoginManager()
 
 
 class User:
     """Represents a logged in user."""
+    # pylint: disable=too-many-instance-attributes
     Users = {}
 
     def __init__(self, username, user, uuid):
         """Initialize the user."""
         self.username = username
-        self.displayName = user['displayName']
+        self.display_name = user['displayName']
         self.perm = user['SPermission']
         self.uuid = uuid
         self.status = user['status']
@@ -31,14 +32,15 @@ class User:
         self.mutes = user['mutes'] #later ill add a mute db value # user['mute_time']
         self.online_list = []
         #other user values
-        self.Rcolor = user['roleColor']
-        self.Mcolor = user['messageColor']
-        self.Ucolor = user['userColor']
+        self.r_color = user['roleColor']
+        self.m_color = user['messageColor']
+        self.u_color = user['userColor']
         self.role = user['role']
         self.profile = user['profile']
         self.theme = user['theme']
         self.locked = ['locked']
         self.permission = user['permission']  # temp will go away
+        self.theme_count = user['themeCount']
         # self.warned = user['warned']
 
     @staticmethod
@@ -65,6 +67,7 @@ class User:
         return self.username
 
     def remove_user(self):
+        """logout out the user."""
         logout_user()
 
     @staticmethod
@@ -80,26 +83,41 @@ class User:
 
     @classmethod
     def get_user_by_id(cls, userid):
+        """Returns the user's class by the uuid."""
         user = cls.Users.get(userid, None)
         return user
 
     @classmethod
+    def get_userid(cls, displayname):
+        """Returns the user id of a user by its display name (unsecured need a better method)."""
+        userid = None
+        for _, user in cls.Users.items():
+            if user.display_name == displayname:
+                userid = user.uuid
+        return userid
+
+    @classmethod
+    def get_display(cls, uuid):
+        """Returns the user's display name."""
+        user = cls.Users.get(uuid, None)
+        displayname = user.display_name
+        return displayname
+
+    @classmethod
     def add_user_class(cls, username, user, userid):
+        """Creates and retunrns the user's class."""
         user_class = cls(username, user, userid)
         database.set_online(userid, False)
         cls.Users.update({userid: user_class})
-        tupple = (userid, user['displayName'], user['SPermission'][0])
-        # if tupple in inactive_users:
-        #     inactive_users.remove(tupple)
         return user_class
 
     @classmethod
     def delete_user(cls, userid):
+        """Deletes the user's class."""
         if userid in cls.Users:
             u = cls.Users[userid]
-            u.backup()
-            # inactive_users.append((u.uuid, u.displayName, u.perm[0]))
             del cls.Users[userid]
+            u.backup()
             u.remove_user()
 
     # pylint: disable=E0213
@@ -114,6 +132,7 @@ class User:
         return obj
 
     def send_limit(self):
+        """Prevent the user from sending if they have a status saying too."""
         difference = datetime.now() - self.last_message
         if self.limit <= 15 and difference.total_seconds() < 5:
             self.limit += 1
@@ -124,13 +143,14 @@ class User:
                 self.pause = True
                 self.mutes.append({'spam': datetime.now() + timedelta(minutes=5)})
             return False
-        
+
         self.limit = 0
         self.last_message = datetime.now()
         return True
 
 
     def check_mute(self):
+        """Checks the mute/ban status."""
         current_time = datetime.now()
         to_remove = []
 
@@ -144,10 +164,11 @@ class User:
 
         if not self.mutes:
             self.pause = False
-            
+
         return bool(to_remove)
 
     def get_perm(self, roomid):
+        """Retuns permission to send if the user is not muted/banned."""
         mute_list = self.mutes
         current_time = datetime.now()
 
@@ -155,28 +176,24 @@ class User:
             if isinstance(mute_entry, dict):
                 if "all" in mute_entry and mute_entry["all"] >= current_time:
                     return True
-                else:
-                    self.check_mute()
-                    
+                self.check_mute()
+
                 if roomid in mute_entry and mute_entry[roomid] >= current_time:
                     return True
-                else:
-                    self.check_mute()
-                
-        # print(self.mutes)
+                self.check_mute()
+
         return False
 
-    def update_account(self, messageC, roleC, userC, displayname, role, profile, theme):
+    def update_account(self, account_details):
         """Update the user's account details."""
-        self.Mcolor = messageC
-        self.Rcolor = roleC
-        self.Ucolor = userC
-        self.displayName = displayname
-        self.role = role
-        self.profile = profile
-        self.theme = theme
-        
+        self.m_color = account_details['message_color']
+        self.r_color = account_details['role_color']
+        self.u_color = account_details['user_color']
+        self.display_name = account_details['displayname']
+        self.role = account_details['role']
+        self.profile = account_details['profile']
+        self.theme = account_details['theme']
+
     def backup(self):
         """Backup the user's data."""
         database.backup_user(self)
-        

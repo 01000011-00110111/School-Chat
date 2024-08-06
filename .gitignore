@@ -1,5 +1,8 @@
 # file for excluding files from git repo (dev files)
 backend/Backups/*
+.vscode/*
+# thanks to the one mac user
+.DS_Store
 
 # chatlog
 backend/webserver.log
@@ -29,3 +32,4 @@ replit.nix
 addons.py
 keys.py
 test.py
+setup.py.disabled
