@@ -816,7 +816,7 @@ def get_rooms(userid):
 @socketio.on("message_chat")
 def handle_message(_, message, vid, userid, private, hidden):
     """sends mesage data to the proper function."""
-    if not private:
+    if private == 'false':
         handle_chat_message(
             message, vid, userid, hidden
         )

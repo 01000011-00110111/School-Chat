@@ -79,7 +79,7 @@ function CheckIfExist(_params) {
 socket.on("room_data", (data) => {
     // console.log(data)
     window.sessionStorage.setItem("ID", data['roomid']);
-    window.sessionStorage.setItem("private", false)
+    window.sessionStorage.setItem("private", 'false')
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
@@ -99,7 +99,7 @@ socket.on("room_data", (data) => {
 socket.on("private_data", (data) => {
     // console.log(data)
     window.sessionStorage.setItem("ID", data['pmid'])
-    window.sessionStorage.setItem("private", true);
+    window.sessionStorage.setItem("private", 'true');
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
