@@ -18,15 +18,25 @@ This chat is always gettings updated so keep updated on our work!
 
 ## No systemd service (easy route)
 #### NOTE: `$sudo shutdown` and `$sudo restart` will NOT work if you do not use systemd! (commands are removed at this time)
-- Create a venv by running ```python -m venv venv```
-- To activate your venv run ```source venv/bin/activate```
-- To install the requirements run ```pip install -r requirements.txt```
+- Create a venv by running:
+```bash
+python -m venv venv
+```
+- To activate your venv run:
+```bash
+source venv/bin/activate
+```
+- To install the requirements run:
+```bash
+pip install -r requirements.txt
+```
 - Add your ssl pem and key into nginx and change them to your domain name
 - Paste this config file into the `sites-enabled` directory where you have nginx installed (usually its somthing like `/etc/nginx`), and name it what your domain name is called:
   - change `yourdomain` to what your domain name is called
   - for the ssl keys and certs, replace `yourdomain` with whatever you named them, if its not your domain name.
   - change `<where your files are stored>` to where you have this downloaded to.
-```
+```nginx
+# /etc/nginx/sites-enabled/yourdomain
 server {
     listen 80;
     listen [::]:80;
@@ -74,21 +84,43 @@ server {
     }
 }
 ```
-- enable and run nginx with this command ```sudo systemctl enable --now nginx.service```
-- Run this command while in the venv to start the chat server, after nginx starts: ```python main.py```
+- enable and run nginx with this command:
+```bash
+sudo systemctl enable --now nginx.service
+```
+- Run this command while in the venv to start the chat server, after nginx starts: 
+```bash
+python main.py
+```
 
 
 ## Systemd route (auto restart and other nice features)
-- make sure you have the optional systemd dependency installed (run ```poetry install --extras "systemd"```)
+- make sure you have the optional systemd dependency installed run:
+```bash
+poetry install --extras "systemd"
+```
 - do the above, but also copy the `example.chatserverd.service` file and edit anywhere it mentions:
  - `<dir_path>` to where the files are stored
  - `<user>` for what user this is running under
  - rename the file to chatserverd.service
 - Next, place that file inside the `~/.config/systemd/user` directory (create this if it does not exist)
-- Run this command to allow your user to run systemd services when not logged in (to start on startup) ```sudo loginctl enable-linger <user>``` (this must be run under a user that has root privlages)
-- run (under the user you intend to run this) ```systemctl --user daemon-reload```
-- then, run ```systemctl --user enable --now chatserverd.service``` after nginx is running
+- Run this command to allow your user to run systemd services when not logged in (to start on startup):
+```bash
+sudo loginctl enable-linger <user>
+```
+> (this must be run under a user that has root privlages)
+- run (under the user you intend to run this):
+```bash
+systemctl --user daemon-reload
+```
+- After nginx is running then, run:
+```bash
+systemctl --user enable --now chatserverd.service
+```
 - it should just start working
 
-This was created by
-  cserver and C7
+### This was created by:
+- [**cserver45**](https://github.com/cserver45) and [**C7**](https://github.com/01000011-00110111)
+
+### Contributors:
+-  [**CastyiGlitchxz**](https://github.com/CastyiGlitchxz)
