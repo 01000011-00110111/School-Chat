@@ -27,7 +27,7 @@ def generate_unique_code(length):
 
 def create_chat_room(name, username, _userinfo):
     """Create a chat room and register it in the database."""
-    generated_at = datetime().strftime("%Y-%m-%dT%H:%M:%S")
+    generated_at = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
     if not name or database.find_room({'roomName': name}, 'vid'):
         log = f"Failed: Invalid Room Name ({username} room creation) {generated_at}"

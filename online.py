@@ -52,9 +52,9 @@ def clear_unread(recipient, sender):
 def get_all_offline():
     """gets all offline users"""
     offline = []
-    for u in users_list:
-        if u["status"] in ["offline", "offline-locked"]:
-            offline.append(u["username"])
+    for _, values in users_list.items():
+        if 'offline' in values["status"]:
+            offline.append(values["username"])
     return offline
 
 

@@ -360,9 +360,9 @@ def update_account(user_data):
 def backup_user(user):
     """Saves a users data."""
     customization_data = {
-        "messageColor": user.Mcolor,
-        "roleColor": user.Rcolor,
-        "userColor": user.Ucolor,
+        "messageColor": user.m_color,
+        "roleColor": user.r_color,
+        "userColor": user.u_color,
         "displayName": user.display_name,
         "role": user.role,
         "profile": user.profile,

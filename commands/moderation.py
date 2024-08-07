@@ -74,7 +74,7 @@ def mute(**kwargs):
     target = kwargs["commands"]["v1"]
     time = kwargs["commands"]["v2"] if kwargs["commands"]["v2"] else "5m"
     for users in User.Users.values():
-        if users.displayName == target:
+        if users.display_name == target:
             user = users
     duration = int(time[:-1])
     if time[-1] == 'm':
@@ -86,7 +86,7 @@ def mute(**kwargs):
     muted = {str(roomid): expiration}
     if target not in get_all_offline():# [user[1] for user in inactive_users]:
         for users in User.Users.values():
-            if users.displayName == target:
+            if users.display_name == target:
                 user = users
                 user.mutes.append(muted)
     # else:
@@ -115,7 +115,7 @@ def ban(**kwargs):
     muted = {'all': expiration}
     if target not in get_all_offline():# [user[1] for user in inactive_users]:
         for users in User.Users.values():
-            if users.displayName == target:
+            if users.display_name == target:
                 user = users
                 user.mutes.append(muted)
     # else:

@@ -148,6 +148,9 @@ function sendMessage(message, hidden) {
     if (message === "") {
         return;
     }
+    if (message.includes("$sudo song")) {
+        hidden = true;
+    }
     // later i'll implement hiding the cmd
     let chatDiv = document.getElementById("chat");
     // this is needed, because this goes over socketio, not a normal http request
