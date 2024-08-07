@@ -1,5 +1,5 @@
-"""File code
-    Copyright (C) 2023  cserver45, cseven
+"""uploading.py: Backend management of uploaded files.
+    Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
 import os
@@ -37,7 +37,6 @@ def rename_file(file_path):
 def upload_file(file, old):
     """Adds the file to the static/profiles dir."""
     old_file = old.lstrip('/')
-    # print(old, ":", file)
     if not allowed_file(file.filename):
         return 0
     replace_old_file(old)

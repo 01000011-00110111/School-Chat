@@ -1,7 +1,7 @@
-"""accounting.py - checks on accounts and sends emails
-Stuff to handle accounts
-Copyright (C) 2023  cserver45, cseven
-License info can be viewed in main.py or the LICENSE file.
+"""accounting.py: Checks on accounts and sends emails
+    Stuff to handle accounts
+    Copyright (C) 2023, 2024  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
 """
 import configparser
 import hashlib
@@ -177,7 +177,7 @@ def create_user(username: str, passwd: str, email: str, role: str,
     formatted_time = time.strftime("%Y-%m-%d %H:%M:%S")
     database.add_accounts(
     {"username": username,
-    "password": passwd,
+    "password": hashlib.sha384(bytes(passwd, 'utf-8')).hexdigest(),
     "userid": userid,
     "email": email,
     "role": role,

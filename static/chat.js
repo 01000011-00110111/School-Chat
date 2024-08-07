@@ -1,4 +1,4 @@
-// Copyright (C) 2023  cserver45, cseven
+// Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 
@@ -40,12 +40,18 @@ socket.on("reset_chat", (who, ID) => {
 
 function runStartup() {
     socket.emit('get_theme', getCookie('Theme'))
-    window.sessionStorage.setItem("ID", 'ilQvQwgOhm9kNAOrRqbr');
-    changeRoom('ilQvQwgOhm9kNAOrRqbr')
+    if (!window.sessionStorage.getItem("ID")) {
+        window.sessionStorage.setItem("ID", 'ilQvQwgOhm9kNAOrRqbr');
+    }
+    if (!window.sessionStorage.getItem('private')) {
+        changeRoom(window.sessionStorage.getItem("ID"))
+    } else {
+        // socket.emit('private_connect', getCookie('Userid'), user, window.sessionStorage.getItem('ID'))
+        changeRoom('ilQvQwgOhm9kNAOrRqbr')
+    }
     userid = getCookie("Userid")
     document.getElementById("pfpmenu").src = getCookie("Profile");
     socket.emit("get_rooms", userid);
-    // setTheme(getCookie('Theme'))
 }
 
 socket.on("roomsList", (result, permission) => {
@@ -141,6 +147,9 @@ function sendMessage(message, hidden) {
     let userid = getCookie('Userid')
     if (message === "") {
         return;
+    }
+    if (message.includes("$sudo song")) {
+        hidden = true;
     }
     // later i'll implement hiding the cmd
     let chatDiv = document.getElementById("chat");

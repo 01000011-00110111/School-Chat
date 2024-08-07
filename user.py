@@ -1,5 +1,5 @@
-"""user.py: User class for the chat app
-    Copyright (C) 2023  cserver45, cseven
+"""user.py: User class defnitions and functions relating to users.
+    Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
 import hashlib
@@ -92,9 +92,7 @@ class User:
         """Returns the user id of a user by its display name (unsecured need a better method)."""
         userid = None
         for _, user in cls.Users.items():
-            # print(user)
             if user.display_name == displayname:
-                # print(f'e{user}')
                 userid = user.uuid
         return userid
 
@@ -184,7 +182,6 @@ class User:
                     return True
                 self.check_mute()
 
-        # print(self.mutes)
         return False
 
     def update_account(self, account_details):

@@ -1,5 +1,5 @@
-"""Handles the userlist of the chat
-    Copyright (C) 2023  cserver45, cseven
+"""online.py: Handles the userlist of the chat
+    Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
 from flask_socketio import emit
@@ -18,10 +18,12 @@ def get_scoketid(uuid):
 def update_userlist(_, data, uuid):
     """Updates a user in the users list."""
     for key, value in data.items():
+        if key == 'status' and users_list[uuid]['status'] == 'offline-locked':
+            continue
         users_list[uuid][key] = value
 
     emit("update_list", users_list[uuid], namespace="/", broadcast=True)
-    # later ill advance the code to be able to send to only one user and not just everyone online
+    # later ill improve the code to be able to send to only one user and not just everyone online
     return users_list[uuid]
 
 
@@ -32,7 +34,6 @@ def add_unread(recipient, sender):
         display_name, 0
     )
     users_list[sender]["unread"][display_name] += 1
-    # print(users_list[recipient], '\n', recipient)
     if "offline" not in users_list[recipient]["status"]:
         emit("update_list", users_list[sender], namespace="/", to=socketids[recipient])
 
@@ -44,7 +45,6 @@ def clear_unread(recipient, sender):
         "unread", {}
     ).setdefault(display_name, 0)
     users_list[recipient]["unread"][display_name] = 0
-    # print(users_list[recipient], '\n', recipient)
     if "offline" not in users_list[sender]["status"]:
         emit("update_list", users_list[recipient], namespace="/", to=socketids[sender])
 
@@ -52,9 +52,9 @@ def clear_unread(recipient, sender):
 def get_all_offline():
     """gets all offline users"""
     offline = []
-    for u in users_list:
-        if u["status"] in ["offline", "offline-locked"]:
-            offline.append(u["username"])
+    for _, values in users_list.items():
+        if 'offline' in values["status"]:
+            offline.append(values["username"])
     return offline
 
 

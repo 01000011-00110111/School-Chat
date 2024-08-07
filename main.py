@@ -1,18 +1,18 @@
-"""Main webserver file for school-chat, a chat server
-Copyright (C) 2023  cserver45, cseven
+"""main.py: Main webserver file for school-chat, a chat server
+    Copyright (C) 2023, 2024  cserver45, cseven
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as
-published by the Free Software Foundation, either version 3 of the
-License, or (at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
@@ -117,7 +117,7 @@ login_manager.login_view = "login_page"
 
 # license stuff
 if __name__ == "__main__":
-    print("Copyright (C) 2023  cserver45, cseven")
+    print("Copyright (C) 2023, 2024  cserver45, cseven")
     print("License info can be viewed in main.py or the LICENSE file.")
 
 
@@ -309,6 +309,7 @@ def signup_get() -> ResponseReturnValue:
 @app.route("/verify/<userid>/<verification_code>")
 def verify(userid, verification_code):
     """Verify a user."""
+    template_string = "verified.html"
     user_id = database.find_account({"userId": userid}, "vid")
     if user_id is not None:
         user_code = accounting.create_verification_code(user_id)
@@ -320,8 +321,26 @@ def verify(userid, verification_code):
             log.log_accounts(
                 f"The account {user} is now verified and may now chat in any chat room."
             )
-            return f"{user} has been verified. You may now chat in other chat rooms."
-    return "Invalid verification code."
+            page_title = "Account Verified"
+            background = "success"
+            verifiedicon = 'fa-solid fa-check success'
+            verified_text = "You are now verified!"
+            verified_sub_text1 = "Thank you for using School Chat"
+            verified_sub_text2 = "You can close this page when you're ready"
+            return flask.render_template(template_string, icon = verifiedicon,
+                                            verifiedText = verified_text,
+                                            verifiedsubText1 = verified_sub_text1,
+                                            verifiedsubText2 = verified_sub_text2,
+                                            page_title = page_title, background = background)
+    page_title = "Account Verification Failed"
+    background = "failed"
+    unverifiedicon = 'fa-solid fa-x failed'
+    verified_text = "Verification Failed"
+    verified_sub_text = "Sorry but we failed to verify your School Chat account, please try again"
+    return flask.render_template(template_string, icon = unverifiedicon,
+                                 verifiedText = verified_text,
+                                 verifiedsubText1 = verified_sub_text,
+                                 page_title = page_title, background = background)
 
 
 @app.route("/change-password", methods=["POST", "GET"])
@@ -380,12 +399,35 @@ def reset_password(userid, verification_code) -> ResponseReturnValue:
     return "Invalid reset code."
 
 
+##### Backup file code ######
+
 @app.route("/backup")
 @login_required
 def get_logs_page() -> ResponseReturnValue:
     """Serve the chat logs (backup)"""
-    html_file = flask.render_template("Backup-chat.html")
-    return html_file
+    uuid = request.cookies.get('Userid')
+    user = User.get_user_by_id(uuid)
+
+    if 'adminpass' in user.perm:
+        return flask.render_template("Backup-chat.html")
+
+    return flask.redirect(flask.url_for("chat_page"))
+
+
+@socketio.on("change_chunk")
+def handle_chunk_change(direction):
+    """Sends a chunk of the backup file to the backup page."""
+    uuid = request.cookies.get('Userid')
+    backup_sesson = log.FileHandler.get_handler(uuid)
+    lines = None
+    if direction == 'next':
+        lines = backup_sesson.read_chunk()
+    if direction == 'prev':
+        lines = backup_sesson.read_chunk_reverse()
+    if direction == 'reset':
+        lines = backup_sesson.read_chunk()
+
+    emit('load_chunk', lines)
 
 
 @app.route("/settings", methods=["GET"])
@@ -551,7 +593,7 @@ def handle_projecet_creation():
     socketid = request.sid
     userid = request.cookies.get("Userid")
     user = User.get_user_by_id(userid)
-    if user.themeCount >= 3:
+    if user.theme_count >= 3:
         emit("response", ("You have hit your project limit", True), to=socketid)
         return
     while True:
@@ -562,7 +604,7 @@ def handle_projecet_creation():
         if code not in database.get_all_projects():
             break
     project = database.create_project(userid, user.display_name, code)
-    user.themeCount += 1
+    user.theme_count += 1
     del project["_id"]
     project['theme'] = {}
     project["author"] = project["author"][1:]
@@ -600,7 +642,7 @@ def handle_delete_project(project):
     """Deletes a project."""
     socketid = request.sid
     user = User.get_user_by_id(request.cookies.get("Userid"))
-    user.themeCount -= 1
+    user.theme_count -= 1
     database.delete_project(project)
     emit("response", ("Project deleted", False), to=socketid)
 
@@ -774,7 +816,7 @@ def get_rooms(userid):
 @socketio.on("message_chat")
 def handle_message(_, message, vid, userid, private, hidden):
     """sends mesage data to the proper function."""
-    if private == "false":
+    if private == 'false':
         handle_chat_message(
             message, vid, userid, hidden
         )
@@ -853,7 +895,7 @@ def connect(roomid, sender):
 
 
 @socketio.on("private_connect")
-def private_connect(sender, receiver, roomid):
+def private_connect(sender, receiver, roomid):# rework the connect code later
     """Switch rooms for the user"""
     socketid = request.sid
     receiverid = database.find_userid(receiver)

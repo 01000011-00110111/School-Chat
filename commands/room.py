@@ -1,5 +1,5 @@
-"""this is where all room commands goes
-    Copyright (C) 2023  cserver45, cseven
+"""room.py: Commands relating to room management.
+    Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
 import rooms

@@ -1,4 +1,4 @@
-// Copyright (C) 2023  cserver45, cseven
+// Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 const clearSearchButton = document.getElementById("clearSearchButton");
@@ -126,7 +126,7 @@ function update_status(themeID, currentStatus) {
   const buttonToUpdate = document.querySelector(`[data-id="${themeID}"] button.project_panel`);
   // if (buttonToUpdate) {
     const currentText = buttonToUpdate.innerHTML;
-    const newText = currentText.replace(`status: ${currentStatus}`, `Status: ${capitalize(newStatus)}`);
+    const newText = currentText.replace(`Status: ${capitalize(currentStatus)}`, `Status: ${capitalize(newStatus)}`);
     buttonToUpdate.innerHTML = newText;
   // }
 

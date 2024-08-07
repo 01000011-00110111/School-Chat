@@ -1,12 +1,12 @@
-"""All commands ran by devs, mods, users, etc.
-    Copyright (C) 2023  cserver45, cseven
+"""cmds.py: All commands ran by devs, mods, users, etc.
+    Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
 # from datetime import datetime, timedelta
 
 # from flask_socketio import emit
 
-from commands import debug, moderation, other, room
+from commands import debug, moderation, other, online_commands, room
 
 # from main import scheduler
 
@@ -47,9 +47,8 @@ def find_command(**kwargs):
     basic_commands = {
         'help': other.help_command,
         'song': other.song,
-        # 'refresh': online.refresh_online,
-        # 'offline': online.appear_offline,
-        # 'online': online.appear_online,
+        'offline': online_commands.appear_offline,
+        'online': online_commands.appear_online,
         'ping': debug.ping,
         'ecount': other.e_count_backup,
         'create': room.create_room,

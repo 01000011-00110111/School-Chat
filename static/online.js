@@ -1,4 +1,4 @@
-// Copyright (C) 2023  cserver45, cseven
+// Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 const users_list = {
@@ -110,8 +110,9 @@ socket.on("update_list", (updatedUser) => {
         }
     } else {
         if (isInOfflineList) {
+            // Update user in offline list
             offlineList = offlineList.map(user => user.username === updatedUser.username ? updatedUser : user);
-        }else if (isInOfflineList) {
+        } else {
             // Move to offline list
             onlineList = onlineList.filter(user => user.username !== updatedUser.username);
             offlineList.push(updatedUser);
@@ -123,3 +124,4 @@ socket.on("update_list", (updatedUser) => {
 
     updateUserList(onlineList, offlineList);
 });
+

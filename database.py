@@ -1,5 +1,5 @@
-"""Database.py - functions for writing/reading from MongoDB
-    Copyright (C) 2023  cserver45, cseven
+"""database.py: Backend functions for communicating with MongoDB.
+    Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
 
@@ -360,9 +360,9 @@ def update_account(user_data):
 def backup_user(user):
     """Saves a users data."""
     customization_data = {
-        "messageColor": user.Mcolor,
-        "roleColor": user.Rcolor,
-        "userColor": user.Ucolor,
+        "messageColor": user.m_color,
+        "roleColor": user.r_color,
+        "userColor": user.u_color,
         "displayName": user.display_name,
         "role": user.role,
         "profile": user.profile,
@@ -371,7 +371,7 @@ def backup_user(user):
     permission_data = {
         "mutes": user.mutes,
         "SPermission": user.perm,
-        "themeCount": user.themeCount,
+        "themeCount": user.theme_count,
         # "warned": user.warned,
     }
 
@@ -921,7 +921,6 @@ def create_project(uuid, displayname, code):
 
 def get_project(theme_id):
     """Returns a project."""
-    # print(theme_id)
     return Themes.find_one({"themeID": theme_id})
 
 

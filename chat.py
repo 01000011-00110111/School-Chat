@@ -1,5 +1,5 @@
-"""Handles chat classes.
-    Copyright (C) 2023  cserver45, cseven
+"""chat.py: Backend functions for message handling.
+    Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
 import os
@@ -20,7 +20,6 @@ def format_system_msg(msg):
 @dataclass
 class ChatConfig:
     """Config stuff for chats."""
-    # pylint: disable=too-few-public-methods
 
     def __init__(self, config):
         self.whitelisted = config["whitelisted"]

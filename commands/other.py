@@ -1,5 +1,5 @@
-"""other.py: functions that need to be imported in multiple places
-    Copyright (C) 2023  cserver45, cseven
+"""other.py: Functions that need to be imported in multiple places by other commands
+    Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
 
