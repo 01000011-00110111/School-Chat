@@ -96,6 +96,8 @@ const offline = document.getElementById("offline");
 // const online = document.getElementById("online_users");
 
 const ColorPickers = document.querySelectorAll("#ColorPicker");
+const color_inputs = document.querySelectorAll("#color_display_input");
+const gradient_button = document.getElementById("gradient_mode_button");
 
 // After this is the Theme & CSE code
 
@@ -212,21 +214,21 @@ const setProperties = (background, text, shadow, border) => {
   }
 
   if (text === propertyStates[0]) {
-    ColorPickers[1].style.display = "none";
-  } else if (border === propertyStates[1]) {
-    ColorPickers[1].style.display = "flex";
-  }
-
-  if (shadow === propertyStates[0]) {
     ColorPickers[2].style.display = "none";
   } else if (border === propertyStates[1]) {
     ColorPickers[2].style.display = "flex";
   }
 
-  if (border === propertyStates[0]) {
+  if (shadow === propertyStates[0]) {
     ColorPickers[3].style.display = "none";
   } else if (border === propertyStates[1]) {
     ColorPickers[3].style.display = "flex";
+  }
+
+  if (border === propertyStates[0]) {
+    ColorPickers[4].style.display = "none";
+  } else if (border === propertyStates[1]) {
+    ColorPickers[4].style.display = "flex";
   }
 }
 
@@ -295,6 +297,34 @@ function open_project(data) {
   }
 }
 
+const gradient_icon = document.getElementById("gradient_mode_button");
+const colorMode = ["Solid", "Gradient"]
+var currentColorMode = colorMode[0]
+
+const setColorMode = (modeInt) => {
+  currentColorMode = colorMode[modeInt];
+}
+
+const enableGradient = () => {
+  ColorPickers[1].style.display = "flex";
+  setColorMode(1);
+  gradient_icon.innerHTML = '<i class="fa-solid fa-circle"></i>';
+}
+
+const disableGradient = () => {
+  ColorPickers[1].style.display = "none";
+  setColorMode(0);
+  gradient_icon.innerHTML = '<i class="fa-solid fa-circle-half-stroke"></i>';
+}
+
+gradient_button.addEventListener('click', () => {
+  if (currentColorMode != colorMode[1]) {
+    enableGradient();
+  } else {
+    disableGradient();
+  }
+})
+
 var shadow_user = "";
 
 AllContent.forEach((element) => {
@@ -306,6 +336,7 @@ AllContent.forEach((element) => {
 
         var SelectedLayer = event.target.id;
         const ColorBox = document.getElementById("body-color");
+        const gradientColor = document.getElementById("2nd-body-color")
         const textColor = document.getElementById("text-color");
         const borderColor = document.getElementById("border-color");
         const shadowColor = document.getElementById("shadow-color");
@@ -355,9 +386,9 @@ AllContent.forEach((element) => {
 
         const fetchColors = () => {
           document.getElementsByClassName("ColorDisplay")[0].style.background = document.getElementById(`${SelectedLayer}`).style.background;
-          document.getElementsByClassName("ColorDisplay")[1].style.background = document.getElementById(`${SelectedLayer}`).style.color;
-          document.getElementsByClassName("ColorDisplay")[2].style.background = document.getElementById(`${SelectedLayer}`).style.shadowColor;
-          document.getElementsByClassName("ColorDisplay")[3].style.background = document.getElementById(`${SelectedLayer}`).style.borderColor;
+          document.getElementsByClassName("ColorDisplay")[2].style.background = document.getElementById(`${SelectedLayer}`).style.color;
+          document.getElementsByClassName("ColorDisplay")[3].style.background = document.getElementById(`${SelectedLayer}`).style.boxShadow.slice(document.getElementById(`${SelectedLayer}`).style.boxShadow.split(" ")[3], 16)
+          document.getElementsByClassName("ColorDisplay")[4].style.background = document.getElementById(`${SelectedLayer}`).style.borderColor;
         };
         fetchColors();
 
@@ -391,10 +422,21 @@ AllContent.forEach((element) => {
               }
             }
 
-            document.getElementById(SelectedLayer).style.setProperty('background', ColorBox.value)
-            document.getElementById(SelectedLayer).style.setProperty('color', textColor.value)
-            document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value)
-            document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
+            switch (currentColorMode) {
+              case 'Solid':
+                document.getElementById(SelectedLayer).style.setProperty('background', ColorBox.value)
+                document.getElementById(SelectedLayer).style.setProperty('color', textColor.value)
+                document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value)
+                document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
+                break;
+              
+              case 'Gradient':
+                document.getElementById(SelectedLayer).style.setProperty('background', `linear-gradient(to right, ${ColorBox.value}, ${gradientColor.value})`)
+                document.getElementById(SelectedLayer).style.setProperty('color', textColor.value)
+                document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value)
+                document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
+                break;
+            }
 
             function Update() {
               document.body.style.background = chat.style.background;
@@ -427,6 +469,26 @@ editor_dropdown_button.addEventListener('click', (event) => {
     editor_dropdown.style.display = "none";
   }
 });
+
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function openColorPanel() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown menu if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+} 
 
 function Runstartup() {
   value = sessionStorage.getItem("editing")

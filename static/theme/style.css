@@ -41,6 +41,14 @@ html, body {
   border-right: 1px solid gray;
 }
 
+#properties_panel_top_controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 69px;
+  padding: 14px;
+}
+
 .c_div {
   display: flex;
   width: 70%;
@@ -199,17 +207,56 @@ html, body {
 }
 
 #ColorPicker {
-  height: fit-content;
-  width: fit-content;
+  height: 48px;
+  width: 235px;
   display: flex;
   align-items: center;
+  background: rgb(49, 49, 49);
+  border-radius: 11px;
+  padding: 5px;
+  margin-left: 11px;
 }
 
 #ColorPicker div {
   height: 38px;
   width: 38px;
-  border-radius: 100%;
+  border-radius: 13px;
   border: 1px #c1c1c1 solid;
+}
+
+#ColorPicker input {
+  border-radius: 7px;
+  height: 29px;
+  border: 0;
+  margin: 0 0 0 7px;
+  background: transparent;
+  outline: none;
+  color: white;
+  font-size: 18px;
+  width: 118px;
+}
+
+drawer {
+  display: grid;
+  width: 100%;
+  border: 1px solid gray;
+  height: fit-content;
+  min-height: 174px;
+  grid-template-rows: 41px;
+}
+
+drawer drawer_header {
+  width: 100%;
+  display: flex;
+  height: 40px;
+  align-items: center;
+  justify-content: space-between;
+  text-indent: 8px;
+}
+
+drawer_content {
+  align-content: space-evenly;
+  display: grid;
 }
 
 .ValueBox {
@@ -226,11 +273,19 @@ html, body {
 }
 
 #applyButton {
-  width: 71%;
+  width: 97%;
+  margin-top: 16px;
 }
 
 #closeButton {
   width: 20%;
+  border: 0;
+  box-shadow: none;
+  font-size: 22px;
+}
+
+#menuOwner {
+  text-transform: capitalize;
 }
 
 .PropertiesButton {

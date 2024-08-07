@@ -80,60 +80,106 @@
 
   <div class="main" id="main">
     <div id="controls">
-      <div style="text-align: center; margin-top: 16px;">
-        <h3 id="menuOwner"></h3>
+      <div style="text-align: center;">
+        <div id="properties_panel_top_controls">
+          <h3 id="menuOwner"></h3>
+          <button onclick="CloseProperties();" id="closeButton" class="PropertiesButton">
+            <i class="fa-solid fa-x"></i>
+          </button>
+
+          <!-- content-seperator -->
+        </div>
+        <hr id="content-seperator">
         <div style="height: 100%; display: flex; justify-content: space-evenly;">
           <button id="applyButton" class="PropertiesButton">Apply</button>
-          <button onclick="CloseProperties();" id="closeButton" class="PropertiesButton">Close</button>
         </div>
       </div>
       <div id="c_fh">
-        <div id="fh">
-          <div>
-            <div class="i_h">
-              <h5>Element</h5>
-              <div style="display: flex;">
-                <input type="text" placeholder="X" class="ValueBox">
-                <input type="text" placeholder="Y" class="ValueBox">
-              </div>
-              <div style="display: flex;">
-                <input type="text" placeholder="Width" class="ValueBox">
-                <input type="text" placeholder="Height" class="ValueBox">
-              </div>
+        <drawer style="display: none;">
+          <drawer_header>
+            <p>Sizing</p>
+            <button class="drawer_dropdown_button">
+              <i class="fa-solid fa-chevron-up"></i>
+            </button>
+          </drawer_header>
+          <drawer_content>
+            <div style="display: flex;">
+              <input type="text" placeholder="X" class="ValueBox">
+              <input type="text" placeholder="Y" class="ValueBox">
             </div>
-          </div>
-        </div>
-        <div id="fh">
-          <div>
-            <div class="i_h">
-              <h5>Colors</h5>
-              <label for="body-color" id="ColorPicker">
-                <div class="ColorDisplay"></div>
-                <p>Background Color</p>
-              </label>
-
-              <label for="text-color" id="ColorPicker">
-                <div class="ColorDisplay"></div>
-                <p>Text Color</p>
-              </label>
-
-              <label for="shadow-color" id="ColorPicker">
-                <div class="ColorDisplay"></div>
-                <p>Shadow Color</p>
-              </label>
-
-              <label for="border-color" id="ColorPicker">
-                <div class="ColorDisplay"></div>
-                <p>Border Color</p>
-              </label>
-                
-                <input type="color" id="body-color" style="visibility: hidden;">
-                <input type="color" id="text-color" style="visibility: hidden;">
-                <input type="color" id="border-color" style="visibility: hidden;">
-                <input type="color" id="shadow-color" style="visibility: hidden;">
+            <div style="display: flex;">
+              <input type="text" placeholder="Width" class="ValueBox">
+              <input type="text" placeholder="Height" class="ValueBox">
             </div>
-          </div>
-        </div>
+          </drawer_content>
+        </drawer>
+
+        <drawer>
+          <drawer_header>
+            <p>Color Palette</p>
+            <button id="gradient_mode_button">
+              <i class="fa-solid fa-circle-half-stroke"></i>
+            </button>
+            <button class="drawer_dropdown_button">
+              <i class="fa-solid fa-chevron-up"></i>
+            </button>
+          </drawer_header>
+
+          <drawer_content>
+            <label for="body-color" id="ColorPicker" style="display: none;">
+              <div class="ColorDisplay"></div>
+              <input type="text" id="color_display_input">
+            </label>
+
+            <label for="2nd-body-color" id="ColorPicker" style="display: none;">
+              <div class="ColorDisplay"></div>
+              <input type="text" id="color_display_input">
+            </label>
+          </drawer_content>
+        </drawer>
+
+        <drawer>
+          <drawer_header>
+            <p>Text Style</p>
+            <button class="drawer_dropdown_button">
+              <i class="fa-solid fa-chevron-up"></i>
+            </button>
+          </drawer_header>
+
+          <drawer_content>
+            <label for="text-color" id="ColorPicker">
+              <div class="ColorDisplay"></div>
+              <input type="text" id="color_display_input">
+            </label>
+          </drawer_content>
+        </drawer>
+
+        <drawer>
+          <drawer_header>
+            <p>Effects</p>
+            <button class="drawer_dropdown_button">
+              <i class="fa-solid fa-chevron-up"></i>
+            </button>
+          </drawer_header>
+
+          <drawer_content>
+            <label for="shadow-color" id="ColorPicker">
+              <div class="ColorDisplay"></div>
+              <input type="text" id="color_display_input">
+            </label>
+
+            <label for="border-color" id="ColorPicker">
+              <div class="ColorDisplay"></div>
+              <input type="text" id="color_display_input">
+            </label>
+          </drawer_content>
+        </drawer>
+
+        <input type="color" id="body-color" style="visibility: hidden; position: absolute;">
+        <input type="color" id="2nd-body-color" style="visibility: hidden; position: absolute;">
+        <input type="color" id="text-color" style="visibility: hidden; position: absolute;">
+        <input type="color" id="border-color" style="visibility: hidden; position: absolute;">
+        <input type="color" id="shadow-color" style="visibility: hidden; position: absolute;">
       </div>
     </div>
 
