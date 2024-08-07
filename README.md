@@ -90,7 +90,7 @@ sudo systemctl enable --now nginx.service
 ```
 - Run this command while in the venv to start the chat server, after nginx starts: 
 ```bash
-python main.py
+gunicorn --bind 127.0.0.1:5000 --worker-class eventlet --threads 10 -w 1 main:app
 ```
 
 

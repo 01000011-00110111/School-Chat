@@ -4,7 +4,7 @@ After=network-online.target
 
 [Service]
 WorkingDirectory=/home/<user>/<dir_path>
-ExecStart=python3 main.py
+ExecStart=gunicorn --bind 127.0.0.1:5000 --worker-class eventlet --threads 10 -w 1 main:app
 Restart=always
 RestartSec=1
 PrivateTmp=true
