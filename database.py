@@ -371,7 +371,7 @@ def backup_user(user):
     permission_data = {
         "mutes": user.mutes,
         "SPermission": user.perm,
-        "themeCount": user.themeCount,
+        "themeCount": user.theme_count,
         # "warned": user.warned,
     }
 
