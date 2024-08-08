@@ -95,21 +95,26 @@
         </div>
       </div>
       <div id="c_fh">
-        <drawer style="display: none;">
+        <drawer>
           <drawer_header>
-            <p>Sizing</p>
+            <p>Gradient Settings</p>
             <button class="drawer_dropdown_button">
-              <i class="fa-solid fa-chevron-up"></i>
+              <i class="fa-solid fa-chevron-down"></i>
             </button>
           </drawer_header>
           <drawer_content>
-            <div style="display: flex;">
-              <input type="text" placeholder="X" class="ValueBox">
-              <input type="text" placeholder="Y" class="ValueBox">
+            <div id="gradient_div">
+              <button id="gradient_mode_button" class="gradient">
+                <i class="fa-solid fa-circle-half-stroke"></i>
+              </button>
+              <p id="gradient_text">background mode:</p>
             </div>
-            <div style="display: flex;">
-              <input type="text" placeholder="Width" class="ValueBox">
-              <input type="text" placeholder="Height" class="ValueBox">
+
+            <div id="gradient_buttons_container">
+              <button onclick="changeDirrection('left');" class="gradient_dirrection_button">To Left</button>
+              <button onclick="changeDirrection('right');" class="gradient_dirrection_button">To Right</button>
+              <button onclick="changeDirrection('top');" class="gradient_dirrection_button">To Top</button>
+              <button onclick="changeDirrection('bottom');" class="gradient_dirrection_button">To Bottom</button>
             </div>
           </drawer_content>
         </drawer>
@@ -117,16 +122,13 @@
         <drawer>
           <drawer_header>
             <p>Color Palette</p>
-            <button id="gradient_mode_button">
-              <i class="fa-solid fa-circle-half-stroke"></i>
-            </button>
             <button class="drawer_dropdown_button">
-              <i class="fa-solid fa-chevron-up"></i>
+              <i class="fa-solid fa-chevron-down"></i>
             </button>
           </drawer_header>
 
           <drawer_content>
-            <label for="body-color" id="ColorPicker" style="display: none;">
+            <label for="body-color" id="ColorPicker">
               <div class="ColorDisplay"></div>
               <input type="text" id="color_display_input">
             </label>
@@ -142,7 +144,7 @@
           <drawer_header>
             <p>Text Style</p>
             <button class="drawer_dropdown_button">
-              <i class="fa-solid fa-chevron-up"></i>
+              <i class="fa-solid fa-chevron-down"></i>
             </button>
           </drawer_header>
 
@@ -158,28 +160,45 @@
           <drawer_header>
             <p>Effects</p>
             <button class="drawer_dropdown_button">
-              <i class="fa-solid fa-chevron-up"></i>
+              <i class="fa-solid fa-chevron-down"></i>
             </button>
           </drawer_header>
 
           <drawer_content>
+            <p>Shadow Color</p>
             <label for="shadow-color" id="ColorPicker">
+              
               <div class="ColorDisplay"></div>
               <input type="text" id="color_display_input">
             </label>
-
+            <p>Border Color</p>
             <label for="border-color" id="ColorPicker">
+              
               <div class="ColorDisplay"></div>
               <input type="text" id="color_display_input">
             </label>
           </drawer_content>
         </drawer>
 
-        <input type="color" id="body-color" style="visibility: hidden; position: absolute;">
-        <input type="color" id="2nd-body-color" style="visibility: hidden; position: absolute;">
-        <input type="color" id="text-color" style="visibility: hidden; position: absolute;">
-        <input type="color" id="border-color" style="visibility: hidden; position: absolute;">
-        <input type="color" id="shadow-color" style="visibility: hidden; position: absolute;">
+        <div id="unsupported_browser_color_controls">
+          <button onclick="enableGradient();">Enable Gradient</button>
+          <button onclick="disableGradient();">Disable Gradient</button>
+
+          <p>Background Color</p>
+          <input type="color" id="body-color" class="color_picker">
+
+          <p>Gradient Color</p>
+          <input type="color" id="2nd-body-color" class="color_picker">
+
+          <p>Text Color</p>
+          <input type="color" id="text-color" class="color_picker">
+
+          <p>Shadow Color</p>
+          <input type="color" id="shadow-color" class="color_picker">
+
+          <p>Border Color</p>
+          <input type="color" id="border-color" class="color_picker">
+        </div>
       </div>
     </div>
 
@@ -220,9 +239,9 @@
                   </div>
               </div>
                   <div id="extratext" style="align-self: baseline;">
-                      <h6 class="=extrabuttons" style="padding: 0 0 15px 0;"><a class="extrabuttons" href="/changelog" style="color: rgb(129, 129, 129);">Update log</a></h6>
-                      <h6 style="padding: 0 0 15px 0;"><a class="extrabuttons" href="#TELL-THE-OWNERS-TO-GET-YOUR-OWN-CONTACT-FOR-YOU-AND-LET-THEM-CONTACT-US" style="color: rgb(129, 129, 129);">Contact us</a></h6>
-                      <h6 style="padding: 0 0 15px 0;"><a class="extrabuttons" href="https://github.com/01000011-00110111/School-Chat" style="color: rgb(129, 129, 129);">Source Code</a></h6>
+                      <h6 class="=extrabuttons" style="padding: 0 0 15px 0;"><a class="extrabuttons" style="color: rgb(129, 129, 129);">Update log</a></h6>
+                      <h6 style="padding: 0 0 15px 0;"><a class="extrabuttons" style="color: rgb(129, 129, 129);">Contact us</a></h6>
+                      <h6 style="padding: 0 0 15px 0;"><a class="extrabuttons" style="color: rgb(129, 129, 129);">Source Code</a></h6>
                   </div>
                   <br>
                   <br>
