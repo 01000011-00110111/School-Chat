@@ -268,6 +268,7 @@ function open_project(data) {
   theme_name1.value = data.name;
   document.title = `${data.name} - Theme Editor`;
   body.style.background = colors['body']
+  chat.style.background = colors['body']
   chat.style.color = colors['chat-text']
   message.style.background = colors['chat-background']
   message.style.color = colors['chat-color']
@@ -483,40 +484,32 @@ AllContent.forEach((element) => {
 
 
         const fetchColors = () => {
-          if (isGradient(document.getElementById(`${SelectedLayer}`).style.background) || isGradient(document.getElementsByTagName(`body`)[0].style.background) && SelectedLayer === 'chat') {
-            if (SelectedLayer === 'chat') {
-              var c1 = document.getElementsByTagName(`body`)[0].style.background = document.getElementsByTagName(`body`)[0].style.background
-            .split(',')
-            .map(color => color.trim())
-            .slice(1)
-            .join(', ')
-            .replace(/\)\)+/, ')').split('), ')
-            .map((color, index, array) => index === array.length - 1 ? color : color + ')')
-            .map(color => color.trim());;
-            } else {
-              var c1 = document.getElementById(`${SelectedLayer}`).style.background = document.getElementById(`${SelectedLayer}`).style.background
+          layer = document.getElementById(`${SelectedLayer}`)
+          if (isGradient(layer.style.background)) {
+              var c1 = layer.style.background
               .split(',')
               .map(color => color.trim())
               .slice(1)
               .join(', ')
-              .replace(/\)\)+/, ')').split('), ')
+              .replace(/\)\)+/, ')')
+              .split('), ')
               .map((color, index, array) => index === array.length - 1 ? color : color + ')')
               .map(color => color.trim());
-            }
+            // }
             console.log(c1)
             c0 = rgbToHex(extractRGBValues(c1[0]))
             c1 = rgbToHex(extractRGBValues(c1[1]))
             setColorMode(1)
             enableGradient()
           } else {
-            var c0 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.background));
-            var c1 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.background));
+            var c0 = rgbToHex(extractRGBValues(layer.style.background));
+            var c1 = rgbToHex(extractRGBValues(layer.style.background));
             setColorMode(0)
             disableGradient()
           }
-          const c2 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.color));
-          const c3 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.boxShadow.slice(document.getElementById(`${SelectedLayer}`).style.boxShadow)))
-          const c4 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.borderColor));
+          const c2 = rgbToHex(extractRGBValues(layer.style.color));
+          const c3 = rgbToHex(extractRGBValues(layer.style.boxShadow.slice(layer.style.boxShadow)))
+          const c4 = rgbToHex(extractRGBValues(layer.style.borderColor));
 
           ColorDisplay[0].style.background = c0
           ColorDisplay[1].style.background = c1
@@ -535,33 +528,26 @@ AllContent.forEach((element) => {
           textColor.value = c2
           shadowColor.value = c3
           borderColor.value = c4
-
-          // console.log(c0)
         };
 
-
-        // switch (currentColorMode) {
-          // case "Solid":
             fetchColors();
-  
-            // for (let index = 0; index < color_inputs.length; index++) {
-            //   color_inputs[index].addEventListener('focusout', (event) => {
-            //     ColorBox.value = color_inputs[0].value
-            //     textColor.value = color_inputs[2].value
-            //     document.getElementById(SelectedLayer).style.boxShadow = color_inputs[3].value
-            //     borderColor.value = color_inputs[4].value
-            //     fetchColors();
-            //   })  
-            // }
 
             for (let index = 0; index < color_inputs.length; index++) {
               color_inputs[index].addEventListener('focusout', (event) => {
-                color = document.getElementById(SelectedLayer).style.background.split(',').map(color => color.trim()).slice(1);
                 if (isGradient(document.getElementById(`${SelectedLayer}`).style.background)) {
+                  color = document.getElementById(SelectedLayer).style.background
+                .split(',')
+                .map(color => color.trim())
+                .slice(1)
+                .join(', ')
+                .replace(/\)\)+/, ')')
+                .split('), ')
+                .map((color, index, array) => index === array.length - 1 ? color : color + ')')
+                .map(color => color.trim());
                   const c0 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.background));
                   const c1 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.background));
-                  ColorBox.value = color[0]
-                  gradientColor.value = color[1]
+                  ColorBox.value = c0
+                  gradientColor.value = c1
                 } else {
                   ColorBox.value = color_inputs[0].value
                 }
@@ -569,54 +555,8 @@ AllContent.forEach((element) => {
                 document.getElementById(SelectedLayer).style.boxShadow = color_inputs[3].value
                 borderColor.value = color_inputs[4].value
                 fetchColors();
-              })  
+              })
             }
-            // break;
-
-        //   case "Gradient":
-        //     const fetchColorsGradient = () => {
-        //       const c1 = document.getElementById(`${SelectedLayer}`).style.background.split(',').map(color => color.trim()).slice(1);
-        //       console.log(c1)
-        //       const c2 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.color));
-        //       const c3 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.boxShadow.slice(document.getElementById(`${SelectedLayer}`).style.boxShadow)))
-        //       const c4 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.borderColor));
-    
-              // c0 = rgbToHex(extractRGBValues(c1[0]))
-              // c1 = rgbToHex(extractRGBValues(c1[1]))
-    
-        //       ColorDisplay[0].style.background = c0
-        //       ColorDisplay[1].style.background = c1
-        //       ColorDisplay[2].style.background = c2
-        //       ColorDisplay[3].style.background = c3
-        //       ColorDisplay[4].style.background = c4
-    
-        //       color_inputs[0].value = c0
-        //       color_inputs[1].value = c1
-        //       color_inputs[2].value = c2
-        //       color_inputs[3].value = c3
-        //       color_inputs[4].value = c4
-    
-        //       ColorBox.value = c0
-        //       gradientColor.value = c1
-        //       textColor.value = c2
-        //       shadowColor.value = c3
-        //       borderColor.value = c4
-        //     };
-        //     fetchColorsGradient();
-
-            // for (let index = 0; index < color_inputs.length; index++) {
-            //   color_inputs[index].addEventListener('focusout', (event) => {
-            //     color = document.getElementById(SelectedLayer).style.background.split(',').map(color => color.trim()).slice(1);
-            //     ColorBox.value = color[0]
-            //     gradientColor.value = color[1]
-            //     textColor.value = color_inputs[2].value
-            //     document.getElementById(SelectedLayer).style.boxShadow = color_inputs[3].value
-            //     borderColor.value = color_inputs[4].value
-            //     fetchColorsGradient();
-            //   })  
-            // }
-        //     break;
-        // }
 
         for (let index = 0; index < color_boxes.length; index++) {
           color_boxes[index].addEventListener('input', (event) => {
@@ -669,12 +609,12 @@ AllContent.forEach((element) => {
                 document.getElementById(SelectedLayer).style.setProperty('color', textColor.value)
                 document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value)
                 document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
-                fetchColorsGradient();
+                fetchColors();
                 break;
             }
 
             function Update() {
-              document.body.style.background = chat.style.background;
+              body.style.background = chat.style.background;
             };
             if (SelectedLayer === 'chat') {
               Update();
