@@ -596,13 +596,13 @@ AllContent.forEach((element) => {
               shadow_user = ""
             }
 
-            if (SelectedLayer === "room_names") {
-              const rooms = document.querySelectorAll('#room_names');
-              for (let index = 0; index < rooms.length; index++) {
-                rooms[index].style.background = ColorBox.value;
-                rooms[index].style.color = textColor.value;        
-              }
-            }
+            // if (SelectedLayer === "room_names") {
+              // const rooms = document.querySelectorAll('#room_names');
+              // for (let index = 0; index < rooms.length; index++) {
+              //   rooms[index].style.background = ColorBox.value;
+              //   rooms[index].style.color = textColor.value;        
+              // }
+            // }
           
             if (SelectedLayer === "online_buttons") {
               const online_buttons = document.querySelectorAll("#online_buttons");
@@ -630,11 +630,23 @@ AllContent.forEach((element) => {
             }
 
             function Update() {
-              body.style.background = chat.style.background;
+              if (SelectedLayer === 'chat') {
+                body.style.background = chat.style.background;
+              } 
+              if (SelectedLayer === 'room_names') {
+                rooms = document.querySelectorAll('#room_names');
+                extra = document.getElementsByClassName('extrabuttons');
+                for (let index = 0; index < rooms.length; index++) {
+                  rooms[index].style.background = ColorBox.value;
+                  rooms[index].style.color = textColor.value;        
+                }
+                for (let index = 0; index < extra.length; index++) {
+                  extra[index].style.background = ColorBox.value;
+                  extra[index].style.color = textColor.value;        
+                }
+              }
             };
-            if (SelectedLayer === 'chat') {
               Update();
-            }
           };
         });
       };
