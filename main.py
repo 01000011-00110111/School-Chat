@@ -554,6 +554,10 @@ def customize_accounts() -> ResponseReturnValue:
     log.log_accounts(f"The account {user} has updated some setting(s)")
     return return_val
 
+@app.route("/support/docsx")
+def docx():
+    """Opens support documentation."""
+    return flask.render_template("support/documentation.html")
 
 
 ##### THEME STUFF #####
