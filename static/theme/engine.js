@@ -99,6 +99,7 @@ const ColorPickers = document.querySelectorAll("#ColorPicker");
 const color_inputs = document.querySelectorAll("#color_display_input");
 const gradient_button = document.getElementById("gradient_mode_button");
 const color_boxes = document.querySelectorAll('.color_picker');
+const dirrectionBox = document.getElementsByClassName('gradient_dirrection_button')
 
 // After this is the Theme & CSE code
 
@@ -268,6 +269,7 @@ function open_project(data) {
   theme_name1.value = data.name;
   document.title = `${data.name} - Theme Editor`;
   body.style.background = colors['body']
+  chat.style.background = colors['body']
   chat.style.color = colors['chat-text']
   message.style.background = colors['chat-background']
   message.style.color = colors['chat-color']
@@ -332,12 +334,29 @@ const enableGradient = () => {
   ColorPickers[1].style.display = "flex";
   setColorMode(1);
   gradient_icon.innerHTML = '<i class="fa-solid fa-circle"></i>';
+  let dirrection_iter = dirrectionBox.length;
+  for (let i = 0; i < dirrection_iter; i++) {
+    dirrectionBox[i].style.display = 'block'
+  }
 }
 
 const disableGradient = () => {
   ColorPickers[1].style.display = "none";
   setColorMode(0);
   gradient_icon.innerHTML = '<i class="fa-solid fa-circle-half-stroke"></i>';
+  let dirrection_iter = dirrectionBox.length;
+  for (let i = 0; i < dirrection_iter; i++) {
+    dirrectionBox[i].style.display = 'none'
+  }
+}
+
+const unsupportedBrowser = () => {
+  const drawers = document.getElementsByTagName("drawer");
+  const unsupportedControls = document.getElementById("unsupported_browser_color_controls");
+  for (let index = 0; index < drawers.length; index++) {
+    drawers[index].style.display = "none";
+  }
+  unsupportedControls.style.display = "grid";
 }
 
 gradient_div.addEventListener('click', () => {
@@ -386,9 +405,17 @@ for (let index = 0; index < drawer.length; index++) {
   })
 }
 
+
 var gradient_dirrection = "left";
-const changeDirrection = (dirrection) => {
+dirrectionBox[0].style.border = '1px darkgray solid'
+
+const changeDirrection = (dirrection, index) => {
   gradient_dirrection = dirrection;
+  let dirrection_iter = dirrectionBox.length;
+  for (let i = 0; i < dirrection_iter; i++) {
+    dirrectionBox[i].style.border = 'none'
+  }
+  dirrectionBox[index].style.border = '1px darkgray solid'
 }
 
 function extractRGBValues(rgbString) {
@@ -458,7 +485,7 @@ AllContent.forEach((element) => {
             setProperties("enabled", "enabled", "disabled", "disabled");
             break;
           case "pfpmenu":
-            setProperties("disabled", "disabled", "disabled", "enabled");
+            setProperties("disabled", "disabled", "disabled", "disabled");
             break;
           case "online":
             setProperties("disabled", "enabled", "disabled", "disabled");
@@ -472,39 +499,32 @@ AllContent.forEach((element) => {
 
 
         const fetchColors = () => {
-          if (isGradient(document.getElementById(`${SelectedLayer}`).style.background) || isGradient(document.getElementsByTagName(`body`)[0].style.background) && SelectedLayer === 'chat') {
-            if (SelectedLayer === 'chat') {
-              var c1 = document.getElementsByTagName(`body`)[0].style.background = document.getElementsByTagName(`body`)[0].style.background
-            .split(',')
-            .map(color => color.trim())
-            .slice(1)
-            .join(', ')
-            .replace(/\)\)+/, ')').split('), ')
-            .map((color, index, array) => index === array.length - 1 ? color : color + ')')
-            .map(color => color.trim());;
-            } else {
-              var c1 = document.getElementById(`${SelectedLayer}`).style.background = document.getElementById(`${SelectedLayer}`).style.background
+          layer = document.getElementById(`${SelectedLayer}`)
+          if (isGradient(layer.style.background)) {
+              var c1 = layer.style.background
               .split(',')
               .map(color => color.trim())
               .slice(1)
               .join(', ')
-              .replace(/\)\)+/, ')').split('), ')
+              .replace(/\)\)+/, ')')
+              .split('), ')
               .map((color, index, array) => index === array.length - 1 ? color : color + ')')
               .map(color => color.trim());
-            }
+            // }
+            console.log(c1)
             c0 = rgbToHex(extractRGBValues(c1[0]))
             c1 = rgbToHex(extractRGBValues(c1[1]))
             setColorMode(1)
             enableGradient()
           } else {
-            var c0 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.background));
-            var c1 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.background));
+            var c0 = rgbToHex(extractRGBValues(layer.style.background));
+            var c1 = rgbToHex(extractRGBValues(layer.style.background));
             setColorMode(0)
             disableGradient()
           }
-          const c2 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.color));
-          const c3 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.boxShadow.slice(document.getElementById(`${SelectedLayer}`).style.boxShadow)))
-          const c4 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.borderColor));
+          const c2 = rgbToHex(extractRGBValues(layer.style.color));
+          const c3 = rgbToHex(extractRGBValues(layer.style.boxShadow.slice(layer.style.boxShadow)))
+          const c4 = rgbToHex(extractRGBValues(layer.style.borderColor));
 
           ColorDisplay[0].style.background = c0
           ColorDisplay[1].style.background = c1
@@ -529,12 +549,20 @@ AllContent.forEach((element) => {
 
             for (let index = 0; index < color_inputs.length; index++) {
               color_inputs[index].addEventListener('focusout', (event) => {
-                color = document.getElementById(SelectedLayer).style.background.split(',').map(color => color.trim()).slice(1);
                 if (isGradient(document.getElementById(`${SelectedLayer}`).style.background)) {
+                  color = document.getElementById(SelectedLayer).style.background
+                .split(',')
+                .map(color => color.trim())
+                .slice(1)
+                .join(', ')
+                .replace(/\)\)+/, ')')
+                .split('), ')
+                .map((color, index, array) => index === array.length - 1 ? color : color + ')')
+                .map(color => color.trim());
                   const c0 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.background));
                   const c1 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.background));
-                  ColorBox.value = color[0]
-                  gradientColor.value = color[1]
+                  ColorBox.value = c0
+                  gradientColor.value = c1
                 } else {
                   ColorBox.value = color_inputs[0].value
                 }
@@ -542,7 +570,7 @@ AllContent.forEach((element) => {
                 document.getElementById(SelectedLayer).style.boxShadow = color_inputs[3].value
                 borderColor.value = color_inputs[4].value
                 fetchColors();
-              })  
+              })
             }
 
         for (let index = 0; index < color_boxes.length; index++) {
@@ -566,14 +594,6 @@ AllContent.forEach((element) => {
                 shadow_user = ""
                 break;
             }
-
-            if (SelectedLayer === "room_names") {
-              const rooms = document.querySelectorAll('#room_names');
-              for (let index = 0; index < rooms.length; index++) {
-                rooms[index].style.background = ColorBox.value;
-                rooms[index].style.color = textColor.value;        
-              }
-            }
           
             if (SelectedLayer === "online_buttons") {
               const online_buttons = document.querySelectorAll("#online_buttons");
@@ -595,15 +615,28 @@ AllContent.forEach((element) => {
                 document.getElementById(SelectedLayer).style.setProperty('color', textColor.value)
                 document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value)
                 document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
+                fetchColors();
                 break;
             }
 
             function Update() {
-              document.body.style.background = chat.style.background;
+              if (SelectedLayer === 'chat') {
+                body.style.background = chat.style.background;
+              } 
+              if (SelectedLayer === 'room_names') {
+                rooms = document.querySelectorAll('#room_names');
+                extra = document.getElementsByClassName('extrabuttons');
+                for (let index = 0; index < rooms.length; index++) {
+                  rooms[index].style.background = ColorBox.value;
+                  rooms[index].style.color = textColor.value;        
+                }
+                for (let index = 0; index < extra.length; index++) {
+                  extra[index].style.background = ColorBox.value;
+                  extra[index].style.color = textColor.value;        
+                }
+              }
             };
-            if (SelectedLayer === 'chat') {
               Update();
-            }
           };
         });
       };
