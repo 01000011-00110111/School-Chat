@@ -113,6 +113,7 @@ database.clear_online()
 login_manager.init_app(app)
 login_manager.login_view = "login_page"
 
+# pylint: disable=C0302
 # pylint: enable=E0213
 
 # license stuff
