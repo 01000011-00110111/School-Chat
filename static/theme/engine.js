@@ -486,7 +486,7 @@ AllContent.forEach((element) => {
             setProperties("enabled", "enabled", "disabled", "disabled");
             break;
           case "pfpmenu":
-            setProperties("disabled", "disabled", "disabled", "enabled");
+            setProperties("disabled", "disabled", "disabled", "disabled");
             break;
           case "online":
             setProperties("disabled", "enabled", "disabled", "disabled");
@@ -595,14 +595,6 @@ AllContent.forEach((element) => {
             {
               shadow_user = ""
             }
-
-            // if (SelectedLayer === "room_names") {
-              // const rooms = document.querySelectorAll('#room_names');
-              // for (let index = 0; index < rooms.length; index++) {
-              //   rooms[index].style.background = ColorBox.value;
-              //   rooms[index].style.color = textColor.value;        
-              // }
-            // }
           
             if (SelectedLayer === "online_buttons") {
               const online_buttons = document.querySelectorAll("#online_buttons");
@@ -708,8 +700,6 @@ socket.on('set_theme', (theme) => {
 });
 
 socket.on('response', (response, limit) => {
-  // console.log(response)
-
   if (limit === true) {
     window.location.href = '/projects';
   }
