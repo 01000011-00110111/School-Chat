@@ -99,6 +99,7 @@ const ColorPickers = document.querySelectorAll("#ColorPicker");
 const color_inputs = document.querySelectorAll("#color_display_input");
 const gradient_button = document.getElementById("gradient_mode_button");
 const color_boxes = document.querySelectorAll('.color_picker');
+const dirrectionBox = document.getElementsByClassName('gradient_dirrection_button')
 
 // After this is the Theme & CSE code
 
@@ -333,12 +334,20 @@ const enableGradient = () => {
   ColorPickers[1].style.display = "flex";
   setColorMode(1);
   gradient_icon.innerHTML = '<i class="fa-solid fa-circle"></i>';
+  let dirrection_iter = dirrectionBox.length;
+  for (let i = 0; i < dirrection_iter; i++) {
+    dirrectionBox[i].style.display = 'block'
+  }
 }
 
 const disableGradient = () => {
   ColorPickers[1].style.display = "none";
   setColorMode(0);
   gradient_icon.innerHTML = '<i class="fa-solid fa-circle-half-stroke"></i>';
+  let dirrection_iter = dirrectionBox.length;
+  for (let i = 0; i < dirrection_iter; i++) {
+    dirrectionBox[i].style.display = 'none'
+  }
 }
 
 const unsupportedBrowser = () => {
@@ -396,10 +405,17 @@ for (let index = 0; index < drawer.length; index++) {
   })
 }
 
-var gradient_dirrection = "left";
 
-const changeDirrection = (dirrection) => {
+var gradient_dirrection = "left";
+dirrectionBox[0].style.border = '1px darkgray solid'
+
+const changeDirrection = (dirrection, index) => {
   gradient_dirrection = dirrection;
+  let dirrection_iter = dirrectionBox.length;
+  for (let i = 0; i < dirrection_iter; i++) {
+    dirrectionBox[i].style.border = 'none'
+  }
+  dirrectionBox[index].style.border = '1px darkgray solid'
 }
 
 function extractRGBValues(rgbString) {
