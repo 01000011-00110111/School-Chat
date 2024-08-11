@@ -1037,6 +1037,14 @@ version #arrowContainer {
   border: 2px solid #464646;
 }
 
+.light-links {
+  color: black !important;
+}
+
+.light-links:hover {
+  text-decoration: black solid underline 2px !important;
+}
+
 .themes-dropdown-button {
   width: 200px;
   height: 45px;
