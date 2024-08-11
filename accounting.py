@@ -1,7 +1,7 @@
-"""accounting.py - checks on accounts and sends emails
-Stuff to handle accounts
-Copyright (C) 2023  cserver45, cseven
-License info can be viewed in main.py or the LICENSE file.
+"""accounting.py: Checks on accounts and sends emails
+    Stuff to handle accounts
+    Copyright (C) 2023, 2024  cserver45, cseven
+    License info can be viewed in main.py or the LICENSE file.
 """
 import configparser
 import hashlib

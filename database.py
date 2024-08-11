@@ -1,5 +1,5 @@
-"""Database.py - functions for writing/reading from MongoDB
-    Copyright (C) 2023  cserver45, cseven
+"""database.py: Backend functions for communicating with MongoDB.
+    Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
 
@@ -921,7 +921,6 @@ def create_project(uuid, displayname, code):
 
 def get_project(theme_id):
     """Returns a project."""
-    # print(theme_id)
     return Themes.find_one({"themeID": theme_id})
 
 

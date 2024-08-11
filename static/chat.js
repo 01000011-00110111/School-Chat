@@ -1,4 +1,4 @@
-// Copyright (C) 2023  cserver45, cseven
+// Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 
@@ -43,7 +43,12 @@ function runStartup() {
     if (!window.sessionStorage.getItem("ID")) {
         window.sessionStorage.setItem("ID", 'ilQvQwgOhm9kNAOrRqbr');
     }
-    changeRoom(window.sessionStorage.getItem("ID"))
+    if (!window.sessionStorage.getItem('private')) {
+        changeRoom(window.sessionStorage.getItem("ID"))
+    } else {
+        // socket.emit('private_connect', getCookie('Userid'), user, window.sessionStorage.getItem('ID'))
+        changeRoom('ilQvQwgOhm9kNAOrRqbr')
+    }
     userid = getCookie("Userid")
     document.getElementById("pfpmenu").src = getCookie("Profile");
     socket.emit("get_rooms", userid);
@@ -74,7 +79,7 @@ function CheckIfExist(_params) {
 socket.on("room_data", (data) => {
     // console.log(data)
     window.sessionStorage.setItem("ID", data['roomid']);
-    window.sessionStorage.setItem("private", 'false')
+    window.sessionStorage.setItem("private", false)
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.
@@ -94,7 +99,7 @@ socket.on("room_data", (data) => {
 socket.on("private_data", (data) => {
     // console.log(data)
     window.sessionStorage.setItem("ID", data['pmid'])
-    window.sessionStorage.setItem("private", 'true');
+    window.sessionStorage.setItem("private", true);
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     // update the url when the room is changed.

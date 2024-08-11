@@ -1,5 +1,5 @@
-"""Setup file (might rework).
-    Copyright (C) 2023  cserver45, cseven
+"""setup.py: Inital setup functions on first run.
+    Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
 import os

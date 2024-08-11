@@ -1,18 +1,18 @@
-"""Main webserver file for school-chat, a chat server
-Copyright (C) 2023  cserver45, cseven
+"""main.py: Main webserver file for school-chat, a chat server
+    Copyright (C) 2023, 2024  cserver45, cseven
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as
-published by the Free Software Foundation, either version 3 of the
-License, or (at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
@@ -117,7 +117,7 @@ login_manager.login_view = "login_page"
 
 # license stuff
 if __name__ == "__main__":
-    print("Copyright (C) 2023  cserver45, cseven")
+    print("Copyright (C) 2023, 2024  cserver45, cseven")
     print("License info can be viewed in main.py or the LICENSE file.")
 
 
@@ -408,7 +408,7 @@ def get_logs_page() -> ResponseReturnValue:
     uuid = request.cookies.get('Userid')
     user = User.get_user_by_id(uuid)
 
-    if 'Debugpass' in user.perm:
+    if 'adminpass' in user.perm:
         return flask.render_template("Backup-chat.html")
 
     return flask.redirect(flask.url_for("chat_page"))
@@ -816,7 +816,7 @@ def get_rooms(userid):
 @socketio.on("message_chat")
 def handle_message(_, message, vid, userid, private, hidden):
     """sends mesage data to the proper function."""
-    if private == "false":
+    if not private:
         handle_chat_message(
             message, vid, userid, hidden
         )
@@ -895,7 +895,7 @@ def connect(roomid, sender):
 
 
 @socketio.on("private_connect")
-def private_connect(sender, receiver, roomid):
+def private_connect(sender, receiver, roomid):# rework the connect code later
     """Switch rooms for the user"""
     socketid = request.sid
     receiverid = database.find_userid(receiver)

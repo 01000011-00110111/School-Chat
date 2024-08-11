@@ -1,5 +1,5 @@
-"""All online commands for the chat
-    Copyright (C) 2023  cserver45, cseven
+"""online_commands.py: All online commands for the chat
+    Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
 from flask_socketio import emit
