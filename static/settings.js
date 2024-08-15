@@ -159,7 +159,7 @@ function openTab(evt, tabName) {
   }
   
   // Opens the defualt tab
-  openTab(event, "My-Profile");
+  openTab(event, "settings-main-page");
 
   function enableNotifications() {
     // Checks if the user's browser supports notifications

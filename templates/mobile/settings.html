@@ -3,38 +3,53 @@
 <script src="static/settings.js" defer></script>
 {% endblock %}
 {% block content %}
-<div id="nav">
-  <div id="ButtonContainer">
-    <button class="SettingsNavItem" onclick="openTab(event, 'My-Profile')">
-      My Profile
-    </button>
-
-    <button class="SettingsNavItem" onclick="openTab(event, 'Account')">
-      Account
-    </button>
-
-    <button class="SettingsNavItem" onclick="openTab(event, 'Notifications')">
-      Notifications
-    </button>
-
-    <button class="SettingsNavItem" onclick="openTab(event, 'Preferences')">
-      Preferences
-    </button>
-
-    <button class="SettingsNavItem" onclick="openTab(event, 'DeveloperSettings')" hidden>
-      Developer Settings
-    </button>
-
-    <button class="SettingsNavItem" onclick="openTab(event, 'AppInfo')">
-      App
-    </button>
-  </div>
-</div>
-
-<form method="post" style="display: grid; height: 49rem; min-height: 100%;">
+<form method="post" style="display: grid; min-height: 100%;">
     <div id="ProfileDisplay">
       <div id="MainSettingsBody">
+        <div id="settings-main-page" class="tabcontent">
+          <div id="StatusContainer">
+            <a href="." id="cancelButton" class="statusButton">
+              <i class="fa-solid fa-chevron-left"></i>
+              Back
+            </a>
+            <button type="submit" id="change" name="update" class="statusButton">Save</button>
+          </div>
+
+          <div id="ButtonContainer">
+            <button class="SettingsNavItem" onclick="openTab(event, 'My-Profile')" type="button">
+              My Profile
+            </button>
+        
+            <button class="SettingsNavItem" onclick="openTab(event, 'Account')" type="button">
+              Account
+            </button>
+        
+            <button class="SettingsNavItem" onclick="openTab(event, 'Notifications')" type="button">
+              Notifications
+            </button>
+        
+            <button class="SettingsNavItem" onclick="openTab(event, 'Preferences')" type="button">
+              Preferences
+            </button>
+        
+            <button class="SettingsNavItem" onclick="openTab(event, 'DeveloperSettings')" hidden type="button">
+              Developer Settings
+            </button>
+        
+            <button class="SettingsNavItem" onclick="openTab(event, 'AppInfo')" type="button">
+              App
+            </button>
+          </div>
+        </div>
+
         <div id="My-Profile" class="tabcontent">
+          <div id="StatusContainer">
+            <a id="cancelButton" class="statusButton" onclick="openTab(event, 'settings-main-page')">
+              <i class="fa-solid fa-chevron-left"></i>
+              Back
+            </a>
+          </div>
+
           <div style="display: flex;">
             <label for="profile" id="FileClick">
               <div id="imageContentControl">
@@ -67,6 +82,13 @@
         </div>
 
         <div id="Account" class="tabcontent">
+          <div id="StatusContainer">
+            <a id="cancelButton" class="statusButton" onclick="openTab(event, 'settings-main-page')">
+              <i class="fa-solid fa-chevron-left"></i>
+              Back
+            </a>
+          </div>
+
           <h3>Account</h3>
           <p id="user_colorTXT">Username: </p>
           <input type="text" id="username" value='{{user}}' placeholder="Username" name="user" maxlength="15" class='std_box'><br>
@@ -83,11 +105,25 @@
         </div>
 
         <div id="Notifications" class="tabcontent">
+          <div id="StatusContainer">
+            <a id="cancelButton" class="statusButton" onclick="openTab(event, 'settings-main-page')">
+              <i class="fa-solid fa-chevron-left"></i>
+              Back
+            </a>
+          </div>
+
           <p>Note: Notifications are still in beta phase.</p>
           <input type="button" onclick="enableNotifications();" value="Enable Notifications" id="notificationsButton"/>
         </div>
 
         <div id="Preferences" class="tabcontent">
+          <div id="StatusContainer">
+            <a id="cancelButton" class="statusButton" onclick="openTab(event, 'settings-main-page')">
+              <i class="fa-solid fa-chevron-left"></i>
+              Back
+            </a>
+          </div>
+
           <div class="themeDropdown">
             <button type="button" class="themeBtn" onclick="toggleDropdown()">Themes</button>
             <div class="themeContent">
@@ -103,18 +139,25 @@
         </div>
 
         <div id="DeveloperSettings" class="tabcontent">
-
+          <div id="StatusContainer">
+            <a id="cancelButton" class="statusButton" onclick="openTab(event, 'settings-main-page')">
+              <i class="fa-solid fa-chevron-left"></i>
+              Back
+            </a>
+          </div>
         </div>
 
         <div id="AppInfo" class="tabcontent">
+          <div id="StatusContainer">
+            <a id="cancelButton" class="statusButton" onclick="openTab(event, 'settings-main-page')">
+              <i class="fa-solid fa-chevron-left"></i>
+              Back
+            </a>
+          </div>
+          
           <a href="https://github.com/01000011-00110111/School-Chat">Source Code</a>
         </div>
       </div>
-    </div>
-
-    <div id="StatusContainer">
-      <a href="." id="cancelButton" class="statusButton">Back</a>
-      <button type="submit" id="change" name="u pdate" class="statusButton">Save</button>
     </div>
 </form>
 
