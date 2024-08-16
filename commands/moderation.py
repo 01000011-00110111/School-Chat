@@ -3,7 +3,7 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 from datetime import datetime, timedelta
-
+from better_profanity import profanity
 from flask_socketio import emit
 
 import database
@@ -11,7 +11,8 @@ from chat import Chat
 from commands import other
 from online import get_all_offline, get_scoketid
 from user import User
-from word_lists import blacklist_words, whitelist_words
+from word_lists import blacklist_words
+from word_lists import whitelist_words as wl
 
 REPORTS = []
 
@@ -176,14 +177,16 @@ def add_word_to_unban_list(**kwargs):
     room = kwargs['room']
     roomid = kwargs['roomid']
     with open('backend/unbanned_words.txt', 'a', encoding="utf-8") as file:
-        if word not in whitelist_words:
+        if word not in wl:
             file.write(word + '\n')
-    whitelist_words.append(word)
+    wl.append(word)
     if word in blacklist_words:
         blacklist_words.remove(word)
     message = other.format_system_msg(
         f"New unbanned word: {word} was added by an Admin.")
     room.add_message(message, roomid)
+    profanity.load_censor_words(whitelist_words=wl)
+    profanity.add_censor_words(blacklist_words)
 
 
 def remove_word_from_unban_list(**kwargs):
@@ -198,8 +201,8 @@ def remove_word_from_unban_list(**kwargs):
             for line in lines:
                 if line.strip("\n") != word:
                     file.write(line)
-                    if word in whitelist_words:
-                        whitelist_words.remove(word)
+                    if word in wl:
+                        wl.remove(word)
         # Add the removed word to banned_words.txt
         with open("backend/banned_words.txt", "a", encoding="utf-8") as banned_file:
             banned_file.write(word + "\n")
@@ -208,6 +211,8 @@ def remove_word_from_unban_list(**kwargs):
         message = other.format_system_msg(
             f"An Admin banned the word: {word}")
         room.add_message(message, roomid)
+        profanity.load_censor_words(whitelist_words=wl)
+        profanity.add_censor_words(blacklist_words)
     except FileNotFoundError:
         pass
 

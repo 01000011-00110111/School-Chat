@@ -707,6 +707,17 @@ def handle_full_list_request():
     emit("update_list_full", (list(users_list.values())), namespace="/", to=socketid)
 
 
+@socketio.on("connect")
+def emit_on_startup():
+    """statup function"""
+    socketid = request.sid
+    uuid = request.cookies.get("Userid")
+    if uuid in socketids:
+        socketids[uuid] = socketid
+    if uuid is not None:
+        update_userlist(socketid, {"status": "active"}, uuid)
+
+
 @socketio.on("disconnect")
 def handle_disconnect():
     """Remove the user from the online user db on disconnect."""
@@ -730,15 +741,16 @@ def handle_disconnect():
     for chat in active_chats:
         chat.sids.remove(socketid)
 
-    try:
-        user = User.get_user_by_id(userid)
-        if user is not None and user.status != "offline-locked":
-            user.status = "offline"
-        database.set_offline(userid)
-        if userid is not None:
-            update_userlist(socketid, {"status": "offline"}, userid)
-    except TypeError:
-        pass
+    if bool(socketio.server.manager.is_connected(socketid, '/')):
+        try:
+            user = User.get_user_by_id(userid)
+            if user is not None and user.status != "offline-locked":
+                user.status = "offline"
+            database.set_offline(userid)
+            if userid is not None:
+                update_userlist(socketid, {"status": "offline"}, userid)
+        except TypeError:
+            pass
 
 
 @socketio.on("get_rooms")
@@ -941,31 +953,6 @@ def private_connect(sender, receiver, roomid):# rework the connect code later
 
     chat.sids.append(socketid)
     emit("private_data", lst, to=socketid, namespace="/")
-
-# scheduler.start()
-# global STARTUP_MSG True
-
-@socketio.on("connect")
-def emit_on_startup():
-    """statup function"""
-    socketid = request.sid
-    uuid = request.cookies.get("Userid")
-    # if STARTUP_MSG:
-        # emit(
-        #     "message_chat",
-        #     (
-        #         format_system_msg(
-        #             "If you can see this message, please refresh your client"
-        #         ),
-        #         "ilQvQwgOhm9kNAOrRqbr",
-        #     ),
-        #     broadcast=True,
-        #     namespace="/",
-        # )
-    if uuid in socketids:
-        socketids[uuid] = socketid
-    if uuid is not None:
-        update_userlist(socketid, {"status": "active"}, uuid)
 
 
 @socketio.on("class_backups")

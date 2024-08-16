@@ -38,11 +38,12 @@ function updateUserList(onlineList, offlineList) {
     let DisplayName = getCookie('DisplayName').replace(/"/g, '');
 
     for (let onlineUser of onlineList) {
+        let status_icon = ''
         let perm_icon = icon_perm[onlineUser.perm] || '';
-        let status_icon = visibility_icon[onlineUser.status] || '';
+        if (DisplayName !== onlineUser.username) {status_icon = visibility_icon[onlineUser.status] || '';}
         let unread = '';
         if (onlineUser?.unread && onlineUser.unread.hasOwnProperty(DisplayName) && onlineUser.unread[DisplayName] > 0) {
-            unread = onlineUser.unread[DisplayName];
+                unread = onlineUser.unread[DisplayName];
         }
         online += `<button id="online_buttons" onclick="openuserinfo('${onlineUser.username}')" style="color: ${theme['sidebar-text']};"><font color='red'>${unread}</font>${perm_icon}${onlineUser.username}${status_icon}</button><br>`;
     }

@@ -2,6 +2,9 @@
     Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
+from better_profanity import profanity
+
+profanity.CENSOR_CHAR = '#'
 
 with open('backend/unbanned_words.txt', 'r', encoding="utf-8") as file:
     whitelist_words = list(file.read().splitlines())
@@ -10,9 +13,6 @@ with open('backend/unbanned_words.txt', 'r', encoding="utf-8") as file:
 with open('backend/banned_words.txt', 'r', encoding="utf-8") as file:
     blacklist_words = list(file.read().splitlines())
 
-censored = [
-    'sh!t',
-]
 
 banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
                     '[URL]', 'mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD',
