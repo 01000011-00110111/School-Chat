@@ -56,7 +56,7 @@ server {
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-Frame-Options "DENY" always;
     add_header Permissions-Policy "microphone=(), camera=(), usb=(), picture-in-picture=(), payment=(), web-share=()" always;
-    add_header Content-Security-Policy "default-src 'self'; style-src 'self' https://cdnjs.cloudflare.com/ 'unsafe-inline'; script-src 'self' cdnjs.cloudflare.com 'unsafe-inline';font-src 'self' https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/webfonts/;img-src *;";
+    add_header Content-Security-Policy "default-src 'self'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline' https://api.github.com; script-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; font-src 'self' https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/webfonts/; img-src *; connect-src 'self' https://api.github.com;";
     # SSL certs go here
     ssl_certificate         /etc/ssl/yourdomain.pem;
     ssl_certificate_key     /etc/ssl/yourdomain.key;
