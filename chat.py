@@ -97,11 +97,11 @@ class Chat:
         self.config.last_message = datetime.now()
         lines = len(self.messages)# if not private else 1
 
-        if ((lines >= 250) and permission != 'true'):
+        if ((lines >= 350) and permission != 'true'):
             self.reset_chat()
 
         for sid in self.sids:
-            emit("message_chat", (message_text), room=sid)
+            emit("message_chat", (message_text), to=sid)
         self.messages.append(message_text)
 
         log.backup_log(message_text, self.vid, False)

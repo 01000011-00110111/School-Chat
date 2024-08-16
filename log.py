@@ -3,10 +3,13 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import os
+import re
 from collections import deque
 from datetime import datetime
 
 import database
+from private import Private
+from online import users_list
 
 
 def format_system_msg(msg):
@@ -56,11 +59,14 @@ def backup_log(message_text: str, roomid: str, private: bool) -> None:
         date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S: ")
         room = database.find_room({"roomid": roomid}, 'vid')
         if private:
-            name = "Private Room"
+            userids = Private.get_userids_list(roomid)
+            user0 = users_list[userids[0]]["username"]
+            user1 = users_list[userids[1]]["username"]
+            name = f"{user0} and {user1}"
         else:
             name = room["roomName"] if roomid != "all" else "All rooms"
         f_out.write(
-            f"[{date}], [{name}, Roomid: ({roomid})] The message said: {message_text}\n"
+            f"[{date}], [ Name: {name}, Roomid: ({roomid})] {message_text}\n"
         )
 
 class FileHandler:
@@ -119,4 +125,3 @@ class FileHandler:
         """Resets the user's position."""
         self.current_position = os.path.getsize(self.file_path)
         return self.current_position
-    

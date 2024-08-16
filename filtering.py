@@ -23,7 +23,7 @@ from user import User
 
 # get our custom whitelist words (that shouldnot be banned in the first place)
 profanity.load_censor_words(whitelist_words=word_lists.whitelist_words)
-profanity.add_censor_words(word_lists.censored)
+profanity.add_censor_words(word_lists.blacklist_words)
 
 
 def run_filter_chat(user, room, message, roomid, userid):
@@ -50,17 +50,17 @@ def run_filter_chat(user, room, message, roomid, userid):
         # cmds.warn_user(user)
         return ('permission', 10, 0)
 
-    if perms != "dev":
-        message = filter_message(message)
-        role = profanity.censor(user.role)
-    else:
-        role = user.role
+    # if perms != "dev":
+    message = filter_message(format_text(message))
+    role = profanity.censor(user.role)
+    # else:
+        # role = user.role
 
     profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
     if "@" in message and not locked:
         find_pings(message, user.display_name, user, roomid, room)
 
-    final_str = compile_message(format_text(message), profile_picture, user, role)
+    final_str = compile_message(message, profile_picture, user, role)
 
     # check if locked or allowed to send
     if locked and perms not in ["dev", 'admin', "mod"]:
@@ -104,16 +104,16 @@ def run_filter_private(user, message, userid):
         # cmds.warn_user(user)
         return ('permission', 10, 0)
 
-    if perms != "dev":
-        message = filter_message(message)
-        role = profanity.censor(user.role)
-    else:
-        role = user.role
+    # if perms != "dev":
+    message = filter_message(format_text(message))
+    role = profanity.censor(user.role)
+    # else:
+        # role = user.role
 
     profile_picture = '/static/favicon.ico' if user.profile == "" else user.profile
 
 
-    final_str = ('msg' ,compile_message(format_text(message),
+    final_str = ('msg' ,compile_message(message,
                                         profile_picture, user, role), 0)
 
     limit = user.send_limit()

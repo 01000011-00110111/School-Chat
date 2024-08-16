@@ -20,7 +20,7 @@ class Appconfiguration:
 application = Appconfiguration(
     app_name="School Chat",
     app_desciption="Just a chat app",
-    app_version="1.4",
+    app_version="1.4.4",
     contributers=['C7', 'cserver', 'CastyiGlitchxz'],
     source="https://github.com/01000011-00110111/School-Chat",
 )

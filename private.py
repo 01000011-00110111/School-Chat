@@ -105,6 +105,10 @@ class Private:
             return cls.chats_userlist[userlist].unread
         return 0
 
+    @classmethod
+    def get_userids_list(cls, pmid):
+        """Gets the unread count of a user."""
+        return cls.chats[pmid].userlist
 
     def add_message(self, message_text: str, uuid) -> None:
         """Handler for messages so they get logged."""
@@ -119,7 +123,7 @@ class Private:
             self.reset_chat()
         else:
             for sid in self.sids:
-                emit("message_chat", (message_text), room=sid)
+                emit("message_chat", (message_text), to=sid)
             self.messages.append(message_text)
 
         log.backup_log(message_text, self.vid, True)
