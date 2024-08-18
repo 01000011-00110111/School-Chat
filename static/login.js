@@ -16,6 +16,8 @@ const checkbox = document.getElementById('checkBox')
   const innerContainer = document.getElementById("innerContainer")
   const schemeIcon = document.getElementById("schemeIcon")
   const tos = document.getElementById("tos-body")
+  const linksContainer = document.getElementById("linksContainer")
+  const loginLinks = linksContainer.getElementsByTagName("a")
 
   const getcheckedState = () => {
     if (checkState == "true")
@@ -97,12 +99,18 @@ const checkbox = document.getElementById('checkBox')
       schemeIcon.classList.add("light-mode")
       schemeIcon.classList.add("fa-moon")
       schemeIcon.classList.remove("fa-sun")
+      for (let index = 0; index < loginLinks.length; index++) {
+        loginLinks[index].classList.add("light-links")
+      }
     }
     else if (schemeState == "dark")
     {
       loginContainer.classList.remove("light-mode")
       leftPanel.classList.remove("light-mode")
       innerContainer.classList.remove("light-mode")
+      for (let index = 0; index < loginLinks.length; index++) {
+        loginLinks[index].classList.remove("light-links")
+      }
     }
   }
   retrieveScheme()

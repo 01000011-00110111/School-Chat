@@ -22,6 +22,7 @@ import os
 import random
 import time
 from string import ascii_uppercase
+from threading import Timer
 
 import flask
 from flask import make_response, request
@@ -45,7 +46,15 @@ import word_lists
 from app_config import application
 from chat import Chat
 from commands.other import end_ping
-from online import socketids, update_userlist, users_list
+from online import (
+    socketids,
+    update_userlist,
+    users_list,
+    user_connections,
+    user_last_heartbeat,
+    HEARTBEAT_TIMEOUT,
+    check_user_heartbeat
+    )
 from private import Private, get_messages, get_messages_list
 from user import User, login_manager
 
@@ -175,11 +184,17 @@ def specific_private_page(prefix, private_chat) -> ResponseReturnValue:
 @login_required
 def logout():
     """Log out the current user"""
-    User.delete_user(request.cookies.get("Userid"))
+    uuid = request.cookies.get("Userid")
+    User.delete_user(uuid)
     logout_user()
-    del socketids[request.cookies.get("Userid")]
     resp = make_response(flask.redirect(flask.url_for("login_page")))
     resp.set_cookie("Userid", "", expires=0)
+    user = User.get_user_by_id(uuid)
+    if user and user.status != "offline-locked":
+        user.status = "offline"
+    database.set_offline(uuid)
+    update_userlist(socketids[uuid], {"status": "offline"}, uuid)
+    del socketids[uuid]
     return resp
 
 
@@ -709,30 +724,48 @@ def handle_full_list_request():
 
 @socketio.on("connect")
 def emit_on_startup():
-    """statup function"""
+    """Handle a new connection."""
     socketid = request.sid
-    uuid = request.cookies.get("Userid")
-    if uuid in socketids:
-        socketids[uuid] = socketid
-    if uuid is not None:
-        update_userlist(socketid, {"status": "active"}, uuid)
+    userid = request.cookies.get("Userid")
+
+    if userid is not None:
+        if userid not in user_connections:
+            user_connections[userid] = set()
+        user_connections[userid].add(socketid)
+        user_last_heartbeat[userid] = time.time()
+
+        update_userlist(socketid, {"status": "active"}, userid)
+
+        Timer(HEARTBEAT_TIMEOUT + 5, check_user_heartbeat,
+              args=[userid, handle_disconnect]).start()
 
 
 @socketio.on("disconnect")
-def handle_disconnect():
-    """Remove the user from the online user db on disconnect."""
-    socketid = request.sid
-    userid = request.cookies.get("Userid")
+def handle_disconnect(socketid=None, userid=None):
+    """Handle user disconnection."""
+    if not socketid:
+        socketid = request.sid
+    if not userid:
+        userid = request.cookies.get("Userid")
+
+    if userid is None:
+        return
+
+    if userid in user_connections:
+        user_connections[userid].discard(socketid)
+        if not user_connections[userid]:
+            del user_connections[userid]
 
     active_privates = [
         private
         for private in Private.chats.values()
-        if (userid in private.userlist and private.active.get(userid, False))
+        if userid in private.userlist and private.active.get(userid, False)
         or socketid in private.sids
     ]
 
     for private in active_privates:
-        private.active[userid] = False
+        if userid in private.active:
+            private.active[userid] = False
         if socketid in private.sids:
             private.sids.remove(socketid)
 
@@ -741,16 +774,28 @@ def handle_disconnect():
     for chat in active_chats:
         chat.sids.remove(socketid)
 
-    if bool(socketio.server.manager.is_connected(socketid, '/')):
+    if not user_connections.get(userid):
         try:
             user = User.get_user_by_id(userid)
-            if user is not None and user.status != "offline-locked":
+            if user and user.status != "offline-locked":
                 user.status = "offline"
             database.set_offline(userid)
-            if userid is not None:
-                update_userlist(socketid, {"status": "offline"}, userid)
-        except TypeError:
-            pass
+            update_userlist(socketid, {"status": "offline"}, userid)
+        except TypeError as e:
+            print(f"Error setting user offline: {e}")
+
+
+@socketio.on("heartbeat")
+def handle_heartbeat(status):
+    """Handle heartbeat from the client."""
+    socketid = request.sid
+    userid = request.cookies.get("Userid")
+
+    if userid is not None:
+        user_last_heartbeat[userid] = time.time()
+
+        if userid in user_connections:
+            update_userlist(socketid, {"status": status}, userid)
 
 
 @socketio.on("get_rooms")
@@ -873,6 +918,7 @@ def handle_private_message(message, pmid, userid):
         if "$sudo" in message and result[2] != 3:
             filtering.find_cmds(message, user, pmid, private)
 
+
 @socketio.on("pingtest")
 def handle_ping_tests(start, roomid):
     """Respond with the start time, so ping times can be calculated"""
@@ -893,12 +939,13 @@ def connect(roomid, sender):
     active_privates = [
         private
         for private in Private.chats.values()
-        if (sender in private.userlist and private.active.get(sender, False))
+        if sender in private.userlist and private.active.get(sender, False)
         or socketid in private.sids
     ]
 
     for private in active_privates:
-        private.active[sender] = False
+        if sender in private.active:
+            private.active[sender] = False
         if socketid in private.sids:
             private.sids.remove(socketid)
 
@@ -930,12 +977,13 @@ def private_connect(sender, receiver, roomid):# rework the connect code later
     active_privates = [
         private
         for private in Private.chats.values()
-        if (sender in private.userlist and private.active.get(sender, False))
+        if sender in private.userlist and private.active.get(sender, False)
         or socketid in private.sids
     ]
 
     for private in active_privates:
-        private.active[sender] = False
+        if sender in private.active:
+            private.active[sender] = False
         if socketid in private.sids:
             private.sids.remove(socketid)
 

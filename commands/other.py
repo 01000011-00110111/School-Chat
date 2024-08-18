@@ -15,6 +15,9 @@ def check_if_dev(user):
     """Return if a user is a dev or not."""
     return 1 if 'Debugpass' in user.perm else 0
 
+def check_if_admin(user):
+    """Return if a user is a mod or not."""
+    return 1 if 'adminpass' in user.perm else 0
 
 def check_if_mod(user):
     """Return if a user is a mod or not."""
@@ -47,6 +50,7 @@ def send_as_admin(**kwargs):
 
 def help_command(**kwargs):
     """sends a message with a file full of commands that the user can use."""
+    # pylint: disable=R0912
     roomid = kwargs['roomid']
     issuer = kwargs['user']
     with open('backend/command_list.txt', 'r', encoding="utf8") as file:
@@ -60,26 +64,24 @@ def help_command(**kwargs):
                 start_index = i
             elif 'end' in line.lower():
                 end_index = i - 1
-    elif check_if_mod(issuer) == 1:
+    elif check_if_admin(issuer) == 1:
         for i, line in enumerate(lines):
             if 'admin commands' in line.lower():
                 start_index = i
             elif 'end' in line.lower():
                 end_index = i - 1
+    elif check_if_mod(issuer) == 1:
+        for i, line in enumerate(lines):
+            if 'mod commands' in line.lower():
+                start_index = i
+            elif 'end' in line.lower():
+                end_index = i - 1
     else:
         for i, line in enumerate(lines):
-            # if check_if_owner(roomid, issuer) == 1:
             if 'user commands' in line.lower():
                 start_index = i
             elif 'end' in line.lower():
                 end_index = i - 1
-            # if check_if_room_mod(issuer) == 1:
-            #     if 'user commands' in line.lower():
-            #         start_index = i
-            #     elif 'room owner commands' in line.lower():
-            #         end_index = i - roomid
-            #     elif 'end' in line.lower():
-            #         end_index = i - 1
 
     command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(
         line.strip() for line in lines[start_index:end_index + 1]) + "</font>"

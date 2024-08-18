@@ -2,12 +2,19 @@
     Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
+import time
+from flask import current_app
 from flask_socketio import emit
 
 import database
+from user import User
 
 socketids = {}
 users_list = {}
+user_connections = {}
+user_last_heartbeat = {}
+
+HEARTBEAT_TIMEOUT = 40
 
 
 def get_scoketid(uuid):
@@ -47,6 +54,32 @@ def clear_unread(recipient, sender):
     users_list[recipient]["unread"][display_name] = 0
     if "offline" not in users_list[sender]["status"]:
         emit("update_list", users_list[recipient], namespace="/", to=socketids[sender])
+
+
+def check_user_heartbeat(userid, disconnect_callback):
+    """Check if the user's heartbeat is overdue and disconnect if necessary."""
+    if userid in user_last_heartbeat:
+        last_heartbeat = user_last_heartbeat[userid]
+        if time.time() - last_heartbeat > HEARTBEAT_TIMEOUT:
+            handle_forced_disconnect(userid, disconnect_callback)
+
+
+def handle_forced_disconnect(userid, disconnect_callback):
+    """Mark the user as offline if no heartbeat is received in time."""
+    if userid in user_connections:
+        for socketid in list(user_connections[userid]):
+            disconnect_callback(socketid, userid)
+        del user_connections[userid]
+
+    with current_app.app_context():
+        try:
+            u = User.get_user_by_id(userid)
+            if u and user.status != "offline-locked":
+                u.status = "offline"
+            database.set_offline(userid)
+            update_userlist(None, {"status": "offline"}, userid)
+        except TypeError as e:
+            print(f"Error in forced disconnect: {e}")
 
 
 def get_all_offline():
