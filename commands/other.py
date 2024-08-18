@@ -50,6 +50,7 @@ def send_as_admin(**kwargs):
 
 def help_command(**kwargs):
     """sends a message with a file full of commands that the user can use."""
+    # pylint: disable=R0912
     roomid = kwargs['roomid']
     issuer = kwargs['user']
     with open('backend/command_list.txt', 'r', encoding="utf8") as file:
