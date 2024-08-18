@@ -15,6 +15,9 @@ def check_if_dev(user):
     """Return if a user is a dev or not."""
     return 1 if 'Debugpass' in user.perm else 0
 
+def check_if_admin(user):
+    """Return if a user is a mod or not."""
+    return 1 if 'adminpass' in user.perm else 0
 
 def check_if_mod(user):
     """Return if a user is a mod or not."""
@@ -60,9 +63,15 @@ def help_command(**kwargs):
                 start_index = i
             elif 'end' in line.lower():
                 end_index = i - 1
-    elif check_if_mod(issuer) == 1:
+    elif check_if_admin(issuer) == 1:
         for i, line in enumerate(lines):
             if 'admin commands' in line.lower():
+                start_index = i
+            elif 'end' in line.lower():
+                end_index = i - 1
+    elif check_if_mod(issuer) == 1:
+        for i, line in enumerate(lines):
+            if 'mod commands' in line.lower():
                 start_index = i
             elif 'end' in line.lower():
                 end_index = i - 1

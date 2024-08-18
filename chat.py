@@ -99,13 +99,15 @@ class Chat:
 
         if ((lines >= 350) and permission != 'true'):
             self.reset_chat()
+        else:
+            self.messages.append(message_text)
 
         for sid in self.sids:
             emit("message_chat", (message_text), to=sid)
-        self.messages.append(message_text)
 
         log.backup_log(message_text, self.vid, False, None)
         return ('room', 1)
+
 
     def reset_chat(self):
         """Reset the chat."""
