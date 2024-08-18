@@ -82,7 +82,7 @@ class Chat:
             _lines = len(chat.messages)
             chat.messages.append(message_text)
 
-            log.backup_log(message_text, chat.vid, False)
+            log.backup_log(message_text, chat.vid, False, None)
             return ('room', 1)
 
 
@@ -104,7 +104,7 @@ class Chat:
             emit("message_chat", (message_text), to=sid)
         self.messages.append(message_text)
 
-        log.backup_log(message_text, self.vid, False)
+        log.backup_log(message_text, self.vid, False, None)
         return ('room', 1)
 
     def reset_chat(self):

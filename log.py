@@ -3,12 +3,10 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import os
-import re
 from collections import deque
 from datetime import datetime
 
 import database
-from private import Private
 from online import users_list
 
 
@@ -53,15 +51,14 @@ def get_cmd_logs() -> str:
     return format_system_msg(f"Last 10 Command Log Entries:<br>{cmd_log_txt}\n")
 
 
-def backup_log(message_text: str, roomid: str, private: bool) -> None:
+def backup_log(message_text: str, roomid: str, private: bool, userlist) -> None:
     """adds the newest message from any chat rooom in the backup file"""
     with open("backend/Chat-backup.txt", "a", encoding="utf8") as f_out:
         date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S: ")
         room = database.find_room({"roomid": roomid}, 'vid')
         if private:
-            userids = Private.get_userids_list(roomid)
-            user0 = users_list[userids[0]]["username"]
-            user1 = users_list[userids[1]]["username"]
+            user0 = users_list[userlist[0]]["username"]
+            user1 = users_list[userlist[1]]["username"]
             name = f"{user0} and {user1}"
         else:
             name = room["roomName"] if roomid != "all" else "All rooms"

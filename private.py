@@ -126,7 +126,7 @@ class Private:
                 emit("message_chat", (message_text), to=sid)
             self.messages.append(message_text)
 
-        log.backup_log(message_text, self.vid, True)
+        log.backup_log(message_text, self.vid, True, self.userlist)
         return ('room', 1)
 
     def set_active(self, sender):
