@@ -4,7 +4,7 @@
 """
 import os
 
-from database import Permission
+from database import Permission, Customization
 
 
 def chcek_if_data_is_missing():
@@ -13,6 +13,8 @@ def chcek_if_data_is_missing():
     for user in users:
         if 'themeCount' not in user or user['themeCount'] is None:
             Permission.update_one({'userId': user['userId']}, {'$set': {'themeCount': 0}})
+        # if 'blocked' not in user or user['themeCount'] is None:
+            # Customization.update_one({'userId': user['userId']}, {'$set': {'blocked': []}})
 
 
 def self_destruct():
