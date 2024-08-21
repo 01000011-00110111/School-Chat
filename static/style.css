@@ -96,11 +96,17 @@ body, html {
 }
 
 #message {
-    font-size: 18px;
-    width: 100%;
-    border-radius: 15px;
-    text-indent: 6px;
-    outline: none;
+  font-size: 18px;
+  width: 100%;
+  border-radius: 15px;
+  text-indent: 6px;
+  outline: none;
+}
+
+#message:disabled {
+  background: #00000082 !important;
+  color: white !important;
+  border: 0;
 }
 
 /* id start by getting the text above the area the text box is */
@@ -141,6 +147,10 @@ body, html {
 #send {
     font-size: 24px;
     border-radius: 22%;
+}
+
+#send:disabled {
+  display: none;
 }
 
 #send:hover {

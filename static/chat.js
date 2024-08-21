@@ -6,6 +6,22 @@ socket.on("message_chat", (message) => {
     renderChat((message));
 });
 
+socket.on("chat_muted", () => {
+    const send_button = document.getElementById("send");
+
+    message.disabled = true;
+    message.placeholder = "You can't chat in this room";
+    send_button.disabled = true;
+})
+
+socket.on("chat_unmuted", () => {
+    const send_button = document.getElementById("send");
+
+    message.disabled = false;
+    message.placeholder = "type your message here";
+    send_button.disabled = false;
+})
+
 socket.on("troll", (message, ID) => {
     renderChat(message, ID);
     var audio = new Audio('static/airhorn_default.wav');
