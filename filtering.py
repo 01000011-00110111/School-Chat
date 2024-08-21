@@ -159,29 +159,27 @@ def filter_message(message):
     return profanity.censor(message)
 
 
-def format_text(message):#this system needs notes do not remove
+def format_text(message):  # this system needs notes do not remove
     """Adds the message styling the user requested."""
     bold_pattern = re.compile(r'\*(.*?)\*', re.DOTALL)
     italic_pattern = re.compile(r'/(.*?)/', re.DOTALL)
     underline_pattern = re.compile(r'_(.*?)_', re.DOTALL)
     color_pattern = re.compile(r'\[([a-zA-Z]+)\](.*?)#')
 
-    # Check and apply bold formatting: *text*
     if '*' in message:
-        message = bold_pattern.sub(r'<b>\1</b>', message)
+        message = bold_pattern.sub(lambda m: f'<b>{m.group(1)}</b>' if m.group(1).strip() else m.group(0), message)
 
-    # Check and apply italic formatting: <i>text</i>
-    if '/' in message and '__' not in message:
-        message = italic_pattern.sub(r'<i>\1</i>', message)
+    if '/' in message:
+        message = italic_pattern.sub(lambda m: f'<i>{m.group(1)}</i>' if m.group(1).strip() else m.group(0), message)
 
-    # Check and apply underline formatting: __text__
-    if '_' in message and '__' not in message:
-        message = underline_pattern.sub(r'<u>\1</u>', message)
+    if '_' in message:
+        message = underline_pattern.sub(lambda m: f'<u>{m.group(1)}</u>' if m.group(1).strip() else m.group(0), message)
 
-    # Check and apply color formatting: [color]text
     def replace(match):
         color, text = match.groups()
-        return f'<span style="color: {color}">{text}</span>'
+        if text.strip():
+            return f'<span style="color: {color}">{text}</span>'
+        return match.group(0)
 
     if '[' in message:
         message = color_pattern.sub(replace, message)
@@ -189,27 +187,35 @@ def format_text(message):#this system needs notes do not remove
     return message
 
 
+
 def find_pings(message, disp_name, user, roomid, _room):
     """Gotta catch 'em all! (checks for pings in the users message)"""
     if user.locked == 'locked':
         failed_message(('permission', 11, 'locked'), roomid)
         return
+    users_pinged = []
     pings = re.findall(r'@(\w+|"[^"]+")', message)
     pings = [ping.strip('"') for ping in pings]
     # room = database.find_room({'roomid': roomid}, 'vid')
 
     for ping in pings:
-        # message = message.replace(f"[{ping}", '')
-        # print(ping)
-        sid = get_scoketid(User.get_userid(ping)) if ping != 'everyone' else None
-        emit("ping", {
-            "from": disp_name,
-            # "pfp": profile_picture,
-        },
-        namespace="/",
-        to=sid if ping != 'everyone' else None,
-        broadcast=ping == 'everyone')
-        break  # ez one per message fix lol
+        other_user = User.get_userid(ping)
+        if user in users_pinged:
+            continue
+        sid = get_scoketid(other_user) if ping != 'everyone' else None
+        users_pinged.append(other_user)
+        broadcast = ping == 'everyone'
+        to = None if broadcast else sid
+        emit(
+            "ping", 
+            {
+                "from": disp_name,
+                # "pfp": profile_picture,
+            },
+            namespace='/',
+            broadcast=broadcast,
+            to=to
+        )
 
 
 def find_cmds(message, user, roomid, room):
