@@ -571,10 +571,15 @@ def customize_accounts() -> ResponseReturnValue:
     log.log_accounts(f"The account {user} has updated some setting(s)")
     return return_val
 
-@app.route("/support/docsx")
+@app.route("/support/docs")
 def docx():
     """Opens support documentation."""
     return flask.render_template("support/documentation.html")
+
+@app.route("/support/docs/categories/<page>")
+def category():
+    """Opens support documentation."""
+    return flask.render_template("support/chat_docs.html")
 
 
 ##### THEME STUFF #####
@@ -1041,4 +1046,4 @@ def teardown_request(_exception=None):
 
 if __name__ == "__main__":
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)

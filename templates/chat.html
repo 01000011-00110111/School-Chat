@@ -41,8 +41,42 @@
 <div id="chat"></div>
 
 <div id="sides">
+    <div id="sudo_cmd_menu">
+        <ul id="sudo_list">
+            <li><button command="sudo help" trigger="$" privilege="user" class="sudo_cmd_button">$help</button></li>
+            <li><button command="sudo online" trigger="$" privilege="user" class="sudo_cmd_button">$online</button></li>
+            <li><button command="sudo offline" trigger="$" privilege="user" class="sudo_cmd_button">$offline</button></li>
+            <li><button command="sudo ping" trigger="$" privilege="user" class="sudo_cmd_button">$ping</button></li>
+            <li><button command="sudo create room_name" trigger="$" privilege="user" class="sudo_cmd_button">$create room</button></li>
+            <li><button command="sudo song" trigger="$" privilege="user" class="sudo_cmd_button">$song</button></li>
+            <li><button command="sudo ecount" trigger="$" privilege="user" class="sudo_cmd_button">$ecount</button></li>
+            <li><button command="everyone" trigger="@" privilege="user" class="sudo_cmd_button">@everyone</button></li>
+            <li><button command="username_here" trigger="@" privilege="user" class="sudo_cmd_button">@user_notify</button></li>
+            <li><button command="*text_goes_here*" trigger="" privilege="style" class="sudo_cmd_button">&Bold</button></li>
+            <li><button command="/text_goes_here/" trigger="" privilege="style" class="sudo_cmd_button">&Italicize</button></li>
+            <li><button command="_text_goes_here_" trigger="" privilege="style" class="sudo_cmd_button">&Underline</button></li>
+            <li><button command="[color]text_goes_here#" trigger="" privilege="style" class="sudo_cmd_button">&Color</button></li>
+            <li><button command="sudo lock" trigger="$" privilege="mod" class="sudo_cmd_button">$lock</button></li>
+            <li><button command="sudo unlock" trigger="$" privilege="mod" class="sudo_cmd_button">$unlock</button></li>
+            <li><button command="sudo mute" trigger="$" privilege="mod" class="sudo_cmd_button">$mute</button></li>
+            <li><button command="sudo unmute" trigger="$" privilege="mod" class="sudo_cmd_button">$unmute</button></li>
+            <li><button command="sudo clear" trigger="$" privilege="mod" class="sudo_cmd_button">$clear</button></li>
+            <li><button command="sudo report username_here reason_here" trigger="$" privilege="mod" class="sudo_cmd_button">$report</button></li>
+            <li><button command="sudo report_list" trigger="$" privilege="mod" class="sudo_cmd_button">$report_list</button></li>
+            <li><button command="sudo ban" trigger="$" privilege="admin" class="sudo_cmd_button">$ban</button></li>
+            <li><button command="sudo unban" trigger="$" privilege="admin" class="sudo_cmd_button">$unban</button></li>
+            <li><button command="sudo cmd_logs" trigger="$" privilege="admin" class="sudo_cmd_button">$logs</button></li>
+            <li><button command="sudo globalock" trigger="$" privilege="admin" class="sudo_cmd_button">$globalock</button></li>
+            <li><button command="sudo word_ban" trigger="$" privilege="admin" class="sudo_cmd_button">$word_ban</button></li>
+            <li><button command="sudo word_unban" trigger="$" privilege="admin" class="sudo_cmd_button">$word_unban</button></li>
+            <li><button command="sudo status" trigger="$" privilege="dev" class="sudo_cmd_button">$status</button></li>
+            <li><button command="sudo pstats" trigger="$" privilege="dev" class="sudo_cmd_button">$pstats</button></li>
+            <li><button command="sudo lines" trigger="$" privilege="dev" class="sudo_cmd_button">$lines</button></li>
+            <li><button command="sudo clear_mutes" trigger="$" privilege="dev" class="sudo_cmd_button">$clear_mutes</button></li>
+        </ul>
+    </div>
     <div id="chatbox" hidden>       
-        <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250"></input><br/>
+        <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250" onkeyup="search_commands()"></input><br/>
         <button onClick="getMessage();" id="send">Send</button>
     </div>
 </div><br>

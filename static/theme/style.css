@@ -992,7 +992,6 @@ notification .close_panel button {
   position: fixed;
   text-align: left;
   z-index: 3;
-  height: fit-content;
   top: 57px;
   left: 0px;
   background: black;
