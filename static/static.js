@@ -19,3 +19,14 @@ socket.on("ping", ({from}) => {
 socket.on("system_pings", (message) => {
     new Notification(message, { icon: 'static/favicon.ico' });
 });
+
+setInterval(() => {
+    RID = window.sessionStorage.getItem("ID")
+    let status = ''
+    if (document.hidden) {
+        status = 'idle';
+    } else {
+        status = 'active';
+    }
+    socket.emit('heartbeat', status, RID);
+}, 25000);

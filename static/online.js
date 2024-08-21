@@ -6,16 +6,6 @@ const users_list = {
     offlineList: []
 };
 
-setInterval(() => {
-    let status = ''
-    if (document.hidden) {
-        status = 'idle';
-    } else {
-        status = 'active';
-    }
-    socket.emit('heartbeat', status);
-}, 25000);
-
 function notifyStatusChange(status) {
     socket.emit('status_change', { status: status });
 }

@@ -228,7 +228,7 @@ def report_user(**kwargs):
          (other.format_system_msg(f"You reported {reported_user} with the reason, {reason}"),
           roomid),
         to=get_scoketid(user.uuid))
-    emit('system_pings', f"The user {reported_user} was reported for the reason: {reason}")
+    # emit('system_pings', f"The user {reported_user} was reported for the reason: {reason}",)
 
 
 def list_reports(**kwargs):

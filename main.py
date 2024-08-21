@@ -467,7 +467,7 @@ def settings_page() -> ResponseReturnValue:
         user_color=user["userColor"],
         role_color=user["roleColor"],
         message_color=user["messageColor"],
-        profile=user["profile"],
+        profile_view=user["profile"],
         theme=user["theme"],
     )
 
@@ -478,6 +478,7 @@ def customize_accounts() -> ResponseReturnValue:
     """Customize the account."""
     return_val = None
     # Gather form and cookie data into a single dictionary
+    file = request.files.get('profile')
     data = {
         "username": request.form.get("user"),
         "userid": request.cookies.get("Userid"),
@@ -487,7 +488,7 @@ def customize_accounts() -> ResponseReturnValue:
         "role_color": request.form.get("role_color"),
         "user_color": request.form.get("user_color"),
         "email": request.form.get("email"),
-        "file": request.files.get("profile"),
+        "file": file,
         "theme": request.form.get("theme"),
     }
 
@@ -786,7 +787,7 @@ def handle_disconnect(socketid=None, userid=None):
 
 
 @socketio.on("heartbeat")
-def handle_heartbeat(status):
+def handle_heartbeat(status, roomid):
     """Handle heartbeat from the client."""
     socketid = request.sid
     userid = request.cookies.get("Userid")
@@ -796,6 +797,9 @@ def handle_heartbeat(status):
 
         if userid in user_connections:
             update_userlist(socketid, {"status": status}, userid)
+            room = Chat.create_or_get_chat(roomid)
+            if socketid not in room.sids:
+                room.sids.append(socketid)
 
 
 @socketio.on("get_rooms")
