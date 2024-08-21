@@ -200,22 +200,12 @@ def find_pings(message, disp_name, user, roomid, _room):
 
     for ping in pings:
         other_user = User.get_userid(ping)
-        if user in users_pinged:
-            continue
         sid = get_scoketid(other_user) if ping != 'everyone' else None
-        users_pinged.append(other_user)
-        broadcast = ping == 'everyone'
-        to = None if broadcast else sid
-        emit(
-            "ping", 
-            {
-                "from": disp_name,
-                # "pfp": profile_picture,
-            },
-            namespace='/',
-            broadcast=broadcast,
-            to=to
-        )
+        users_pinged.append(other_user) 
+        if ping == 'everyone': 
+            emit("ping", {"from": disp_name}, namespace='/', broadcast=True) 
+        else: 
+            emit("ping", {"from": disp_name}, namespace='/', to=sid)
 
 
 def find_cmds(message, user, roomid, room):
