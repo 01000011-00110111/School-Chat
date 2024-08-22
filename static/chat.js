@@ -196,12 +196,17 @@ const close_command_menu = () => {
 /* This tirgger the sudo command menu when you type the trigger word ($, @ ,&, &*) */
 const sudo_button = document.querySelectorAll(".sudo_cmd_button")
 message.addEventListener('input', (event) => {
-    if (message.value[0] === "$" || message.value[0] === "@" || message.value[0] === "&" || message.value[0] === "&*" || message.value[0] === "filter:") {
-        open_command_menu()
+    // const inputValue = message.value.trim();
+    const commandPrefixes = ["$", "@", "&", "&*", "filter:"];
+
+    let containsCommand = commandPrefixes.some(prefix => message.value.includes(prefix));
+
+    if (containsCommand) {
+        open_command_menu();
     } else {
-        close_command_menu()
+        close_command_menu();
     }
-})
+});
 
 /* This closes the sudo command menu when you click the enter button */
 message.addEventListener('keypress', (event) => {
@@ -232,7 +237,6 @@ for (let index = 0; index < sudo_button.length; index++) {
     })
 }
 
-/* This is a search filter that filters through the commands and hides the ones that don't match the search filters typed */
 function search_commands() {
     // Declare variables
     var filter, ul, li, a, i, txtValue;
@@ -262,6 +266,58 @@ function search_commands() {
       }
     }
 }
+
+/* This is a search filter that filters through the commands and hides the ones that don't match the search filters typed */
+// function search_commands() {
+//     // Declare variables
+//     var filter, ul, li, a, i, txtValue;
+//     filter = message.value.toLowerCase();
+//     ul = document.getElementById("sudo_list");
+//     li = ul.getElementsByTagName('li');
+//     const variations = ["$", "$s", "$su", "$sud", "$sudo", "$sudo "];
+//     let bypass = false;
+//     let actualFilter = '';
+    
+//     // Trim any leading or trailing whitespace from the filter
+//     const trimmedFilter = filter.trim();
+    
+//     // Find the longest matching prefix
+//     const prefix = variations.reduce((longest, current) => {
+//         return trimmedFilter.startsWith(current) && current.length > longest.length ? current : longest;
+//     }, "");
+    
+//     // Remove the prefix and any leading/trailing spaces
+//     if (prefix) {
+//         actualFilter = trimmedFilter.substring(prefix.length).trim();
+//         if (variations.includes(trimmedFilter)) { // Check if the exact trimmed filter is one of the variations
+//             bypass = true;
+//         }
+//     }
+  
+//     // Loop through all list items, and hide those who don't match the search query
+//     if (!bypass) {
+//     for (i = 0; i < li.length; i++) {
+//         a = li[i].getElementsByTagName("button")[0];
+//         txtValue = a.textContent || a.innerText;
+//         if (txtValue.toLowerCase().indexOf(actualFilter) > -1) {
+//           li[i].style.display = "";
+//         } else {
+//           li[i].style.display = "none";
+//         } if (message.value === "&*") {
+//           li[i].style.display = "";
+//         } if (message.value === `$filter{type:${sudo_button[i].getAttribute("privilege")}}`) {
+//           const command_badge = document.querySelectorAll(".user")
+//           for (let index = 0; index < command_badge.length; index++) {
+//               if (command_badge[index].innerHTML === "user") {
+//                   li[i].style.display = "";
+//               }
+//           }
+//         } if (message.value === "color_change") {
+//           message.style.setProperty('animation', 'clr_typing 3s infinite')
+//         }
+//       }
+//     }
+//   }
 
 
 // setInterval(BTMLog, 3000)

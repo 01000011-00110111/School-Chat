@@ -155,20 +155,54 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
 @app.route("/admin")
 @login_required
 def admin_page() -> ResponseReturnValue:
-    """Get the specific room in the uri."""
+    """Serve the admin page."""
     user = database.find_login_data(request.cookies.get("Userid"), True)
     if "adminpass" in user["SPermission"]:
         return flask.render_template("admin.html")
     return flask.redirect(flask.url_for("chat_page"))
 
-
 @app.route("/admin/<room_name>")
 @login_required
 def specific_admin_page(room_name) -> ResponseReturnValue:
-    """Get the specific room in the uri."""
-    # later we can set this up to get the specific room (with permssions)
+    """Redirect to the admin page for a specific room."""
     void(room_name)
     return flask.redirect(flask.url_for("admin_page"))
+
+
+@app.route("/mod")
+@login_required
+def mod_page() -> ResponseReturnValue:
+    """Serve the mod page."""
+    user = database.find_login_data(request.cookies.get("Userid"), True)
+    if "modpass" in user["SPermission"]:
+        return flask.render_template("mod.html")
+    return flask.redirect(flask.url_for("chat_page"))
+
+
+@app.route("/mod/<room_name>")
+@login_required
+def specific_mod_page(room_name) -> ResponseReturnValue:
+    """Redirect to the mod page for a specific room."""
+    void(room_name)
+    return flask.redirect(flask.url_for("mod_page"))
+
+
+@app.route("/dev")
+@login_required
+def dev_page() -> ResponseReturnValue:
+    """Serve the dev page."""
+    user = database.find_login_data(request.cookies.get("Userid"), True)
+    if "Debugpass" in user["SPermission"]:
+        return flask.render_template("dev.html")
+    return flask.redirect(flask.url_for("chat_page"))
+
+
+@app.route("/dev/<room_name>")
+@login_required
+def specific_dev_page(room_name) -> ResponseReturnValue:
+    """Redirect to the dev page for a specific room."""
+    void(room_name)
+    return flask.redirect(flask.url_for("dev_page"))
 
 
 @app.route("/<prefix>/Private/<private_chat>")
@@ -237,8 +271,12 @@ def login_page() -> ResponseReturnValue:
                     next_page = flask.url_for("projects")
                 if next_page not in word_lists.approved_links:
                     next_page = flask.url_for("chat_page")
-                    if "adminpass" in user["SPermission"]:
+                    if "Debugpass" in user["SPermission"][0]:
+                        next_page = flask.url_for("dev_page")
+                    if "adminpass" in user["SPermission"][0]:
                         next_page = flask.url_for("admin_page")
+                    if "modpass" in user["SPermission"][0]:
+                        next_page = flask.url_for("mod_page")
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie("Username", user["username"])
             resp.set_cookie("Theme", user["theme"])
@@ -467,7 +505,7 @@ def settings_page() -> ResponseReturnValue:
         user_color=user["userColor"],
         role_color=user["roleColor"],
         message_color=user["messageColor"],
-        profile_view=user["profile"],
+        profile=user["profile"],
         theme=user["theme"],
     )
 
@@ -478,7 +516,6 @@ def customize_accounts() -> ResponseReturnValue:
     """Customize the account."""
     return_val = None
     # Gather form and cookie data into a single dictionary
-    file = request.files.get('profile')
     data = {
         "username": request.form.get("user"),
         "userid": request.cookies.get("Userid"),
@@ -488,7 +525,7 @@ def customize_accounts() -> ResponseReturnValue:
         "role_color": request.form.get("role_color"),
         "user_color": request.form.get("user_color"),
         "email": request.form.get("email"),
-        "file": file,
+        "file": request.files.get('profile'),
         "theme": request.form.get("theme"),
     }
 
@@ -1046,4 +1083,4 @@ def teardown_request(_exception=None):
 
 if __name__ == "__main__":
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)

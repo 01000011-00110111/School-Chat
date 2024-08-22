@@ -199,12 +199,12 @@ def find_pings(message, disp_name, user, roomid, _room):
     # room = database.find_room({'roomid': roomid}, 'vid')
 
     for ping in pings:
-        other_user = User.get_userid(ping)
+        other_user = User.get_userid(ping) if ping != 'everyone' else None
         sid = get_scoketid(other_user) if ping != 'everyone' else None
-        users_pinged.append(other_user) 
-        if ping == 'everyone': 
-            emit("ping", {"from": disp_name}, namespace='/', broadcast=True) 
-        else: 
+        users_pinged.append(other_user)
+        if ping == 'everyone':
+            emit("ping", {"from": disp_name}, namespace='/', broadcast=True)
+        if sid is not None:
             emit("ping", {"from": disp_name}, namespace='/', to=sid)
 
 
