@@ -49,6 +49,7 @@ from commands.other import end_ping
 from online import (
     socketids,
     update_userlist,
+    update_display,
     users_list,
     user_connections,
     user_last_heartbeat,
@@ -155,20 +156,54 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
 @app.route("/admin")
 @login_required
 def admin_page() -> ResponseReturnValue:
-    """Get the specific room in the uri."""
+    """Serve the admin page."""
     user = database.find_login_data(request.cookies.get("Userid"), True)
     if "adminpass" in user["SPermission"]:
         return flask.render_template("admin.html")
     return flask.redirect(flask.url_for("chat_page"))
 
-
 @app.route("/admin/<room_name>")
 @login_required
 def specific_admin_page(room_name) -> ResponseReturnValue:
-    """Get the specific room in the uri."""
-    # later we can set this up to get the specific room (with permssions)
+    """Redirect to the admin page for a specific room."""
     void(room_name)
     return flask.redirect(flask.url_for("admin_page"))
+
+
+@app.route("/mod")
+@login_required
+def mod_page() -> ResponseReturnValue:
+    """Serve the mod page."""
+    user = database.find_login_data(request.cookies.get("Userid"), True)
+    if "modpass" in user["SPermission"]:
+        return flask.render_template("mod.html")
+    return flask.redirect(flask.url_for("chat_page"))
+
+
+@app.route("/mod/<room_name>")
+@login_required
+def specific_mod_page(room_name) -> ResponseReturnValue:
+    """Redirect to the mod page for a specific room."""
+    void(room_name)
+    return flask.redirect(flask.url_for("mod_page"))
+
+
+@app.route("/dev")
+@login_required
+def dev_page() -> ResponseReturnValue:
+    """Serve the dev page."""
+    user = database.find_login_data(request.cookies.get("Userid"), True)
+    if "Debugpass" in user["SPermission"]:
+        return flask.render_template("dev.html")
+    return flask.redirect(flask.url_for("chat_page"))
+
+
+@app.route("/dev/<room_name>")
+@login_required
+def specific_dev_page(room_name) -> ResponseReturnValue:
+    """Redirect to the dev page for a specific room."""
+    void(room_name)
+    return flask.redirect(flask.url_for("dev_page"))
 
 
 @app.route("/<prefix>/Private/<private_chat>")
@@ -237,15 +272,20 @@ def login_page() -> ResponseReturnValue:
                     next_page = flask.url_for("projects")
                 if next_page not in word_lists.approved_links:
                     next_page = flask.url_for("chat_page")
-                    if "adminpass" in user["SPermission"]:
+                    if "Debugpass" == user["SPermission"][0]:
+                        next_page = flask.url_for("dev_page")
+                    if "adminpass" == user["SPermission"][0]:
                         next_page = flask.url_for("admin_page")
+                    if "modpass" == user["SPermission"][0]:
+                        next_page = flask.url_for("mod_page")
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie("Username", user["username"])
             resp.set_cookie("Theme", user["theme"])
-            resp.set_cookie(
-                "Profile",
-                user["profile"] if user["profile"] != "" else "/static/favicon.ico",
+            profile_image = (
+                user.get("profile")
+                or "/static/favicon.ico"
             )
+            resp.set_cookie("Profile",profile_image)
             resp.set_cookie("Userid", user["userId"])
             resp.set_cookie("DisplayName", user["displayName"])
             return resp
@@ -487,18 +527,27 @@ def customize_accounts() -> ResponseReturnValue:
         "role_color": request.form.get("role_color"),
         "user_color": request.form.get("user_color"),
         "email": request.form.get("email"),
-        "file": request.files.get("profile"),
+        "file": request.files.get('profile'),
         "theme": request.form.get("theme"),
     }
 
     user = User.get_user_by_id(data["userid"])
     user_email = database.get_email(user.uuid)
     old_path = user.profile
+    blank = "<FileStorage: '' ('application/octet-stream')>"
 
     # Handle file upload
     profile_location = (
-        uploading.upload_file(data["file"], old_path) if data["file"] is not None else old_path
+        old_path if data.get("file") == blank else (
+            uploading.upload_file(data["file"], old_path) or old_path
+        )
     )
+
+    if profile_location == 0:
+        return flask.render_template(
+            "settings.html", error="That file format is now allowed!", **data
+        )
+        # profile_location = old_path
 
     # Check theme
     if data["theme"] is None:
@@ -545,7 +594,8 @@ def customize_accounts() -> ResponseReturnValue:
             "theme": theme,
             "email": data["email"]
         }
-
+        if data["displayname"] != user.display_name:
+            update_display({"username": data["displayname"], "status": "active"}, data["userid"])
         database.update_account(account_update_data)
         user.update_account(account_update_data)
         resp = flask.make_response(flask.redirect(flask.url_for("chat_page")))
@@ -570,10 +620,15 @@ def customize_accounts() -> ResponseReturnValue:
     log.log_accounts(f"The account {user} has updated some setting(s)")
     return return_val
 
-@app.route("/support/docsx")
+@app.route("/support/docs")
 def docx():
     """Opens support documentation."""
     return flask.render_template("support/documentation.html")
+
+@app.route("/support/docs/categories/<page>")
+def category():
+    """Opens support documentation."""
+    return flask.render_template("support/chat_docs.html")
 
 
 ##### THEME STUFF #####
@@ -734,6 +789,7 @@ def emit_on_startup():
         user_connections[userid].add(socketid)
         user_last_heartbeat[userid] = time.time()
 
+        socketids[userid] = socketid
         update_userlist(socketid, {"status": "active"}, userid)
 
         Timer(HEARTBEAT_TIMEOUT + 5, check_user_heartbeat,
@@ -786,7 +842,7 @@ def handle_disconnect(socketid=None, userid=None):
 
 
 @socketio.on("heartbeat")
-def handle_heartbeat(status):
+def handle_heartbeat(status, roomid):
     """Handle heartbeat from the client."""
     socketid = request.sid
     userid = request.cookies.get("Userid")
@@ -796,6 +852,10 @@ def handle_heartbeat(status):
 
         if userid in user_connections:
             update_userlist(socketid, {"status": status}, userid)
+            room = Chat.create_or_get_chat(roomid)
+            if socketid not in room.sids:
+                socketids[userid] = socketid
+                room.sids.append(socketid)
 
 
 @socketio.on("get_rooms")
@@ -1037,4 +1097,4 @@ def teardown_request(_exception=None):
 
 if __name__ == "__main__":
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", debug=True, port=5000)

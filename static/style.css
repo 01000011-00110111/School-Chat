@@ -84,7 +84,7 @@ body, html {
 
 #chat {
     z-index: 0;
-	padding-left: 5%;
+	  padding-left: 5%;
     padding-right: 12%;
     margin-left: 1.5%;
     line-height: 40px;
@@ -96,9 +96,17 @@ body, html {
 }
 
 #message {
-    font-size: 18px;
-    width: 100%;
-    border-radius: 15px;
+  font-size: 18px;
+  width: 100%;
+  border-radius: 15px;
+  text-indent: 6px;
+  outline: none;
+}
+
+#message:disabled {
+  background: #00000082 !important;
+  color: white !important;
+  border: 0;
 }
 
 /* id start by getting the text above the area the text box is */
@@ -139,6 +147,10 @@ body, html {
 #send {
     font-size: 24px;
     border-radius: 22%;
+}
+
+#send:disabled {
+  display: none;
 }
 
 #send:hover {
@@ -1260,4 +1272,139 @@ version #arrowContainer {
   border: 0;
   text-align: left;
   text-indent: 30px;
+}
+
+#sudo_cmd_menu {
+  position: absolute;
+  display: none;
+  background: rgba(0, 0, 0, 0.71);
+  bottom: 77px;
+  width: 50%;
+  border-radius: 20px;
+  overflow-y: scroll;
+  max-height: 185px;
+  border: 1px solid #ffffff69;
+}
+
+#sudo_cmd_menu .sudo_cmd_button {
+  background: transparent;
+  border: 0;
+  font-size: 20px;
+  text-indent: 17px;
+  color: white;
+  height: 60px;
+  width: 90%;
+  text-align: left;
+  border-radius: 14px;
+  align-content: center;
+}
+
+#sudo_cmd_menu ul {
+  color: yellow;
+  list-style: none;
+}
+
+#sudo_cmd_menu ul li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#sudo_cmd_menu .sudo_cmd_button:hover {
+  transition: 0.6s all;
+  background: #403e3e;
+  border: 2px #7ebfd5 solid;
+}
+
+.user {
+  background: gray;
+  color: white;
+  width: 65px;
+  height: 30px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+.mod {
+  background: maroon;
+  color: white;
+  width: 65px;
+  height: 30px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+.admin {
+  background: rgb(0, 172, 246);
+  color: white;
+  width: 65px;
+  height: 30px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+.dev {
+  background: rgb(38, 153, 0);
+  color: white;
+  width: 65px;
+  height: 30px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+.style {
+  background: rgb(246, 119, 0);
+  color: white;
+  width: 65px;
+  height: 30px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+@-webkit-keyframes clr_typing {
+  25% {
+    color: red;
+  }
+
+  50% {
+    color: green;
+  }
+
+  75% {
+    color: yellow;
+  }
+
+  100% {
+    color: blue;
+  }
 }

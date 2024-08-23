@@ -2,6 +2,9 @@
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 
+const fileInput = document.getElementById('profile');
+const PfPdisplay = document.getElementById('PfPdisplay');
+
 let prevValues = {};
 const numExamples = 1; // Number of examples to create
 
@@ -91,8 +94,7 @@ function updateExamples() {
         return;
     }
 
-    let profile = document.getElementById("profile").value;
-    if (profile === '') {profile = 'static/favicon.ico'}
+    let profile = document.getElementById("PfPdisplay").src
     const userColor = document.getElementById("user_color").value;
     const username = document.getElementById("username").value;
     const roleColor = document.getElementById("role_color").value;
@@ -186,7 +188,21 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
   }
-  
+
+fileInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            PfPdisplay.src = e.target.result;
+        };
+
+        reader.readAsDataURL(file);
+    }
+    this.files = this.files
+});
+
   // Opens the defualt tab
   openTab(event, "My-Profile");
 

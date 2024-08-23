@@ -1,0 +1,15 @@
+{% extends 'chat.html' %}
+{% block header %}
+{{ super() }}
+<script src="/static/cmds.js"></script>
+{% endblock %}
+
+{% block mod_commands %}
+<li><button command="sudo report_list" trigger="report_list" privilege="mod" class="sudo_cmd_button">$sudo report_list</button></li>
+<li><button command="sudo lock" trigger="lock" privilege="mod" class="sudo_cmd_button">$sudo lock</button></li>
+<li><button command="sudo unlock" trigger="unlock" privilege="mod" class="sudo_cmd_button">$sudo unlock</button></li>
+<li><button command="sudo mute" trigger="mute" privilege="mod" class="sudo_cmd_button">$sudo mute</button></li>
+<li><button command="sudo unmute" trigger="unmute" privilege="mod" class="sudo_cmd_button">$sudo unmute</button></li>
+<li><button command="sudo clear" trigger="clear" privilege="mod" class="sudo_cmd_button">$sudo clear</button></li>
+<li><button command="sudo report username_here reason_here" trigger="report" privilege="mod" class="sudo_cmd_button">$sudo report</button></li>
+{% endblock %}

@@ -180,6 +180,7 @@ def find_login_data(value, login):
                 "roleColor": {"$arrayElemAt": ["$customization.roleColor", 0]},
                 "userColor": {"$arrayElemAt": ["$customization.userColor", 0]},
                 "theme": {"$arrayElemAt": ["$customization.theme", 0]},
+                # "blocked": {"$arrayElemAt": ["$customization.blocked", 0]},
                 "permission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
                 "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
                 "locked": {"$arrayElemAt": ["$permissions.location", 0]},

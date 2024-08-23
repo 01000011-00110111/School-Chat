@@ -6,16 +6,6 @@ const users_list = {
     offlineList: []
 };
 
-setInterval(() => {
-    let status = ''
-    if (document.hidden) {
-        status = 'idle';
-    } else {
-        status = 'active';
-    }
-    socket.emit('heartbeat', status);
-}, 25000);
-
 function notifyStatusChange(status) {
     socket.emit('status_change', { status: status });
 }
@@ -85,6 +75,8 @@ function getCurrentUserLists() {
 }
 
 socket.on('update_list_full', (userStatuses) => {
+    users_list.onlineList = [];
+    users_list.offlineList = [];
     let onlineList = [];
     let offlineList = [];
 
@@ -102,37 +94,62 @@ socket.on('update_list_full', (userStatuses) => {
     updateUserList(onlineList, offlineList);
 });
 
+// const updating = false
+
+// socket.on('updated_display', (oldUserData, newUserData) => {
+//     updating = true
+//     let { onlineList, offlineList } = getCurrentUserLists();
+
+//     // Helper function to update a user in a list
+//     const updateUserInList = (list, oldUsername, newUser) => {
+//         return list.map(user =>
+//             user.username === oldUsername ? { ...user, ...newUser } : user
+//         );
+//     };
+
+//     // Update the global user lists
+//     users_list.onlineList = onlineList;
+//     users_list.offlineList = offlineList;
+//     // users_list.offlineList = offlineList;
+//     updating = false
+//     handleUserUpdate(updatedUser)
+// });
+
+
 socket.on("update_list", (updatedUser) => {
-    let { onlineList, offlineList } = getCurrentUserLists();
-    let isInOnlineList = onlineList.some(user => user.username === updatedUser.username);
-    let isInOfflineList = offlineList.some(user => user.username === updatedUser.username);
-
-    if (updatedUser.status === 'active' || updatedUser.status === 'idle') {
-        if (isInOnlineList) {
-            // Update user in online list
-            onlineList = onlineList.map(user => user.username === updatedUser.username ? updatedUser : user);
-        } else if (isInOfflineList) {
-            // Move from offline to online list
-            offlineList = offlineList.filter(user => user.username !== updatedUser.username);
-            onlineList.push(updatedUser);
-        } else {
-            // Add to online list
-            onlineList.push(updatedUser);
-        }
-    } else {
-        if (isInOfflineList) {
-            // Update user in offline list
-            offlineList = offlineList.map(user => user.username === updatedUser.username ? updatedUser : user);
-        } else {
-            // Move to offline list
-            onlineList = onlineList.filter(user => user.username !== updatedUser.username);
-            offlineList.push(updatedUser);
-        }
-    }
-
-    users_list.onlineList = onlineList;
-    users_list.offlineList = offlineList;
-
-    updateUserList(onlineList, offlineList);
+    handleUserUpdate(updatedUser)
 });
 
+function handleUserUpdate(updatedUser) {
+        let { onlineList, offlineList } = getCurrentUserLists();
+        let isInOnlineList = onlineList.some(user => user.username === updatedUser.username);
+        let isInOfflineList = offlineList.some(user => user.username === updatedUser.username);
+
+        if (updatedUser.status === 'active' || updatedUser.status === 'idle') {
+            if (isInOnlineList) {
+                // Update user in online list
+                onlineList = onlineList.map(user => user.username === updatedUser.username ? updatedUser : user);
+            } else if (isInOfflineList) {
+                // Move from offline to online list
+                offlineList = offlineList.filter(user => user.username !== updatedUser.username);
+                onlineList.push(updatedUser);
+            } else {
+                // Add to online list
+                onlineList.push(updatedUser);
+            }
+        } else {
+            if (isInOfflineList) {
+                // Update user in offline list
+                offlineList = offlineList.map(user => user.username === updatedUser.username ? updatedUser : user);
+            } else {
+                // Move to offline list
+                onlineList = onlineList.filter(user => user.username !== updatedUser.username);
+                offlineList.push(updatedUser);
+            }
+        }
+
+        users_list.onlineList = onlineList;
+        users_list.offlineList = offlineList;
+
+        updateUserList(onlineList, offlineList);
+}

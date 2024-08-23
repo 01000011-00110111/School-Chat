@@ -36,9 +36,9 @@ def rename_file(file_path):
 
 def upload_file(file, old):
     """Adds the file to the static/profiles dir."""
-    old_file = old.lstrip('/')
     if not allowed_file(file.filename):
         return 0
+    old_file = old.lstrip('/')
     replace_old_file(old)
     new_filename = \
     f"static/profiles/{rename_file(old_file)}.{file.filename.rsplit('.', 1)[1].lower()}"

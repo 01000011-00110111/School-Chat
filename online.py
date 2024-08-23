@@ -34,6 +34,19 @@ def update_userlist(_, data, uuid):
     return users_list[uuid]
 
 
+def update_display(data, uuid):
+    """Updates a user in the users list."""
+    # user_old = users_list[uuid]
+    for key, value in data.items():
+        if key == 'status' and users_list[uuid]['status'] == 'offline-locked':
+            continue
+        users_list[uuid][key] = value
+
+    # emit("updated_display", (users_list[uuid], user_old), namespace="/", broadcast=True)
+    emit("update_list_full", (list(users_list.values())), namespace="/", broadcast=True)
+    return users_list[uuid]
+
+
 def add_unread(recipient, sender):
     """Updates the unread list of a user."""
     display_name = users_list[recipient]["username"]
@@ -71,15 +84,20 @@ def handle_forced_disconnect(userid, disconnect_callback):
             disconnect_callback(socketid, userid)
         del user_connections[userid]
 
-    with current_app.app_context():
-        try:
-            u = User.get_user_by_id(userid)
-            if u and user.status != "offline-locked":
-                u.status = "offline"
-            database.set_offline(userid)
-            update_userlist(None, {"status": "offline"}, userid)
-        except TypeError as e:
-            print(f"Error in forced disconnect: {e}")
+    try:
+        with current_app.app_context():
+            try:
+                u = User.get_user_by_id(userid)
+                if u and u.status != "offline-locked":
+                    u.status = "offline"
+                database.set_offline(userid)
+                update_userlist(None, {"status": "offline"}, userid)
+            except TypeError as e:
+                print(f"Error in forced disconnect: {e}")
+    except RuntimeError as e:
+        print(f"Runtime error in forced disconnect: {e}")
+
+
 
 
 def get_all_offline():

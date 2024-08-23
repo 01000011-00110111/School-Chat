@@ -4,7 +4,7 @@
         
     <span id="topleft" style="font-size: 34px; cursor: pointer;  color: rgb(25, 32, 128);" onclick="openNav()"><i class="fa-solid fa-bars"></i></span>
     <h2 id="RoomDisplay" style="margin: 14.5px 0;">/e</h2>
-    {% block panel_button %}{% endblock %}
+    <!-- {% block panel_button %}{% endblock %} -->
     <div class="AccountPopup">
     <input type="image" id="pfpmenu" class="PictureBTN" onclick="OpenAC();" name="pfpmenu" src="static/favicon.ico">
     <div id="AccControls" class="AccControls" style="display: none;">
@@ -22,7 +22,7 @@
             </a>
         </div>
     </div></div>
-    {% block panel_menu %}{% endblock %}
+    <!-- {% block panel_menu %}{% endblock %} -->
     <div id="mySidenav" class="sidenav" style="background-color: rgb(17, 17, 17); width: 0px;">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="color: rgb(129, 129, 129);"><i class="fa-solid fa-x"></i></a>
         <div style="align-self: baseline;">
@@ -41,14 +41,34 @@
 <div id="chat"></div>
 
 <div id="sides">
+    <div id="sudo_cmd_menu">
+        <ul id="sudo_list">
+            <li><button command="sudo help" trigger="help" privilege="user" class="sudo_cmd_button">$sudo help</button></li>
+            <li><button command="sudo online" trigger="online" privilege="user" class="sudo_cmd_button">$sudo online</button></li>
+            <li><button command="sudo offline" trigger="offline" privilege="user" class="sudo_cmd_button">$sudo offline</button></li>
+            <li><button command="sudo ping" trigger="ping" privilege="user" class="sudo_cmd_button">$sudo ping</button></li>
+            <li><button command="sudo create room_name" trigger="create" privilege="user" class="sudo_cmd_button">$sudo create room</button></li>
+            <li><button command="sudo song" trigger="song" privilege="user" class="sudo_cmd_button">$sudo song</button></li>
+            <li><button command="sudo ecount" trigger="ecount" privilege="user" class="sudo_cmd_button">$sudo ecount</button></li>
+            <li><button command="everyone" trigger="@" privilege="user" class="sudo_cmd_button">@everyone</button></li>
+            <li><button command="username_here" trigger="@" privilege="user" class="sudo_cmd_button">@user_notify</button></li>
+            <li><button command="*text_goes_here*" trigger="" privilege="style" class="sudo_cmd_button">&Bold</button></li>
+            <li><button command="/text_goes_here/" trigger="" privilege="style" class="sudo_cmd_button">&Italicize</button></li>
+            <li><button command="_text_goes_here_" trigger="" privilege="style" class="sudo_cmd_button">&Underline</button></li>
+            <li><button command="[color]text_goes_here#" trigger="" privilege="style" class="sudo_cmd_button">&Color</button></li>
+            {% block mod_commands %}{% endblock %}
+            {% block admin_commands %}{% endblock %}
+            {% block dev_commands %}{% endblock %}
+        </ul>
+    </div>
     <div id="chatbox" hidden>       
-        <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250"></input><br/>
+        <input type="text" id="message" onkeypress="checkKey();" placeholder="type your message here" maxlength="250" onkeyup="search_commands()"></input><br/>
         <button onClick="getMessage();" id="send">Send</button>
     </div>
 </div><br>
 
 <div class="activenav" id="activenav" style="background-color: rgb(12, 12, 12);">
-    <!-- {% block panel %}{% endblock %} -->
+    {% block panel %}{% endblock %}
     <div id="online_users">
         <p id="online"hidden></p>
         <p id="offline" hidden></p>
