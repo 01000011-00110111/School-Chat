@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 // Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
@@ -6,13 +8,17 @@ socket.on("message_chat", (message) => {
     renderChat((message));
 });
 
-socket.on("chat_muted", () => {
-    const send_button = document.getElementById("send");
+socket.on("chat_muted", (user_perm) => {
+    if (user_perm[0] === "Debugpass" || user_perm[0] === "adminpass" || user_perm[0] === "modpass") {
+        null
+    } else {
+        const send_button = document.getElementById("send");
 
-    message.disabled = true;
-    message.placeholder = "You can't chat in this room";
-    send_button.disabled = true;
-})
+        message.disabled = true;
+        message.placeholder = "You can't chat in this room";
+        send_button.disabled = true;
+    }
+});
 
 socket.on("chat_unmuted", () => {
     const send_button = document.getElementById("send");
@@ -193,7 +199,7 @@ const close_command_menu = () => {
     sudo_cmd_menu.style.setProperty("display", "none")
 }
 
-/* This tirgger the sudo command menu when you type the trigger word ($, @ ,&, &*) */
+/* This trigger the sudo command menu when you type the trigger word ($, @, &, &*) */
 const sudo_button = document.querySelectorAll(".sudo_cmd_button")
 message.addEventListener('input', (event) => {
     // const inputValue = message.value.trim();
@@ -203,7 +209,7 @@ message.addEventListener('input', (event) => {
 
     if (containsCommand) {
         open_command_menu();
-    } else {
+    } else if (!containsCommand) {
         close_command_menu();
     }
 });
@@ -248,7 +254,7 @@ function search_commands() {
     for (i = 0; i < li.length; i++) {
       a = li[i].getElementsByTagName("button")[0];
       txtValue = a.textContent || a.innerText;
-      if (txtValue.toLowerCase().indexOf(filter) > -1) {
+      if (txtValue.toLowerCase().includes(filter)) {
         li[i].style.display = "";
       } else {
         li[i].style.display = "none";
@@ -274,7 +280,7 @@ function search_commands() {
 //     filter = message.value.toLowerCase();
 //     ul = document.getElementById("sudo_list");
 //     li = ul.getElementsByTagName('li');
-//     const variations = ["$", "$s", "$su", "$sud", "$sudo", "$sudo "];
+//     const variations = ["$", "@", "&"];
 //     let bypass = false;
 //     let actualFilter = '';
     
@@ -300,7 +306,7 @@ function search_commands() {
 //         a = li[i].getElementsByTagName("button")[0];
 //         txtValue = a.textContent || a.innerText;
 //         if (txtValue.toLowerCase().indexOf(actualFilter) > -1) {
-//           li[i].style.display = "";
+//             li[i].style.display = "";
 //         } else {
 //           li[i].style.display = "none";
 //         } if (message.value === "&*") {
@@ -322,11 +328,100 @@ function search_commands() {
 
 // setInterval(BTMLog, 3000)
 
+const disclaimer = (title, message, link) => {
+    const disclaimer_backdrop = document.createElement('div');
+    const disclaimer_body = document.createElement('div');
+    const disclaimer_control_panel = document.createElement('div');
+    const disclaimer_title = document.createElement('h2');
+    const disclaimer_message = document.createElement('p');
+    const back_button = document.createElement('button');
+    const continue_button = document.createElement('button');
+
+    disclaimer_title.innerHTML = title;
+    disclaimer_message.innerHTML = `${message} ${link}`;
+    back_button.innerHTML = "Stay here";
+    continue_button.innerHTML = "Continue";
+
+    disclaimer_backdrop.setAttribute("id", "disclaimer_background");
+    disclaimer_body.classList.add("disclaimer");
+    disclaimer_control_panel.classList.add("disclaimer_buttons");
+    disclaimer_title.classList.add("disclaimer_title");
+    continue_button.setAttribute("id", "continue_button");
+    back_button.setAttribute("id", "stay_button");
+    disclaimer_message.setAttribute("id", "message_body");
+
+    document.body.appendChild(disclaimer_backdrop);
+    disclaimer_backdrop.appendChild(disclaimer_body);
+    disclaimer_body.appendChild(disclaimer_title);
+    disclaimer_body.appendChild(disclaimer_message);
+    disclaimer_body.appendChild(disclaimer_control_panel);
+    disclaimer_control_panel.appendChild(back_button);
+    disclaimer_control_panel.appendChild(continue_button);
+
+    back_button.addEventListener('click', () => {
+        disclaimer_backdrop.remove();
+    });
+
+    continue_button.addEventListener('click', () => {
+        window.location.href = link;
+    });
+}
+
+const hyperlinks = document.querySelectorAll('a');
+
+const isValidUrl = urlString => {
+    let url;
+    try {
+        url = new URL(urlString);
+    }
+    catch(e) {
+        return false;
+    }
+    return url.protocol === "http:" || url.protocol === "https:";
+};
+
+const default_leave_msg = "You are about to leave this site. You clicked on a link that leads you to another site. Continue at your own risk. <br> <br>";
+
+const activate_hyperlinks = () => {
+    console.info("Hyperlinks activated")
+    const chat_hyperlinks = chat.querySelectorAll('a');
+    for (let index = 0; index < hyperlinks.length; index++) {
+        hyperlinks[index].addEventListener('click', (event) => {
+            if (isValidUrl(hyperlinks[index].href)) {
+                if (hyperlinks[index].hostname === "www6.school-chat.us" || hyperlinks[index].hostname === "localhost") {
+                    null
+                } else {
+                    event.preventDefault();
+                    disclaimer("You are leaving the School chat platform", default_leave_msg, hyperlinks[index])
+                };
+            };
+        });
+    };
+
+    for (let index = 0; index < chat_hyperlinks.length; index++) {
+        chat_hyperlinks[index].addEventListener('click', (event) => {
+            if (isValidUrl(chat_hyperlinks[index].href)) {
+                if (chat_hyperlinks[index].hostname === "www6.school-chat.us" || chat_hyperlinks[index].hostname === "localhost") {
+                    null
+                } else {
+                    event.preventDefault();
+                    disclaimer("You are leaving the School chat platform", default_leave_msg, chat_hyperlinks[index])
+                };
+            };
+        });
+    };
+};
+
+window.onload = () => {
+    setTimeout(activate_hyperlinks, 300);
+}
+
 function renderChat(messages) {
     // console.log(messages)
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
+    activate_hyperlinks();
 }
 
 

@@ -44,10 +44,12 @@ def lock(**kwargs):
         message = other.format_system_msg("Chat Locked by Admin.")
         room.add_message(message, roomid)
         room.set_lock_status(True)
+        emit("chat_muted", user.perm)
     elif other.check_if_mod(user) == 1:
         message = other.format_system_msg("Chat Locked by Moderator.")
         room.add_message(message, roomid)
         room.set_lock_status(True)
+        emit("chat_muted", user.perm)
 
 
 def unlock(**kwargs):
@@ -61,10 +63,12 @@ def unlock(**kwargs):
         message = other.format_system_msg("Chat Unlocked by Admin.")
         room.add_message(message, roomid)
         room.set_lock_status(False)
+        emit("chat_unmuted")
     elif other.check_if_mod(user) == 1:
         message = other.format_system_msg("Chat Unlocked by Moderator.")
         room.add_message(message, roomid)
         room.set_lock_status(False)
+        emit("chat_unmuted")
 
 
 def mute(**kwargs):

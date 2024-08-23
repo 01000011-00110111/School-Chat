@@ -1,5 +1,16 @@
 {% extends 'index.html' %}
 {% block content %}
+<!-- <div id="disclaimer_background">
+    <div class="disclaimer">
+        <h2>You are leaving the School Chat platform</h2>
+        <p>You are visiting {link_here}</p>
+        <div class="disclaimer_buttons">
+            <button>Back</button>
+            <button>Continue</button>
+        </div>
+    </div>
+</div> -->
+
 <div id="topbar">
         
     <span id="topleft" style="font-size: 34px; cursor: pointer;  color: rgb(25, 32, 128);" onclick="openNav()"><i class="fa-solid fa-bars"></i></span>
@@ -43,13 +54,13 @@
 <div id="sides">
     <div id="sudo_cmd_menu">
         <ul id="sudo_list">
-            <li><button command="sudo help" trigger="$sudo help" privilege="user" class="sudo_cmd_button">$help</button></li>
-            <li><button command="sudo online" trigger="$sudo online" privilege="user" class="sudo_cmd_button">$online</button></li>
-            <li><button command="sudo offline" trigger="$sudo offline" privilege="user" class="sudo_cmd_button">$offline</button></li>
-            <li><button command="sudo ping" trigger="$sudo ping" privilege="user" class="sudo_cmd_button">$ping</button></li>
-            <li><button command="sudo create room_name" trigger="$sudo create" privilege="user" class="sudo_cmd_button">$create room</button></li>
-            <li><button command="sudo song" trigger="$sudo song" privilege="user" class="sudo_cmd_button">$song</button></li>
-            <li><button command="sudo ecount" trigger="$sudo ecount" privilege="user" class="sudo_cmd_button">$ecount</button></li>
+            <li><button command="sudo help" trigger="$" privilege="user" class="sudo_cmd_button">$sudo help</button></li>
+            <li><button command="sudo online" trigger="$" privilege="user" class="sudo_cmd_button">$sudo online</button></li>
+            <li><button command="sudo offline" trigger="$" privilege="user" class="sudo_cmd_button">$sudo offline</button></li>
+            <li><button command="sudo ping" trigger="$" privilege="user" class="sudo_cmd_button">$sudo ping</button></li>
+            <li><button command="sudo create room_name" trigger="$" privilege="user" class="sudo_cmd_button">$sudo create room</button></li>
+            <li><button command="sudo song" trigger="$" privilege="user" class="sudo_cmd_button">$sudo song</button></li>
+            <li><button command="sudo ecount" trigger="$" privilege="user" class="sudo_cmd_button">$sudo ecount</button></li>
             <li><button command="everyone" trigger="@" privilege="user" class="sudo_cmd_button">@everyone</button></li>
             <li><button command="username_here" trigger="@" privilege="user" class="sudo_cmd_button">@user_notify</button></li>
             <li><button command="*text_goes_here*" trigger="" privilege="style" class="sudo_cmd_button">&Bold</button></li>
