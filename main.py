@@ -49,6 +49,7 @@ from commands.other import end_ping
 from online import (
     socketids,
     update_userlist,
+    update_display,
     users_list,
     user_connections,
     user_last_heartbeat,
@@ -271,19 +272,20 @@ def login_page() -> ResponseReturnValue:
                     next_page = flask.url_for("projects")
                 if next_page not in word_lists.approved_links:
                     next_page = flask.url_for("chat_page")
-                    if "Debugpass" in user["SPermission"][0]:
+                    if "Debugpass" == user["SPermission"][0]:
                         next_page = flask.url_for("dev_page")
-                    if "adminpass" in user["SPermission"][0]:
+                    if "adminpass" == user["SPermission"][0]:
                         next_page = flask.url_for("admin_page")
-                    if "modpass" in user["SPermission"][0]:
+                    if "modpass" == user["SPermission"][0]:
                         next_page = flask.url_for("mod_page")
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie("Username", user["username"])
             resp.set_cookie("Theme", user["theme"])
-            resp.set_cookie(
-                "Profile",
-                user["profile"] if user["profile"] != "" else "/static/favicon.ico",
+            profile_image = (
+                user.get("profile")
+                or "/static/favicon.ico"
             )
+            resp.set_cookie("Profile",profile_image)
             resp.set_cookie("Userid", user["userId"])
             resp.set_cookie("DisplayName", user["displayName"])
             return resp
@@ -532,11 +534,20 @@ def customize_accounts() -> ResponseReturnValue:
     user = User.get_user_by_id(data["userid"])
     user_email = database.get_email(user.uuid)
     old_path = user.profile
+    blank = "<FileStorage: '' ('application/octet-stream')>"
 
     # Handle file upload
     profile_location = (
-        uploading.upload_file(data["file"], old_path) if data["file"] is not None else old_path
+        old_path if data.get("file") == blank else (
+            uploading.upload_file(data["file"], old_path) or old_path
+        )
     )
+
+    if profile_location == 0:
+        return flask.render_template(
+            "settings.html", error="That file format is now allowed!", **data
+        )
+        # profile_location = old_path
 
     # Check theme
     if data["theme"] is None:
@@ -583,7 +594,8 @@ def customize_accounts() -> ResponseReturnValue:
             "theme": theme,
             "email": data["email"]
         }
-
+        if data["displayname"] != user.display_name:
+            update_display({"username": data["displayname"], "status": "active"}, data["userid"])
         database.update_account(account_update_data)
         user.update_account(account_update_data)
         resp = flask.make_response(flask.redirect(flask.url_for("chat_page")))
@@ -777,6 +789,7 @@ def emit_on_startup():
         user_connections[userid].add(socketid)
         user_last_heartbeat[userid] = time.time()
 
+        socketids[userid] = socketid
         update_userlist(socketid, {"status": "active"}, userid)
 
         Timer(HEARTBEAT_TIMEOUT + 5, check_user_heartbeat,
@@ -841,6 +854,7 @@ def handle_heartbeat(status, roomid):
             update_userlist(socketid, {"status": status}, userid)
             room = Chat.create_or_get_chat(roomid)
             if socketid not in room.sids:
+                socketids[userid] = socketid
                 room.sids.append(socketid)
 
 

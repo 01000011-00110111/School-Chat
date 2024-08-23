@@ -167,13 +167,16 @@ def format_text(message):  # this system needs notes do not remove
     color_pattern = re.compile(r'\[([a-zA-Z]+)\](.*?)#')
 
     if '*' in message:
-        message = bold_pattern.sub(lambda m: f'<b>{m.group(1)}</b>' if m.group(1).strip() else m.group(0), message)
+        message = bold_pattern.sub(lambda m: f'<b>{m.group(1)}</b>'\
+                                   if m.group(1).strip() else m.group(0), message)
 
     if '/' in message:
-        message = italic_pattern.sub(lambda m: f'<i>{m.group(1)}</i>' if m.group(1).strip() else m.group(0), message)
+        message = italic_pattern.sub(lambda m: f'<i>{m.group(1)}</i>'\
+            if m.group(1).strip() else m.group(0), message)
 
     if '_' in message:
-        message = underline_pattern.sub(lambda m: f'<u>{m.group(1)}</u>' if m.group(1).strip() else m.group(0), message)
+        message = underline_pattern.sub(lambda m: f'<u>{m.group(1)}</u>'\
+            if m.group(1).strip() else m.group(0), message)
 
     def replace(match):
         color, text = match.groups()
@@ -194,7 +197,7 @@ def find_pings(message, disp_name, user, roomid, _room):
         failed_message(('permission', 11, 'locked'), roomid)
         return
     users_pinged = []
-    pings = re.findall(r'@(\w+|"[^"]+")', message)
+    pings = re.findall(r'@([^\s@"]+|"[^"]*")', message)
     pings = [ping.strip('"') for ping in pings]
     # room = database.find_room({'roomid': roomid}, 'vid')
 
