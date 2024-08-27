@@ -219,12 +219,12 @@ message.addEventListener('keypress', (event) => {
     if (event.key === "Enter") {
         close_command_menu()
     }
-})
+});
 
 /* This closes the sudo command menu when you click outside of the textinput */
 message.addEventListener('focusout', (event) => {
     setTimeout(close_command_menu, 100)
-})
+});
 
 /* This controls the button length letting js assign command_buttons and command_badges */
 for (let index = 0; index < sudo_button.length; index++) {
@@ -382,21 +382,13 @@ const isValidUrl = urlString => {
 
 const default_leave_msg = "You are about to leave this site. You clicked on a link that leads you to another site. Continue at your own risk. <br> <br>";
 
+/**
+ * This function activates the hyperlinks when chat is loaded,
+ * This function takes no parameters.
+ */
 const activate_hyperlinks = () => {
-    console.info("Hyperlinks activated")
+    console.info("Chat hyperlinks activated")
     const chat_hyperlinks = chat.querySelectorAll('a');
-    for (let index = 0; index < hyperlinks.length; index++) {
-        hyperlinks[index].addEventListener('click', (event) => {
-            if (isValidUrl(hyperlinks[index].href)) {
-                if (hyperlinks[index].hostname === "www6.school-chat.us" || hyperlinks[index].hostname === "localhost") {
-                    null
-                } else {
-                    event.preventDefault();
-                    disclaimer("You are leaving the School chat platform", default_leave_msg, hyperlinks[index])
-                };
-            };
-        });
-    };
 
     for (let index = 0; index < chat_hyperlinks.length; index++) {
         chat_hyperlinks[index].addEventListener('click', (event) => {
@@ -410,6 +402,19 @@ const activate_hyperlinks = () => {
             };
         });
     };
+};
+
+for (let index = 0; index < hyperlinks.length; index++) {
+    hyperlinks[index].addEventListener('click', (event) => {
+        if (isValidUrl(hyperlinks[index].href)) {
+            if (hyperlinks[index].hostname === "www6.school-chat.us" || hyperlinks[index].hostname === "localhost") {
+                null
+            } else {
+                event.preventDefault();
+                disclaimer("You are leaving the School chat platform", default_leave_msg, hyperlinks[index])
+            };
+        };
+    });
 };
 
 window.onload = () => {

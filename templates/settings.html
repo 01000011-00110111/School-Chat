@@ -64,7 +64,12 @@
             <p id="user_colorTXT">Message: </p>
             <input type="color" value='{{message_color}}' id="message_color" name="message_color"><br>
             <input type="file" id="profile" name="profile" accept="image/*">
-
+            <script>
+              window.onload = function() {
+                  document.getElementById("PfPdisplay").src = getCookie("Profile");
+                  document.getElementById('profile').files = new DataTransfer().files;
+              };
+            </script>
           <div id="example">
       
           </div>

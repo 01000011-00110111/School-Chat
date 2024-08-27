@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-        <title>School Chat signup page</title>
+        <title>School Chat Sign Up Page</title>
         <link rel="icon" type="image/x-icon" href="static/favicon.ico">
         <!-- SOCKETIO IMPORT MUST BE HERE, BEFORE signup.JS IMPORT. IT BREAKS OTHERWISE -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
@@ -10,34 +10,84 @@
         <meta name="author" content="cseven, cserver">
         <meta name="googlebot" content="noindex,nofollow,nositelinkssearchbox,nopagereadaloud,notranslate">
 	</head>
+  <body style="background: linear-gradient(138deg, rgb(9, 9, 11) 3%, rgb(60, 60, 60) 41%, rgb(17, 17, 17) 100%);">
+    <form method="post" class="SignUpForm">
+        <div id="signupContainer2">
+          <div class="details_container_signup">
+            <p style="text-align: center; font-size: 20px;">Already have an account? <a href=".">Log in</a></p>
+          </div>
 
-    <body style=" background: rgb(33,33,36);
-    background: linear-gradient(138deg, rgba(33,33,36,1) 3%, rgba(98,98,167,1) 41%, rgba(0,0,0,1) 100%); ">
-<form method="post" class="SignUpForm">
-  <div id="signupContainer2">
-    <button type="submit" class="signupbtn" id="signup" name="submit">Signup</button>
-    <div style="display: flex; color: white; margin-left: 70px;font-size: 12px;">
-      <input type="checkbox">
-      <p>Accept <a href="" style="text-decoration: none;color: #7c0ed7;">Terms &amp; Conditions</a></p>
-    </div>
-    <p style="text-align: center;">Already have an account? <a href=".">Log in</a></p>
-  </div>
+          <p>School Chat is an online chat website made by C7 and cserver45</p>
+        </div>
 
-  <div id="signupContainer1">
-    <div style="text-align: center;">
-      <h1>School Chat</h1>
-    </div>
-    <input type="email" class="signuptext" id="SEmail" name="SEmail" placeholder="Email:" required="" value="">
-              <input type="text" class="signuptext" id="SUsername" name="SUsername" placeholder="Username:" maxlength="25" required="" value="">
-              <input type="text" class="signuptext" name="SDisplayname" placeholder="Displayname:" maxlength="15" required="" value="">
-              
-              <input type="text" class="signuptext" name="SRole" placeholder="Role:" maxlength="18" required="" value=""><input type="password" class="signuptext" name="SPassword" placeholder="Password:" required="">
-              <input type="password" class="signuptext" name="SPassword2" placeholder="Confirm password" required="">
-</div>
-        </form>
-        {% if error %}
-        <h2 style="color:red; pointer-events: none;" class="signuptext">{{error}}</h2>
-        {% endif %}
-        <script src="../static/html-stuff.js"></script>
-    </body>
+        <div id="signupContainer1">
+          <span id="logo_container">
+            <p style="color: white;" id="Title">School</p>
+            <p style="color: #dd7016;" id="Title">Chat</p>
+          </span>
+
+          <div id="signup_form_controls">
+            <div>
+              <div>
+                <p>Email</p>
+                <input type="email" class="signuptext" id="SEmail" name="SEmail" placeholder="Email" required="" value="">
+              </div>
+            </div>
+            
+
+            <div class="signup_input_row">
+              <div>
+                <p>Username</p>
+                <input type="text" class="signuptext" id="SUsername" name="SUsername" placeholder="Username" maxlength="25" required="" value="">
+              </div>
+
+              <div>
+                <p>Display Name</p>
+                <input type="text" class="signuptext" name="SDisplayname" placeholder="Displayname" maxlength="15" required="" value="">
+              </div>
+            </div>
+
+            <div>
+              <div>
+                <p>Role</p>
+                <input type="text" class="signuptext" name="SRole" placeholder="Role" maxlength="18" required="" value="">
+              </div>
+            </div>
+            
+
+            <div class="signup_input_row">
+              <div>
+                <p>Password</p>
+                <input type="password" class="signuptext" name="SPassword" placeholder="Password" required="">
+              </div>
+
+              <div>
+                <p>Confirm Password</p>
+                <input type="password" class="signuptext" name="SPassword2" placeholder="Confirm password" required="">
+              </div>
+            </div>
+
+            <div>
+              <div>
+                <p>Color Scheme Preference</p>
+                <button class="signuptext" type="button">Color Scheme Preference</button>
+              </div>
+            </div>
+
+            <!-- <div style="display: flex; color: white; margin-left: 70px;font-size: 12px;">
+              <input type="checkbox">
+              <p>Accept <a href="" style="text-decoration: none;color: #7c0ed7;">Terms &amp; Conditions</a></p>
+            </div> -->
+
+            <div style="display: flex; justify-content: right;">
+              <button type="submit" class="signupbtn" id="signup" name="submit">Signup</button>
+            </div>
+          </div>
+      </div>
+    </form>
+    {% if error %}
+    <h2 style="color:red; pointer-events: none;" class="signuptext">{{error}}</h2>
+    {% endif %}
+    <script src="../static/html-stuff.js"></script>
+  </body>
 </html>
