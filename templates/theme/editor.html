@@ -111,10 +111,8 @@
             </div>
 
             <div id="gradient_buttons_container">
-              <button onclick="changeDirrection('left', 0);" class="gradient_dirrection_button">To Left</button>
-              <button onclick="changeDirrection('right', 1);" class="gradient_dirrection_button">To Right</button>
-              <button onclick="changeDirrection('top', 2);" class="gradient_dirrection_button">To Top</button>
-              <button onclick="changeDirrection('bottom', 3);" class="gradient_dirrection_button">To Bottom</button>
+              <input type="range" id="gradient_slider" value="90" max="360" min="0"/>
+              <input type="number" id="gradient_slider_value" value="90" max="360" min="0"/>
             </div>
           </drawer_content>
         </drawer>

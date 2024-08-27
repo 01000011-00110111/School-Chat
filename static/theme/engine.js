@@ -1,6 +1,10 @@
+/* eslint-disable no-redeclare */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 // Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
+
 let project = {}
 
 const pushNotification = (sender, message, icon) => {
@@ -99,7 +103,8 @@ const ColorPickers = document.querySelectorAll("#ColorPicker");
 const color_inputs = document.querySelectorAll("#color_display_input");
 const gradient_button = document.getElementById("gradient_mode_button");
 const color_boxes = document.querySelectorAll('.color_picker');
-const dirrectionBox = document.getElementsByClassName('gradient_dirrection_button')
+const gradient_slider = document.getElementById("gradient_slider");
+const gradient_slider_value = document.getElementById("gradient_slider_value");
 
 // After this is the Theme & CSE code
 
@@ -333,21 +338,17 @@ setColorMode(0)
 const enableGradient = () => {
   ColorPickers[1].style.display = "flex";
   setColorMode(1);
+  gradient_slider.style.display = "block";
+  gradient_slider_value.style.display = "block";
   gradient_icon.innerHTML = '<i class="fa-solid fa-circle"></i>';
-  let dirrection_iter = dirrectionBox.length;
-  for (let i = 0; i < dirrection_iter; i++) {
-    dirrectionBox[i].style.display = 'block'
-  }
 }
 
 const disableGradient = () => {
   ColorPickers[1].style.display = "none";
   setColorMode(0);
+  gradient_slider.style.display = "none";
+  gradient_slider_value.style.display = "none";
   gradient_icon.innerHTML = '<i class="fa-solid fa-circle-half-stroke"></i>';
-  let dirrection_iter = dirrectionBox.length;
-  for (let i = 0; i < dirrection_iter; i++) {
-    dirrectionBox[i].style.display = 'none'
-  }
 }
 
 const unsupportedBrowser = () => {
@@ -405,18 +406,23 @@ for (let index = 0; index < drawer.length; index++) {
   })
 }
 
+gradient_slider.addEventListener('input', () => {
+  gradient_slider_value.value = gradient_slider.value;
+});
 
-var gradient_dirrection = "left";
-dirrectionBox[0].style.border = '1px darkgray solid'
+gradient_slider_value.addEventListener('input', () => {
+  gradient_slider.value = gradient_slider_value.value;
+});
 
-const changeDirrection = (dirrection, index) => {
-  gradient_dirrection = dirrection;
-  let dirrection_iter = dirrectionBox.length;
-  for (let i = 0; i < dirrection_iter; i++) {
-    dirrectionBox[i].style.border = 'none'
-  }
-  dirrectionBox[index].style.border = '1px darkgray solid'
-}
+const min = gradient_slider.min
+const max = gradient_slider.max
+const value = gradient_slider.value
+
+gradient_slider.style.background = `linear-gradient(to right, #404a70 0%, #404a70 ${(value-min)/(max-min)*100}%, #DEE2E6 ${(value-min)/(max-min)*100}%, #DEE2E6 100%)`
+
+gradient_slider.oninput = function() {
+  this.style.background = `linear-gradient(to right, #404a70 0%, #404a70 ${(this.value-this.min)/(this.max-this.min)*100}%, #DEE2E6 ${(this.value-this.min)/(this.max-this.min)*100}%, #DEE2E6 100%)`
+};
 
 function extractRGBValues(rgbString) {
   const match = rgbString.match(/\d+/g);
@@ -611,7 +617,7 @@ AllContent.forEach((element) => {
                 break;
               
               case 'Gradient':
-                document.getElementById(SelectedLayer).style.setProperty('background', `linear-gradient(to ${gradient_dirrection}, ${ColorBox.value}, ${gradientColor.value})`)
+                document.getElementById(SelectedLayer).style.setProperty('background', `linear-gradient(${gradient_slider.value}deg, ${ColorBox.value}, ${gradientColor.value})`)
                 document.getElementById(SelectedLayer).style.setProperty('color', textColor.value)
                 document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value)
                 document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
@@ -663,7 +669,7 @@ editor_dropdown_button.addEventListener('click', (event) => {
 });
 
 function Runstartup() {
-  value = sessionStorage.getItem("editing")
+  var value = sessionStorage.getItem("editing")
   if (value !== '') {
     socket.emit('get_project', value)
   } else {
