@@ -139,8 +139,9 @@ def to_hyperlink(text: str) -> tuple[str, list[str]]:
     # Define patterns
     mail_pattern = r"mailto:(.+?)([\s]|$)"
     www_pattern = r"(^|[^\/])(www\.[\S]+)"
-    link_pattern = r"(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])"
-    
+    link_pattern = \
+    r"(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])"
+
     # Find all matches
     mails = re.findall(mail_pattern, text)
     www_links = re.findall(www_pattern, text)
@@ -157,7 +158,7 @@ def to_hyperlink(text: str) -> tuple[str, list[str]]:
         if original_text in text:
             text = text.replace(original_text, replacement_text)
             modifications.append(replacement_text)
-    
+
     # Process www links
     for url in www_links:
         www_link = url[1]
@@ -166,7 +167,7 @@ def to_hyperlink(text: str) -> tuple[str, list[str]]:
         if original_text in text:
             text = text.replace(original_text, replacement_text)
             modifications.append(replacement_text)
-    
+
     # Process http/https/ftp/sftp/file links
     for link in links:
         link_url = link[0]
