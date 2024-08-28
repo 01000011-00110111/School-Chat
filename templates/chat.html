@@ -43,13 +43,14 @@
 <div id="sides">
     <div id="sudo_cmd_menu">
         <ul id="sudo_list">
-            <li><button command="sudo help" trigger="help" privilege="user" class="sudo_cmd_button">$sudo help</button></li>
-            <li><button command="sudo online" trigger="online" privilege="user" class="sudo_cmd_button">$sudo online</button></li>
-            <li><button command="sudo offline" trigger="offline" privilege="user" class="sudo_cmd_button">$sudo offline</button></li>
-            <li><button command="sudo ping" trigger="ping" privilege="user" class="sudo_cmd_button">$sudo ping</button></li>
-            <li><button command="sudo create room_name" trigger="create" privilege="user" class="sudo_cmd_button">$sudo create room</button></li>
-            <li><button command="sudo song" trigger="song" privilege="user" class="sudo_cmd_button">$sudo song</button></li>
-            <li><button command="sudo ecount" trigger="ecount" privilege="user" class="sudo_cmd_button">$sudo ecount</button></li>
+            <li><button command="sudo help" trigger="$" privilege="user" class="sudo_cmd_button">$sudo help</button></li>
+            <li><button command="sudo online" trigger="$" privilege="user" class="sudo_cmd_button">$sudo online</button></li>
+            <li><button command="sudo offline" trigger="$" privilege="user" class="sudo_cmd_button">$sudo offline</button></li>
+            <li><button command="sudo report username_here reason_here" trigger="$" privilege="mod" class="sudo_cmd_button">$sudo report</button></li>
+            <li><button command="sudo ping" trigger="$" privilege="user" class="sudo_cmd_button">$sudo ping</button></li>
+            <li><button command="sudo create $" trigger="create" privilege="user" class="sudo_cmd_button">$sudo create room</button></li>
+            <li><button command="sudo song" trigger="$" privilege="user" class="sudo_cmd_button">$sudo song</button></li>
+            <li><button command="sudo ecount" trigger="$" privilege="user" class="sudo_cmd_button">$sudo ecount</button></li>
             <li><button command="everyone" trigger="@" privilege="user" class="sudo_cmd_button">@everyone</button></li>
             <li><button command="username_here" trigger="@" privilege="user" class="sudo_cmd_button">@user_notify</button></li>
             <li><button command="*text_goes_here*" trigger="" privilege="style" class="sudo_cmd_button">&Bold</button></li>

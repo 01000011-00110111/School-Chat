@@ -104,6 +104,7 @@ if __name__ == "__main__":
 if os.path.exists(os.path.abspath("setup.py")):
     setup.chcek_if_data_is_missing()
     setup.self_destruct()
+    word_lists.start()
     print(False)
 else:
     print(True)
