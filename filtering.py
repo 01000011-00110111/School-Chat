@@ -136,15 +136,10 @@ def check_perms(user):
 
 def to_hyperlink(text: str) -> tuple[str, list[str]]:
     """Auto hyperlinks any links we find as common and returns the hyperlinked parts."""
-    # Define patterns
-    mail_pattern = r"mailto:(.+?)([\s]|$)"
-    www_pattern = r"(^|[^\/])(www\.[\S]+)"
     link_pattern = \
     r"(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])"
-
-    # Find all matches
-    mails = re.findall(mail_pattern, text)
-    www_links = re.findall(www_pattern, text)
+    mails = re.findall(r"mailto:(.+?)([\s]|$)", text)
+    www_links = re.findall(r"(^|[^\/])(www\.[\S]+)", text)
     links = re.findall(link_pattern, text, flags=re.I)
 
     # Track modifications

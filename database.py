@@ -10,7 +10,7 @@ import secrets
 from datetime import datetime
 
 import pymongo
-# import certifi
+import certifi
 
 
 def format_system_msg(msg):
@@ -21,7 +21,7 @@ def format_system_msg(msg):
 config = configparser.ConfigParser()
 config.read("config/keys.conf")
 mongo_pass = config["mongodb"]["passwd"]
-client = pymongo.MongoClient(mongo_pass)#, tls=True, tlsCAFile=certifi.where())
+client = pymongo.MongoClient(mongo_pass, tls=True, tlsCAFile=certifi.where())
 # accounts/user data
 Accounts = client.Accounts
 Permission = client.Accounts.Permission

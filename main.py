@@ -104,9 +104,10 @@ if __name__ == "__main__":
 if os.path.exists(os.path.abspath("setup.py")):
     setup.chcek_if_data_is_missing()
     setup.self_destruct()
-    word_lists.start()
+    word_lists.whitelist_words, word_lists.blacklist_words = word_lists.start()
     print(False)
 else:
+    word_lists.whitelist_words, word_lists.blacklist_words = word_lists.start()
     print(True)
 
 app = flask.Flask(__name__)
