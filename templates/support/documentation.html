@@ -1,0 +1,36 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<div id="flex_container">
+    <div id="docx_nav_panel">
+        <div id="docs_nav_heading_container">
+            <img src="/static/AppIcon.png" id="docs_icon"/>
+            <h2 id="docs_header">School Chat Docs</h2>
+        </div>
+
+        <div id="docx_nav_panel_container">
+            <button>Introduction</button>
+            <button>Getting Started</button>
+            <button onclick="open_documentation('chat_docs.html');">Chat</button>
+            <button>Theme Maker [Beta]</button>
+        </div>
+    </div>
+
+    <div id="grid_container">
+        <div id="docx_topbar">
+
+        </div>
+
+        <div id="docx_content">
+            <h1>Introuduction</h1>
+            <p>Welcome to School Chat Docs</p>
+            <p>This is an official School Chat documentation.</p>
+            <p>This is here to guide you as you explore the School Chat Platform</p>
+        </div>
+    </div>
+
+</div>
+
+<script src="../static/support/documentation.js"></script>
+
+{% endblock %}

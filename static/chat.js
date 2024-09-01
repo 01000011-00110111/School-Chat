@@ -1,10 +1,26 @@
-// Copyright (C) 2023  cserver45, cseven
+// Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 
 socket.on("message_chat", (message) => {
     renderChat((message));
 });
+
+socket.on("chat_muted", () => {
+    const send_button = document.getElementById("send");
+
+    message.disabled = true;
+    message.placeholder = "You can't chat in this room";
+    send_button.disabled = true;
+})
+
+socket.on("chat_unmuted", () => {
+    const send_button = document.getElementById("send");
+
+    message.disabled = false;
+    message.placeholder = "type your message here";
+    send_button.disabled = false;
+})
 
 socket.on("troll", (message, ID) => {
     renderChat(message, ID);
@@ -40,12 +56,18 @@ socket.on("reset_chat", (who, ID) => {
 
 function runStartup() {
     socket.emit('get_theme', getCookie('Theme'))
-    window.sessionStorage.setItem("ID", 'ilQvQwgOhm9kNAOrRqbr');
-    changeRoom('ilQvQwgOhm9kNAOrRqbr')
+    if (!window.sessionStorage.getItem("ID")) {
+        window.sessionStorage.setItem("ID", 'ilQvQwgOhm9kNAOrRqbr');
+    }
+    if (!window.sessionStorage.getItem('private')) {
+        changeRoom(window.sessionStorage.getItem("ID"))
+    } else {
+        // socket.emit('private_connect', getCookie('Userid'), user, window.sessionStorage.getItem('ID'))
+        changeRoom('ilQvQwgOhm9kNAOrRqbr')
+    }
     userid = getCookie("Userid")
     document.getElementById("pfpmenu").src = getCookie("Profile");
     socket.emit("get_rooms", userid);
-    // setTheme(getCookie('Theme'))
 }
 
 socket.on("roomsList", (result, permission) => {
@@ -121,17 +143,6 @@ function openuserinfo(user) {
     socket.emit('private_connect', getCookie('Userid'), user, window.sessionStorage.getItem('ID'))
 }
 
-// function BTMLog() {
-//   if (Math.floor(window.scrollY) === window.scrollMaxY) {
-//     console.log("cheese");
-//     setTimeout(ToBtm, 10000);
-//   } 
-// }
-
-// function ToBtm() {
-//   window.scrollTo(0, chatDiv.scrollHeight);
-// }
-
 function getMessage() {
     let messageElement = document.getElementById("message");
     let message = messageElement["value"];
@@ -153,6 +164,9 @@ function sendMessage(message, hidden) {
     if (message === "") {
         return;
     }
+    if (message.includes("$sudo song")) {
+        hidden = true;
+    }
     // later i'll implement hiding the cmd
     let chatDiv = document.getElementById("chat");
     // this is needed, because this goes over socketio, not a normal http request
@@ -162,6 +176,148 @@ function sendMessage(message, hidden) {
 
     window.scrollTo(0, chatDiv.scrollHeight);
 }
+
+const sudo_cmd_menu = document.getElementById("sudo_cmd_menu")
+
+/**
+ * Opens the sudo command menu and other text functions
+ */
+const open_command_menu = () => {
+    sudo_cmd_menu.style.setProperty("display", "grid")
+}
+
+/**
+ * Closes the sudo command menu and other text functions
+ */
+const close_command_menu = () => {
+    sudo_cmd_menu.style.setProperty("display", "none")
+}
+
+/* This tirgger the sudo command menu when you type the trigger word ($, @ ,&, &*) */
+const sudo_button = document.querySelectorAll(".sudo_cmd_button")
+message.addEventListener('input', (event) => {
+    // const inputValue = message.value.trim();
+    const commandPrefixes = ["$", "@", "&", "&*", "filter:"];
+
+    let containsCommand = commandPrefixes.some(prefix => message.value.includes(prefix));
+
+    if (containsCommand) {
+        open_command_menu();
+    } else {
+        close_command_menu();
+    }
+});
+
+/* This closes the sudo command menu when you click the enter button */
+message.addEventListener('keypress', (event) => {
+    if (event.key === "Enter") {
+        close_command_menu()
+    }
+})
+
+/* This closes the sudo command menu when you click outside of the textinput */
+message.addEventListener('focusout', (event) => {
+    setTimeout(close_command_menu, 100)
+})
+
+/* This controls the button length letting js assign command_buttons and command_badges */
+for (let index = 0; index < sudo_button.length; index++) {
+    ul = document.getElementById("sudo_list");
+    li = ul.getElementsByTagName('li');
+
+    const command_tag = document.createElement('div');
+    command_tag.classList.add(`${sudo_button[index].getAttribute("privilege")}`)
+    command_tag.innerHTML = sudo_button[index].getAttribute("privilege")
+    li[index].appendChild(command_tag)
+
+    sudo_button[index].addEventListener('click', () => {
+        message.value = `${sudo_button[index].getAttribute("trigger")}${sudo_button[index].getAttribute("command")}`;
+        message.focus()
+        close_command_menu()
+    })
+}
+
+function search_commands() {
+    // Declare variables
+    var filter, ul, li, a, i, txtValue;
+    filter = message.value.toLowerCase();
+    ul = document.getElementById("sudo_list");
+    li = ul.getElementsByTagName('li');
+  
+    // Loop through all list items, and hide those who don't match the search query
+    for (i = 0; i < li.length; i++) {
+      a = li[i].getElementsByTagName("button")[0];
+      txtValue = a.textContent || a.innerText;
+      if (txtValue.toLowerCase().indexOf(filter) > -1) {
+        li[i].style.display = "";
+      } else {
+        li[i].style.display = "none";
+      } if (message.value === "&*") {
+        li[i].style.display = "";
+      } if (message.value === `$filter{type:${sudo_button[i].getAttribute("privilege")}}`) {
+        const command_badge = document.querySelectorAll(".user")
+        for (let index = 0; index < command_badge.length; index++) {
+            if (command_badge[index].innerHTML === "user") {
+                li[i].style.display = "";
+            }
+        }
+      } if (message.value === "color_change") {
+        message.style.setProperty('animation', 'clr_typing 3s infinite')
+      }
+    }
+}
+
+/* This is a search filter that filters through the commands and hides the ones that don't match the search filters typed */
+// function search_commands() {
+//     // Declare variables
+//     var filter, ul, li, a, i, txtValue;
+//     filter = message.value.toLowerCase();
+//     ul = document.getElementById("sudo_list");
+//     li = ul.getElementsByTagName('li');
+//     const variations = ["$", "$s", "$su", "$sud", "$sudo", "$sudo "];
+//     let bypass = false;
+//     let actualFilter = '';
+    
+//     // Trim any leading or trailing whitespace from the filter
+//     const trimmedFilter = filter.trim();
+    
+//     // Find the longest matching prefix
+//     const prefix = variations.reduce((longest, current) => {
+//         return trimmedFilter.startsWith(current) && current.length > longest.length ? current : longest;
+//     }, "");
+    
+//     // Remove the prefix and any leading/trailing spaces
+//     if (prefix) {
+//         actualFilter = trimmedFilter.substring(prefix.length).trim();
+//         if (variations.includes(trimmedFilter)) { // Check if the exact trimmed filter is one of the variations
+//             bypass = true;
+//         }
+//     }
+  
+//     // Loop through all list items, and hide those who don't match the search query
+//     if (!bypass) {
+//     for (i = 0; i < li.length; i++) {
+//         a = li[i].getElementsByTagName("button")[0];
+//         txtValue = a.textContent || a.innerText;
+//         if (txtValue.toLowerCase().indexOf(actualFilter) > -1) {
+//           li[i].style.display = "";
+//         } else {
+//           li[i].style.display = "none";
+//         } if (message.value === "&*") {
+//           li[i].style.display = "";
+//         } if (message.value === `$filter{type:${sudo_button[i].getAttribute("privilege")}}`) {
+//           const command_badge = document.querySelectorAll(".user")
+//           for (let index = 0; index < command_badge.length; index++) {
+//               if (command_badge[index].innerHTML === "user") {
+//                   li[i].style.display = "";
+//               }
+//           }
+//         } if (message.value === "color_change") {
+//           message.style.setProperty('animation', 'clr_typing 3s infinite')
+//         }
+//       }
+//     }
+//   }
 
 
 // setInterval(BTMLog, 3000)

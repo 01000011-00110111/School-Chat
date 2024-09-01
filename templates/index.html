@@ -32,7 +32,7 @@
             <div id="arrowContainer">
               <h1>&lt;</h1>
             </div>
-            <span id="versionText" style="font-size: 20px;margin-top: 25px;">Version: 1.4-beta</span>
+            <span id="versionText" style="font-size: 20px;"></span>
         </version>
 
         <script>
@@ -40,13 +40,34 @@
 
             versionTag.addEventListener('mouseover', () => {
             versionTag.style.transition = "all 1s ease-in-out";
-            versionTag.style.right = "-2%";
+            versionTag.style.right = "-1%";
             })
 
             versionTag.addEventListener('mouseleave', () => {
             versionTag.transition = "all 1s ease-in-out";
             versionTag.style.right = "";
             })
+
+            async function fetchVersionTag() {
+                    try {
+                        response = await fetch('https://api.github.com/repos/01000011-00110111/School-Chat/tags');
+                        tags = await response.json();
+                        filteredTags = tags
+                        .filter(tag => !tag.name.includes('A'))
+                        
+                        // Get the latest tag
+                        const latestTag = `Version: 1.4.2
+                        Release: ${filteredTags[0]?.name || 'No tags found'}`
+                        
+                        // Set the tag name in the <var> element
+                        document.getElementById('versionText').innerText = latestTag;
+                    } catch (error) {
+                        console.error('Error fetching tags:', error);
+                        document.getElementById('versionText').innerText = 'Error fetching tags';
+                    }
+                }
+        
+            fetchVersionTag();
         </script>
     </body>
 </html>

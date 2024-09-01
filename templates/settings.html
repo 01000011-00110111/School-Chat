@@ -33,7 +33,7 @@
     </div>
   </div>
 
-  <form method="post" style="display: grid; height: 49rem; min-height: 100%;">
+  <form method="post" enctype="multipart/form-data" name="form" style="display: grid; height: 49rem; min-height: 100%;">
       <div id="ProfileDisplay">
         <div id="MainSettingsBody">
           <div id="My-Profile" class="tabcontent">
@@ -43,15 +43,17 @@
                   <div id="ImageHoverPreview">
                     <p>Click to upload image</p>
                   </div>
-                  <img id="PfPdisplay" src="{{profile}}" name="profile">
+                  <img id="PfPdisplay" src="{{profile}}" name="profile_view">
                 </div>
               </label>
 
-              <div style="align-content: center; display: grid; margin: 18px;">
-                <h1>{{displayName}}</h1>
-                <h6 id="RoleDisplay">{{role}}</h6>
-              </div>
+            <div style="align-content: center; display: grid; margin: 18px;">
+              <h1>{{displayName}}</h1>
+              <h6 id="RoleDisplay">{{role}}</h6>
             </div>
+          </div>
+
+          <input type="file" id="profile" name="profile">
 
             <p id="user_colorTXT">Displayname: </p>
             <input type="text" id="username" value='{{displayName}}' placeholder="Display Name" name="display" maxlength="12" class='std_box'><br>
@@ -61,75 +63,80 @@
             <input type="color" value='{{role_color}}' id="role_color" name="role_color"><br>
             <p id="user_colorTXT">Message: </p>
             <input type="color" value='{{message_color}}' id="message_color" name="message_color"><br>
-            <input type="file" id="profile" name="profile">
-
-            <div id="example">
-        
-            </div>
-          </div>
-
-          <div id="Account" class="tabcontent">
-            <h3>Account</h3>
-            <p id="user_colorTXT">Username: </p>
-            <input type="text" id="username" value='{{user}}' placeholder="Username" name="user" maxlength="15" class='std_box'><br>
-            <p id="user_colorTXT">Email</p>
-            <input type="text" id="email" value='{{email}}' placeholder="Email" name="email" class='std_box'>
-
-            <!-- Add an input element to store the selected theme value -->
-            <input type="hidden" id="theme-selector" name="theme" value="">
-            <!-- Add an input element to store the selected theme value -->
-            <input type="text" id="Ausername" placeholder="login username" maxlength="15" name="user" value='{{user}}' hidden><br>
-            <p id="user_colorTXT">Password:</p><br>
-            <!-- <input type="password" id="Apassword" placeholder="Password" name="password" value='{{passwd}}' hidden><br> -->
-            <h2 style="color:green; pointer-events: none;">{{passwd}}</h2>
-          </div>
-
-          <div id="Notifications" class="tabcontent">
-            <p>Note: Notifications are still in beta phase.</p>
-            <input type="button" onclick="enableNotifications();" value="Enable Notifications" id="notificationsButton"/>
-          </div>
-
-          <div id="Preferences" class="tabcontent">
-            <div id="themes_container">
-              <div id="user_theme_container">
-                <div class="appearance_rounded_panel rounded">
-                  <h2 id="info_theme_name">Applied theme:</h2>
-                </div>
-
-                <div class="users_details rounded">
-                  <p id="info_theme_author">Creator:</p>
-                </div>
-              </div>
-              <div class="themes-dropdown">
-                <div id="themes-dropdown-content" class="dropdown-content rounded">
-                  <div id="themes_dropdown_header">
-
-                  </div>
-                  <div id="themes_panel">
-
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          </div>
-
-          <div id="DeveloperSettings" class="tabcontent">
-
-          </div>
-
-          <div id="AppInfo" class="tabcontent">
-            <a href="https://github.com/01000011-00110111/School-Chat">Source Code</a>
+            <input type="file" id="profile" name="profile" accept="image/*">
+            <script>
+              window.onload = function() {
+                  document.getElementById("PfPdisplay").src = getCookie("Profile");
+                  document.getElementById('profile').files = new DataTransfer().files;
+              };
+            </script>
+          <div id="example">
+      
           </div>
         </div>
+
+        <div id="Account" class="tabcontent">
+          <h3>Account</h3>
+          <p id="user_colorTXT">Username: </p>
+          <input type="text" id="username" value='{{user}}' placeholder="Username" name="user" maxlength="15" class='std_box'><br>
+          <p id="user_colorTXT">Email</p>
+          <input type="text" id="email" value='{{email}}' placeholder="Email" name="email" class='std_box'>
+
+          <!-- Add an input element to store the selected theme value -->
+          <input type="hidden" id="theme-selector" name="theme" value="">
+          <!-- Add an input element to store the selected theme value -->
+          <input type="text" id="Ausername" placeholder="login username" maxlength="15" name="user" value='{{user}}' hidden><br>
+          <p id="user_colorTXT">Password:</p><br>
+          <!-- <input type="password" id="Apassword" placeholder="Password" name="password" value='{{passwd}}' hidden><br> -->
+          <h2 style="color:green; pointer-events: none;">{{passwd}}</h2>
+        </div>
+
+        <div id="Notifications" class="tabcontent">
+          <p>Note: Notifications are still in beta phase.</p>
+          <input type="button" onclick="enableNotifications();" value="Enable Notifications" id="notificationsButton"/>
+        </div>
+
+        <div id="Preferences" class="tabcontent">
+          <div id="themes_container">
+            <div id="user_theme_container">
+              <div class="appearance_rounded_panel rounded">
+                <h2 id="info_theme_name">Applied theme:</h2>
+              </div>
+
+              <div class="users_details rounded">
+                <p id="info_theme_author">Creator:</p>
+              </div>
+            </div>
+            <div class="themes-dropdown">
+              <div id="themes-dropdown-content" class="dropdown-content rounded">
+                <div id="themes_dropdown_header">
+
+                </div>
+                <div id="themes_panel">
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="DeveloperSettings" class="tabcontent">
+
+        </div>
+
+        <div id="AppInfo" class="tabcontent">
+          <a href="https://github.com/01000011-00110111/School-Chat">Source Code</a>
+        </div>
+
       </div>
 
-      <div id="StatusContainer">
-        <a href="." id="cancelButton" class="statusButton">Back</a>
-        <button type="submit" id="change" name="u pdate" class="statusButton">Save</button>
       </div>
-  </form>
+
+    <div id="StatusContainer">
+      <a href="." id="cancelButton" class="statusButton">Back</a>
+      <button type="submit" id="change" name="update" class="statusButton">Save</button>
+    </div>
+</form>
 
   {% if error %}
       <h2 style="color:red; pointer-events: none;">{{error}}</h2>

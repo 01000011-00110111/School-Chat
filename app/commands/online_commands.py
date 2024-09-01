@@ -1,22 +1,28 @@
 # from datetime import datetime, timedelta
 
-# from flask_socketio import emit
+from flask_socketio import emit
 
-import app.database as database
+from app import database
 
-# from commands import other
 from app.user import User
+from app.online import users_list
 
 
 def appear_offline(**kwargs):
     """sets the user to appear offline"""
-    database.force_set_offline(kwargs["user"].uuid)
-    User.get_user_by_id(kwargs["user"].uuid).status = 'offline-locked'
-    # emit("force_username", ("", None), broadcast=True)
-    
+    uuid = kwargs["user"].uuid
+    database.force_set_offline(uuid)
+    User.get_user_by_id(uuid).status = 'offline-locked'
+    users_list[uuid]['status'] = 'offline-locked'
+
+    emit("update_list", users_list[uuid], namespace="/", broadcast=True)
+
 
 def appear_online(**kwargs):
     """sets the user to appear online"""
+    uuid = kwargs["user"].uuid
     database.set_online(kwargs["user"].uuid, True)
     User.get_user_by_id(kwargs["user"].uuid).status = 'online'
-    # emit("force_username", ("", None), broadcast=True)
+    users_list[uuid]['status'] = 'active'
+
+    emit("update_list", users_list[uuid], namespace="/", broadcast=True)

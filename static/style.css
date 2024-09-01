@@ -1,3 +1,8 @@
+/* Copyright (C) 2023, 2024  cserver45, cseven
+  License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
+  https://github.com/01000011-00110111/School-Chat 
+*/
+
 body, html {
   background-color: #000000;
   color: #dd7016;
@@ -79,7 +84,7 @@ body, html {
 
 #chat {
     z-index: 0;
-	padding-left: 5%;
+	  padding-left: 5%;
     padding-right: 12%;
     margin-left: 1.5%;
     line-height: 40px;
@@ -91,9 +96,17 @@ body, html {
 }
 
 #message {
-    font-size: 18px;
-    width: 100%;
-    border-radius: 15px;
+  font-size: 18px;
+  width: 100%;
+  border-radius: 15px;
+  text-indent: 6px;
+  outline: none;
+}
+
+#message:disabled {
+  background: #00000082 !important;
+  color: white !important;
+  border: 0;
 }
 
 /* id start by getting the text above the area the text box is */
@@ -111,8 +124,7 @@ body, html {
     /*border-top: 5px solid black;*/
     justify-content: center;
     display: flex;
-    height: 8%;
-    margin: 0px -7.7px;
+    height: 71px;
     background: black;
 }
 
@@ -135,6 +147,10 @@ body, html {
 #send {
     font-size: 24px;
     border-radius: 22%;
+}
+
+#send:disabled {
+  display: none;
 }
 
 #send:hover {
@@ -198,7 +214,7 @@ body, html {
 
 .closebtn {
   width: 56px !important;
-  font-size: 40px !important;
+  font-size: 27px !important;
   background: transparent !important;
   position: static;
   justify-self: flex-end;
@@ -590,7 +606,7 @@ body, html {
   background: black;
   position: fixed;
   width: 100%;
-  height: 8%;
+  height: 71px;
   padding: 0px;
   display: flex;
   box-shadow: 0px -1px 44px 15px #191919;
@@ -1038,6 +1054,14 @@ version #arrowContainer {
   border: 2px solid #464646;
 }
 
+.light-links {
+  color: black !important;
+}
+
+.light-links:hover {
+  text-decoration: black solid underline 2px !important;
+}
+
 .themes-dropdown-button {
   width: 200px;
   height: 45px;
@@ -1158,4 +1182,229 @@ version #arrowContainer {
   width: 100%;
   height: 60px;
   border-bottom: 1px solid gray;
+}
+
+/* Support Pages CSS (ex: Documentation Page)*/
+
+#flex_container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+#grid_container {
+  display: grid;
+  height: 100%;
+  width: 100%;
+  grid-template-rows: 13%;
+}
+
+#docx_nav_panel {
+  display: grid;
+  height: 100%;
+  width: 320px;
+  background: black;
+  border-right: 0.6px solid #a2a2a2;
+  text-indent: 20px;
+  grid-template-rows: 17%;
+}
+
+#docx_topbar {
+  display: flex;
+  width: 100%;
+  height: 70px;
+  background: black;
+  border-bottom: 0.6px solid #a2a2a2;
+  color: white;
+}
+
+#docx_topbar button {
+  border: 0;
+  background: transparent;
+  color: white;
+  height: 50px;
+  width: 50px;
+}
+
+#docx_content {
+  color: white;
+  text-indent: 10%;
+}
+
+#docx_content p {
+  color: white;
+  text-indent: 11%;
+}
+
+#docs_header {
+  justify-self: center;
+}
+
+#docs_icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  border: 0.6px solid gray;
+  box-shadow: 4px 3px 7px -1px #555;
+}
+
+#docs_nav_heading_container {
+  display: flex;
+  align-items: center;
+  height: 70px;
+  font-size: 15px;
+  justify-content: space-evenly;
+  border-bottom: 0.6px solid #a2a2a2;
+  text-indent: 0px;
+}
+
+#docx_nav_panel_container {
+  display: grid;
+  align-items: baseline;
+  height: 265px;
+}
+
+#docx_nav_panel_container button {
+  height: 100%;
+  font-size: 18px;
+  background: transparent;
+  color: white;
+  border: 0;
+  text-align: left;
+  text-indent: 30px;
+}
+
+#sudo_cmd_menu {
+  position: absolute;
+  display: none;
+  background: rgba(0, 0, 0, 0.71);
+  bottom: 77px;
+  width: 50%;
+  border-radius: 20px;
+  overflow-y: scroll;
+  max-height: 185px;
+  border: 1px solid #ffffff69;
+}
+
+#sudo_cmd_menu .sudo_cmd_button {
+  background: transparent;
+  border: 0;
+  font-size: 20px;
+  text-indent: 17px;
+  color: white;
+  height: 60px;
+  width: 90%;
+  text-align: left;
+  border-radius: 14px;
+  align-content: center;
+}
+
+#sudo_cmd_menu ul {
+  color: yellow;
+  list-style: none;
+}
+
+#sudo_cmd_menu ul li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#sudo_cmd_menu .sudo_cmd_button:hover {
+  transition: 0.6s all;
+  background: #403e3e;
+  border: 2px #7ebfd5 solid;
+}
+
+.user {
+  background: gray;
+  color: white;
+  width: 65px;
+  height: 30px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+.mod {
+  background: maroon;
+  color: white;
+  width: 65px;
+  height: 30px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+.admin {
+  background: rgb(0, 172, 246);
+  color: white;
+  width: 65px;
+  height: 30px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+.dev {
+  background: rgb(38, 153, 0);
+  color: white;
+  width: 65px;
+  height: 30px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+.style {
+  background: rgb(246, 119, 0);
+  color: white;
+  width: 65px;
+  height: 30px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+@-webkit-keyframes clr_typing {
+  25% {
+    color: red;
+  }
+
+  50% {
+    color: green;
+  }
+
+  75% {
+    color: yellow;
+  }
+
+  100% {
+    color: blue;
+  }
 }

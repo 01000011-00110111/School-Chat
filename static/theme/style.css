@@ -1,3 +1,8 @@
+/* Copyright (C) 2023, 2024  cserver45, cseven
+  License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
+  https://github.com/01000011-00110111/School-Chat 
+*/
+
 html, body {
   height: 100%;
   width: 100%;
@@ -39,6 +44,15 @@ html, body {
   align-content: stretch;
   margin-left: -22%;
   border-right: 1px solid gray;
+  grid-template-rows: 20%;
+}
+
+#properties_panel_top_controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 69px;
+  padding: 14px;
 }
 
 .c_div {
@@ -75,8 +89,7 @@ html, body {
 #c_fh {
   width: auto;
   height: 100%;
-  display: inline-grid;
-  align-content: stretch;
+  align-content: baseline;
   overflow-y: auto;
 }
 
@@ -193,23 +206,80 @@ html, body {
 #NavControlBox {
   height: 100%;
   display: flex;
-  width: 16%;
+  width: 273.6px;
   justify-content: space-evenly;
   align-items: center;
 }
 
 #ColorPicker {
-  height: fit-content;
-  width: fit-content;
+  height: 48px;
+  width: 235px;
   display: flex;
   align-items: center;
+  background: rgb(49, 49, 49);
+  border-radius: 11px;
+  padding: 5px;
+  margin-left: 11px;
 }
 
 #ColorPicker div {
   height: 38px;
   width: 38px;
-  border-radius: 100%;
+  border-radius: 13px;
   border: 1px #c1c1c1 solid;
+}
+
+#ColorPicker input {
+  border-radius: 7px;
+  height: 29px;
+  border: 0;
+  margin: 0 0 0 7px;
+  background: transparent;
+  outline: none;
+  color: white;
+  font-size: 18px;
+  width: 118px;
+}
+
+drawer {
+  display: grid;
+  width: 100%;
+  border: 1px solid gray;
+  height: fit-content;
+  min-height: 174px;
+  grid-template-rows: 41px;
+}
+
+drawer drawer_header {
+  width: 100%;
+  display: flex;
+  height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  text-indent: 8px;
+  border-bottom: 1px solid gray;
+}
+
+.gradient {
+  background: none;
+  color: white;
+  border: none;
+  font-size: 20px;
+}
+
+.drawer_dropdown_button {
+  font-size: 20px;
+  background: none;
+  color: white;
+  border: none;
+  margin: 7px;
+  width: 32px;
+  height: 32px;
+}
+
+drawer_content {
+  align-content: space-evenly;
+  display: grid;
 }
 
 .ValueBox {
@@ -226,11 +296,19 @@ html, body {
 }
 
 #applyButton {
-  width: 71%;
+  width: 97%;
+  margin-top: 16px;
 }
 
 #closeButton {
   width: 20%;
+  border: 0;
+  box-shadow: none;
+  font-size: 22px;
+}
+
+#menuOwner {
+  text-transform: capitalize;
 }
 
 .PropertiesButton {
@@ -379,8 +457,7 @@ html, body {
   padding-top: 9%;
   word-wrap: break-word;
   color: #dd7016;
-  width: 200%;
-  height: 91.9%;
+  height: 94%;
 }
 
 #message {
@@ -405,8 +482,7 @@ html, body {
     /*border-top: 5px solid black;*/
     justify-content: center;
     display: flex;
-    height: 9.6%;
-    margin: 0px -0.7px;
+    height: 71px;
     background: black;
 }
 
@@ -465,12 +541,11 @@ html, body {
   left: 0;
   overflow-x: hidden;
   transition: 0.5s;
-  padding-top: 57px;
   background: black;
     background-color: black;
-  background-color: black;
   scrollbar-width: thin;
-  margin: 0 0.2%;
+  display: grid;
+  grid-template-rows: 85px;
 }
 
 .sidenav a {
@@ -492,11 +567,11 @@ html, body {
 }
 
 .closebtn {
-    position: absolute;
-    margin: -73px 74%;
-    width: 12px !important;
-    font-size: 40px !important;
-    background: transparent !important;
+  width: 56px !important;
+  font-size: 27px !important;
+  background: transparent !important;
+  position: static;
+  justify-self: flex-end;
 }
 
 @media screen and (max-height: 450px) {
@@ -821,7 +896,7 @@ html, body {
   background: black;
   position: fixed;
   width: 100%;
-  height: 8%;
+  height: 71px;
   padding: 0px;
   display: flex;
   box-shadow: 0px -1px 44px 15px #191919;
@@ -917,8 +992,7 @@ notification .close_panel button {
   position: fixed;
   text-align: left;
   z-index: 3;
-  height: fit-content;
-  top: 6%;
+  top: 57px;
   left: 0px;
   background: black;
   width: 173px;
@@ -976,4 +1050,56 @@ notification .close_panel button {
   justify-content: center;
   display: grid;
   font-size: 20px;
+}
+
+#unsupported_browser_color_controls {
+  position: fixed;
+  visibility: hidden;
+}
+
+#gradient_buttons_container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+#gradient_buttons_container button {
+  background: transparent;
+  color: white;
+  border: 0;
+  font-size: 13px;
+
+}
+
+.button_active {
+  color: blue !important;
+}
+
+#gradient_div {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  width: 200px;
+  justify-self: center;
+  height: 50px;
+  background: #2b2b2b;
+  border-radius: 20px;
+  text-align: center;
+  text-indent: 10px;
+  padding-left: 15px;
+}
+
+#mydiv {
+  position: absolute;
+  z-index: 9;
+  background-color: #f1f1f1;
+  border: 1px solid #d3d3d3;
+  text-align: center;
+}
+
+#mydivheader {
+  padding: 10px;
+  cursor: move;
+  z-index: 10;
+  background-color: #2196F3;
+  color: #fff;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2023  cserver45, cseven
+// Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 
@@ -15,3 +15,18 @@ function getCookie(name) {
 socket.on("ping", ({from}) => {
     new Notification(`${from} pinged you`, { icon: 'static/favicon.ico' });
 });
+
+socket.on("system_pings", (message) => {
+    new Notification(message, { icon: 'static/favicon.ico' });
+});
+
+setInterval(() => {
+    RID = window.sessionStorage.getItem("ID")
+    let status = ''
+    if (document.hidden) {
+        status = 'idle';
+    } else {
+        status = 'active';
+    }
+    socket.emit('heartbeat', status, RID);
+}, 25000);

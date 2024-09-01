@@ -1,6 +1,9 @@
-// Copyright (C) 2023  cserver45, cseven
+// Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
+
+const fileInput = document.getElementById('profile');
+const PfPdisplay = document.getElementById('PfPdisplay');
 
 let prevValues = {};
 const numExamples = 1; // Number of examples to create
@@ -38,7 +41,6 @@ const responses = [
     { message: "Parallel lines have so much in common. It’s a shame they’ll never meet.", rarity: 3 },
     { message: "Guess what? The next big feature drop is just around the corner!", rarity: 2 },
     { message: "Did you hear? Typing 'wizard' grants you magical chat powers.", rarity: 2 },
-    // { message: "Challenge if you can the rarest message on 4 messages and show proof to a dev then you rainbow role colors!(This challenge is over new one soon)", rarity: 2 },
     { message: "Try $sudo E in chat.", rarity: 1 },
     { message: "Feeling lucky? Enter the lottery and see what you get!", rarity: 1 },
 ];
@@ -92,8 +94,7 @@ function updateExamples() {
         return;
     }
 
-    let profile = document.getElementById("profile").value;
-    if (profile === '') {profile = 'static/favicon.ico'}
+    let profile = document.getElementById("PfPdisplay").src
     const userColor = document.getElementById("user_color").value;
     const username = document.getElementById("username").value;
     const roleColor = document.getElementById("role_color").value;
@@ -152,7 +153,7 @@ function setTheme(theme, name, author) {
 }
 
 
-socket.on('receve_themes', (themes) => {
+socket.on('receive_themes', (themes) => {
   const contentList = document.getElementById("themes_panel")
   // console.log(themes)
   for (const theme of themes) {
@@ -187,7 +188,21 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
   }
-  
+
+fileInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            PfPdisplay.src = e.target.result;
+        };
+
+        reader.readAsDataURL(file);
+    }
+    this.files = this.files
+});
+
   // Opens the defualt tab
   openTab(event, "My-Profile");
 

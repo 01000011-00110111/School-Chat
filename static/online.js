@@ -1,3 +1,6 @@
+// Copyright (C) 2023, 2024  cserver45, cseven
+// License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
+// https://github.com/01000011-00110111/School-Chat
 const users_list = {
     onlineList: [],
     offlineList: []
@@ -35,11 +38,12 @@ function updateUserList(onlineList, offlineList) {
     let DisplayName = getCookie('DisplayName').replace(/"/g, '');
 
     for (let onlineUser of onlineList) {
+        let status_icon = ''
         let perm_icon = icon_perm[onlineUser.perm] || '';
-        let status_icon = visibility_icon[onlineUser.status] || '';
+        if (DisplayName !== onlineUser.username) {status_icon = visibility_icon[onlineUser.status] || '';}
         let unread = '';
         if (onlineUser?.unread && onlineUser.unread.hasOwnProperty(DisplayName) && onlineUser.unread[DisplayName] > 0) {
-            unread = onlineUser.unread[DisplayName];
+                unread = onlineUser.unread[DisplayName];
         }
         online += `<button id="online_buttons" onclick="openuserinfo('${onlineUser.username}')" style="color: ${theme['sidebar-text']};"><font color='red'>${unread}</font>${perm_icon}${onlineUser.username}${status_icon}</button><br>`;
     }
@@ -71,6 +75,8 @@ function getCurrentUserLists() {
 }
 
 socket.on('update_list_full', (userStatuses) => {
+    users_list.onlineList = [];
+    users_list.offlineList = [];
     let onlineList = [];
     let offlineList = [];
 
@@ -88,35 +94,62 @@ socket.on('update_list_full', (userStatuses) => {
     updateUserList(onlineList, offlineList);
 });
 
+// const updating = false
+
+// socket.on('updated_display', (oldUserData, newUserData) => {
+//     updating = true
+//     let { onlineList, offlineList } = getCurrentUserLists();
+
+//     // Helper function to update a user in a list
+//     const updateUserInList = (list, oldUsername, newUser) => {
+//         return list.map(user =>
+//             user.username === oldUsername ? { ...user, ...newUser } : user
+//         );
+//     };
+
+//     // Update the global user lists
+//     users_list.onlineList = onlineList;
+//     users_list.offlineList = offlineList;
+//     // users_list.offlineList = offlineList;
+//     updating = false
+//     handleUserUpdate(updatedUser)
+// });
+
+
 socket.on("update_list", (updatedUser) => {
-    let { onlineList, offlineList } = getCurrentUserLists();
-    let isInOnlineList = onlineList.some(user => user.username === updatedUser.username);
-    let isInOfflineList = offlineList.some(user => user.username === updatedUser.username);
-
-    if (updatedUser.status === 'active' || updatedUser.status === 'idle') {
-        if (isInOnlineList) {
-            // Update user in online list
-            onlineList = onlineList.map(user => user.username === updatedUser.username ? updatedUser : user);
-        } else if (isInOfflineList) {
-            // Move from offline to online list
-            offlineList = offlineList.filter(user => user.username !== updatedUser.username);
-            onlineList.push(updatedUser);
-        } else {
-            // Add to online list
-            onlineList.push(updatedUser);
-        }
-    } else {
-        if (isInOfflineList) {
-            offlineList = offlineList.map(user => user.username === updatedUser.username ? updatedUser : user);
-        }else if (isInOfflineList) {
-            // Move to offline list
-            onlineList = onlineList.filter(user => user.username !== updatedUser.username);
-            offlineList.push(updatedUser);
-        }
-    }
-
-    users_list.onlineList = onlineList;
-    users_list.offlineList = offlineList;
-
-    updateUserList(onlineList, offlineList);
+    handleUserUpdate(updatedUser)
 });
+
+function handleUserUpdate(updatedUser) {
+        let { onlineList, offlineList } = getCurrentUserLists();
+        let isInOnlineList = onlineList.some(user => user.username === updatedUser.username);
+        let isInOfflineList = offlineList.some(user => user.username === updatedUser.username);
+
+        if (updatedUser.status === 'active' || updatedUser.status === 'idle') {
+            if (isInOnlineList) {
+                // Update user in online list
+                onlineList = onlineList.map(user => user.username === updatedUser.username ? updatedUser : user);
+            } else if (isInOfflineList) {
+                // Move from offline to online list
+                offlineList = offlineList.filter(user => user.username !== updatedUser.username);
+                onlineList.push(updatedUser);
+            } else {
+                // Add to online list
+                onlineList.push(updatedUser);
+            }
+        } else {
+            if (isInOfflineList) {
+                // Update user in offline list
+                offlineList = offlineList.map(user => user.username === updatedUser.username ? updatedUser : user);
+            } else {
+                // Move to offline list
+                onlineList = onlineList.filter(user => user.username !== updatedUser.username);
+                offlineList.push(updatedUser);
+            }
+        }
+
+        users_list.onlineList = onlineList;
+        users_list.offlineList = offlineList;
+
+        updateUserList(onlineList, offlineList);
+}

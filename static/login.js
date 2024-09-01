@@ -1,3 +1,7 @@
+// Copyright (C) 2023, 2024  cserver45, cseven
+// License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
+// https://github.com/01000011-00110111/School-Chat
+
 const checkbox = document.getElementById('checkBox')
   const checkState = window.localStorage.getItem('checkedState')
   const schemeState = window.localStorage.getItem('schemeState')
@@ -12,6 +16,8 @@ const checkbox = document.getElementById('checkBox')
   const innerContainer = document.getElementById("innerContainer")
   const schemeIcon = document.getElementById("schemeIcon")
   const tos = document.getElementById("tos-body")
+  const linksContainer = document.getElementById("linksContainer")
+  const loginLinks = linksContainer.getElementsByTagName("a")
 
   const getcheckedState = () => {
     if (checkState == "true")
@@ -93,12 +99,18 @@ const checkbox = document.getElementById('checkBox')
       schemeIcon.classList.add("light-mode")
       schemeIcon.classList.add("fa-moon")
       schemeIcon.classList.remove("fa-sun")
+      for (let index = 0; index < loginLinks.length; index++) {
+        loginLinks[index].classList.add("light-links")
+      }
     }
     else if (schemeState == "dark")
     {
       loginContainer.classList.remove("light-mode")
       leftPanel.classList.remove("light-mode")
       innerContainer.classList.remove("light-mode")
+      for (let index = 0; index < loginLinks.length; index++) {
+        loginLinks[index].classList.remove("light-links")
+      }
     }
   }
   retrieveScheme()
