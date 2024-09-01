@@ -10,8 +10,6 @@ import secrets
 from datetime import datetime
 
 import pymongo
-import certifi
-
 
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
@@ -21,7 +19,15 @@ def format_system_msg(msg):
 config = configparser.ConfigParser()
 config.read("config/keys.conf")
 mongo_pass = config["mongodb"]["passwd"]
-client = pymongo.MongoClient(mongo_pass, tls=True, tlsCAFile=certifi.where())
+
+if config['ENV'] == 'development': #this check is temp.
+    import certifi
+    client = pymongo.MongoClient(mongo_pass, tls=True, tlsCAFile=certifi.where())
+    #needed for mac users (might be temp depends on mongo)
+else:
+    client = pymongo.MongoClient(mongo_pass)
+
+
 # accounts/user data
 Accounts = client.Accounts
 Permission = client.Accounts.Permission

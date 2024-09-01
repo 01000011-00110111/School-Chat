@@ -23,6 +23,7 @@ import random
 import time
 from string import ascii_uppercase
 from threading import Timer
+import configparser
 
 import flask
 from flask import make_response, request
@@ -112,6 +113,9 @@ else:
 
 app = flask.Flask(__name__)
 app.secret_key = os.urandom(500)  # ITS ONLY AT 500!!!!!!
+config = configparser.ConfigParser()
+config.read("config/keys.conf")
+app.config['ENV'] = config['ENV']
 
 logging.basicConfig(filename="backend/webserver.log", filemode="a", level=logging.ERROR)
 root = logging.getLogger().setLevel(logging.ERROR)
