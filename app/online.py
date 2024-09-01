@@ -1,4 +1,6 @@
+from flask import request
 from flask_socketio import emit
+from app import socketio
 
 import app.database as database
 
@@ -26,20 +28,6 @@ def handle_full_list_request():
 def emit_on_startup():
     socketid = request.sid
     uuid = request.cookies.get("Userid")
-    global startup_msg
-    if startup_msg:
-        emit(
-            "message_chat",
-            (
-                format_system_msg(
-                    "If you can see this message, please refresh your client"
-                ),
-                "ilQvQwgOhm9kNAOrRqbr",
-            ),
-            broadcast=True,
-            namespace="/",
-        )
-        startup_msg = False
     if uuid in socketids:
         socketids[uuid] = socketid
     if uuid is not None:
@@ -131,12 +119,3 @@ for user in database.get_all_offline():
             
     users_list[user['userid']] = {'username': user['displayName'],
                                   'status': status, 'perm': perm, 'unread': {}}
-    
-"""
-unread = Private.get_unread(
-    format_userlist(self.uuid, key.uuid))
-if isinstance(unread, dict):
-    unread = 0 if key.uuid == self.uuid else unread.get(self.uuid, 0)
-else:
-    unread = 0    
-"""# for future us will rework

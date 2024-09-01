@@ -7,11 +7,9 @@ from datetime import datetime, timedelta
 
 from flask_login import LoginManager, logout_user
 
-import app.database as database
-
+from app import database
 
 login_manager = LoginManager()
-
 
 class User:
     """Represents a logged in user."""

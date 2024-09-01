@@ -9,9 +9,7 @@ from datetime import datetime
 from better_profanity import profanity
 from flask_socketio import emit
 
-import app.cmds as cmds
-
-from app import word_lists, log
+from app import word_lists#, log, cmds
 from app.online import get_scoketid
 from app.user import User
 
@@ -49,7 +47,7 @@ def run_filter_chat(user, room, message, roomid, userid):
         return ('permission', 10, 0)
 
     # if perms != "dev":
-    message = format_text(message)
+    message = filter_message(format_text(message))
     role = profanity.censor(user.role)
     # else:
         # role = user.role
@@ -103,7 +101,7 @@ def run_filter_private(user, message, userid):
         return ('permission', 10, 0)
 
     # if perms != "dev":
-    message = format_text(message)
+    message = filter_message(format_text(message))
     role = profanity.censor(user.role)
     # else:
         # role = user.role
@@ -132,45 +130,24 @@ def check_perms(user):
         'user'
 
 
-def to_hyperlink(text: str) -> tuple[str, list[str]]:
-    """Auto hyperlinks any links we find as common and returns the hyperlinked parts."""
-    link_pattern = \
-    r"(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])"
-    mails = re.findall(r"mailto:(.+?)([\s]|$)", text)
-    www_links = re.findall(r"(^|[^\/])(www\.[\S]+)", text)
-    links = re.findall(link_pattern, text, flags=re.I)
+def to_hyperlink(text: str) -> str:
+    """Auto hyperlinks any links we find as common."""
+    mails = re.findall(r"mailto:(.+?)[\s?]", text, flags=re.M)
+    links2 = re.findall(r"(^|[^\/])(www\.[\S]+(\b|$))", text, flags=re.M | re.I)
+    pattern = \
+        r"(\b(https?|ftp|sftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])"
+    links1 = re.findall(
+    pattern, text, flags=re.I)
 
-    # Track modifications
-    modifications = []
-
-    # Process mailto links
-    for mail in mails:
-        mail_address = mail[0]
-        original_text = f'mailto:{mail_address}'
-        replacement_text = f'<a href="mailto:{mail_address}">{mail_address}</a>'
-        if original_text in text:
-            text = text.replace(original_text, replacement_text)
-            modifications.append(replacement_text)
-
-    # Process www links
-    for url in www_links:
-        www_link = url[1]
-        original_text = f'www.{www_link}'
-        replacement_text = f'<a target="_blank" href="http://{www_link}">{original_text}</a>'
-        if original_text in text:
-            text = text.replace(original_text, replacement_text)
-            modifications.append(replacement_text)
-
-    # Process http/https/ftp/sftp/file links
-    for link in links:
-        link_url = link[0]
-        replacement_text = f'<a target="_blank" href="{link_url}">{link_url}</a>'
-        if link_url in text:
-            text = text.replace(link_url, replacement_text)
-            modifications.append(replacement_text)
-
-    return text, modifications
-
+    # Iterate over the results and replace the strings
+    for link in mails:
+        text = text.replace(f'mailto:{link}', f'<a href="mailto:{link}">{link}</a>')
+    for link in links1:
+        text = text.replace(link[0], f'<a href="{link[0]}">{link[0]}</a>')
+    for link in links2:
+        text = text.replace(link[1],
+                            f'<a target="_blank" href="{link[1]}">{link[1]}</a>')
+    return text
 
 
 def filter_message(message):
@@ -184,8 +161,6 @@ def format_text(message):  # this system needs notes do not remove
     italic_pattern = re.compile(r'/(.*?)/', re.DOTALL)
     underline_pattern = re.compile(r'_(.*?)_', re.DOTALL)
     color_pattern = re.compile(r'\[([a-zA-Z]+)\](.*?)#')
-
-    message, modifications = to_hyperlink(message)
 
     if '*' in message:
         message = bold_pattern.sub(lambda m: f'<b>{m.group(1)}</b>'\
@@ -201,15 +176,14 @@ def format_text(message):  # this system needs notes do not remove
 
     def replace(match):
         color, text = match.groups()
-        formatted_text = f'<span style="color: {color}">{text}</span>'
-        if text.strip() and formatted_text not in modifications:
-            return formatted_text
+        if text.strip():
+            return f'<span style="color: {color}">{text}</span>'
         return match.group(0)
 
     if '[' in message:
         message = color_pattern.sub(replace, message)
 
-    return filter_message(message)
+    return message
 
 
 
@@ -270,14 +244,15 @@ def find_cmds(message, user, roomid, room):
 
 def compile_message(message, profile_picture, user, role):
     """Taken from old methold of making messages"""
+    to_hyperlink(message)
     profile = f"<img class='pfp' src='{profile_picture}'></img>"
     user_string = f"<font color='{user.u_color}'>{user.display_name}</font>"
     message_string = f"<font color='{user.m_color}'>{message}</font>"
     role_string = do_dev_easter_egg(role, user)
     date_str = datetime.now().strftime("[%a %I:%M %p] ")
-    # message_string_h = to_hyperlink(message_string)
+    message_string_h = to_hyperlink(message_string)
 
-    message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string}"
+    message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string_h}"
     return message
 
 

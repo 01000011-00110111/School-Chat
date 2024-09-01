@@ -1,32 +1,31 @@
 import os
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 import flask
-from flask import request
+from flask import Blueprint, request
 from flask.typing import ResponseReturnValue
 
 from flask_socketio import emit
 from flask_login import (
-    # current_user,
     login_required,
-    # login_user,
-    # logout_user,
 )
 
-from app import database, log, filtering
+from app import socketio
+from app import database#, log, filtering
 from app.user import User
-# import app.log as log
+
+chat_bp = Blueprint('chat', __name__)
 
 ##### chat route code #####
 
-
-@app.route("/chat")
+@chat_bp.route("/chat")
 @login_required
 def chat_page() -> ResponseReturnValue:
     """Serve the main chat window."""
     return flask.render_template("chat.html")
 
 
-@app.route("/chat/<room_name>")
+@chat_bp.route("/chat/<room_name>")
 @login_required
 def specific_chat_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
@@ -36,7 +35,7 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
     return flask.redirect(flask.url_for("chat_page"))
 
 
-@app.route("/admin")
+@chat_bp.route("/admin")
 @login_required
 def admin_page() -> ResponseReturnValue:
     """Get the specific room in the uri."""
@@ -46,7 +45,7 @@ def admin_page() -> ResponseReturnValue:
     return flask.redirect(flask.url_for("chat_page"))
 
 
-@app.route("/admin/<room_name>")
+@chat_bp.route("/admin/<room_name>")
 @login_required
 def specific_admin_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
@@ -221,23 +220,33 @@ def format_system_msg(msg):
     return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
 
 # import cmds
+@dataclass
+class ChatConfig:
+    """Config stuff for chats."""
+
+    def __init__(self, config):
+        self.whitelisted = config["whitelisted"]
+        self.banned = config["blacklisted"]
+        self.can_send = config["canSend"]
+        self.locked = config["locked"]
+        self.backups = [0, 0]
+        self.last_message =  datetime.now()
+
+
 
 class Chat:
+    """Chat class."""
     chats = {}  # Dictionary to store existing chats
 
     def __init__(self, room, roomid):
         """Initialize the chat."""
         self.name = room["roomName"]
         self.vid = roomid
-        self.whitelisted = room["whitelisted"]
-        self.banned = room["blacklisted"]
-        self.canSend = room["canSend"]
-        self.locked = room["locked"]
+        self.config = ChatConfig(room)
         self.messages = database.get_messages(roomid)
-        self.backups = [0, 0] # 1st is total and 2nd is total sense last message
-        self.last_message =  datetime.now()
         self.sids = []
-        
+        self.sids = []
+
 
     @classmethod
     def create_or_get_chat(cls, roomid):
@@ -246,61 +255,62 @@ class Chat:
         if roomid in cls.chats:
             return cls.chats[roomid]
         if roomid not in cls.chats:
-            # print('remade it')
-            # Create a new chat instance if it doesn't exist
             room = database.get_room_data(roomid)
             new_chat = cls(room, roomid)
             cls.chats[roomid] = new_chat
             return new_chat
+        return None
 
     @classmethod
     def log_rooms(cls):
+        """add what this does here."""
         if os.path.exists("backend/chatlog.txt"):
-            with open("backend/chatlog.txt", "a") as logfile:
+            with open("backend/chatlog.txt", "a", encoding="utf-8") as logfile:
                 logfile.write(f"{datetime.now()} - Chat log updated\nChats:\n")
                 for key, _chat in cls.chats.items():
                     logfile.write(key+'\n')
-        
-        
+
+
     @classmethod
     def set_all_lock_status(cls, status):
+        """Sets the lo9ck status on all active chat rooms."""
         for chat in cls.chats:
-            chat.locked = status
-                
+            chat.config.locked = status
+
     @classmethod
     def add_message_to_all(cls, message_text: str, _rooms, _permission='false'):
         """ads messsages to all chatrooms"""
         for chat in cls.chats:
-            # private = self.vid == "all"
-            chat.last_message = datetime.now()
-            _lines = len(chat.messages)# if not private else 1
-
-            # if ((lines >= 500) and permission != 'true'):
-            #     chat.reset_chat(message_text, False)
-            #     chat.messages.append(message_text)
-            # else:
+            chat.config.last_message = datetime.now()
+            _lines = len(chat.messages)
             chat.messages.append(message_text)
-            # emit("message_chat", (message_text), brodcast=True)
 
-            log.backup_log(message_text, chat.vid, False)
+            log.backup_log(message_text, chat.vid, False, None)
             return ('room', 1)
-        
-        
+
+
+    def send_message(self, message_text: str):
+        """Emits the message to the chat"""
+        emit("message_chat", (message_text), broadcast=True, namespace="/")
+
+
     def add_message(self, message_text: str, permission='false') -> None:
         """Handler for messages so they get logged."""
         # private = self.vid == "all"
-        self.last_message = datetime.now()
+        self.config.last_message = datetime.now()
         lines = len(self.messages)# if not private else 1
 
-        if ((lines >= 250) and permission != 'true'):
-            self.reset_chat(message_text, False)
+        if ((lines >= 350) and permission != 'true'):
+            self.reset_chat()
+        else:
+            self.messages.append(message_text)
 
         for sid in self.sids:
-            emit("message_chat", (message_text), room=sid)
-        self.messages.append(message_text)
+            emit("message_chat", (message_text), to=sid)
 
-        log.backup_log(message_text, self.vid, False)
+        log.backup_log(message_text, self.vid, False, None)
         return ('room', 1)
+
 
     def reset_chat(self):
         """Reset the chat."""
@@ -308,18 +318,22 @@ class Chat:
         msg = format_system_msg('Chat reset by an admin.')
         self.messages.append(msg)
         emit("reset_chat", ("admin", self.vid), broadcast=True, namespace="/")
-        
-    
+
+
     def set_lock_status(self, status):
-        self.locked = status
-        
-        
+        """Changes the chat lock status."""
+        self.config.locked = status
+
+
     def backup_data(self):
+        """Backups the chat room."""
         database.update_chat(self)
-        self.backups[0] += 1
-        if self.last_message > datetime.now() + timedelta(minutes=90):
-            self.backups[1] += 1
-            self.delete() if self.backups[1] > 3 else None
-            
+        self.config.backups[0] += 1
+        if self.config.last_message > datetime.now() + timedelta(minutes=90):
+            self.config.backups[1] += 1
+            if self.config.backups[1] > 3:
+                self.delete()
+
     def delete(self):
+        """Deletes the chat."""
         del Chat.chats[self.vid]

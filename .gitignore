@@ -5,17 +5,17 @@ backend/Backups/*
 .DS_Store
 
 # chatlog
-backend/webserver.log
-backend/Chat-backup.txt
-backend/command_log.txt
-airhorn_default.wav
-backend/chat-rooms_log.txt
-backend/permission.txt
-backend/accounts.txt
-backend/unbanned_words.txt
-backend/banned_words.txt
-config/keys.conf
-static/profiles
+app/backend/webserver.log
+app/backend/Chat-backup.txt
+app/backend/command_log.txt
+app/airhorn_default.wav
+app/backend/chat-rooms_log.txt
+app/backend/permission.txt
+app/backend/accounts.txt
+app/backend/unbanned_words.txt
+app/backend/banned_words.txt
+app/config/keys.conf
+app/static/profiles
 
 # running files
 __pycache__/*
