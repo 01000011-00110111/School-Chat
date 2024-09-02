@@ -14,11 +14,12 @@ def create_app():
 
     with app.app_context():
         # Import routes and socket events
-        from app import login, chat, user
+        from app import login, chat, user, connections, log
         user.login_manager.init_app(app)
 
         # Register routes
         app.register_blueprint(login.login_bp)
         app.register_blueprint(chat.chat_bp)
+        app.register_blueprint(log.log_bp)
 
     return app

@@ -9,7 +9,7 @@ from datetime import datetime
 from better_profanity import profanity
 from flask_socketio import emit
 
-from app import word_lists#, log, cmds
+from app import word_lists, log, cmds
 from app.online import get_scoketid
 from app.user import User
 

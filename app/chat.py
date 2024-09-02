@@ -11,8 +11,9 @@ from flask_login import (
 )
 
 from app import socketio
-from app import database#, log, filtering
+from app import database, log, filtering
 from app.user import User
+from app.private import Private
 
 chat_bp = Blueprint('chat', __name__)
 
@@ -30,29 +31,61 @@ def chat_page() -> ResponseReturnValue:
 def specific_chat_page(room_name) -> ResponseReturnValue:
     """Get the specific room in the uri."""
     # later we can set this up to get the specific room (with permssions)
-    # request.cookies.get('Userid')
-    # print(room_name)
-    return flask.redirect(flask.url_for("chat_page"))
+    # void(room_name)
+    return flask.redirect(flask.url_for("chat.chat_page"))
 
 
 @chat_bp.route("/admin")
 @login_required
 def admin_page() -> ResponseReturnValue:
-    """Get the specific room in the uri."""
+    """Serve the admin page."""
     user = database.find_login_data(request.cookies.get("Userid"), True)
     if "adminpass" in user["SPermission"]:
         return flask.render_template("admin.html")
-    return flask.redirect(flask.url_for("chat_page"))
-
+    return flask.redirect(flask.url_for("chat.chat_page"))
 
 @chat_bp.route("/admin/<room_name>")
 @login_required
 def specific_admin_page(room_name) -> ResponseReturnValue:
-    """Get the specific room in the uri."""
-    # later we can set this up to get the specific room (with permssions)
-    # request.cookies.get('Userid')
-    # print(room_name)
-    return flask.redirect(flask.url_for("admin_page"))
+    """Redirect to the admin page for a specific room."""
+    # void(room_name)
+    return flask.redirect(flask.url_for("chat.admin_page"))
+
+
+@chat_bp.route("/mod")
+@login_required
+def mod_page() -> ResponseReturnValue:
+    """Serve the mod page."""
+    user = database.find_login_data(request.cookies.get("Userid"), True)
+    if "modpass" in user["SPermission"]:
+        return flask.render_template("mod.html")
+    return flask.redirect(flask.url_for("chat.chat_page"))
+
+
+@chat_bp.route("/mod/<room_name>")
+@login_required
+def specific_mod_page(room_name) -> ResponseReturnValue:
+    """Redirect to the mod page for a specific room."""
+    # void(room_name)
+    return flask.redirect(flask.url_for("chat.mod_page"))
+
+
+@chat_bp.route("/dev")
+@login_required
+def dev_page() -> ResponseReturnValue:
+    """Serve the dev page."""
+    user = database.find_login_data(request.cookies.get("Userid"), True)
+    if "Debugpass" in user["SPermission"]:
+        return flask.render_template("dev.html")
+    return flask.redirect(flask.url_for("chat.chat_page"))
+
+
+@chat_bp.route("/dev/<room_name>")
+@login_required
+def specific_dev_page(room_name) -> ResponseReturnValue:
+    """Redirect to the dev page for a specific room."""
+    # void(room_name)
+    return flask.redirect(flask.url_for("chat.dev_page"))
 
 
 ##### chat code ######
