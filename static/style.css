@@ -80,6 +80,7 @@ body, html {
     width: 45px;
     height: 45px;
     border: 2px red solid;
+    object-fit: cover;
 }
 
 #chat {

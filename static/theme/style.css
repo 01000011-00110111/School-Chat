@@ -8,6 +8,7 @@ html, body {
   width: 100%;
   background: black;
   color: white;
+  display: grid;
 }
 
 * {
@@ -19,7 +20,7 @@ html, body {
 .nav {
   display: flex;
   background: #000;
-  height: 6%;
+  height: 100%;
   justify-content: space-between;
   border-bottom: 1px solid gray;
 }
@@ -34,7 +35,7 @@ html, body {
 .main {
   width: 100%;
   display: flex;
-  height: 94%;
+  height: 100%;
 }
 
 #controls {
@@ -45,6 +46,7 @@ html, body {
   margin-left: -22%;
   border-right: 1px solid gray;
   grid-template-rows: 20%;
+  min-height: 826px;
 }
 
 #properties_panel_top_controls {
@@ -408,7 +410,7 @@ drawer_content {
 
 #online_users {
     padding-left: 0.7%;
-    padding-top: 1.6%;
+    padding-top: 5%;
     color: #ffffff;
 }
 
@@ -464,6 +466,8 @@ drawer_content {
     font-size: 18px;
     width: 100%;
     border-radius: 15px;
+    text-indent: 6px;
+    outline: none;
 }
 
 /* id start by getting the text above the area the text box is */
@@ -1117,4 +1121,72 @@ notification .close_panel button {
   width: 20px;
   height: 20px;
   border-radius: 100px
+}
+
+.settings_panel {
+  width: 900px;
+  height: 500px;
+  background: white;
+  border-radius: 6px;
+  display: grid;
+  grid-template-rows: 17%;
+  position: relative;
+}
+
+#settings_backdrop {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  display: none;
+  justify-content: center;
+  align-content: center;
+  backdrop-filter: blur(3px);
+}
+
+.settings_panel #settings_header {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  background: transparent;
+  align-items: center;
+  color: black;
+  box-shadow: 0px 3px 7px -2px #797979;
+}
+
+.settings_panel #settings_close_button {
+  background: transparent;
+  height: 100%;
+  width: 50px;
+  color: black;
+  border: 0;
+  font-size: 24px;
+}
+
+.settings_panel #panel_name {
+  text-indent: 15px;
+}
+
+.panel_body {
+  display: flex;
+}
+
+.settings_nav {
+  display: grid;
+  width: 115px;
+  grid-template-rows: 10% 10% 10%;
+}
+
+.settings_nav button {
+  background: ;
+  border: 0;
+  text-align: left;
+  text-indent: 12px;
+  height: 37px;
+  border-radius: 10px;
+  width: 100%;
+}
+
+.settings_display {
+  display: grid;
 }

@@ -141,6 +141,7 @@ socket.on("private_data", (data) => {
 function changeRoom(room) {
     window.sessionStorage.setItem("ID", room);
     closeNav();
+    setTimeout(activate_hyperlinks, 200)
     socket.emit('room_connect', room, getCookie("Userid"))
 }
 
@@ -418,7 +419,7 @@ for (let index = 0; index < hyperlinks.length; index++) {
 };
 
 window.onload = () => {
-    setTimeout(activate_hyperlinks, 300);
+    setTimeout(activate_hyperlinks, 100);
 }
 
 function renderChat(messages) {

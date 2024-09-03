@@ -24,7 +24,7 @@
       <p>v1.0</p>
 
       <div id="editor_dropdown">
-        <button>
+        <button onclick="open_settings();">
           <i class="fa-solid fa-gear"></i>
           Settings
         </button>
@@ -243,8 +243,8 @@
           </div>
         <div id="chat">
           [Fri 03:30 PM]
-          <img class="pfp" src="https://www6.school-chat.us/static/profiles/81b4a197-a670-4497-9c3e-08cb87f44737.png">
-          <font color="#690e8b">Kokonoe</font>
+          <img class="pfp" src={{profile}}>
+          <font color="#690e8b">{{username}}</font>
           (
           <font class="Dev_colors-loop">Student&nbsp;Council&nbsp;President</font>
           ) - 
@@ -302,6 +302,30 @@
                 <br>
               </div>
             </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="settings_backdrop">
+    <div class="settings_panel" id="settings_panel">
+      <div id="settings_header">
+        <h3 id="panel_name">Settings</h3>
+        <button id="settings_close_button" onclick="close_settings();">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="panel_body">
+        <div class="settings_nav">
+          <button>Preferences</button>
+          <button>Notifications</button>
+          <button>Editor</button>
+          <button>Appearance</button>
+        </div>
+
+        <div class="settings_display">
+
         </div>
       </div>
     </div>

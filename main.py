@@ -636,14 +636,16 @@ def category():
 @login_required
 def editor():
     """Opens the theme editor page."""
-    return flask.render_template("theme/editor.html")
+    user = database.find_login_data(request.cookies.get("Userid"), True)
+    return flask.render_template("theme/editor.html", profile=user["profile"], username = user["displayName"], role = user["role"])
 
 
 @app.route("/projects")
 @login_required
 def projects():
     """Opens the project page."""
-    return flask.render_template("theme/projects.html")
+    user = database.find_login_data(request.cookies.get("Userid"), True)
+    return flask.render_template("theme/projects.html", profile=user["profile"])
 
 
 @socketio.on("get_projects")
@@ -1097,4 +1099,4 @@ def teardown_request(_exception=None):
 
 if __name__ == "__main__":
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)

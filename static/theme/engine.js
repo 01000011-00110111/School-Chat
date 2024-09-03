@@ -212,6 +212,16 @@ function closeNav() {
     document.getElementById("mySidenav").style.width = "0";
 }
 
+const settings_backdrop = document.getElementById("settings_backdrop");
+const open_settings = () => {
+  settings_backdrop.style.display = "grid";
+  editor_dropdown.style.display = "none";
+}
+
+const close_settings = () => {
+  settings_backdrop.style.display = "none";
+}
+
 const propertyStates = ["disabled", "enabled"];
 const setProperties = (background, text, shadow, border) => {
   const drawer = document.getElementsByTagName('drawer');
@@ -351,15 +361,6 @@ const disableGradient = () => {
   gradient_icon.innerHTML = '<i class="fa-solid fa-circle-half-stroke"></i>';
 }
 
-const unsupportedBrowser = () => {
-  const drawers = document.getElementsByTagName("drawer");
-  const unsupportedControls = document.getElementById("unsupported_browser_color_controls");
-  for (let index = 0; index < drawers.length; index++) {
-    drawers[index].style.display = "none";
-  }
-  unsupportedControls.style.display = "grid";
-}
-
 gradient_div.addEventListener('click', () => {
   if (currentColorMode != colorMode[1]) {
     enableGradient();
@@ -418,7 +419,7 @@ const min = gradient_slider.min
 const max = gradient_slider.max
 const value = gradient_slider.value
 
-gradient_slider.style.background = `linear-gradient(to right, #404a70 0%, #404a70 ${(value-min)/(max-min)*100}%, #DEE2E6 ${(value-min)/(max-min)*100}%, #DEE2E6 100%)`
+gradient_slider.style.background = `linear-gradient(to right, #404a70 0%, #404a70 ${(value-min)/(max-min)*100}%, #DEE2E6 ${(value-min)/(max-min)*100}%, #DEE2E6 100%)`;
 
 gradient_slider.oninput = function() {
   this.style.background = `linear-gradient(to right, #404a70 0%, #404a70 ${(this.value-this.min)/(this.max-this.min)*100}%, #DEE2E6 ${(this.value-this.min)/(this.max-this.min)*100}%, #DEE2E6 100%)`
@@ -550,43 +551,42 @@ AllContent.forEach((element) => {
           shadowColor.value = c3
           borderColor.value = c4
         };
+        fetchColors();
 
-            fetchColors();
-
-            for (let index = 0; index < color_inputs.length; index++) {
-              color_inputs[index].addEventListener('focusout', (event) => {
-                if (isGradient(document.getElementById(`${SelectedLayer}`).style.background)) {
-                  color = document.getElementById(SelectedLayer).style.background
-                .split(',')
-                .map(color => color.trim())
-                .slice(1)
-                .join(', ')
-                .replace(/\)\)+/, ')')
-                .split('), ')
-                .map((color, index, array) => index === array.length - 1 ? color : color + ')')
-                .map(color => color.trim());
-                  const c0 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.background));
-                  const c1 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.background));
-                  ColorBox.value = c0
-                  gradientColor.value = c1
-                } else {
-                  ColorBox.value = color_inputs[0].value
-                }
-                textColor.value = color_inputs[2].value
-                document.getElementById(SelectedLayer).style.boxShadow = color_inputs[3].value
-                borderColor.value = color_inputs[4].value
-                fetchColors();
-              })
+        for (let index = 0; index < color_inputs.length; index++) {
+          color_inputs[index].addEventListener('focusout', (event) => {
+            if (isGradient(document.getElementById(`${SelectedLayer}`).style.background)) {
+              color = document.getElementById(SelectedLayer).style.background
+            .split(',')
+            .map(color => color.trim())
+            .slice(1)
+            .join(', ')
+            .replace(/\)\)+/, ')')
+            .split('), ')
+            .map((color, index, array) => index === array.length - 1 ? color : color + ')')
+            .map(color => color.trim());
+              const c0 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.background));
+              const c1 = rgbToHex(extractRGBValues(document.getElementById(`${SelectedLayer}`).style.background));
+              ColorBox.value = c0
+              gradientColor.value = c1
+            } else {
+              ColorBox.value = color_inputs[0].value
             }
+            textColor.value = color_inputs[2].value
+            document.getElementById(SelectedLayer).style.boxShadow = color_inputs[3].value
+            borderColor.value = color_inputs[4].value
+          })
+        fetchColors();
+        }
 
         for (let index = 0; index < color_boxes.length; index++) {
           color_boxes[index].addEventListener('input', (event) => {
             ColorDisplay[index].style.background = color_boxes[index].value
             color_inputs[index].value = color_boxes[index].value
-          })
+          });
         }
 
-        applyButton.addEventListener("click", (event) => {
+        const save_changes = () => {
           if (SelectedLayer == menuOwner.innerHTML) {
 
             switch (SelectedLayer) {
@@ -644,7 +644,12 @@ AllContent.forEach((element) => {
             };
               Update();
           };
+        }
+
+        applyButton.addEventListener("click", (event) => {
+            save_changes();
         });
+
       };
     };
   });

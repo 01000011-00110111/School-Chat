@@ -18,6 +18,7 @@ function OpenExternalPage(External_Url) {
 
 clearSearchButton.addEventListener('click', () => {
   searchInput.value = "";
+  search_projects()
 });
 
 const showclearButton = () => {
@@ -167,7 +168,7 @@ function updateProjectCount() {
 //   document.getElementById('response_text').innerHTML = response
 // });
 
-ellipsis_button.addEventListener('click', (event) => {
+ellipsis_button.addEventListener('click', () => {
   if (ellipsis_dropdown.style.display != "grid") {
     ellipsis_dropdown.style.display = "grid";
   } else {
@@ -175,10 +176,35 @@ ellipsis_button.addEventListener('click', (event) => {
   }
 });
 
-logout_button.addEventListener('click', (event) => {
+logout_button.addEventListener('click', () => {
   window.location.href = "/logout";
 });
 
-back_button.addEventListener('click', (event) => {
+back_button.addEventListener('click', () => {
   window.location.href = ".";
 });
+
+function search_projects() {
+  // Declare variables
+  var filter, li, a, i, txtValue;
+  filter = searchInput.value.toLowerCase();
+  li = document.querySelectorAll(".project_panel_container");
+
+  // Loop through all list items, and hide those who don't match the search query
+  for (i = 0; i < li.length; i++) {
+    a = li[i].getElementsByTagName("button")[0];
+    txtValue = a.textContent || a.innerText;
+    if (txtValue.toLowerCase().includes(filter)) {
+      li[i].style.display = "";
+    } else {
+      li[i].style.display = "none";
+    } if (searchInput.value === `filter{user:user}`) {
+      const command_badge = document.querySelectorAll(".user")
+      for (let index = 0; index < command_badge.length; index++) {
+          if (command_badge[index].innerHTML === "user") {
+              li[i].style.display = "";
+          }
+      }
+    }
+  }
+}

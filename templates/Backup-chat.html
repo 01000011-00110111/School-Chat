@@ -5,9 +5,11 @@
         <link rel="icon" type="image/x-icon" href="static/favicon.ico">
         <!-- SOCKETIO IMPORT MUST BE HERE, BEFORE CHAT.JS IMPORT. IT BREAKS OTHERWISE -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
         <script src="static/static.js"></script>
         <script src="static/chatlog.js"></script>
         <link rel="stylesheet" href="static/style.css"> 
+        <link rel="stylesheet" href="static/backup.css">
         <meta charset="utf-8">
         <meta name="description" content="A chat app, what else did you think this is?">
         <meta name="author" content="cseven, cserver">
@@ -17,7 +19,17 @@
         <div id="chat">
         </div>
     </body>
-    <button onclick="loadPrevious()">Previous</button>
-    <button onclick="loadNext()">Next</button>
-    <button onclick="resetPosition()">Reset</button>
+    <div class="navigation_buttons_container">
+        <button onclick="loadPrevious()" class="">
+            <i class="fa-solid fa-chevron-left" style="color: black;"></i>
+        </button>
+
+        <button onclick="resetPosition()">
+            <i class="fa-solid fa-rotate-right"></i>
+        </button>
+
+        <button onclick="loadNext()">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </div>
 </html>
