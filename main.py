@@ -115,7 +115,7 @@ app = flask.Flask(__name__)
 app.secret_key = os.urandom(500)  # ITS ONLY AT 500!!!!!!
 config = configparser.ConfigParser()
 config.read("config/keys.conf")
-app.config['ENV'] = config['ENV']
+app.config['ENV'] = config['backend']['ENV']
 
 logging.basicConfig(filename="backend/webserver.log", filemode="a", level=logging.ERROR)
 root = logging.getLogger().setLevel(logging.ERROR)
