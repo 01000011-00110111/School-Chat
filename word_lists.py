@@ -5,14 +5,18 @@
 from better_profanity import profanity
 
 profanity.CENSOR_CHAR = '#'
+whitelist_words = []
+blacklist_words = []
 
-with open('backend/unbanned_words.txt', 'r', encoding="utf-8") as file:
-    whitelist_words = list(file.read().splitlines())
+def start():
+    """sets the whitlisted and blacklisted words."""
+    with open('backend/unbanned_words.txt', 'r', encoding="utf-8") as file:
+        whitelist = list(file.read().splitlines())
 
+    with open('backend/banned_words.txt', 'r', encoding="utf-8") as file:
+        blacklist = list(file.read().splitlines())
 
-with open('backend/banned_words.txt', 'r', encoding="utf-8") as file:
-    blacklist_words = list(file.read().splitlines())
-
+    return whitelist, blacklist
 
 banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
                     '[URL]', 'mod', 'Mod', '[mod]', '[Mod]', '[MOD]', 'MOD',
