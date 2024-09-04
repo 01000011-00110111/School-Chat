@@ -20,7 +20,7 @@ config = configparser.ConfigParser()
 config.read("config/keys.conf")
 mongo_pass = config["mongodb"]["passwd"]
 
-if config['ENV'] == 'development': #this check is temp.
+if config['backend']['ENV'] == 'development': #this check is temp.
     #pylint: disable=E0401
     import certifi
     client = pymongo.MongoClient(mongo_pass, tls=True, tlsCAFile=certifi.where())
