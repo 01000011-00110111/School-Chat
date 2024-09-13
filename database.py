@@ -13,7 +13,20 @@ import pymongo
 
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
-    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
+    profile = "<img class='message_pfp' src='/static/favicon.ico'></img>"
+    user_string = "<p style='color:'>[SYSTEM]</p>"
+    message_string = f"<p color='#ff7f00'>{msg}</p>"
+    role_string = "<p style='background:\
+#ff7f00; color: #ffffff;' class='badge'> [SYSTEM]</p>"
+    # perm_string = f"<p style='background:{perm}; color: #ffffff;' class='badge'> {perm}</p>" if user != 'user' else None
+    date_str = datetime.now().strftime("%a %I:%M %p ")
+    return {
+        'profile': profile,
+        'user': user_string,
+        'message': message_string,
+        'icons': [role_string, None],
+        'date': date_str
+    }
 
 
 config = configparser.ConfigParser()

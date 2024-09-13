@@ -18,19 +18,21 @@ socket.on("force_room_update", (_statement) => {
     socket.emit("get_rooms", userid);
 });
 
-socket.on("reset_chat", (who, ID) => {
-    if (ID === window.sessionStorage.getItem('ID')) {
-        let chatDiv = document.getElementById("chat");
-        if (who === "admin") {
-            chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by an admin.</font><br>";
-        } else if (who === 'owner/mod') {
-            chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by this chat rooms Owner or Mod.</font><br>"
-        } else if (who === "priv") {
-            chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by a private chat user.</font><br>";
-        } else if (who === "auto") {
-            chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font><br>";
-        }
-    }
+socket.on("reset_chat", (msg) => {
+    let chatDiv = document.getElementById("chat");
+    chatDiv.innerHTML = "";
+    // Chat.messages = [msg];
+    renderChat((msg));
+    //     if (who === "admin") {
+    //         chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by an admin.</font><br>";
+    //     } else if (who === 'owner/mod') {
+    //         chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by this chat rooms Owner or Mod.</font><br>"
+    //     } else if (who === "priv") {
+    //         chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by a private chat user.</font><br>";
+    //     } else if (who === "auto") {
+    //         chatDiv.innerHTML = "[SYSTEM]: <font color='#ff7f00'>Chat reset by automatic wipe system.</font><br>";
+    //     }
+    // }
 });
 
 function runStartup() {
@@ -86,7 +88,19 @@ socket.on("room_data", (data) => {
     document.title = `/${data['name']} - Chat`;
     let msgs = ""; 
     for (let messageObj of data['msg']) {
-        msgs = msgs + messageObj + newline;
+        messages = `
+            <div class='message'> 
+            <div class='message_image_content'>${messageObj["profile"]}</div>
+            <div class='message_content'>
+            <div class='user_info_div'>${messageObj["user"]}<p>*</p>
+            <p>${messageObj["date"]}</p>
+            ${messageObj["icons"][0]}
+            ${messageObj["icons"][1] !== null ? messageObj["icons"][1] : ''}
+            </div>
+            <div class='user_message_div'>${messageObj["message"]}</div> </div>
+            </div>
+        `
+        msgs = msgs + messages + newline;
     }
 
     chatDiv["innerHTML"] = msgs;
@@ -108,10 +122,22 @@ socket.on("private_data", (data) => {
     document.title = `/Private - ${data['name']}`;
     let msgs = ""; 
     for (let messageObj of data['message']) {
-        msgs = msgs + messageObj + newline;
+        message = `
+            <div class='message'> 
+            <div class='message_image_content'>${messageObj["profile"]}</div>
+            <div class='message_content'>
+            <div class='user_info_div'>${messageObj["user"]}<p>*</p>
+            <p>${messageObj["date"]}</p>
+            ${messageObj["icons"][0]}
+            ${messageObj["icons"][1]}
+            </div>
+            <div class='user_message_div'>${messageObj["message"]}</div> </div>
+            </div>
+        `
+        msgs = msgs + message + newline;
     }
 
-    chatDiv["innerHTML"] = chat;
+    chatDiv["innerHTML"] = msgs;
     window.scrollTo(0, chatDiv.scrollHeight);
 });
 

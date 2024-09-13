@@ -276,7 +276,7 @@ def compile_message(message, profile_picture, user, role, perm):
     message_string = f"<p color='{user.m_color}'>{message}</p>"
     role_string = f"<p style='background:\
 {user.r_color}; color: #ffffff;' class='badge'> {role}</p>"
-    perm_string = f"<p style='background:{perm}; color: #ffffff;' class='badge'> {perm}</p>" if user != 'user' else None
+    perm_string = f"<p style='background:{perm}; color: #ffffff;' class='badge'> {perm}</p>" if perm != 'user' else None
     date_str = datetime.now().strftime("%a %I:%M %p ")
     # message_string_h = to_hyperlink(message_string)
 

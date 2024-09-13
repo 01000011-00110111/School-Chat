@@ -14,7 +14,21 @@ import log
 
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
-    return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
+    # return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
+    profile = "<img class='message_pfp' src='/static/favicon.ico'></img>"
+    user_string = "<p style='color:'>[SYSTEM]</p>"
+    message_string = f"<p color='#ff7f00'>{msg}</p>"
+    role_string = "<p style='background:\
+#ff7f00; color: #ffffff;' class='badge'> [SYSTEM]</p>"
+    # perm_string = f"<p style='background:{perm}; color: #ffffff;' class='badge'> {perm}</p>" if user != 'user' else None
+    date_str = datetime.now().strftime("%a %I:%M %p ")
+    return {
+        'profile': profile,
+        'user': user_string,
+        'message': message_string,
+        'icons': [role_string, None],
+        'date': date_str
+    }
 
 def permission(perm):
     """get the users permission"""
@@ -113,23 +127,27 @@ class Chat:
         lines = len(self.messages)
 
         if ((lines >= 350) and not perm):
-            self.reset_chat()
+            self.reset_chat('limit')
+        if not any(sudo_cmd in message_text['message'] for sudo_cmd in ["$sudo rc", "$sudo clear"]):
+            self.messages.append(message_text)
 
-        self.messages.append(message_text)
+            for sid in self.sids:
+                emit("message_chat", (message_text, self.user_data), to=sid)
 
-        for sid in self.sids:
-            emit("message_chat", (message_text, self.user_data), to=sid)
-
-        log.backup_log(message_text, self.vid, False, None)
-        return ('room', 1)
+            log.backup_log(message_text, self.vid, False, None)
+            return ('room', 1)
 
 
-    def reset_chat(self):
+    def reset_chat(self, type):
         """Reset the chat."""
         self.messages.clear()
-        msg = format_system_msg('Chat reset by an admin.')
+        if type == 'limit':
+            msg = format_system_msg('Message limit reached chat cleared.')
+        else:
+            msg = format_system_msg(f'The chat was cleared by {type}.')
         self.messages.append(msg)
-        emit("reset_chat", ("admin", self.vid), broadcast=True, namespace="/")
+        for sid in self.sids:
+            emit("reset_chat", (msg), to=sid)
 
 
     def set_lock_status(self, status):

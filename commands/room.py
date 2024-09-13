@@ -9,7 +9,7 @@ from commands import other
 def reset_chat_user(**kwargs):
     """Reset the current chatroom."""
     room = kwargs['room']
-    room.reset_chat()
+    room.reset_chat(kwargs['user'].display_name)
 
 
 
