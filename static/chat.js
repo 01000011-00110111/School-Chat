@@ -7,10 +7,10 @@ const Chat = {
     messages: []
 }
 
-socket.on("message_chat", (message, user_data) => {
+socket.on("message_chat", (message_data, user_data) => {
     Chat.users_data.push(user_data); // Push user_data into users_data
-    Chat.messages.push(message);
-    renderChat((message));
+    Chat.messages.push(message_data);
+    renderChat((message_data));
 });
 
 socket.on("force_room_update", (_statement) => {
@@ -162,10 +162,22 @@ function sendMessage(message, hidden) {
 
 // setInterval(BTMLog, 3000)
 
-function renderChat(messages) {
+function renderChat(message_data) {
     // console.log(messages)
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
+    messages = `
+        <div class='message'> 
+        <div class='message_image_content'>${message_data["profile"]}</div>
+        <div class='message_content'>
+        <div class='user_info_div'>${message_data["user"]}<p>*</p>
+        <p>${message_data["date"]}</p>
+        ${message_data["icons"][0]}
+        ${message_data["icons"][1]}
+        </div>
+        <div class='user_message_div'>${message_data["message"]}</div> </div>
+        </div>
+    `
     chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
 }
 
