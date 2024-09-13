@@ -381,6 +381,7 @@ def backup_user(user):
         "mutes": user.mutes,
         "SPermission": user.perm,
         "themeCount": user.theme_count,
+        'muted': user.muted,
         # "warned": user.warned,
     }
 
@@ -484,6 +485,9 @@ def get_room_data(roomid):
                 "blacklisted": {"$arrayElemAt": ["$access.blacklisted", 0]},
                 "canSend": {"$arrayElemAt": ["$access.canSend", 0]},
                 "locked": {"$arrayElemAt": ["$access.locked", 0]},
+                "user_data": {"$arrayElemAt": ["$access.user_data", 0]},
+                "muted": {"$arrayElemAt": ["$access.muted", 0]},
+                "banned": {"$arrayElemAt": ["$access.banned", 0]},
             }
         },
     ]
@@ -531,6 +535,8 @@ def update_chat(chat):
         "blacklisted": chat.config.banned,
         "canSend": chat.config.can_send,
         "locked": chat.config.locked,
+        "muted": chat.muted,
+        "banned": chat.banned,
     }
 
     # Rooms.insert_one(room_data)
@@ -583,6 +589,9 @@ def add_rooms(code, username, generated_at, name):
         "blacklisted": "empty",
         "canSend": "everyone",
         "locked": False,
+        "user_data": {},
+        "muted": {},
+        "banned": {},
     }
     message = {
         "roomid": code,

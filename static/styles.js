@@ -4,7 +4,7 @@
 let theme = {}
 
 const body = document.getElementsByTagName("body")[0];
-const chat = document.getElementById("chat");
+const chat_box = document.getElementById("chat");
 const message = document.getElementById("message");
 const chatbox = document.getElementById("chatbox");
 const sides = document.getElementById("sides");
@@ -28,7 +28,7 @@ function setTheme(data) {
     // let snav_iter = snavText.length;
     let extra_iter = extrabutton.length;
     body.style.background = colors['body']
-    chat.style.color = colors['chat-text']
+    chat_box.style.color = colors['chat-text']
     message.style.background = colors['chat-background']
     message.style.color = colors['chat-color']
     // chatbox.style.background = colors['chatbox-background']

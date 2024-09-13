@@ -98,6 +98,7 @@ def setup_func():
         with open("backend/banned_words.txt", "w", encoding="utf-8"):
             pass
     database.setup_chatrooms()
+    word_lists.whitelist_words, word_lists.blacklist_words = word_lists.start()
 
 
 if __name__ == "__main__":
@@ -105,10 +106,8 @@ if __name__ == "__main__":
 if os.path.exists(os.path.abspath("setup.py")):
     setup.chcek_if_data_is_missing()
     setup.self_destruct()
-    word_lists.whitelist_words, word_lists.blacklist_words = word_lists.start()
     print(False)
 else:
-    word_lists.whitelist_words, word_lists.blacklist_words = word_lists.start()
     print(True)
 
 app = flask.Flask(__name__)
@@ -147,7 +146,15 @@ def void(*_):
 @login_required
 def chat_page() -> ResponseReturnValue:
     """Serve the main chat window."""
-    return flask.render_template("chat.html")
+    template = "chat.html"
+    user = database.find_login_data(request.cookies.get("Userid"), True)
+    if "Debugpass" in user["SPermission"][0]:
+        template = 'dev.html'
+    elif "adminpass" in user["SPermission"][0]:
+        template = 'admin.html'
+    elif "modpass" in user["SPermission"][0]:
+        template = 'mod.html'
+    return flask.render_template(template)
 
 
 @app.route("/chat/<room_name>")
@@ -159,65 +166,12 @@ def specific_chat_page(room_name) -> ResponseReturnValue:
     return flask.redirect(flask.url_for("chat_page"))
 
 
-@app.route("/admin")
+@app.route("/chat/Private/<private_chat>")
 @login_required
-def admin_page() -> ResponseReturnValue:
-    """Serve the admin page."""
-    user = database.find_login_data(request.cookies.get("Userid"), True)
-    if "adminpass" in user["SPermission"]:
-        return flask.render_template("admin.html")
-    return flask.redirect(flask.url_for("chat_page"))
-
-@app.route("/admin/<room_name>")
-@login_required
-def specific_admin_page(room_name) -> ResponseReturnValue:
-    """Redirect to the admin page for a specific room."""
-    void(room_name)
-    return flask.redirect(flask.url_for("admin_page"))
-
-
-@app.route("/mod")
-@login_required
-def mod_page() -> ResponseReturnValue:
-    """Serve the mod page."""
-    user = database.find_login_data(request.cookies.get("Userid"), True)
-    if "modpass" in user["SPermission"]:
-        return flask.render_template("mod.html")
-    return flask.redirect(flask.url_for("chat_page"))
-
-
-@app.route("/mod/<room_name>")
-@login_required
-def specific_mod_page(room_name) -> ResponseReturnValue:
-    """Redirect to the mod page for a specific room."""
-    void(room_name)
-    return flask.redirect(flask.url_for("mod_page"))
-
-
-@app.route("/dev")
-@login_required
-def dev_page() -> ResponseReturnValue:
-    """Serve the dev page."""
-    user = database.find_login_data(request.cookies.get("Userid"), True)
-    if "Debugpass" in user["SPermission"]:
-        return flask.render_template("dev.html")
-    return flask.redirect(flask.url_for("chat_page"))
-
-
-@app.route("/dev/<room_name>")
-@login_required
-def specific_dev_page(room_name) -> ResponseReturnValue:
-    """Redirect to the dev page for a specific room."""
-    void(room_name)
-    return flask.redirect(flask.url_for("dev_page"))
-
-
-@app.route("/<prefix>/Private/<private_chat>")
-@login_required
-def specific_private_page(prefix, private_chat) -> ResponseReturnValue:
+def specific_private_page(private_chat) -> ResponseReturnValue:
     """Get the specific private chat in the uri."""
     # later we can set this up to get the specific room (with permssions)
-    void(prefix, private_chat)
+    void(private_chat)
     return flask.redirect(flask.url_for("chat_page"))
 
 
@@ -271,19 +225,12 @@ def login_page() -> ResponseReturnValue:
             socketids[user["userId"]] = socketid
             update_userlist(socketid, {"status": "active"}, user["userId"])
             if next_page is None:
-                next_page = flask.url_for("admin_page") if "adminpass" in \
-                    user["SPermission"] else flask.url_for("chat_page")
+                next_page = flask.url_for("chat_page")
             else:
                 if "editor" in next_page:
                     next_page = flask.url_for("projects")
                 if next_page not in word_lists.approved_links:
                     next_page = flask.url_for("chat_page")
-                    if "Debugpass" == user["SPermission"][0]:
-                        next_page = flask.url_for("dev_page")
-                    if "adminpass" == user["SPermission"][0]:
-                        next_page = flask.url_for("admin_page")
-                    if "modpass" == user["SPermission"][0]:
-                        next_page = flask.url_for("mod_page")
             resp = flask.make_response(flask.redirect(next_page))
             resp.set_cookie("Username", user["username"])
             resp.set_cookie("Theme", user["theme"])
@@ -959,7 +906,7 @@ def handle_chat_message(message, roomid, userid, hidden):
     result = filtering.run_filter_chat(user, room, message, roomid, userid)
     if result[0] == "msg":
         if room is not None and not hidden:
-            room.add_message(result[1])
+            room.add_message(result[1], user)
             if "$sudo" in message and result[2] != 3:
                 filtering.find_cmds(message, user, roomid, room)
             elif "$sudo" in message and result[2] == 3:
@@ -983,6 +930,8 @@ def handle_private_message(message, pmid, userid):
         private.add_message(result[1], userid)
         if "$sudo" in message and result[2] != 3:
             filtering.find_cmds(message, user, pmid, private)
+    else:
+        filtering.failed_message(result, pmid)
 
 
 @socketio.on("pingtest")
@@ -997,7 +946,8 @@ def connect(roomid, sender):
     socketid = request.sid
     try:
         room = Chat.create_or_get_chat(roomid)
-        lst = {"roomid": room.vid, "name": room.name, "msg": room.messages}
+        lst = {"roomid": room.vid, 'user_data': room.user_data,\
+                "name": room.name, "msg": room.messages}
     except TypeError:
         emit("room_data", "failed", namespace="/", to=socketid)
         return

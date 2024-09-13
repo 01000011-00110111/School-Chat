@@ -117,8 +117,7 @@ def run_filter_private(user, message, userid):
                                         profile_picture, user, role), 0)
 
     limit = user.send_limit()
-    if not limit: #and perms != "dev":
-        # cmds.warn_user(user)
+    if not limit:
         return ('permission', 8, 0)
 
     return final_str
@@ -251,7 +250,7 @@ def find_cmds(message, user, roomid, room):
     # leading to users being able to send comamnds, even when chat is locked
     # we should be the only ones that can do that (devs)
     for cmd in command_split:
-        date_str = datetime.now().strftime("[%a %H:%M] ")
+        date_str = datetime.now().strftime("[ %a %I:%M %p] ")
         l_message = date_str + user.username + ":" + cmd
         log.log_commands(l_message)
 

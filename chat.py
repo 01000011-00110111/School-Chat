@@ -16,6 +16,12 @@ def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
     return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
 
+def permission(perm):
+    """get the users permission"""
+    return 'dev' if 'Debugpass' in perm else 'admin' \
+        if 'adminpass' in perm else 'mod' \
+        if 'modpass' in perm else None
+
 # import cmds
 @dataclass
 class ChatConfig:
@@ -40,6 +46,9 @@ class Chat:
         self.name = room["roomName"]
         self.vid = roomid
         self.config = ChatConfig(room)
+        self.user_data = room["user_data"]
+        self.muted = room["muted"]
+        self.banned = room["banned"]
         self.messages = database.get_messages(roomid)
         self.sids = []
         self.sids = []
@@ -51,6 +60,7 @@ class Chat:
         cls.log_rooms()
         if roomid in cls.chats:
             return cls.chats[roomid]
+        #### create new chat class#######
         if roomid not in cls.chats:
             room = database.get_room_data(roomid)
             new_chat = cls(room, roomid)
@@ -91,19 +101,24 @@ class Chat:
         emit("message_chat", (message_text), broadcast=True, namespace="/")
 
 
-    def add_message(self, message_text: str, permission='false') -> None:
+    def add_message(self, message_text: str, user, perm=False) -> None:
         """Handler for messages so they get logged."""
         # private = self.vid == "all"
+        perm = permission(user.perm[0])
+        self.user_data[user.uuid] = [user.role, perm,
+                            False if user.uuid not in self.muted else True,
+                            False if user.uuid not in self.banned else True]
+                            #last 2 is for mute and ban
         self.config.last_message = datetime.now()
-        lines = len(self.messages)# if not private else 1
+        lines = len(self.messages)
 
-        if ((lines >= 350) and permission != 'true'):
+        if ((lines >= 350) and not perm):
             self.reset_chat()
-        else:
-            self.messages.append(message_text)
+
+        self.messages.append(message_text)
 
         for sid in self.sids:
-            emit("message_chat", (message_text), to=sid)
+            emit("message_chat", (message_text, self.user_data), to=sid)
 
         log.backup_log(message_text, self.vid, False, None)
         return ('room', 1)
