@@ -284,7 +284,7 @@ def compile_message(message, profile_picture, user, role, perm):
         'profile': profile,
         'user': user_string,
         'message': message_string,
-        'icons': [role_string, perm_string],
+        'badges': [role_string, perm_string],
         'date': date_str
     }
 

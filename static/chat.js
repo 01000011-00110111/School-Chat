@@ -88,19 +88,8 @@ socket.on("room_data", (data) => {
     document.title = `/${data['name']} - Chat`;
     let msgs = ""; 
     for (let messageObj of data['msg']) {
-        messages = `
-            <div class='message'> 
-            <div class='message_image_content'>${messageObj["profile"]}</div>
-            <div class='message_content'>
-            <div class='user_info_div'>${messageObj["user"]}<p>*</p>
-            <p>${messageObj["date"]}</p>
-            ${messageObj["icons"][0]}
-            ${messageObj["icons"][1] !== null ? messageObj["icons"][1] : ''}
-            </div>
-            <div class='user_message_div'>${messageObj["message"]}</div> </div>
-            </div>
-        `
-        msgs = msgs + messages + newline;
+        msg = renderMessage(messageObj);
+        msgs = msgs + msg + newline;
     }
 
     chatDiv["innerHTML"] = msgs;
@@ -122,19 +111,8 @@ socket.on("private_data", (data) => {
     document.title = `/Private - ${data['name']}`;
     let msgs = ""; 
     for (let messageObj of data['message']) {
-        message = `
-            <div class='message'> 
-            <div class='message_image_content'>${messageObj["profile"]}</div>
-            <div class='message_content'>
-            <div class='user_info_div'>${messageObj["user"]}<p>*</p>
-            <p>${messageObj["date"]}</p>
-            ${messageObj["icons"][0]}
-            ${messageObj["icons"][1]}
-            </div>
-            <div class='user_message_div'>${messageObj["message"]}</div> </div>
-            </div>
-        `
-        msgs = msgs + message + newline;
+        msg = renderMessage(messageObj);
+        msgs = msgs + msg + newline;
     }
 
     chatDiv["innerHTML"] = msgs;
@@ -192,21 +170,33 @@ function renderChat(message_data) {
     // console.log(messages)
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
-    messages = `
+    messages = renderMessage(message_data)
+    chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
+}
+
+function renderMessage(message_data, who) {
+    // console.log(messages)
+    let newline = "<br>";
+    let chatDiv = document.getElementById("chat");
+    let badges = '';
+    for (let i = 0; i < message_data["badges"].length; i++) {
+        if (message_data["badges"][i] !== null) {
+            badges += message_data["badges"][i];
+        }
+    }
+
+    return messages = `
         <div class='message'> 
         <div class='message_image_content'>${message_data["profile"]}</div>
         <div class='message_content'>
         <div class='user_info_div'>${message_data["user"]}<p>*</p>
         <p>${message_data["date"]}</p>
-        ${message_data["icons"][0]}
-        ${message_data["icons"][1]}
+        ${badges}
         </div>
         <div class='user_message_div'>${message_data["message"]}</div> </div>
         </div>
     `
-    chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
 }
-
 
 function checkKey() {
     if (event.key === "Enter") {

@@ -102,7 +102,7 @@ def format_system_msg(msg):
         'profile': profile,
         'user': user_string,
         'message': message_string,
-        'icons': [role_string, None],
+        'badges': [role_string, None],
         'date': date_str
     }
 
