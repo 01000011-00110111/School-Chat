@@ -73,6 +73,7 @@ for (let index = 0; index < sudo_button.length; index++) {
     li = ul.getElementsByTagName('li');
 
     const command_tag = document.createElement('div');
+    command_tag.classList.add('badge');
     command_tag.classList.add(`${sudo_button[index].getAttribute("privilege")}`)
     command_tag.innerHTML = sudo_button[index].getAttribute("privilege")
     li[index].appendChild(command_tag)
