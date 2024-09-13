@@ -60,7 +60,7 @@ def run_filter_chat(user, room, message, roomid, userid):
     if "@" in message and not locked:
         find_pings(message, user.display_name, user, roomid, room)
 
-    final_str = compile_message(message, profile_picture, user, role)
+    final_str = compile_message(message, profile_picture, user, role, perms)
 
     # check if locked or allowed to send
     if locked and perms not in ["dev", 'admin', "mod"]:
@@ -114,7 +114,7 @@ def run_filter_private(user, message, userid):
 
 
     final_str = ('msg' ,compile_message(message,
-                                        profile_picture, user, role), 0)
+                                        profile_picture, user, role, perms), 0)
 
     limit = user.send_limit()
     if not limit:
@@ -129,7 +129,7 @@ def check_mute(user, roomid):
 
 def check_perms(user):
     """Checks if the user has specal perms else return as a user"""
-    return 'dev' if 'Debugpass' in user.perm else 'mod' if 'modpass' in user.perm else\
+    return 'dev' if 'Debugpass' in user.perm else 'admin' if 'adminpass' in user.perm else 'mod' if 'modpass' in user.perm else\
         'user'
 
 
@@ -269,16 +269,30 @@ def find_cmds(message, user, roomid, room):
             break  # that will work ez one per message fix lol
 
 
-def compile_message(message, profile_picture, user, role):
+def compile_message(message, profile_picture, user, role, perm):
     """Taken from old methold of making messages"""
     profile = f"<img class='message_pfp' src='{profile_picture}'></img>"
     user_string = f"<p style='color:{user.u_color}'>{user.display_name}</p>"
     message_string = f"<p color='{user.m_color}'>{message}</p>"
-    role_string = f"<p style='background: {user.r_color}; color: #ffffff;' class='badge'> {role}</p>"
+    role_string = f"<p style='background:\
+        {user.r_color}; color: #ffffff;' class='badge'> {role}</p>"
+    perm_string = f"<p style='background:\
+        {user.r_color}; color: #ffffff;' class='badge'> {perm}</p>"
     date_str = datetime.now().strftime("%a %I:%M %p ")
     # message_string_h = to_hyperlink(message_string)
 
-    message = f"<div class='message'> <div class='message_image_content'>{profile}</div> <div class='message_content'><div class='user_info_div'>{user_string}<p>*</p> <p>{date_str}</p> {role_string}</div> <div class='user_message_div'>{message_string}</div> </div></div>"
+    message = f"""
+    <div class='message'> 
+    <div class='message_image_content'>{profile}</div>
+    <div class='message_content'>
+    <div class='user_info_div'>{user_string}<p>*</p>
+    <p>{date_str}</p>
+    {role_string}
+    {perm_string}
+    </div>
+    <div class='user_message_div'>{message_string}</div> </div>
+    </div>
+    """
     return message
 
 
