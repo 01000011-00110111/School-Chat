@@ -87,7 +87,6 @@ body, html {
 	  padding-left: 5%;
     padding-right: 12%;
     margin-left: 1.5%;
-    line-height: 40px;
     padding-bottom: 9%;
     margin-bottom: 2%;
     margin-top: 1%;
@@ -1316,64 +1315,106 @@ version #arrowContainer {
   border: 2px #7ebfd5 solid;
 }
 
-.user {
-  background: gray;
-  color: white;
-  width: 65px;
-  height: 30px;
-  text-align: center;
-  align-items: center;
+.message {
   display: flex;
-  justify-content: center;
-  border-radius: 10px;
-  right: 1%;
-  position: relative;
-  margin: 0px 0px 0px 11px;
+  align-items: center;
+  width: fit-content;
+  height: fit-content;
+  min-height: 75px;
+  min-width: fit-content;
+  max-width: 860px;
+  border-radius: 15px;
+  padding: 12px 12px 12px 12px;
+}
+
+.message .user_info_div {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+}
+
+.banned {
+  background: red;
+  color: white;
+}
+
+.user {
+  background: #554366;
+  color: white;
 }
 
 .mod {
   background: maroon;
   color: white;
-  width: 65px;
-  height: 30px;
-  text-align: center;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  border-radius: 10px;
-  right: 1%;
-  position: relative;
-  margin: 0px 0px 0px 11px;
 }
 
 .admin {
   background: rgb(0, 172, 246);
   color: white;
-  width: 65px;
-  height: 30px;
-  text-align: center;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  border-radius: 10px;
-  right: 1%;
-  position: relative;
-  margin: 0px 0px 0px 11px;
 }
 
 .dev {
   background: rgb(38, 153, 0);
   color: white;
+}
+
+.system {
+  background: #dd7016;
+  color: white;
+}
+
+.developer {
+  background: rgb(0, 172, 246);
+  color: white;
   width: 65px;
-  height: 30px;
+  height: 24px;
   text-align: center;
   align-items: center;
   display: flex;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 7px;
   right: 1%;
   position: relative;
   margin: 0px 0px 0px 11px;
+}
+
+.badge {
+  width: 65px;
+  min-width: max-content;
+  padding: 12px 12px 12px 12px;
+  height: 24px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 7px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+.onlineList_user_preview {
+  width: 308px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px dashed red;
+}
+
+.onlineList_user_preview:hover {
+  border: 1px solid #333452;
+}
+
+.message_content {
+  margin: 0px 7px;
+}
+
+.message_image_content {
+  align-self: baseline;
+  display: grid;
+  align-content: center;
 }
 
 .style {
@@ -1389,6 +1430,14 @@ version #arrowContainer {
   right: 1%;
   position: relative;
   margin: 0px 0px 0px 11px;
+}
+
+.message_pfp {
+  height: 50px;
+  width: 50px;
+  border-radius: 100px;
+  overflow: hidden;
+  border: 2px solid #404040;
 }
 
 @-webkit-keyframes clr_typing {

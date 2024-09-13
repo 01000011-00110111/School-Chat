@@ -271,27 +271,15 @@ def find_cmds(message, user, roomid, room):
 
 def compile_message(message, profile_picture, user, role):
     """Taken from old methold of making messages"""
-    profile = f"<img class='pfp' src='{profile_picture}'></img>"
-    user_string = f"<font color='{user.u_color}'>{user.display_name}</font>"
-    message_string = f"<font color='{user.m_color}'>{message}</font>"
-    role_string = do_dev_easter_egg(role, user)
-    date_str = datetime.now().strftime("[%a %I:%M %p] ")
+    profile = f"<img class='message_pfp' src='{profile_picture}'></img>"
+    user_string = f"<p style='color:{user.u_color}'>{user.display_name}</p>"
+    message_string = f"<p color='{user.m_color}'>{message}</p>"
+    role_string = f"<p style='background: {user.r_color}; color: #ffffff;' class='badge'> {role}</p>"
+    date_str = datetime.now().strftime("%a %I:%M %p ")
     # message_string_h = to_hyperlink(message_string)
 
-    message = f"{date_str}{profile} {user_string} ({role_string}) - {message_string}"
+    message = f"<div class='message'> <div class='message_image_content'>{profile}</div> <div class='message_content'><div class='user_info_div'>{user_string}<p>*</p> <p>{date_str}</p> {role_string}</div> <div class='user_message_div'>{message_string}</div> </div></div>"
     return message
-
-
-def do_dev_easter_egg(role, user):
-    """Because we want RAINBOW changing role names."""
-    role_color = user.r_color
-    if role_color == "#00ff00":
-        role_string = "<font class='Dev_colors-loop'>" + role + "</font>"
-    elif role_color == "rainbow":
-        role_string = "<font class='rainbow-text-loop'>" + role + "</font>"
-    else:
-        role_string = "<font color='" + role_color + "'>" + role + "</font>"
-    return role_string
 
 
 def failed_message(result, roomid):
