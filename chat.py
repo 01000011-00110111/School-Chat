@@ -19,8 +19,7 @@ def format_system_msg(msg):
     user_string = "<p style='color: #ff7f00'>[SYSTEM]</p>"
     message_string = f"<p color='#ff7f00'>{msg}</p>"
     role_string = "<p style='background:\
-#ff7f00; color: #ffffff;' class='badge'> [SYSTEM]</p>"
-    # perm_string = f"<p style='background:{perm}; color: #ffffff;' class='badge'> {perm}</p>" if user != 'user' else None
+#ff7f00; color: #ffffff;' class='badge'>System</p>"
     date_str = datetime.now().strftime("%a %I:%M %p ")
     return {
         'profile': profile,
@@ -138,13 +137,13 @@ class Chat:
             return ('room', 1)
 
 
-    def reset_chat(self, type):
+    def reset_chat(self, clear_type):
         """Reset the chat."""
         self.messages.clear()
-        if type == 'limit':
+        if clear_type == 'limit':
             msg = format_system_msg('Message limit reached chat cleared.')
         else:
-            msg = format_system_msg(f'The chat was cleared by {type}.')
+            msg = format_system_msg(f'The chat was cleared by {clear_type}.')
         self.messages.append(msg)
         for sid in self.sids:
             emit("reset_chat", (msg), to=sid)

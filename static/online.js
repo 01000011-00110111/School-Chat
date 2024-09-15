@@ -40,19 +40,18 @@ function updateUserList(onlineList, offlineList) {
     for (let onlineUser of onlineList) {
         let status_icon = ''
         let perm_icon = icon_perm[onlineUser.perm] || '';
-        let ProfilePicure = getCookie('Profile');
-        let indicator_color = "";
+        let indicator_color = "lime";
         if (DisplayName !== onlineUser.username) {status_icon = visibility_icon[onlineUser.status] || '';}
         let unread = '';
         if (onlineUser?.unread && onlineUser.unread.hasOwnProperty(DisplayName) && onlineUser.unread[DisplayName] > 0) {
                 unread = onlineUser.unread[DisplayName];
         }
-        if (onlineUser) {
-            indicator_color = "lime";
+        if (onlineUser.status === "idle" && onlineUser.username !== DisplayName) {
+            indicator_color = "yellow";
         }
         online += `
             <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${onlineUser.username}')">
-                <img class="message_pfp" src="${ProfilePicure}">
+                <img class="user_list_pfp" src="${onlineUser.profile}">
                 <div style="display: grid;">
                     <div style="display: flex; align-items: center;">
                         <h3>${onlineUser.username}</h3>
@@ -68,18 +67,14 @@ function updateUserList(onlineList, offlineList) {
     }
     for (let offlineUser of offlineList) {
         let perm_icon = icon_perm[offlineUser.perm] || '';
-        let ProfilePicure = getCookie('Profile');
-        let indicator_color = "";
+        let indicator_color = "red";
         let unread = '';
         if (offlineUser?.unread && offlineUser.unread.hasOwnProperty(DisplayName) && offlineUser.unread[DisplayName] > 0) {
             unread = offlineUser.unread[DisplayName];
         }
-        if (offlineUser) {
-            indicator_color = "red";
-        }
         offline += `
             <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${offlineUser.username}')">
-                <img class="message_pfp" src="${ProfilePicure}">
+                <img class="user_list_pfp" src="${offlineUser.profile}">
                 <div style="display: grid;">
                     <div style="display: flex; align-items: center;">
                         <h3>${offlineUser.username}</h3>
@@ -96,12 +91,9 @@ function updateUserList(onlineList, offlineList) {
 
     let final_online = `
         <div>
-            <font id="online" style="color: ${theme['online-color']};" size=5%>Online: ${online_count}</font>
-            <br><br>
+            <font id="online" style="color: ${theme['online-color']};" size=5%>Online: ${online_count}</font> <font id="offline" style="color: ${theme['offline-color']};" size=5%>Offline: ${offline_count}</font>
+            <br><br> 
             ${online}
-            <br><br>
-            <font id="offline" style="color: ${theme['offline-color']};" size=5%>Offline: ${offline_count}</font>
-            <br><br>
             ${offline}
         </div>`;
     onlineDiv.innerHTML = final_online;
@@ -131,27 +123,6 @@ socket.on('update_list_full', (userStatuses) => {
     
     updateUserList(onlineList, offlineList);
 });
-
-// const updating = false
-
-// socket.on('updated_display', (oldUserData, newUserData) => {
-//     updating = true
-//     let { onlineList, offlineList } = getCurrentUserLists();
-
-//     // Helper function to update a user in a list
-//     const updateUserInList = (list, oldUsername, newUser) => {
-//         return list.map(user =>
-//             user.username === oldUsername ? { ...user, ...newUser } : user
-//         );
-//     };
-
-//     // Update the global user lists
-//     users_list.onlineList = onlineList;
-//     users_list.offlineList = offlineList;
-//     // users_list.offlineList = offlineList;
-//     updating = false
-//     handleUserUpdate(updatedUser)
-// });
 
 
 socket.on("update_list", (updatedUser) => {

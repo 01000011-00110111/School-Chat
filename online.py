@@ -123,6 +123,7 @@ for user in database.get_all_offline():
     STATUS = "offline" if user["status"] != "offlne-locked" else "offline-locked"
 
     users_list[user["userid"]] = {
+        "profile": user["profile"] if user["profile"] != "" else "/static/favicon.ico",
         "username": user["displayName"],
         "status": STATUS,
         "perm": perm,

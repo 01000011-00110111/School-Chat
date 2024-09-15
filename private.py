@@ -23,6 +23,13 @@ def get_messages_list(sender, receiver):
     return chat
 
 
+def permission(perm):
+    """get the users permission"""
+    return 'dev' if 'Debugpass' in perm else 'admin' \
+        if 'adminpass' in perm else 'mod' \
+        if 'modpass' in perm else None
+
+
 def get_messages(vid, sender):
     """gets the chats with 2 users."""
     chat = Private.create_or_get_private(vid, sender)
@@ -110,7 +117,7 @@ class Private:
         """Gets the unread count of a user."""
         return cls.chats[pmid].userlist
 
-    def add_message(self, message_text: str, uuid) -> None:
+    def add_message(self, message_text: str, user, uuid) -> None:
         """Handler for messages so they get logged."""
         self.backup_values[1] = datetime.now()
 
@@ -119,15 +126,19 @@ class Private:
                 self.unread[receiver] += 1
                 add_unread(receiver, uuid)
 
-        if len(self.messages) >= 250:
-            self.reset_chat()
-        else:
-            for sid in self.sids:
-                emit("message_chat", (message_text), to=sid)
+        perm = permission(user.perm[0])
+        lines = len(self.messages)
+
+        if ((lines >= 350) and not perm):
+            self.reset_chat('limit')
+        if not any(sudo_cmd in message_text['message'] for sudo_cmd in ["$sudo rc", "$sudo clear"]):
             self.messages.append(message_text)
 
-        log.backup_log(message_text, self.vid, True, self.userlist)
-        return ('room', 1)
+            for sid in self.sids:
+                emit("message_chat", (message_text, None), to=sid)
+
+            log.backup_log(message_text, self.vid, True, self.userlist)
+            return ('room', 1)
 
     def set_active(self, sender):
         """Sets the active user."""
@@ -137,12 +148,16 @@ class Private:
             if receiver != sender and not self.active[receiver]:
                 clear_unread(receiver, sender)
 
-    def reset_chat(self):
+    def reset_chat(self, clear_type):
         """Reset the chat."""
         self.messages.clear()
-        msg = format_system_msg('This Private room has been reset.')
+        if clear_type == 'limit':
+            msg = format_system_msg('Message limit reached chat cleared.')
+        else:
+            msg = format_system_msg(f'The chat was cleared by {clear_type}.')
         self.messages.append(msg)
-        emit("reset_chat", ("admin", self.vid), broadcast=True, namespace="/")
+        for sid in self.sids:
+            emit("reset_chat", (msg), to=sid)
 
 
     def backup_data(self):
