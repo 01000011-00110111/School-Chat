@@ -140,6 +140,8 @@ class Private:
             log.backup_log(message_text, self.vid, True, self.userlist)
             return ('room', 1)
 
+        return ('room', 0)
+
     def set_active(self, sender):
         """Sets the active user."""
         self.active[sender] = True

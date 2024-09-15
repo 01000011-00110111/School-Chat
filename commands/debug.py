@@ -7,13 +7,12 @@ import sys
 from time import time
 from typing import List
 
-# from cmds import other.respond_command, check_if_dev
 import psutil
 from flask_socketio import emit
 
 import database
 import log
-from commands import other
+from commands.other import format_system_msg
 from user import User
 
 LOGFILE_B = "backend/Chat-backup.txt"
@@ -49,7 +48,8 @@ def get_stats(roomid, version, room) -> str:
     # Define full and partial helper functions
     def full():
         return (
-            "[SYSTEM]: <font color='#ff7f00'>Server Stats:</font><br>"
+            format_system_msg("Server Stats:"),
+            "<br>",
             f"Temp logfile: {get_line_count('main', roomid)} lines.<br>"
             f"Backup logfile: {get_line_count('backup', None)} lines.<br>"
             f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds.<br>"
@@ -69,7 +69,8 @@ def get_stats(roomid, version, room) -> str:
 
     def partial():
         return (
-            "[SYSTEM]: <font color='#ff7f00'>Partial Server Stats:</font><br>"
+            format_system_msg("Partial Server Stats:"),
+            "<br>",
             f"Temp logfile: {get_line_count('main', roomid)} lines.<br>"
             f"Backup logfile: {get_line_count('backup', None)} lines.<br>"
             f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds.<br>"
@@ -107,7 +108,7 @@ def line_count(**kwargs):
     roomid = kwargs['roomid']
     room = kwargs['room']
     lines = get_line_count("main", roomid)
-    msg = other.format_system_msg(f"Line count is {lines}\n")
+    msg = format_system_msg(f"Line count is {lines}\n")
     room.add_message(msg, 'true')
 
 
@@ -137,5 +138,5 @@ def clear_all_mutes(**kwargs):
     room = kwargs['room']
     for user in User.Users.values():
         user.mutes = []
-    message = other.format_system_msg("All mutes cleared by a Dev.")
+    message = format_system_msg("All mutes cleared by a Dev.")
     room.add_message(message, None)

@@ -5,7 +5,7 @@
 import configparser
 import os
 
-from database import Access, Messages, Private
+from database import Access, Messages, Private, Customization
 from commands.other import format_system_msg
 
 
@@ -15,6 +15,10 @@ def chcek_if_data_is_missing():
     # for user in users:
     #     if 'themeCount' not in user or user['themeCount'] is None:
     #         Permission.update_one({'userId': user['userId']}, {'$set': {'themeCount': 0}})
+    costom = Customization.find()
+    for custom in costom:
+        if 'badges' not in custom or custom['badges'] is None:
+            Customization.update_one({'userId': custom['userId']}, {'$set': {'badges': []}})
     rooms = Access.find()
     for room in rooms:
         if 'user_data' not in room or room['user_data'] is None:

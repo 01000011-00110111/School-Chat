@@ -58,7 +58,7 @@ function updateUserList(onlineList, offlineList) {
                 <img class="user_list_pfp" src="${onlineUser.profile}">
                 <div style="display: grid; left: -10px; position: relative;">
                     <div style="display: grid; align-items: left; min-width: 120px;">
-                        <h3>${cut_replace(onlineUser.username, 11)}</h3>
+                        <h3 style="color: ${theme['online-color']};">${cut_replace(onlineUser.username, 11)}</h3>
                         <p style="font-size: 12px;">${cut_replace(onlineUser.role, 23)}</p>
                     </div>
                 </div>
@@ -86,7 +86,7 @@ function updateUserList(onlineList, offlineList) {
                 <img class="user_list_pfp" src="${offlineUser.profile}">
                 <div style="display: grid; left: -10px; position: relative;">
                     <div style="display: grid; align-items: left; min-width: 120px;">
-                        <h3>${cut_replace(offlineUser.username, 11)}</h3>
+                        <h3 style="color: ${theme['offline-color']};">${cut_replace(offlineUser.username, 11)}</h3>
                         <p style="font-size: 12px;">${cut_replace(offlineUser.role, 23)}</p>
                     </div>
                 </div>

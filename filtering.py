@@ -16,6 +16,7 @@ import log
 import word_lists
 from online import get_scoketid
 from user import User
+from commands.other import format_system_msg
 
 # old imports, do we still need the markdown package due to us having our own markdown
 # from markdown import markdown
@@ -129,7 +130,8 @@ def check_mute(user, roomid):
 
 def check_perms(user):
     """Checks if the user has specal perms else return as a user"""
-    return 'dev' if 'Debugpass' in user.perm else 'admin' if 'adminpass' in user.perm else 'mod' if 'modpass' in user.perm else\
+    return 'dev' if 'Debugpass' in user.perm else 'admin' if 'adminpass'\
+          in user.perm else 'mod' if 'modpass' in user.perm else\
         'user'
 
 
@@ -299,6 +301,8 @@ def failed_message(result, roomid):
     # also why do we use a tuple here for these entries?
     # they could just be ints and it work still
     fail_strings = {
+        (0):
+        "need to figure out how to solve this. I don't think anyone can see this message. -cseven",
         (1):
         "You can't send messages here because you are muted. Next time don't get muted.",
         (2):
@@ -308,9 +312,11 @@ def failed_message(result, roomid):
         (4):
         "You can't send messages here because you have been banned from this chat room. Say sorry.",
         (5):
-        "You can't send messages here due to lack of permissions for this chat room. Just ask for permission whats the worst that can happen.",
+        """You can't send messages here due to lack of permissions for this chat room.
+              Just ask for permission whats the worst that can happen.""",
         (6):
-        "This chat room no longer exists, select a chat room that does exist, or just sit alone with youself",
+        """This chat room no longer exists, select a chat room that does exist,
+          or just sit alone with youself""",
         (7):
         "This chat room does not exist. Make so it then",
         (8):
@@ -328,7 +334,7 @@ def failed_message(result, roomid):
 
     fail_str = fail_strings.get((result[1]), "")  # result[2]), "")
     # I love fstrings
-    final_str = f"[SYSTEM]: <font color='#ff7f00'>{fail_str}</font>"
+    final_str = format_system_msg(fail_str)
     emit("message_chat", (final_str, roomid), namespace="/")
 
 

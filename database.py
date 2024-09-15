@@ -10,12 +10,12 @@ import secrets
 from datetime import datetime
 
 import pymongo
-
+#pylint: disable=C0302
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
     profile = "<img class='message_pfp' src='/static/favicon.ico'></img>"
-    user_string = "<p style='color:'>[SYSTEM]</p>"
-    message_string = f"<p color='#ff7f00'>{msg}</p>"
+    user_string = "<p style='color: #ff7f00;'>[SYSTEM]</p>"
+    message_string = f"<p style='color: #ffffff;'>{msg}</p>"
     role_string = "<p style='background:\
 #ff7f00; color: #ffffff;' class='badge'>System</p>"
     date_str = datetime.now().strftime("%a %I:%M %p ")
@@ -276,7 +276,7 @@ def find_target_data(display_name):
         return result
     except IndexError:
         return None
-    
+
 
 
 def find_account_data(userid):
@@ -453,7 +453,6 @@ def backup_user(user):
         "mutes": user.mutes,
         "SPermission": user.perm,
         "themeCount": user.theme_count,
-        'mutes': user.mutes,
         # "warned": user.warned,
     }
 

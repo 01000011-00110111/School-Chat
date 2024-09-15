@@ -27,26 +27,18 @@ def check_if_mod(user):
 
 def song(**kwargs):
     """Send a song to the chat."""
-    roomid = kwargs['roomid']
     room = kwargs['room']
+    user = kwargs['user']
     msg = format_song_msg(' '.join(list(kwargs["commands"].values())[1:]))
-    room.add_message(msg, roomid)
+    room.add_message(msg, user)
 
 
 def send_admin(**kwargs):
     """Send a song to the chat."""
-    roomid = kwargs['roomid']
     room = kwargs['room']
+    user = kwargs['user']
     msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
-    room.add_message(msg, roomid)
-
-
-def send_as_admin(**kwargs):
-    """Send as admin to the chat."""
-    roomid = kwargs['roomid']
-    room = kwargs['room']
-    msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
-    room.add_message(msg, roomid)
+    room.add_message(msg, user, False   )
 
 
 def help_command(**kwargs):
@@ -84,16 +76,16 @@ def help_command(**kwargs):
             elif 'end' in line.lower():
                 end_index = i - 1
 
-    command_line = "[SYSTEM]:<font color='#ff7f00'><br>" + ' '.join(
-        line.strip() for line in lines[start_index:end_index + 1]) + "</font>"
+    command_line = format_system_msg(' '.join(
+        line.strip() for line in lines[start_index:end_index + 1]))
     emit("message_chat", (command_line, roomid), namespace="/")
 
 
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
     profile = "<img class='message_pfp' src='/static/favicon.ico'></img>"
-    user_string = "<p style='color:'>[SYSTEM]</p>"
-    message_string = f"<p color='#ff7f00'>{msg}</p>"
+    user_string = "<p style='color: #ff7f00;'>[SYSTEM]</p>"
+    message_string = f"<p style='color: #ffffff;'>{msg}</p>"
     role_string = "<p style='background:\
 #ff7f00; color: #ffffff;' class='badge'>System</p>"
     date_str = datetime.now().strftime("%a %I:%M %p ")
@@ -107,12 +99,40 @@ def format_system_msg(msg):
 
 
 def format_song_msg(msg):
+    # """Format a message [SONG] would send."""
+    # return f'<font color="#0E9556">[SONG]: {msg}</font>'
     """Format a message [SONG] would send."""
-    return f'<font color="#0E9556">[SONG]: {msg}</font>'
+    profile = "<img class='message_pfp' src='/static/favicon.ico'></img>"
+    user_string = "<p style='color:'>[SONG]</p>"
+    message_string = f"<p style='color: #0E9556;'>{msg}</p>"
+    role_string = "<p style='background:\
+#0E9556; color: #ffffff;' class='badge'>Song</p>"
+    date_str = datetime.now().strftime("%a %I:%M %p ")
+    return {
+        'profile': profile,
+        'user': user_string,
+        'message': message_string,
+        'badges': [role_string, None],
+        'date': date_str
+    }
 
 def format_admin_msg(msg):
-    """Format a message [SONG] would send."""
-    return f'<font color="#e0790b">[ADMIN]: {msg}</font>'
+    # """Format a message [SONG] would send."""
+    # return f'<font color="#e0790b">[ADMIN]: {msg}</font>'
+    """Format a message Admin would send."""
+    profile = "<img class='message_pfp' src='/static/favicon.ico'></img>"
+    user_string = "<p style='color:'>[ADMIN]</p>"
+    message_string = f"<p style='color: #f9211b;'>{msg}</p>"
+    role_string = "<p style='background:\
+#f9211b; color: #ffffff;' class='badge'>Admin</p>"
+    date_str = datetime.now().strftime("%a %I:%M %p ")
+    return {
+        'profile': profile,
+        'user': user_string,
+        'message': message_string,
+        'badges': [role_string, None],
+        'date': date_str
+    }
 
 
 def respond_command(result, roomid):
