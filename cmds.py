@@ -6,7 +6,7 @@
 
 # from flask_socketio import emit
 
-from commands import debug, moderation, other, online_commands, room
+from commands import debug, moderation, other, online_commands, room, user_commands
 
 # from main import scheduler
 
@@ -25,6 +25,8 @@ def find_command(**kwargs):
         'lines': debug.line_count,
         'rc': room.reset_chat_user,
         'clear_mutes': debug.clear_all_mutes,
+        'add_badge': user_commands.add_badge,
+        'remove_badge': user_commands.remove_badge,
     }
     admin_commands = {
         'cmd_logs': debug.send_cmd_logs,

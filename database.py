@@ -200,6 +200,7 @@ def find_login_data(value, login):
                 "roleColor": {"$arrayElemAt": ["$customization.roleColor", 0]},
                 "userColor": {"$arrayElemAt": ["$customization.userColor", 0]},
                 "theme": {"$arrayElemAt": ["$customization.theme", 0]},
+                "badges": {"$arrayElemAt": ["$customization.badges", 0]},
                 # "blocked": {"$arrayElemAt": ["$customization.blocked", 0]},
                 "permission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
                 "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
@@ -220,6 +221,61 @@ def find_login_data(value, login):
         return result
     except IndexError:
         return None
+
+
+def find_target_data(display_name):
+    """Retrieves all data required to open targe class."""
+    uuid = Customization.find_one({"displayName": display_name})['userId']
+    pipeline = [
+        {"$match": {"userId": uuid}},
+        {
+            "$lookup": {
+                "from": "Customization",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "customization",
+            }
+        },
+        {
+            "$lookup": {
+                "from": "Permission",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "permissions",
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "userId": "$userId",
+                "status": "$status",
+                "username": "$username",
+                "password": "$password",
+                "email": "$email",
+                "role": {"$arrayElemAt": ["$customization.role", 0]},
+                "profile": {"$arrayElemAt": ["$customization.profile", 0]},
+                "displayName": {"$arrayElemAt": ["$customization.displayName", 0]},
+                "messageColor": {"$arrayElemAt": ["$customization.messageColor", 0]},
+                "roleColor": {"$arrayElemAt": ["$customization.roleColor", 0]},
+                "userColor": {"$arrayElemAt": ["$customization.userColor", 0]},
+                "theme": {"$arrayElemAt": ["$customization.theme", 0]},
+                "badges": {"$arrayElemAt": ["$customization.badges", 0]},
+                # "blocked": {"$arrayElemAt": ["$customization.blocked", 0]},
+                "permission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
+                "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
+                "locked": {"$arrayElemAt": ["$permissions.location", 0]},
+                "warned": {"$arrayElemAt": ["$permissions.location", 0]},
+                "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
+                "themeCount": {"$arrayElemAt": ["$permissions.themeCount", 0]},
+            }
+        },
+    ]
+    try:
+        result = list(ID.aggregate(pipeline))[0]
+        return result
+    except IndexError:
+        return None
+    
 
 
 def find_account_data(userid):
@@ -343,6 +399,7 @@ def add_accounts(data):
         "messageColor": "#ffffff",
         "roleColor": "#ffffff",
         "userColor": "#ffffff",
+        "badges": [],
     }
     permission_data = {
         "userId": userid,
@@ -370,6 +427,7 @@ def update_account(user_data):
         "role": user_data["role"],
         "profile": user_data["profile"],
         "theme": user_data["theme"],
+        "badges": user_data["badges"],
     }
 
     Customization.update_one(
@@ -388,12 +446,13 @@ def backup_user(user):
         "role": user.role,
         "profile": user.profile,
         "theme": user.theme,
+        "badges": user.badges,
     }
     permission_data = {
         "mutes": user.mutes,
         "SPermission": user.perm,
         "themeCount": user.theme_count,
-        'muted': user.muted,
+        'mutes': user.mutes,
         # "warned": user.warned,
     }
 

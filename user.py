@@ -29,7 +29,7 @@ class User:
         self.limit = 0
         self.pause = False
         self.last_message = datetime.now()
-        self.mutes = user['mutes'] #later ill add a mute db value # user['mute_time']
+        self.mutes = user['mutes']
         self.online_list = []
         #other user values
         self.r_color = user['roleColor']
@@ -41,6 +41,7 @@ class User:
         self.locked = ['locked']
         self.permission = user['permission']  # temp will go away
         self.theme_count = user['themeCount']
+        self.badges = user['badges']
         # self.blocked = user['blocked']
         # self.warned = user['warned']
 
@@ -105,10 +106,11 @@ class User:
         return displayname
 
     @classmethod
-    def add_user_class(cls, username, user, userid):
+    def add_user_class(cls, username, user, userid, bypass=False):
         """Creates and retunrns the user's class."""
         user_class = cls(username, user, userid)
-        database.set_online(userid, False)
+        if not bypass:
+            database.set_online(userid, False)
         cls.Users.update({userid: user_class})
         return user_class
 

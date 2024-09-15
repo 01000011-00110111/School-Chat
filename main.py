@@ -180,8 +180,6 @@ def specific_private_page(private_chat) -> ResponseReturnValue:
 def logout():
     """Log out the current user"""
     uuid = request.cookies.get("Userid")
-    User.delete_user(uuid)
-    logout_user()
     resp = make_response(flask.redirect(flask.url_for("login_page")))
     resp.set_cookie("Userid", "", expires=0)
     user = User.get_user_by_id(uuid)
@@ -189,6 +187,8 @@ def logout():
         user.status = "offline"
     database.set_offline(uuid)
     update_userlist(socketids[uuid], {"status": "offline"}, uuid)
+    User.delete_user(uuid)
+    logout_user()
     del socketids[uuid]
     return resp
 
@@ -1051,7 +1051,8 @@ def teardown_request(_exception=None):
     users_copy = dict(User.Users)
     for user in users_copy:
         if not isinstance(user, str):
-            user.backup()
+            if user is not None:
+                user.backup()
 
 
 if __name__ == "__main__":
