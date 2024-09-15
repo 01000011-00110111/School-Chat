@@ -14,7 +14,6 @@ def chcek_if_data_is_missing():
     # for user in users:
     #     if 'themeCount' not in user or user['themeCount'] is None:
     #         Permission.update_one({'userId': user['userId']}, {'$set': {'themeCount': 0}})
-
     rooms = Access.find()
     for room in rooms:
         if 'user_data' not in room or room['user_data'] is None:

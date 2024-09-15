@@ -41,7 +41,7 @@ def upload_file(file, old):
     old_file = old.lstrip('/')
     replace_old_file(old)
     new_filename = \
-    f"static/profiles/{rename_file(old_file)}.{file.filename.rsplit('.', 1)[1].lower()}"
+    f"xstatic/profiles/{rename_file(old_file)}.{file.filename.rsplit('.', 1)[1].lower()}"
     file_path = f"{new_filename.split('.')[0]}.png"
     file.save(file_path)  # saves the file at the location
 

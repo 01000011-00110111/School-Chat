@@ -275,16 +275,20 @@ def compile_message(message, profile_picture, user, role, perm):
     user_string = f"<p style='color:{user.u_color}'>{user.display_name}</p>"
     message_string = f"<p style='color:{user.m_color}'>{message}</p>"
     role_string = f"<p style='background:\
-{user.r_color}; color: #ffffff;' class='badge'> {role}</p>"
-    perm_string = f"<p style='background:{perm}; color: #ffffff;' class='badge {perm}'> {perm}</p>" if perm != 'user' else None
-    date_str = datetime.now().strftime("%a %I:%M %p ")
-    # message_string_h = to_hyperlink(message_string)
+{user.r_color}; color: #ffffff;' class='badge'>{role}</p>"
+    perm_string = f"<p style='background:{perm}; color: #ffffff;' class='badge {perm}'>\
+      {perm}</p>" if perm != 'user' else None
+    date_str = datetime.now().strftime("%a %b %d %I:%M %p")
+    badges = []
+    for badge in user.badges:
+        badges.append(f"<p style='background:\
+{badge[1]}; color: {badge[2]};' class='badge'>{badge[0]}</p>")
 
     return {
         'profile': profile,
         'user': user_string,
         'message': message_string,
-        'badges': [role_string, perm_string],
+        'badges': [role_string, perm_string] + badges,
         'date': date_str
     }
 
@@ -296,22 +300,22 @@ def failed_message(result, roomid):
     # they could just be ints and it work still
     fail_strings = {
         (1):
-        "You can't send messages here because you are muted.",
+        "You can't send messages here because you are muted. Next time don't get muted.",
         (2):
-        "You can't send messages here because you have been banned.",
+        "You can't send messages here because you have been banned. what a loser.",
         (3):
         "You can't send messages here because this chat room has been locked.",
         (4):
-        "You can't send messages here because you have been banned from this chat room",
+        "You can't send messages here because you have been banned from this chat room. Say sorry.",
         (5):
-        "You can't send messages here due to lack of permissions for this chat room.",
+        "You can't send messages here due to lack of permissions for this chat room. Just ask for permission whats the worst that can happen.",
         (6):
-        "This chat room no longer exists, select a chat room that does exist.",
+        "This chat room no longer exists, select a chat room that does exist, or just sit alone with youself",
         (7):
-        "This chat room vid does not exist.",
+        "This chat room does not exist. Make so it then",
         (8):
         """You are not allowed to send more than 15 messages in a row.
-        You have been muted for 5 minutes(Warning)""",
+        You have been muted for 5 minutes(Warning) Good job now you have to wait!""",
         (9):
         "You must verify your account before you can use this command.",
         (10):
