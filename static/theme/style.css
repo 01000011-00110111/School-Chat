@@ -1039,6 +1039,55 @@ notification .close_panel button {
   border-radius: 100px;
 }
 
+.project_panel {
+  position: absolute;
+  border: 1px solid gray;
+  background: black;
+  top: 7%;
+  z-index: 12;
+  width: 559px;
+  right: 6px;
+  height: 350px;
+  border-radius: 12px;
+  display: flex;
+}
+
+.project_panel #left {
+  background: rgb(24, 24, 24);
+  height: 100%;
+  width: 40%;
+  border-top-left-radius: inherit;
+  border-bottom-left-radius: inherit;
+  display: grid;
+  align-items: baseline;
+  justify-content: center;
+  grid-template-rows: 17% 17%;
+  padding: 11px 0;
+}
+
+.project_panel #left button {
+  background: black;
+  height: 47px;
+  width: 177px;
+  border-radius: 10px;
+  border: 0;
+  color: white;
+  font-size: 18px;
+  font-family: sans;
+  box-shadow: 2px 2px 4px #2e2e2e;
+  text-align: left;
+  text-indent: 7px;
+}
+
+.project_panel #right {
+  background: black;
+  height: 100%;
+  width: 70%;
+  border-top-right-radius: inherit;
+  border-bottom-right-radius: inherit;
+  display: grid;
+}
+
 #help_button {
   border: 1px solid gray;
   background: transparent;

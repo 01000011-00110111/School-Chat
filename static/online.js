@@ -40,20 +40,58 @@ function updateUserList(onlineList, offlineList) {
     for (let onlineUser of onlineList) {
         let status_icon = ''
         let perm_icon = icon_perm[onlineUser.perm] || '';
+        let ProfilePicure = getCookie('Profile');
+        let indicator_color = "";
         if (DisplayName !== onlineUser.username) {status_icon = visibility_icon[onlineUser.status] || '';}
         let unread = '';
         if (onlineUser?.unread && onlineUser.unread.hasOwnProperty(DisplayName) && onlineUser.unread[DisplayName] > 0) {
                 unread = onlineUser.unread[DisplayName];
         }
-        online += `<button id="online_buttons" onclick="openuserinfo('${onlineUser.username}')" style="color: ${theme['sidebar-text']};"><font color='red'>${unread}</font>${perm_icon}${onlineUser.username}${status_icon}</button><br>`;
+        if (onlineUser) {
+            indicator_color = "lime";
+        }
+        online += `
+            <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${onlineUser.username}')">
+                <img class="message_pfp" src="${ProfilePicure}">
+                <div style="display: grid;">
+                    <div style="display: flex; align-items: center;">
+                        <h3>${onlineUser.username}</h3>
+                    </div>
+                </div>
+                <div style="display: grid;">
+                    <div style="background: ${indicator_color}; width: 10px; height: 10px; border-radius: 100px; right: 12px; position: relative;">
+
+                    </div>
+                </div>
+            </div>
+        `;
     }
     for (let offlineUser of offlineList) {
         let perm_icon = icon_perm[offlineUser.perm] || '';
+        let ProfilePicure = getCookie('Profile');
+        let indicator_color = "";
         let unread = '';
         if (offlineUser?.unread && offlineUser.unread.hasOwnProperty(DisplayName) && offlineUser.unread[DisplayName] > 0) {
             unread = offlineUser.unread[DisplayName];
         }
-        offline += `<button id="online_buttons" onclick="openuserinfo('${offlineUser.username}')" style="color: ${theme['sidebar-text']};"><font color='red'>${unread}</font>${perm_icon}${offlineUser.username}</button><br>`;
+        if (offlineUser) {
+            indicator_color = "red";
+        }
+        offline += `
+            <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${offlineUser.username}')">
+                <img class="message_pfp" src="${ProfilePicure}">
+                <div style="display: grid;">
+                    <div style="display: flex; align-items: center;">
+                        <h3>${offlineUser.username}</h3>
+                    </div>
+                </div>
+                <div style="display: grid;">
+                    <div style="background: ${indicator_color}; width: 10px; height: 10px; border-radius: 100px; right: 12px; position: relative;">
+
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
     let final_online = `
