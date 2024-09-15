@@ -29,6 +29,19 @@ const visibility_icon = {
     'idle': '💤',
 }
 
+const cut_replace = (text, length) => {
+    if (text == null) {
+        return "";
+    }
+    if (text.length <= length) {
+        return text;
+    }
+    text = text.substring(0, length);
+    last = text.lastIndexOf("");
+    text = text.substring(0, last);
+    return text + "...";
+}
+
 function updateUserList(onlineList, offlineList) {
     let online = '';
     let offline = '';
@@ -50,11 +63,12 @@ function updateUserList(onlineList, offlineList) {
             indicator_color = "yellow";
         }
         online += `
-            <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${onlineUser.username}')">
+            <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${onlineUser.username}')" title="${onlineUser.username}">
                 <img class="user_list_pfp" src="${onlineUser.profile}">
-                <div style="display: grid;">
-                    <div style="display: flex; align-items: center;">
-                        <h3>${onlineUser.username}</h3>
+                <div style="display: grid; left: -10px; position: relative;">
+                    <div style="display: grid; align-items: center;">
+                        <h3>${cut_replace(onlineUser.username, 11)}</h3>
+                        <p>Placeholder role</p>
                     </div>
                 </div>
                 <div style="display: grid;">
@@ -73,11 +87,12 @@ function updateUserList(onlineList, offlineList) {
             unread = offlineUser.unread[DisplayName];
         }
         offline += `
-            <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${offlineUser.username}')">
+            <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${offlineUser.username}')" title="${offlineUser.username}">
                 <img class="user_list_pfp" src="${offlineUser.profile}">
-                <div style="display: grid;">
-                    <div style="display: flex; align-items: center;">
-                        <h3>${offlineUser.username}</h3>
+                <div style="display: grid; left: -10px; position: relative;">
+                    <div style="display: grid; align-items: center;">
+                        <h3>${cut_replace(offlineUser.username, 11)}</h3>
+                        <p>Placeholder role</p>
                     </div>
                 </div>
                 <div style="display: grid;">
