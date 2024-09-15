@@ -621,9 +621,6 @@ def handle_projecet_creation():
     socketid = request.sid
     userid = request.cookies.get("Userid")
     user = User.get_user_by_id(userid)
-    if user.theme_count >= 3:
-        emit("response", ("You have hit your project limit", True), to=socketid)
-        return
     while True:
         code = ""
         for _ in range(5):
@@ -632,7 +629,6 @@ def handle_projecet_creation():
         if code not in database.get_all_projects():
             break
     project = database.create_project(userid, user.display_name, code)
-    user.theme_count += 1
     del project["_id"]
     project['theme'] = {}
     project["author"] = project["author"][1:]
@@ -669,8 +665,6 @@ def handle_status_change(theme_id, status):
 def handle_delete_project(project):
     """Deletes a project."""
     socketid = request.sid
-    user = User.get_user_by_id(request.cookies.get("Userid"))
-    user.theme_count -= 1
     database.delete_project(project)
     emit("response", ("Project deleted", False), to=socketid)
 

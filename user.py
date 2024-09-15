@@ -40,7 +40,6 @@ class User:
         self.theme = user['theme']
         self.locked = ['locked']
         self.permission = user['permission']  # temp will go away
-        self.theme_count = user['themeCount']
         self.badges = user['badges']
         # self.blocked = user['blocked']
         # self.warned = user['warned']

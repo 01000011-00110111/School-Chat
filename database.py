@@ -208,7 +208,6 @@ def find_login_data(value, login):
                 "locked": {"$arrayElemAt": ["$permissions.location", 0]},
                 "warned": {"$arrayElemAt": ["$permissions.location", 0]},
                 "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
-                "themeCount": {"$arrayElemAt": ["$permissions.themeCount", 0]},
             }
         },
     ]
@@ -267,7 +266,6 @@ def find_target_data(display_name):
                 "locked": {"$arrayElemAt": ["$permissions.location", 0]},
                 "warned": {"$arrayElemAt": ["$permissions.location", 0]},
                 "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
-                "themeCount": {"$arrayElemAt": ["$permissions.themeCount", 0]},
             }
         },
     ]
@@ -409,7 +407,6 @@ def add_accounts(data):
         "locked": locked,
         "warned": "0",
         "SPermission": [""],
-        "themeCount": 0,
     }
 
     ID.insert_one(id_data)
@@ -452,7 +449,6 @@ def backup_user(user):
     permission_data = {
         "mutes": user.mutes,
         "SPermission": user.perm,
-        "themeCount": user.theme_count,
         # "warned": user.warned,
     }
 
