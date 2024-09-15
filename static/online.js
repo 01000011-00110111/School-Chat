@@ -46,15 +46,15 @@ function updateUserList(onlineList, offlineList) {
                 unread = onlineUser.unread[DisplayName];
         }
         if (onlineUser.status === "idle" && onlineUser.username !== DisplayName) {
-            indicator_color = "yellow";
+            indicator_color = "orange";
         }
         online += `
             <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${onlineUser.username}')" title="${onlineUser.username}">
                 <img class="user_list_pfp" src="${onlineUser.profile}">
                 <div style="display: grid; left: -10px; position: relative;">
-                    <div style="display: grid; align-items: center;">
+                    <div style="display: grid; align-items: left; min-width: 120px;">
                         <h3>${cut_replace(onlineUser.username, 11)}</h3>
-                        <p>${cut_replace(onlineUser.role, 11)}</p>
+                        <p style="font-size: 12px;">${cut_replace(onlineUser.role, 23)}</p>
                     </div>
                 </div>
                 <div style="display: grid;">
@@ -75,9 +75,9 @@ function updateUserList(onlineList, offlineList) {
             <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${offlineUser.username}')" title="${offlineUser.username}">
                 <img class="user_list_pfp" src="${offlineUser.profile}">
                 <div style="display: grid; left: -10px; position: relative;">
-                    <div style="display: grid; align-items: center;">
+                    <div style="display: grid; align-items: left; min-width: 120px;">
                         <h3>${cut_replace(offlineUser.username, 11)}</h3>
-                        <p>${cut_replace(offlineUser.role, 11)}</p>
+                        <p style="font-size: 12px;">${cut_replace(offlineUser.role, 23)}</p>
                     </div>
                 </div>
                 <div style="display: grid;">
