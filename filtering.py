@@ -129,7 +129,8 @@ def check_mute(user, roomid):
 
 def check_perms(user):
     """Checks if the user has specal perms else return as a user"""
-    return 'dev' if 'Debugpass' in user.perm else 'admin' if 'adminpass' in user.perm else 'mod' if 'modpass' in user.perm else\
+    return 'dev' if 'Debugpass' in user.perm else 'admin' if 'adminpass'\
+          in user.perm else 'mod' if 'modpass' in user.perm else\
         'user'
 
 
@@ -299,7 +300,7 @@ def failed_message(result, roomid):
     # also why do we use a tuple here for these entries?
     # they could just be ints and it work still
     fail_strings = {
-        (0): 
+        (0):
         "need to figure out how to solve this. I don't think anyone can see this message. -cseven",
         (1):
         "You can't send messages here because you are muted. Next time don't get muted.",
@@ -310,9 +311,11 @@ def failed_message(result, roomid):
         (4):
         "You can't send messages here because you have been banned from this chat room. Say sorry.",
         (5):
-        "You can't send messages here due to lack of permissions for this chat room. Just ask for permission whats the worst that can happen.",
+        """You can't send messages here due to lack of permissions for this chat room.
+              Just ask for permission whats the worst that can happen.""",
         (6):
-        "This chat room no longer exists, select a chat room that does exist, or just sit alone with youself",
+        """This chat room no longer exists, select a chat room that does exist,
+          or just sit alone with youself""",
         (7):
         "This chat room does not exist. Make so it then",
         (8):
