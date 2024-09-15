@@ -46,7 +46,7 @@ import uploading
 import word_lists
 from app_config import application
 from chat import Chat
-from commands.other import end_ping
+from commands.other import end_ping, format_system_msg
 from online import (
     socketids,
     update_userlist,
@@ -795,7 +795,7 @@ def handle_disconnect(socketid=None, userid=None):
 
 
 @socketio.on("heartbeat")
-def handle_heartbeat(status, roomid):
+def handle_heartbeat(status, roomid, priv):
     """Handle heartbeat from the client."""
     socketid = request.sid
     userid = request.cookies.get("Userid")
@@ -805,7 +805,10 @@ def handle_heartbeat(status, roomid):
 
         if userid in user_connections:
             update_userlist(socketid, {"status": status}, userid)
-            room = Chat.create_or_get_chat(roomid)
+            if priv == "true":
+                room = get_messages(roomid, userid)
+            else:
+                room = Chat.create_or_get_chat(roomid)
             if socketid not in room.sids:
                 socketids[userid] = socketid
                 room.sids.append(socketid)
@@ -927,7 +930,7 @@ def handle_private_message(message, pmid, userid):
     result = filtering.run_filter_private(user, message, userid)
     private = get_messages(pmid, userid)
     if result[0] == "msg":
-        private.add_message(result[1], userid)
+        private.add_message(result[1], user, userid)
         if "$sudo" in message and result[2] != 3:
             filtering.find_cmds(message, user, pmid, private)
     else:
@@ -983,7 +986,7 @@ def private_connect(sender, receiver, roomid):# rework the connect code later
         emit(
             "message_chat",
             (
-                "[SYSTEM]: <font color='#ff7f00'>Don't be a loaner get some friends.</font>",
+                format_system_msg("Don't be a loaner get some friends"),
                 roomid,
             ),
             namespace="/",

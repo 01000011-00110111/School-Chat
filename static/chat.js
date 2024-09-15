@@ -74,6 +74,8 @@ function CheckIfExist(_params) {
 }
 
 socket.on("room_data", (data) => {
+    Chat[0] = [];
+    Chat[1] = [];
     Chat[0] = data['user_data'];
     Chat[1] = data['msg'];
     // console.log(data)
@@ -97,7 +99,7 @@ socket.on("room_data", (data) => {
 });
 
 socket.on("private_data", (data) => {
-    Chat[0] = data['user_data'];
+    Chat[1] = []
     Chat[1] = data['message'];
     // console.log(data)
     window.sessionStorage.setItem("ID", data['pmid'])
@@ -109,7 +111,7 @@ socket.on("private_data", (data) => {
     window.history.replaceState({"pageTitle": `Private Chat`}, "", `/${room_cat}/Private/${data['name']}`);
     roomname = document.getElementById("RoomDisplay").innerHTML = `Private Chat: ${data['name']}`;
     document.title = `/Private - ${data['name']}`;
-    let msgs = ""; 
+    let msgs = "";
     for (let messageObj of data['message']) {
         msg = renderMessage(messageObj);
         msgs = msgs + msg + newline;

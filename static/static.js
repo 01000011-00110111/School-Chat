@@ -22,11 +22,12 @@ socket.on("system_pings", (message) => {
 
 setInterval(() => {
     RID = window.sessionStorage.getItem("ID")
+    private = window.sessionStorage.getItem("private")
     let status = ''
     if (document.hidden) {
         status = 'idle';
     } else {
         status = 'active';
     }
-    socket.emit('heartbeat', status, RID);
+    socket.emit('heartbeat', status, RID, private);
 }, 25000);

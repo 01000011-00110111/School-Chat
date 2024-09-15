@@ -29,10 +29,10 @@
         {% block content %} 
         {% endblock %}
         <version style="transition: 1s ease-in-out;">
-            <div id="arrowContainer">
-              <h1>&lt;</h1>
-            </div>
             <span id="versionText" style="font-size: 20px;"></span>
+            <div id="arrowContainer">
+                <h1>&gt;</h1>
+              </div>
         </version>
 
         <script>
@@ -40,12 +40,12 @@
 
             versionTag.addEventListener('mouseover', () => {
             versionTag.style.transition = "all 1s ease-in-out";
-            versionTag.style.right = "-1%";
+            versionTag.style.left = "-1%";
             })
 
             versionTag.addEventListener('mouseleave', () => {
             versionTag.transition = "all 1s ease-in-out";
-            versionTag.style.right = "";
+            versionTag.style.left = "";
             })
 
             async function fetchVersionTag() {

@@ -273,7 +273,7 @@ def compile_message(message, profile_picture, user, role, perm):
     """Taken from old methold of making messages"""
     profile = f"<img class='message_pfp' src='{profile_picture}'></img>"
     user_string = f"<p style='color:{user.u_color}'>{user.display_name}</p>"
-    message_string = f"<p color='{user.m_color}'>{message}</p>"
+    message_string = f"<p style='color:{user.m_color}'>{message}</p>"
     role_string = f"<p style='background:\
 {user.r_color}; color: #ffffff;' class='badge'> {role}</p>"
     perm_string = f"<p style='background:{perm}; color: #ffffff;' class='badge {perm}'> {perm}</p>" if perm != 'user' else None
