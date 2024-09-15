@@ -299,6 +299,8 @@ def failed_message(result, roomid):
     # also why do we use a tuple here for these entries?
     # they could just be ints and it work still
     fail_strings = {
+        (0): 
+        "need to figure out how to solve this. I don't think anyone can see this message. -cseven",
         (1):
         "You can't send messages here because you are muted. Next time don't get muted.",
         (2):
