@@ -42,14 +42,19 @@ function updateUserList(onlineList, offlineList) {
     for (let onlineUser of onlineList) {
         let indicator_color = "lime";
         let unread = '';
+        let unread_background = "transparent";
         if (onlineUser?.unread && onlineUser.unread.hasOwnProperty(DisplayName) && onlineUser.unread[DisplayName] > 0) {
                 unread = onlineUser.unread[DisplayName];
         }
         if (onlineUser.status === "idle" && onlineUser.username !== DisplayName) {
             indicator_color = "orange";
         }
+        if (unread) {
+            unread_background = "red";
+        }
         online += `
             <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${onlineUser.username}')" title="${onlineUser.username}">
+                <p style="background: ${unread_background}; color: white; text-align: center; position: absolute; left: 15%; margin-top: -30px; border-radius: 100px; min-width: 18px; min-height: 18px; height: min-content; width: min-content; align-content: center;" id="unread_indicator">${unread}</p>
                 <img class="user_list_pfp" src="${onlineUser.profile}">
                 <div style="display: grid; left: -10px; position: relative;">
                     <div style="display: grid; align-items: left; min-width: 120px;">
@@ -68,11 +73,16 @@ function updateUserList(onlineList, offlineList) {
     for (let offlineUser of offlineList) {
         let indicator_color = "red";
         let unread = '';
+        let unread_background = "transparent";
         if (offlineUser?.unread && offlineUser.unread.hasOwnProperty(DisplayName) && offlineUser.unread[DisplayName] > 0) {
             unread = offlineUser.unread[DisplayName];
         }
+        if (unread) {
+            unread_background = "red";
+        }
         offline += `
             <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${offlineUser.username}')" title="${offlineUser.username}">
+                <p style="background: ${unread_background}; color: white; text-align: center; position: absolute; left: 15%; margin-top: -30px; border-radius: 100px; min-width: 18px; min-height: 18px; height: min-content; width: min-content; align-content: center;" id="unread_indicator">${unread}</p>
                 <img class="user_list_pfp" src="${offlineUser.profile}">
                 <div style="display: grid; left: -10px; position: relative;">
                     <div style="display: grid; align-items: left; min-width: 120px;">
