@@ -1049,7 +1049,7 @@ notification .close_panel button {
   right: 6px;
   height: 350px;
   border-radius: 12px;
-  display: flex;
+  display: none;
 }
 
 .project_panel #left {
