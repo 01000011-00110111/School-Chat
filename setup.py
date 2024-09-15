@@ -2,6 +2,7 @@
     Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
+import configparser
 import os
 
 from database import Access, Messages, Private
@@ -39,7 +40,10 @@ def self_destruct():
     """Deletes this file"""
     script_path = os.path.abspath(__file__)
     try:
-        os.remove(script_path)
+        config = configparser.ConfigParser()
+        config.read("config/keys.conf")
+        if config['backend']['ENV'] != 'development':
+            os.remove(script_path)
         print(f'Script {script_path} has been deleted.')
     except TypeError as e:
         print(f'Error deleting script {script_path}: {e}')
