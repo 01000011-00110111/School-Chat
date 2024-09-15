@@ -4,6 +4,7 @@
     <li><code>"$sudo status"</code>: Gets the full status of the chat.</li>
     <li><code>"$sudo lines"</code>: Gets the line count of the chat room you are on.</li>
     <li><code>"$sudo pstats"</code>: Gives you partal status of the chat server.</li>
+    <li><code>"$sudo add_badge (user) (badge name) (background color) (text color)"</code>: Gives a user a badge.</li>
     <li><code>"$sudo clear_mutes"</code>: A debug command that clears all the mutes from every user (later you can pick one user or all).</li>
     
 </ul>

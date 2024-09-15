@@ -43,6 +43,7 @@ def remove_badge(**kwargs):
     name =  kwargs["commands"]["v2"]
     dev = kwargs["user"]
     delete = False
+    user = None
     for users in User.Users.values():
         if users.display_name == target:
             user = users
@@ -52,15 +53,14 @@ def remove_badge(**kwargs):
         userdb = database.find_target_data(target)
         user = User.add_user_class(userdb["username"], userdb, userdb["userId"], True)
         delete = True
-    if name in user.badges:
-        user.badges.remove([name])
-        return
+    if any(badge[0] == name for badge in user.badges):
+        user.badges = [badge for badge in user.badges if badge[0] != name]
+        msg = format_system_msg(f"Congratulations what did you do to lose {name}, {target}?")
+        room.add_message(msg, dev, True)
     else:
-        room.send_message(format_system_msg(f"{target} does not have that badge"    ))
+        room.send_message(format_system_msg(f"{target} does not have the {name} badge"))
     if delete:
         User.delete_user(user.uuid)
-    msg = format_system_msg(f"Congratulations what did you do to lose it {target}?")
-    room.add_message(msg, dev, True)
 
 
 def block(**kwargs):
