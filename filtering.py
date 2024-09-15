@@ -16,6 +16,7 @@ import log
 import word_lists
 from online import get_scoketid
 from user import User
+from commands.other import format_system_msg
 
 # old imports, do we still need the markdown package due to us having our own markdown
 # from markdown import markdown
@@ -333,7 +334,7 @@ def failed_message(result, roomid):
 
     fail_str = fail_strings.get((result[1]), "")  # result[2]), "")
     # I love fstrings
-    final_str = f"[SYSTEM]: <font color='#ff7f00'>{fail_str}</font>"
+    final_str = format_system_msg(fail_str)
     emit("message_chat", (final_str, roomid), namespace="/")
 
 

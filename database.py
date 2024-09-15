@@ -14,8 +14,8 @@ import pymongo
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
     profile = "<img class='message_pfp' src='/static/favicon.ico'></img>"
-    user_string = "<p style='color:'>[SYSTEM]</p>"
-    message_string = f"<p color='#ff7f00'>{msg}</p>"
+    user_string = "<p style='color: #ff7f00;'>[SYSTEM]</p>"
+    message_string = f"<p style='color: #ffffff;'>{msg}</p>"
     role_string = "<p style='background:\
 #ff7f00; color: #ffffff;' class='badge'>System</p>"
     date_str = datetime.now().strftime("%a %I:%M %p ")
