@@ -18,17 +18,6 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 
-const icon_perm = {
-    "dev": '🔧',
-    'admin': "⚒️",
-    'mod': "🛡️",
-    null: ""
-}
-const visibility_icon = {
-    'active': '',
-    'idle': '💤',
-}
-
 const cut_replace = (text, length) => {
     if (text == null) {
         return "";
@@ -51,10 +40,7 @@ function updateUserList(onlineList, offlineList) {
     let DisplayName = getCookie('DisplayName').replace(/"/g, '');
 
     for (let onlineUser of onlineList) {
-        let status_icon = ''
-        let perm_icon = icon_perm[onlineUser.perm] || '';
         let indicator_color = "lime";
-        if (DisplayName !== onlineUser.username) {status_icon = visibility_icon[onlineUser.status] || '';}
         let unread = '';
         if (onlineUser?.unread && onlineUser.unread.hasOwnProperty(DisplayName) && onlineUser.unread[DisplayName] > 0) {
                 unread = onlineUser.unread[DisplayName];
@@ -68,7 +54,7 @@ function updateUserList(onlineList, offlineList) {
                 <div style="display: grid; left: -10px; position: relative;">
                     <div style="display: grid; align-items: center;">
                         <h3>${cut_replace(onlineUser.username, 11)}</h3>
-                        <p>Placeholder role</p>
+                        <p>${cut_replace(onlineUser.role, 11)}</p>
                     </div>
                 </div>
                 <div style="display: grid;">
@@ -80,7 +66,6 @@ function updateUserList(onlineList, offlineList) {
         `;
     }
     for (let offlineUser of offlineList) {
-        let perm_icon = icon_perm[offlineUser.perm] || '';
         let indicator_color = "red";
         let unread = '';
         if (offlineUser?.unread && offlineUser.unread.hasOwnProperty(DisplayName) && offlineUser.unread[DisplayName] > 0) {
@@ -92,7 +77,7 @@ function updateUserList(onlineList, offlineList) {
                 <div style="display: grid; left: -10px; position: relative;">
                     <div style="display: grid; align-items: center;">
                         <h3>${cut_replace(offlineUser.username, 11)}</h3>
-                        <p>Placeholder role</p>
+                        <p>${cut_replace(offlineUser.role, 11)}</p>
                     </div>
                 </div>
                 <div style="display: grid;">

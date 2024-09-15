@@ -157,6 +157,7 @@ def get_all_offline():
                 "username": "$username",
                 "status": "$status",
                 "profile": {"$arrayElemAt": ["$customization.profile", 0]},
+                "role": {"$arrayElemAt": ["$customization.role", 0]},
                 "displayName": {"$arrayElemAt": ["$customization.displayName", 0]},
                 "perm": {"$arrayElemAt": ["$permission.SPermission", 0]},
             }

@@ -125,6 +125,7 @@ for user in database.get_all_offline():
     users_list[user["userid"]] = {
         "profile": user["profile"] if user["profile"] != "" else "/static/favicon.ico",
         "username": user["displayName"],
+        "role": user["role"],
         "status": STATUS,
         "perm": perm,
         "unread": {},
