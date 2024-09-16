@@ -425,7 +425,7 @@ def update_account(user_data):
         "role": user_data["role"],
         "profile": user_data["profile"],
         "theme": user_data["theme"],
-        "badges": user_data["badges"],
+        # "badges": user_data["badges"],
     }
 
     Customization.update_one(
