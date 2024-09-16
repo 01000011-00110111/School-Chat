@@ -545,7 +545,8 @@ def customize_accounts() -> ResponseReturnValue:
             "role": data["role"],
             "profile": profile_location,
             "theme": theme,
-            "email": data["email"]
+            "email": data["email"],
+            # "badges": user.badges,
         }
         if data["displayname"] != user.display_name:
             update_display({"username": data["displayname"], "status": "active"}, data["userid"])
