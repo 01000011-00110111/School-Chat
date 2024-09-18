@@ -9,7 +9,7 @@ from string import ascii_uppercase
 from flask_socketio import emit
 
 import database
-from chat import Chat
+# from chat import Chat
 
 
 def chat_room_log(message):
@@ -25,23 +25,15 @@ def generate_unique_code(length):
         if code not in rooms:
             return code
 
-def create_chat_room(name, username, _userinfo):
+def create_chat_room(name, message, user):
     """Create a chat room and register it in the database."""
     generated_at = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    code = generate_unique_code(5)
+    database.add_rooms(code, user.username, user.display_name, generated_at, name, message)
+    emit("force_room_update", namespace='/chat', broadcast=True)
 
-    if not name or database.find_room({'roomName': name}, 'vid'):
-        log = f"Failed: Invalid Room Name ({username} room creation) {generated_at}"
-        response = (3, "chat") if not name else (4, "chat")
-    else:
-        code = generate_unique_code(5)
-        database.add_rooms(code, username, generated_at, name)
-        Chat.create_or_get_chat(code)
-        log = f"{username} made a room named {name} at {generated_at}"
-        response = (0, "chat")
-        emit("force_room_update", broadcast=True)
-
-    chat_room_log(log)
-    return response
+    chat_room_log(f"{user.username} made a room named {name} at {generated_at}")
+    return (0, "chat")
 
 # ADD BACK DELETING CHAT ROOMS
 

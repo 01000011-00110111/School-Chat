@@ -532,6 +532,39 @@ def get_rooms():
     return list(Rooms.aggregate(pipeline))
 
 
+def get_room(roomid):
+    """Returns all available permission data in that room."""
+    pipeline = [
+        {"$match": {"roomid": roomid}},
+        {
+            "$lookup": {
+                "from": "Permission",  # Target collection
+                "localField": "roomid",  # Field in the 'Rooms' collection
+                "foreignField": "roomid",  # Field in the 'Permission' collection
+                "as": "access",  # Alias for the joined data
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "name": "$roomName",
+                "vid": "$roomid",
+                "generatedBy": "$generatedBy",
+                "mods": "$mods",
+                "whitelisted": {"$arrayElemAt": ["$access.whitelisted", 0]},
+                "blacklisted": {"$arrayElemAt": ["$access.blacklisted", 0]},
+                "canSend": {"$arrayElemAt": ["$access.canSend", 0]},
+                "locked": {"$arrayElemAt": ["$access.locked", 0]},
+                # "user_data": {"$arrayElemAt": ["$access.user_data", 0]},/
+                "muted": {"$arrayElemAt": ["$access.muted", 0]},
+                "banned": {"$arrayElemAt": ["$access.banned", 0]},
+            }
+        },
+    ]
+
+    return list(Rooms.aggregate(pipeline))[0]
+
+
 def get_room_data(roomid):
     """Returns all available permission data in that room."""
     pipeline = [
@@ -597,6 +630,9 @@ def get_messages(roomid):
 
 def update_chat(chat):
     """Updates a chatrooms data."""
+    room_data = {
+        "roomName": chat.name,
+    }
     access_data = {
         "whitelisted": chat.config.whitelisted,
         "blacklisted": chat.config.banned,
@@ -607,6 +643,7 @@ def update_chat(chat):
     }
 
     # Rooms.insert_one(room_data)
+    Rooms.update_one({"roomid": chat.vid}, {"$set": room_data}, upsert=True)
     Access.update_one({"roomid": chat.vid}, {"$set": access_data}, upsert=True)
     Messages.update_one(
         {"roomid": chat.vid}, {"$set": {"messages": chat.messages}}, upsert=True
@@ -623,11 +660,11 @@ def update_blacklist(vid, message):
     Access.update_one({"roomid": vid}, {"$set": {"blacklisted": message}}, upsert=True)
 
 
-def delete_room(data):
+def delete_room(vid):
     """Deletes a room."""
-    Rooms.find_one_and_delete(data)
-    Access.find_one_and_delete(data)
-    Messages.find_one_and_delete(data)
+    Rooms.delete_one({"roomid": vid})
+    Access.delete_one({"roomid": vid})
+    Messages.delete_one({"roomid": vid})
 
 
 def set_lock_status(roomid, locked: str):
@@ -640,8 +677,12 @@ def set_all_lock_status(locked: str):
     Access.update_many({}, {"locked": locked}, upsert=True)
 
 
-def add_rooms(code, username, generated_at, name):
+def add_rooms(code, username, displayname, generated_at, name, message):
     """Creates a new chatroom."""
+    if message == "System_regular":
+        message = f"<b>{name}</b> created by \
+                <b>{displayname}</b> at {generated_at}."
+
     room_data = {
         "roomid": code,
         "generatedBy": username,
@@ -663,8 +704,7 @@ def add_rooms(code, username, generated_at, name):
     message = {
         "roomid": code,
         "messages": [
-            format_system_msg(f"<b>{name}</b> created by \
-                <b>{username}</b> at {generated_at}.")
+            format_system_msg(message)
         ],
     }
 

@@ -49,30 +49,30 @@ def get_stats(roomid, version, room) -> str:
     def full():
         #pylint: disable=E1121
         return (
-            format_system_msg("Server Stats:",
-            "<br>",
-            f"Temp logfile: {get_line_count('main', roomid)} lines.<br>"
-            f"Backup logfile: {get_line_count('backup', None)} lines.<br>"
-            f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds.<br>"
-            f"CPU Usage: {psutil.cpu_percent(interval=1)}%<br>"
-            f"CPU Cores: {psutil.cpu_count(logical=False)} (Physical), \
-                {psutil.cpu_count(logical=True)} (Logical)<br>"
-            f"Disk Usage: Total: {psutil.disk_usage('/').total / (1024 ** 3):.2f}\
-                GB, Used: {psutil.disk_usage('/').used / (1024 ** 3):.2f} GB<br>"
-            f"Virtual Memory: {mem_virt:.2f} GB<br>"
-            f"Resident Memory: {mem_res:.2f} GB<br>"
-            f"Network Usage: Sent: {psutil.net_io_counters().bytes_sent / (1024 ** 2):.2f} MB, \
-                Received: {psutil.net_io_counters().bytes_recv / (1024 ** 2):.2f} MB<br>"
-            f"Operating System: {platform.system()} {platform.version()},\
-                Platform: {platform.platform()}<br>"
-            f"Python Version: {sys.version}")
+            format_system_msg(
+                "Server Stats:<br>"
+                f"Temp logfile: {get_line_count('main', roomid)} lines.<br>"
+                f"Backup logfile: {get_line_count('backup', None)} lines.<br>"
+                f"Uptime: {days} day(s), {hours} hour(s),\
+                      {minutes} minute(s), {seconds} seconds.\<br>"
+                f"CPU Usage: {psutil.cpu_percent(interval=1)}%<br>"
+                f"CPU Cores: {psutil.cpu_count(logical=False)} (Physical), "
+                f"{psutil.cpu_count(logical=True)} (Logical)<br>"
+                f"Disk Usage: Total: {psutil.disk_usage('/').total / (1024 ** 3):.2f} GB, "
+                f"Used: {psutil.disk_usage('/').used / (1024 ** 3):.2f} GB<br>"
+                f"Virtual Memory: {mem_virt:.2f} GB<br>"
+                f"Resident Memory: {mem_res:.2f} GB<br>"
+                f"Network Usage: Sent: {psutil.net_io_counters().bytes_sent / (1024 ** 2):.2f} MB, "
+                f"Received: {psutil.net_io_counters().bytes_recv / (1024 ** 2):.2f} MB<br>"
+                f"Operating System: {platform.system()} {platform.version()}, "
+                f"Platform: {platform.platform()}<br>"
+                f"Python Version: {sys.version}")
         )
 
     def partial():
-        #pylint: disable=E1121
         return (
-            format_system_msg("Partial Server Stats:",
-            "<br>",
+            format_system_msg(
+            "Partial Server Stat:<br>"
             f"Temp logfile: {get_line_count('main', roomid)} lines.<br>"
             f"Backup logfile: {get_line_count('backup', None)} lines.<br>"
             f"Uptime: {days} day(s), {hours} hour(s), {minutes} minute(s), {seconds} seconds.<br>"
@@ -85,7 +85,7 @@ def get_stats(roomid, version, room) -> str:
 
     # Displaying formatted stats
     stats_text = partial() if version == 'partial' else full()
-    room.add_message(stats_text, 'true')
+    room.send_message(stats_text)
 
     # return stats_text
 
@@ -109,9 +109,10 @@ def line_count(**kwargs):
     """Respond with the current line count for the room (TBD)"""
     roomid = kwargs['roomid']
     room = kwargs['room']
+    user = kwargs['user']
     lines = get_line_count("main", roomid)
     msg = format_system_msg(f"Line count is {lines}\n")
-    room.add_message(msg, None)
+    room.add_message(msg, user)
 
 
 def ping(**kwargs):
@@ -123,22 +124,22 @@ def ping(**kwargs):
 
 def send_cmd_logs(**kwargs):
     """Send the last 10 lines in command_log.txt"""
-    # user = kwargs['user']
+    user = kwargs['user']
     roomid = kwargs['roomid']
     room = kwargs['room']
     msg = log.get_cmd_logs()
     if database.check_private(roomid):
-        room.add_private_message(msg, None)
+        room.add_message(msg, user)
     else:
-        room.add_message(msg, None)
+        room.add_message(msg, user)
 
 
 def clear_all_mutes(**kwargs):
     """Clears all mutes from every user."""
-    # user = kwargs['user']
+    user = kwargs['user']
     # roomid = kwargs['roomid']
     room = kwargs['room']
     for user in User.Users.values():
         user.mutes = []
     message = format_system_msg("All mutes cleared by a Dev.")
-    room.add_message(message, None)
+    room.add_message(message, user)

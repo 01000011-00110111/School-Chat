@@ -153,6 +153,19 @@ class Chat:
         """Changes the chat lock status."""
         self.config.locked = status
 
+    
+    def update_chat(self, data):
+        """Updates the chat in the database."""
+        self.name = data["name"]
+        # self.muted = data["muted"]
+        # self.banned = data["banned"]
+        # self.mods = data["mods"]
+        self.config.locked = data["locked"]
+        self.config.whitelisted = data["whitelisted"]
+        # self.config.blacklisted = data["blacklisted"]
+        self.config.can_send = data["canSend"]
+        database.update_chat(self)
+
 
     def backup_data(self):
         """Backups the chat room."""

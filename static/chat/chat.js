@@ -13,7 +13,7 @@ socket.on("message_chat", (message_data, user_data) => {
     renderChat((message_data));
 });
 
-socket.on("force_room_update", (_statement) => {
+socket.on("force_room_update", () => {
     userid = getCookie("Userid")
     socket.emit("get_rooms", userid);
 });

@@ -9,7 +9,7 @@ from flask_socketio import emit
 import database
 from chat import Chat
 from commands import other
-from online import get_all_offline, get_scoketid
+from online import get_scoketid
 from user import User
 from word_lists import blacklist_words
 from word_lists import whitelist_words as wl
@@ -42,11 +42,11 @@ def lock(**kwargs):
         other.respond_command((0, 'priv'), roomid)
     if other.check_if_dev(user) == 1:
         message = other.format_system_msg("Chat Locked by Admin.")
-        room.add_message(message, roomid)
+        room.add_message(message, user)
         room.set_lock_status(True)
     elif other.check_if_mod(user) == 1:
         message = other.format_system_msg("Chat Locked by Moderator.")
-        room.add_message(message, roomid)
+        room.add_message(message, user)
         room.set_lock_status(True)
 
 
@@ -59,162 +59,131 @@ def unlock(**kwargs):
         other.respond_command((0, 'priv'), roomid)
     if other.check_if_dev(user) == 1:
         message = other.format_system_msg("Chat Unlocked by Admin.")
-        room.add_message(message, roomid)
+        room.add_message(message, user)
         room.set_lock_status(False)
     elif other.check_if_mod(user) == 1:
         message = other.format_system_msg("Chat Unlocked by Moderator.")
-        room.add_message(message, roomid)
+        room.add_message(message, user)
         room.set_lock_status(False)
 
 
 def mute(**kwargs):
     """mutes the user"""
-    expiration = None
-    roomid = kwargs['roomid']
-    room = kwargs['room']
-    target = kwargs["commands"]["v1"]
-    time = kwargs["commands"]["v2"] if kwargs["commands"]["v2"] else "5m"
-    for users in User.Users.values():
-        if users.display_name == target:
-            user = users
-    duration = int(time[:-1])
-    if time[-1] == 'm':
-        expiration = datetime.now() + timedelta(minutes=duration)
-    elif time[-1] == 'h':
-        expiration = datetime.now() + timedelta(hours=duration)
-    elif time[-1] == 'd':
-        expiration = datetime.now() + timedelta(days=duration)
-    muted = {str(roomid): expiration}
-    if target not in get_all_offline():# [user[1] for user in inactive_users]:
-        for users in User.Users.values():
-            if users.display_name == target:
-                user = users
-                user.mutes.append(muted)
-    # else:
-    #     for user_data in inactive_users:
-    #         if user_data[1] == target:
-    #             database.mute_user(user_data[0], muted)
-    message = other.format_system_msg("User Muted by Admin.")
-    room.add_message(message, roomid)
-
-
-def ban(**kwargs):
-    """mutes the user in all chat rooms"""
-    expiration = None
-    roomid = kwargs['roomid']
+    sender = kwargs['user']
     room = kwargs['room']
     target = kwargs["commands"]["v1"]
     time = kwargs["commands"]["v2"] if kwargs["commands"]["v2"] else "5m"
     duration = int(time[:-1])
-    if time[-1] == 'm':
-        expiration = datetime.now() + timedelta(minutes=duration)
-    elif time[-1] == 'h':
-        expiration = datetime.now() + timedelta(hours=duration)
-    elif time[-1] == 'd':
-        expiration = datetime.now() + timedelta(days=duration)
-    # if True:  # add check later
-    muted = {'all': expiration}
-    if target not in get_all_offline():# [user[1] for user in inactive_users]:
-        for users in User.Users.values():
-            if users.display_name == target:
-                user = users
-                user.mutes.append(muted)
-    # else:
-    #     for user_data in inactive_users:
-    #         if user_data[1] == target:
-    #             database.mute_user(user_data[0], muted)
-    message = other.format_system_msg("User Banned by Admin.")
-    room.add_message(message, roomid)
+    expiration = datetime.now() + timedelta(**{time[-1] + 's': duration})
+    user, delete = other.get_user(target)
+    if user is None:
+        room.send_message(f"{target} does not exist.")
+        return
+    if delete:
+        User.delete_user(user.uuid)
+    room.mutes.append({str(user.uuid): expiration})
+    message = other.format_system_msg(f"{user.display_name}\
+            was muted by {sender.display_name}.")
+    room.add_message(message, user)
 
 
 def unmute(**kwargs):
     """unmutes the user"""
-    # user = kwargs['user']
-    roomid = kwargs['roomid']
     room = kwargs['room']
     target = kwargs["commands"]["v1"]
-    # time = kwargs["commands"]["v2"]
-    if target not in get_all_offline():#[user[1] for user in inactive_users]:
-        for user in User.Users.values():
-            if user.display_name == target:
-                for remove in list(user.mutes):
-                    if remove.get(str(roomid)):
-                        user.mutes.remove(remove)
-    else:
-        message = other.format_system_msg(
-            "you can only unmute users who have recently been online")
-        emit("message_chat", (message, roomid), broadcast=True)
-
-    message = other.format_system_msg("User Unmuted by Admin.")
-    room.add_message(message, roomid)
+    user, delete = other.get_user(target)
+    if user is None:
+        room.send_message(f"{target} does not exist.")
+        return
+    room.mutes = [mute for mute in room.mutes if mute != {str(user.uuid): None}]
+    if delete:
+        User.delete_user(user.uuid)
+    message = other.format_system_msg(f"{target} was unmuted by {kwargs['user'].display_name}.")
+    room.add_message(message, user)
 
 
-def unban(**kwargs):
-    """unmutes the user"""
-    # user = kwargs['user']
-    roomid = kwargs['roomid']
-    room = kwargs['room']
-    target = kwargs["commands"]["v1"]#' '.join(list(kwargs["commands"].values())[1:])
-    # time = kwargs["commands"]["v2"]
-    if target not in get_all_offline():#[user[1] for user in inactive_users]:
-        for user in User.Users.values():
-            if user.display_name == target:
-                for remove in list(user.mutes):
-                    if remove.get(str('all')):
-                        user.mutes.remove(remove)
-    else:
-        message = other.format_system_msg(
-            "you can only unban users who have recently been online")
-        emit("message_chat", (message, roomid), broadcast=True)
+# def ban(**kwargs):
+#     """mutes the user in all chat rooms"""
+#     sender = kwargs['user']
+#     target = kwargs["commands"]["v1"]
+#     time = kwargs["commands"]["v2"]
+#     user, delete = other.get_user(target)
+#     if user is None:
+#         kwargs['room'].send_message(f"{target} does not exist.")
+#         return
+#     expiration = None
+#     if time:
+#         duration = int(time[:-1])
+#         expiration = datetime.now() + getattr(timedelta, time[-1])(duration)
+#     for room in Chat.chats.values():
+#         room.mutes.append({str(user.uuid): expiration})
+#     if delete:
+#         User.delete_user(user.uuid)
+#     message = other.format_system_msg(
+#     f"{target} was {'banned' if expiration else 'globally muted'} by {sender.display_name}."
+#     )
+#     kwargs['room'].add_message(message, False)
 
-    message = other.format_system_msg("User Unbanned by Admin.")
-    room.add_message(message, roomid)
+
+# def unban(**kwargs):
+#     """unmutes the user"""
+#     sender = kwargs['user']
+#     target = kwargs["commands"]["v1"]
+#     user, delete = other.get_user(target)
+#     if User is None:
+#         kwargs['room'].send_message(f"{target} does not exist.")
+#         return
+#     for room in Chat.chats.values():
+#         del room.mutes[user.uuid]
+#     if delete:
+#         User.delete_user(User.uuid)
+
+#     message = other.format_system_msg(f"{target} was unmuted by {sender.display_name}.")
+#     kwargs['room'].add_message(message, False)
 
 
 def add_word_to_unban_list(**kwargs):
     """Adds a word to the list of unbanned words."""
     word = kwargs["commands"]["v1"]
     room = kwargs['room']
-    roomid = kwargs['roomid']
-    with open('backend/unbanned_words.txt', 'a', encoding="utf-8") as file:
-        if word not in wl:
+    user = kwargs['user']
+    if word not in wl:
+        with open('backend/unbanned_words.txt', 'a', encoding="utf-8") as file:
             file.write(word + '\n')
-    wl.append(word)
-    if word in blacklist_words:
-        blacklist_words.remove(word)
-    message = other.format_system_msg(
-        f"New unbanned word: {word} was added by an Admin.")
-    room.add_message(message, roomid)
-    profanity.load_censor_words(whitelist_words=wl)
-    profanity.add_censor_words(blacklist_words)
+        wl.append(word)
+        if word in blacklist_words:
+            blacklist_words.remove(word)
+        message = other.format_system_msg(
+            f"New unbanned word: {word} was added by an Admin.")
+        room.add_message(message, user)
+        profanity.load_censor_words(whitelist_words=wl)
+        profanity.add_censor_words(blacklist_words)
 
 
 def remove_word_from_unban_list(**kwargs):
     """Adds a word to the list of banned words."""
     word = kwargs["commands"]["v1"]
     room = kwargs['room']
-    roomid = kwargs['roomid']
-    try:
-        with open("backend/unbanned_words.txt", "r", encoding="utf-8") as file:
-            lines = file.readlines()
-        with open("backend/unbanned_words.txt", "w", encoding="utf-8") as file:
-            for line in lines:
-                if line.strip("\n") != word:
-                    file.write(line)
-                    if word in wl:
-                        wl.remove(word)
-        # Add the removed word to banned_words.txt
-        with open("backend/banned_words.txt", "a", encoding="utf-8") as banned_file:
-            banned_file.write(word + "\n")
+    user = kwargs['user']
+
+    if word in wl:
+        wl.remove(word)
+        try:
+            with open("backend/unbanned_words.txt", "r", encoding="utf-8") as file:
+                lines = [line.strip("\n") for line in file if line.strip("\n") != word]
+            with open("backend/unbanned_words.txt", "w", encoding="utf-8") as file:
+                file.write("\n".join(lines))
+            with open("backend/banned_words.txt", "a", encoding="utf-8") as banned_file:
+                banned_file.write(word + "\n")
             blacklist_words.append(word)
 
-        message = other.format_system_msg(
-            f"An Admin banned the word: {word}")
-        room.add_message(message, roomid)
-        profanity.load_censor_words(whitelist_words=wl)
-        profanity.add_censor_words(blacklist_words)
-    except FileNotFoundError:
-        pass
+            message = other.format_system_msg(
+                f"An Admin banned the word: {word}")
+            room.add_message(message, user)
+            profanity.load_censor_words(whitelist_words=wl)
+            profanity.add_censor_words(blacklist_words)
+        except FileNotFoundError:
+            pass
 
 
 def report_user(**kwargs):
@@ -233,9 +202,8 @@ def report_user(**kwargs):
 
 def list_reports(**kwargs):
     """List all reported users."""
-    # user = kwargs['user']
     room = kwargs['room']
-    roomid = kwargs['roomid']
+    user = kwargs['user']
     reports_list = "<br>".join(
         [f'{report[0]} was reported with the reason, {report[1]}' for report in REPORTS])
-    room.add_message(other.format_system_msg(('<br>'+reports_list)), roomid)
+    room.add_message(other.format_system_msg(('<br>'+reports_list)), user)

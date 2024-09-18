@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Creator</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-color: #212121;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        .form-box {
+            width: 100%;
+            max-width: 800px;
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .cancel-create{
+            background-color: #f44336;
+        }
+        .cancel-create:hover {
+            background-color: #e41f20;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+        .row > div {
+            width: 48%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="form-box">
+        <h2>Chat Creator</h2>
+
+        <form id="chat-room-settings" method="post">
+            <label for="room-name">Room Name</label>
+            <input type="text" id="room-name" name="room-name" placeholder="Enter room name" required>
+
+            <label for="inital-message-options">Inital message</label>
+            <select id="inital-message-options" name="inital-message-options">
+                <option value="System_regular" selected>Regular System message</option>
+                <option value="System_custom">Custom System message</option>
+                <!-- <option value="Owner">custom message</option> -->
+            </select>
+
+            <div id="custom-message-container" style="display: none;">
+                <label for="custom-message">Message</label>
+                <input type="text" id="custom-message" name="custom-message" placeholder="Enter custom message">
+            </div>
+            <div class="row">
+                <div>
+                    <button type="button" class="cancel-create">Cancel</button>
+                </div>
+                <div>
+                    <button type="submit">Create Chat</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const messageOptions = document.getElementById('inital-message-options');
+    const messageInput = document.getElementById('custom-message');
+    const customMessageContainer = document.getElementById('custom-message-container');
+    messageOptions.addEventListener('change', function() {
+        if (this.value === 'System_custom') {
+            customMessageContainer.style.display = 'block';
+            messageInput.required = true;
+        } else {
+            customMessageContainer.style.display = 'none';
+            messageInput.required = false;
+        }
+    });
+
+    document.querySelector(".cancel-create").onclick = function() {
+        if (confirm("Are you sure you want to cancel?")) {
+            window.location.href = "/";
+        }
+    };
+</script>
+
+</body>
+</html>

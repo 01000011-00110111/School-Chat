@@ -54,7 +54,7 @@ def send_email(receiver_email, subject, message_body):
 
 def load_email_template(template_name):
     """loads proper email template."""
-    with open(f'templates/{template_name}', "r", encoding="UTF-8") as f:
+    with open(f'templates/emails/{template_name}', "r", encoding="UTF-8") as f:
         return f.read()
 
 def send_verification_email(username, email, verification_code, userid):

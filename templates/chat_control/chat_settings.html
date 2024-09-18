@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/chat_control/settings.css" rel="stylesheet" type="text/css" />
+    <title>Chat Room Settings</title>
+</head>
+<body>
+
+<div class="container">
+    <div class="form-box">
+        <h2>Chat Room Settings</h2>
+
+        <label for="room-select">Select a chat room:</label>
+        <select id="room-select" name="room-select">
+            <option value="" selected hidden>Select a room</option>
+            {% for room in rooms %}
+            <option value="{{ room.vid }}">{{ room.name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+
+        <form id="chat-room-settings">
+            <!-- Room Name -->
+            <label for="room-name">Room Name</label>
+            <input type="text" id="room-name" name="room-name" placeholder="Enter room name" required>
+
+            <!-- Room Mods -->
+            <label for="mods">Room Moderators (comma separated)</label>
+            <input type="text" id="mods" name="mods" placeholder="Enter moderator usernames">
+
+            <!-- Room Whitelist -->
+            <label for="whitelisted">Whitelisted Users (comma separated)</label>
+            <input type="text" id="whitelisted" name="whitelisted" placeholder="Enter whitelisted usernames (or 'everyone')">
+
+            <!-- Room Blacklist -->
+            <label for="blacklisted">Blacklisted Users (comma separated)</label>
+            <input type="text" id="blacklisted" name="blacklisted" placeholder="Enter blacklisted usernames (or 'empty')">
+
+            <!-- Can Send -->
+            <label for="can-send">Who Can Send Messages?</label>
+            <select id="can-send" name="can-send">
+                <option value="" selected hidden>Select a room</option>
+                <option value="everyone">Everyone</option>
+                <option value="mods">Only Mods</option>
+                <option value="whitelisted">Whitelisted Only</option>
+            </select>
+
+            <!-- Room Locked -->
+            <label for="room-locked">Lock Room?</label>
+            <select id="room-locked" name="room-locked">
+                <option value="" selected hidden>Select a room</option>
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+            </select>
+
+            <div class="row">
+                <div>
+                    <button type="button" class="delete-room">Delete Room</button>
+                </div>
+                <div>
+                    <button type="submit">Save Settings</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+<script src="/static/static.js"></script>
+<script src="/static/chat_control/settings.js"></script>
+</html>

@@ -59,6 +59,7 @@ from online import (
     )
 from private import Private, get_messages, get_messages_list
 from user import User, login_manager
+from rooms import create_chat_room
 
 try:
     import setup
@@ -146,14 +147,14 @@ def void(*_):
 @login_required
 def chat_page() -> ResponseReturnValue:
     """Serve the main chat window."""
-    template = "chat.html"
+    template = "chat/chat.html"
     user = database.find_login_data(request.cookies.get("Userid"), True)
     if "Debugpass" in user["SPermission"][0]:
-        template = 'dev.html'
+        template = 'chat/dev.html'
     elif "adminpass" in user["SPermission"][0]:
-        template = 'admin.html'
+        template = 'chat/admin.html'
     elif "modpass" in user["SPermission"][0]:
-        template = 'mod.html'
+        template = 'chat/mod.html'
     return flask.render_template(template)
 
 
@@ -312,13 +313,13 @@ def signup_post() -> ResponseReturnValue:
 @app.route("/signup", methods=["GET"])
 def signup_get() -> ResponseReturnValue:
     """Serve the signup page."""
-    return flask.render_template("signup-index.html")
+    return flask.render_template("signup/signup-index.html")
 
 
 @app.route("/verify/<userid>/<verification_code>")
 def verify(userid, verification_code):
     """Verify a user."""
-    template_string = "verified.html"
+    template_string = "signup/verified.html"
     user_id = database.find_account({"userId": userid}, "vid")
     if user_id is not None:
         user_code = accounting.create_verification_code(user_id)
@@ -356,7 +357,7 @@ def verify(userid, verification_code):
 def change_password() -> ResponseReturnValue:
     """Handles the user password reset request and sends the reset email."""
     if request.method == "GET":
-        return flask.render_template("password_part1.html")
+        return flask.render_template("settings/password_part1.html")
 
     if request.method == "POST":
         username = request.form.get("username")
@@ -373,7 +374,7 @@ def reset_password(userid, verification_code) -> ResponseReturnValue:
     user_id = database.find_account({"userId": userid}, "vid")
     if request.method == "GET":
         return flask.render_template(
-            "password_part2.html", username=user_id["username"]
+            "settings/password_part2.html", username=user_id["username"]
         )
 
     if request.method == "POST":
@@ -385,7 +386,7 @@ def reset_password(userid, verification_code) -> ResponseReturnValue:
             if user_code == verification_code:
                 if password != password2:
                     return flask.render_template(
-                        "password_part2.html",
+                        "settings/password_part2.html",
                         error="Your passwords do not match!",
                         username=user_id["username"],
                     )
@@ -394,7 +395,7 @@ def reset_password(userid, verification_code) -> ResponseReturnValue:
 
                 if password_hash == user_id["password"]:
                     return flask.render_template(
-                        "password_part2.html",
+                        "settings/password_part2.html",
                         error="You can not use your previous password!",
                         username=user_id["username"],
                     )
@@ -406,6 +407,81 @@ def reset_password(userid, verification_code) -> ResponseReturnValue:
                 )
                 return flask.redirect(flask.url_for("login_page"))
     return "Invalid reset code."
+
+
+
+@app.route("/create-chat", methods=["POST", "GET"])
+@login_required
+def create_chat() -> ResponseReturnValue:
+    """Create a chat room."""
+    if request.method == "GET":
+        return flask.render_template("chat_control/create_chat.html")
+
+    if request.method == "POST":
+        name = request.form.get("room-name")
+        inital_msg = request.form.get("inital-message-options")
+        if inital_msg != "System_regular":
+            inital_msg = request.form.get("custom-message")
+        user = User.get_user_by_id(request.cookies.get('Userid'))
+
+        if name == "":
+            return flask.render_template("create_chat.html", error="Please enter a name")
+        
+        if " " in name or len(name) > 10:
+            return flask.render_template(
+"chat_control/create_chat.html", error="Name can not contain spaces and must be under 10 letters!"
+            )
+        
+        if inital_msg == "":
+            return flask.render_template(
+                "chat_control/create_chat.html", error="Please enter an initial message"
+            )
+        
+        create_chat_room(name, inital_msg, user)
+        return flask.redirect(flask.url_for("chat_page", name=name, success=True))
+
+
+@app.route("/chat-settings", methods=["GET"])
+@login_required
+def chat_settings() -> ResponseReturnValue:
+    """Serve the chat settings page."""
+    chats = database.get_rooms()
+    user = User.get_user_by_id(request.cookies.get('Userid'))
+    rooms = []
+    for chat in chats:
+        if chat['generatedBy'] == user.username:
+            rooms.append(chat)
+
+    return flask.render_template("chat_control/chat_settings.html", rooms=rooms)
+
+
+@socketio.on("get_room_data")
+def get_room_data(room):
+    """Sends the room data to the settings page."""
+    room_data = database.get_room(room)
+
+    if room_data is None:
+        return
+    # del room_data["_id"]
+    # del room_data["messages"]
+    emit("room_data", room_data)
+
+
+@socketio.on("update_room")
+def update_room(data):
+    """Updates the room data in the database."""
+    chat = Chat.create_or_get_chat(data["roomid"])
+    chat.update_chat(data)
+    emit("force_room_update", namespace="/chat", broadcast=True)
+
+
+@socketio.on("delete_room")
+def delete_room(vid):
+    """Deletes a room."""
+    chat = Chat.create_or_get_chat(vid)
+    chat.delete()
+    database.delete_room(vid)
+    emit("force_room_update", namespace="/chat", broadcast=True)
 
 
 ##### Backup file code ######
@@ -451,7 +527,7 @@ def settings_page() -> ResponseReturnValue:
         )
 
     return flask.render_template(
-        "settings.html",
+        "settings/settings.html",
         user=user["username"],
         passwd="we are not adding password editing just yet",
         email=user["email"],
@@ -498,21 +574,21 @@ def customize_accounts() -> ResponseReturnValue:
 
     if profile_location == 0:
         return flask.render_template(
-            "settings.html", error="That file format is now allowed!", **data
+            "settings/settings.html", error="That file format is now allowed!", **data
         )
         # profile_location = old_path
 
     # Check theme
     if data["theme"] is None:
         return flask.render_template(
-            "settings.html", error="Pick a theme before updating!", **data
+            "settings/settings.html", error="Pick a theme before updating!", **data
         )
 
     # Validate username and other inputs
     theme = user.theme if data["theme"] == "" else data["theme"]
     result, error = accounting.run_regex_signup(data["username"], data["role"], data["displayname"])
     if result is not False:
-        return flask.render_template("settings.html", error=error, **data)
+        return flask.render_template("settings/settings.html", error=error, **data)
 
     # Check display name
     if (
@@ -520,7 +596,7 @@ def customize_accounts() -> ResponseReturnValue:
         and user.display_name != data["displayname"]
     ) and data["displayname"] in word_lists.banned_usernames:
         return flask.render_template(
-            "settings.html", error="That display name is already taken!", **data
+            "settings/settings.html", error="That display name is already taken!", **data
         )
 
     # Check email
@@ -532,7 +608,7 @@ def customize_accounts() -> ResponseReturnValue:
         )
     elif email_check is not None and user_email != data["email"]:
         return flask.render_template(
-            "settings.html", error="That email is taken", **data
+            "settings/settings.html", error="That email is taken", **data
         )
     # Update account details
     if user.locked != "locked":
@@ -565,7 +641,7 @@ def customize_accounts() -> ResponseReturnValue:
     else:
         if user_email == data["email"]:
             return_val = flask.render_template(
-                "settings.html",
+                "settings/settings.html",
                 error="You must verify your account before you can change settings",
                 **data,
             )
@@ -802,18 +878,21 @@ def handle_heartbeat(status, roomid, priv):
         user_last_heartbeat[userid] = time.time()
 
         if userid in user_connections:
-            update_userlist(socketid, {"status": status}, userid)
-            if priv == "true":
-                room = get_messages(roomid, userid)
-            else:
-                room = Chat.create_or_get_chat(roomid)
-            if socketid not in room.sids:
-                socketids[userid] = socketid
-                room.sids.append(socketid)
+            if users_list[userid]['status'] != 'offline-locked':
+                users_list[userid]['status'] = status
+            emit("update_list", users_list[userid], namespace="/", broadcast=True)
+            if roomid is not None:
+                if priv == "true":
+                    room = get_messages(roomid, userid)
+                else:
+                    room = Chat.create_or_get_chat(roomid)
+                if socketid not in room.sids:
+                    socketids[userid] = socketid
+                    room.sids.append(socketid)
 
 
 @socketio.on("get_rooms")
-def get_rooms(userid):
+def get_chat_rooms(userid):
     """Grabs the chat rooms."""
     user_info = database.find_account_room_data(userid)
     user_name = user_info["displayName"]

@@ -10,19 +10,44 @@ from datetime import datetime
 from flask_socketio import emit
 
 from chat import Chat
+from user import User
+import database
 
 
 def check_if_dev(user):
     """Return if a user is a dev or not."""
-    return 1 if 'Debugpass' in user.perm else 0
+    return 1 if 'Debugpass' in user.perm else check_if_admin(user)
 
 def check_if_admin(user):
     """Return if a user is a mod or not."""
-    return 1 if 'adminpass' in user.perm else 0
+    return 1 if 'adminpass' in user.perm else check_if_mod(user)
 
 def check_if_mod(user):
     """Return if a user is a mod or not."""
     return 1 if 'modpass' in user.perm else 0
+
+
+def permission(user):
+    """get the users permission"""
+    return 'dev' if 'Debugpass' in user.perm else 'admin' \
+        if 'adminpass' in user.perm else 'mod' \
+        if 'modpass' in user.perm else None
+
+
+def get_user(target):
+    """Get a user from the database."""
+    delete = False
+    for users in User.Users.values():
+        if users.display_name == target:
+            user = users
+            break
+        else:
+            user = None
+    if user is None:
+        userdb = database.find_target_data(target)
+        user = User.add_user_class(userdb["username"], userdb, userdb["userId"], True)
+        delete = True
+    return user, delete
 
 
 def song(**kwargs):
@@ -38,13 +63,14 @@ def send_admin(**kwargs):
     room = kwargs['room']
     user = kwargs['user']
     msg = format_admin_msg(' '.join(list(kwargs["commands"].values())[1:]))
-    room.add_message(msg, user, False   )
+    room.add_message(msg, user)
 
 
 def help_command(**kwargs):
     """sends a message with a file full of commands that the user can use."""
     # pylint: disable=R0912
-    roomid = kwargs['roomid']
+    # roomid = kwargs['roomid']
+    room = kwargs['room']
     issuer = kwargs['user']
     with open('backend/command_list.txt', 'r', encoding="utf8") as file:
         lines = file.readlines()
@@ -78,7 +104,8 @@ def help_command(**kwargs):
 
     command_line = format_system_msg(' '.join(
         line.strip() for line in lines[start_index:end_index + 1]))
-    emit("message_chat", (command_line, roomid), namespace="/")
+    # emit("message_chat", (command_line, roomid), namespace="/")
+    room.send_message(command_line)
 
 
 def format_system_msg(msg):
@@ -141,7 +168,7 @@ def respond_command(result, roomid):
     response_strings = {
         (0, 'dev'): "Hey, you're not a dev!!!",
         (0, 'admin'): "Hey, acting like an admin I see. Too bad you're not one.",
-        (0, 'mod'): "Hey, Don't be shy call for help when you need it. Your not a mod.",
+        (0, 'mod'): "Hey, Don't be shy call for help when you need it. Your not a mod afterall.",
         (0, None): "Try '$sudo help' to see what commands are available to you.",
         (0, 'priv'): "Sorry that command is not available wile in private chats.",
         (0, 'chat'): "chat room made(this is temp)",
@@ -157,13 +184,13 @@ def respond_command(result, roomid):
 
 def e_count_backup(**kwargs):
     """E_count_bacup"""
-    roomid = kwargs['roomid']
+    user = kwargs['user']
     room = kwargs['room']
     with open('backend/Chat-backup.txt', 'r', encoding="utf-8") as file:
         text = file.read()
     count = len(re.findall(r'\be\b', text))
     msg = format_system_msg("Current count: " + str(count))
-    room.add_message(msg, roomid)
+    room.add_message(msg, user)
 
 
 def end_ping(start, roomid):
@@ -173,4 +200,4 @@ def end_ping(start, roomid):
     difference = end - start
     msg = format_system_msg('Ping Time: ' + str(
         int(difference)) + 'ms RTT')
-    room.add_message(msg, roomid)
+    room.send_message(msg)

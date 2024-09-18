@@ -141,12 +141,13 @@ function update_status(themeID, currentStatus) {
 
 
 function delete_project(themeID) {
-  socket.emit('delete_project', themeID);
-  deleteProject(themeID);
-  updateProjectCount();
-  // socket.emit('get_projects');
+  if (confirm("Are you sure you want to delete this Theme?")) {
+    socket.emit('delete_project', themeID);
+    deleteProject(themeID);
+    updateProjectCount();
+    alert("Theme deleted!");
+  }
 }
-
 
 function deleteProject(id) {
   const projectContainer = document.querySelector(`.project_panel_container[data-id='${id}']`);

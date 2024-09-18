@@ -20,14 +20,26 @@ socket.on("system_pings", (message) => {
     new Notification(message, { icon: 'static/favicon.ico' });
 });
 
-setInterval(() => {
-    RID = window.sessionStorage.getItem("ID")
-    private = window.sessionStorage.getItem("private")
-    let status = ''
-    if (document.hidden) {
-        status = 'idle';
-    } else {
-        status = 'active';
-    }
-    socket.emit('heartbeat', status, RID, private);
-}, 25000);
+if (window.location.pathname.includes("/chat")) {
+    setInterval(() => {
+        RID = window.sessionStorage.getItem("ID")
+        private = window.sessionStorage.getItem("private")
+        let status = ''
+        if (document.hidden) {
+            status = 'idle';
+        } else {
+            status = 'active';
+        }
+        socket.emit('heartbeat', status, RID, private);
+    }, 25000);
+} else {
+    setInterval(() => {
+        let status = ''
+        if (document.hidden) {
+            status = 'idle';
+        } else {
+            status = 'active';
+        }
+        socket.emit('heartbeat', status, None, None);
+    }, 25000);
+}
