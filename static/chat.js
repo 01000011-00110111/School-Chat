@@ -176,6 +176,14 @@ function renderChat(message_data) {
     chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
 }
 
+
+socket.on("update_messages", () => {
+    if (!window.sessionStorage.getItem('private')) {
+        changeRoom(window.sessionStorage.getItem("ID"))
+    }
+});
+
+
 function renderMessage(message_data, who) {
     // console.log(messages)
     let newline = "<br>";

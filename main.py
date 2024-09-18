@@ -548,12 +548,13 @@ def customize_accounts() -> ResponseReturnValue:
             "email": data["email"],
             # "badges": user.badges,
         }
+        database.update_account(account_update_data)
+        user.update_account(account_update_data)
         if data["displayname"] != user.display_name:
             update_display({"username": data["displayname"], "status": "active"}, data["userid"])
         if data["profile"] != user.profile:
             update_display({"profile": data["profile"], "status": "active"}, data["userid"])
-        database.update_account(account_update_data)
-        user.update_account(account_update_data)
+            emit("update_messages", broadcast=True)
         resp = flask.make_response(flask.redirect(flask.url_for("chat_page")))
         resp.set_cookie("Username", user.username)
         resp.set_cookie("Theme", theme)

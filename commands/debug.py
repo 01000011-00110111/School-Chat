@@ -47,8 +47,9 @@ def get_stats(roomid, version, room) -> str:
 
     # Define full and partial helper functions
     def full():
+        #pylint: disable=E1121
         return (
-            format_system_msg("Server Stats:"),
+            format_system_msg("Server Stats:",
             "<br>",
             f"Temp logfile: {get_line_count('main', roomid)} lines.<br>"
             f"Backup logfile: {get_line_count('backup', None)} lines.<br>"
@@ -64,12 +65,13 @@ def get_stats(roomid, version, room) -> str:
                 Received: {psutil.net_io_counters().bytes_recv / (1024 ** 2):.2f} MB<br>"
             f"Operating System: {platform.system()} {platform.version()},\
                 Platform: {platform.platform()}<br>"
-            f"Python Version: {sys.version}"
+            f"Python Version: {sys.version}")
         )
 
     def partial():
+        #pylint: disable=E1121
         return (
-            format_system_msg("Partial Server Stats:"),
+            format_system_msg("Partial Server Stats:",
             "<br>",
             f"Temp logfile: {get_line_count('main', roomid)} lines.<br>"
             f"Backup logfile: {get_line_count('backup', None)} lines.<br>"
@@ -78,7 +80,7 @@ def get_stats(roomid, version, room) -> str:
             f"CPU Cores: {psutil.cpu_count(logical=False)} (Physical), \
                 {psutil.cpu_count(logical=True)} (Logical)<br>"
             f"Virtual Memory: {mem_virt:.2f} GB<br>"
-            f"Resident Memory: {mem_res:.2f} GB<br>"
+            f"Resident Memory: {mem_res:.2f} GB<br>")
         )
 
     # Displaying formatted stats
@@ -109,7 +111,7 @@ def line_count(**kwargs):
     room = kwargs['room']
     lines = get_line_count("main", roomid)
     msg = format_system_msg(f"Line count is {lines}\n")
-    room.add_message(msg, 'true')
+    room.add_message(msg, None)
 
 
 def ping(**kwargs):
@@ -128,7 +130,7 @@ def send_cmd_logs(**kwargs):
     if database.check_private(roomid):
         room.add_private_message(msg, None)
     else:
-        room.add_message(msg, 'false')
+        room.add_message(msg, None)
 
 
 def clear_all_mutes(**kwargs):

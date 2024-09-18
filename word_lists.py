@@ -2,9 +2,7 @@
     Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in main.py or the LICENSE file.
 """
-from better_profanity import profanity
-
-profanity.CENSOR_CHAR = '#'
+# profanity.CENSOR_CHAR = '#'
 whitelist_words = []
 blacklist_words = []
 

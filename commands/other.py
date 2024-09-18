@@ -171,6 +171,6 @@ def end_ping(start, roomid):
     room = Chat.create_or_get_chat(roomid)
     end = time.time() * 1000.0
     difference = end - start
-    msg = '[SYSTEM]: <font color="#ff7f00">Ping Time: ' + str(
-        int(difference)) + 'ms RTT</font>'
+    msg = format_system_msg('Ping Time: ' + str(
+        int(difference)) + 'ms RTT')
     room.add_message(msg, roomid)
