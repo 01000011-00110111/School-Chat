@@ -410,7 +410,7 @@ def reset_password(userid, verification_code) -> ResponseReturnValue:
 
 
 
-@app.route("/create-chat", methods=["POST", "GET"])
+@app.route("/chat-creator", methods=["POST", "GET"])
 @login_required
 def create_chat() -> ResponseReturnValue:
     """Create a chat room."""
