@@ -568,7 +568,7 @@ def customize_accounts() -> ResponseReturnValue:
     # Handle file upload
     profile_location = (
         old_path if data.get("file") == blank else (
-            uploading.upload_file(data["file"], old_path) or old_path
+            uploading.upload_file(data["file"], old_path, "profiles") or old_path
         )
     )
 
