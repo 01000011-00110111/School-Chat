@@ -13,7 +13,7 @@ from flask_socketio import emit
 import database
 import log
 from commands.other import format_system_msg
-from user import User
+from chat import Chat
 
 LOGFILE_B = "backend/Chat-backup.txt"
 
@@ -137,9 +137,8 @@ def send_cmd_logs(**kwargs):
 def clear_all_mutes(**kwargs):
     """Clears all mutes from every user."""
     user = kwargs['user']
-    # roomid = kwargs['roomid']
     room = kwargs['room']
-    for user in User.Users.values():
-        user.mutes = []
-    message = format_system_msg("All mutes cleared by a Dev.")
+    for room in Chat.chats.values():
+        room.muted.clear()
+    message = format_system_msg(f"All mutes cleared by a {user.display_name}.")
     room.add_message(message, user)

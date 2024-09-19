@@ -204,7 +204,7 @@ def find_login_data(value, login):
                 "badges": {"$arrayElemAt": ["$customization.badges", 0]},
                 # "blocked": {"$arrayElemAt": ["$customization.blocked", 0]},
                 "permission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
-                "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
+                # "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
                 "locked": {"$arrayElemAt": ["$permissions.location", 0]},
                 "warned": {"$arrayElemAt": ["$permissions.location", 0]},
                 "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
@@ -262,7 +262,7 @@ def find_target_data(display_name):
                 "badges": {"$arrayElemAt": ["$customization.badges", 0]},
                 # "blocked": {"$arrayElemAt": ["$customization.blocked", 0]},
                 "permission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
-                "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
+                # "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
                 "locked": {"$arrayElemAt": ["$permissions.location", 0]},
                 "warned": {"$arrayElemAt": ["$permissions.location", 0]},
                 "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
@@ -311,7 +311,7 @@ def find_account_data(userid):
                 "roleColor": {"$arrayElemAt": ["$customization.roleColor", 0]},
                 "userColor": {"$arrayElemAt": ["$customization.userColor", 0]},
                 "permission": {"$arrayElemAt": ["$permissions.permission", 0]},
-                "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
+                # "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
                 "locked": {"$arrayElemAt": ["$permissions.locked", 0]},
                 "warned": {"$arrayElemAt": ["$permissions.warned", 0]},
                 "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
@@ -345,7 +345,7 @@ def find_account_room_data(userid):
             "$project": {
                 "displayName": {"$arrayElemAt": ["$customization.displayName", 0]},
                 "permission": {"$arrayElemAt": ["$permissions.permission", 0]},
-                "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
+                # "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
                 "locked": {"$arrayElemAt": ["$permissions.locked", 0]},
                 "warned": {"$arrayElemAt": ["$permissions.warned", 0]},
                 "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
@@ -392,7 +392,7 @@ def add_accounts(data):
     customization_data = {
         "userId": userid,
         "role": role,
-        "profile": "",
+        "profile": "",#latter asign a uniqe profile image path but keep the favicon
         "theme": "dark",
         "displayName": displayname,
         "messageColor": "#ffffff",
@@ -403,7 +403,7 @@ def add_accounts(data):
     permission_data = {
         "userId": userid,
         "permission": "true",
-        "mutes": [],
+        # "mutes": [],
         "locked": locked,
         "warned": "0",
         "SPermission": [""],
@@ -447,7 +447,6 @@ def backup_user(user):
         "badges": user.badges,
     }
     permission_data = {
-        "mutes": user.mutes,
         "SPermission": user.perm,
         # "warned": user.warned,
     }

@@ -4,8 +4,9 @@
 """
 import os
 import uuid
-
 # import pyclamd
+
+# application = pyclamd.ClamdNetworkSocket('localhost', 3310)
 
 allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -17,13 +18,12 @@ def allowed_file(filename):
 
 
 def scan_for_virus(_file_path):
-    """Scans for Viruses (needs to be added)."""
-    return False
-    # broken SAY "PLZ NO VIRUS"
+    """Scans for Viruses."""
+    return False  # application.scan(file_path)
 
 
 def replace_old_file(old):  # this will grow bigger later
-    """Replaces the old file"""
+    """Replaces the old file."""
     if os.path.exists(old.lstrip("/")):
         os.remove(old.lstrip("/"))
 
@@ -34,25 +34,14 @@ def rename_file(file_path):
     else uuid.uuid4()
 
 
-def upload_file(file, old):
+def upload_file(file, old, location):
     """Adds the file to the static/profiles dir."""
     if not allowed_file(file.filename):
         return 0
-    old_file = old.lstrip('/')
-    replace_old_file(old)
-    new_filename = \
-    f"static/profiles/{rename_file(old_file)}.{file.filename.rsplit('.', 1)[1].lower()}"
-    file_path = f"{new_filename.split('.')[0]}.png"
+    file_path = f"static/images/{location}/{uuid.uuid4()}.{file.filename.rsplit('.', 1)[1].lower()}"
     file.save(file_path)  # saves the file at the location
-
-    virus_scan_result = scan_for_virus(file_path)
-
-    if virus_scan_result:
+    if scan_for_virus(file_path):
         os.remove(file_path)  # Remove the file if a virus is detected
-        print(virus_scan_result)
         return 1
-        # flash(virus_scan_result, 'error')
-        # return virus_scan_result
-
-    return_path = f"/{file_path}"
-    return return_path
+    replace_old_file(old)
+    return f"/{file_path}"

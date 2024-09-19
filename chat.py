@@ -64,7 +64,6 @@ class Chat:
         self.banned = room["banned"]
         self.messages = database.get_messages(roomid)
         self.sids = []
-        self.sids = []
 
 
     @classmethod
@@ -137,6 +136,15 @@ class Chat:
             return ('room', 1)
 
 
+    def check_user(self, user):
+        """Checks if the user got any ristrictions."""
+        if user.uuid in self.muted and self.muted[user.uuid] > datetime.now():
+            return True
+        if user.uuid in self.banned and self.banned[user.uuid] > datetime.now():
+            return True
+        return False
+
+
     def reset_chat(self, clear_type):
         """Reset the chat."""
         self.messages.clear()
@@ -153,7 +161,7 @@ class Chat:
         """Changes the chat lock status."""
         self.config.locked = status
 
-    
+
     def update_chat(self, data):
         """Updates the chat in the database."""
         self.name = data["name"]
