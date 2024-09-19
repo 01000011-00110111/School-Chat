@@ -211,18 +211,22 @@ def find_cmds(message, user, roomid, room):
 
 def compile_message(message, profile_picture, user):
     """Taken from old methold of making messages"""
+    u_color = user.u_color
+    m_color = user.m_color
+    r_color = user.r_color
+    display_name = user.display_name
+    role = profanity.censor(user.role)
     perm = check_perms(user)
+    badges = [f"<p style='background:{badge[1]}; color: {badge[2]};' class='badge'>{badge[0]}</p>"
+              for badge in user.badges]
+
     return {
         'profile': f"<img class='message_pfp' src='{profile_picture}'></img>",
-        'user': f"<p style='color:{user.u_color}'>{user.display_name}</p>",
-        'message': f"<p style='color:{user.m_color}'>{message}</p>",
-        'badges': [f"<p style='background:\
-{user.r_color}; color: #ffffff;' class='badge'>{profanity.censor(user.role)}</p>",
-        f"<p style='background:{perm}; color: #ffffff;' class='badge {perm}'>\
-      {perm}</p>" if perm != 'user' else None
-                   *(f"<p style='background:\
-{badge[1]}; color: {badge[2]};' class='badge'>{badge[0]}</p>"
-                     for badge in user.badges)],
+        'user': f"<p style='color:{u_color}'>{display_name}</p>",
+        'message': f"<p style='color:{m_color}'>{message}</p>",
+        'badges': [f"<p style='background:{r_color}; color: #ffffff;' class='badge'>{role}</p>",
+                   f"<p style='background:{perm}; color: #ffffff;' class='badge {perm}'>\
+      {perm}</p>" if perm != 'user' else None] + badges,
         'date': datetime.now().strftime("%a %b %d %I:%M %p")
     }
 
