@@ -39,7 +39,7 @@ class User:
         self.profile = user['profile']
         self.theme = user['theme']
         self.locked = ['locked']
-        self.permission = user['permission']  # temp will go away
+        # self.permission = user['permission']  # temp will go away
         self.badges = user['badges']
         # self.blocked = user['blocked']
         # self.warned = user['warned']
@@ -140,6 +140,7 @@ class User:
             if not self.pause:
                 self.pause = True
                 room.muted[self.uuid] = now + timedelta(minutes=5)
+                self.limit = 0
             return False
 
         difference = (now - self.last_message).total_seconds()

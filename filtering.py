@@ -30,26 +30,28 @@ profanity.add_censor_words(word_lists.blacklist_words)
 def run_filter_chat(user, room, message, roomid, userid):
     #pylint: disable=E1121
     """Its simple now, but when chat rooms come this will be more convoluted."""
+    limit = user.send_limit(room)
+    perms = check_perms(user)
     if userid != user.uuid:
         # idea lock account if they fail 3 times using the normal lock
         # or a lock version that doesnt let you login at all
         # without dev help of email fix
         return ('permission', 12, False)
 
-    if not user.send_limit(room):
-        return ('permission', 8, 0)
 
-    if room.config.locked and user.perms not in ["dev", 'admin', "mod"]:
+    if room.config.locked and perms not in ["dev", 'admin', "mod"]:
         return ("permission", 3, 0)
 
-    if room.config.can_send == 'mod' and user.perms not in ["mod", "admin", "dev"]:
+    if room.config.can_send == 'mod' and perms not in ["mod", "admin", "dev"]:
         return ('permission', 5, 0)
 
-    if bool(re.search(r'[<>]', message)) and user.perms != 'dev':
+    if bool(re.search(r'[<>]', message)) and perms != 'dev':
         # cmds.warn_user(user)
         return ('permission', 10, 0)
 
     if check_mute(user, room):
+        if not limit:
+            return ('permission', 8, 0)
         return ('permission', 1)
 
     message = format_text(message)
@@ -67,7 +69,7 @@ def run_filter_private(user, message, userid):
     #pylint: disable=E1121
     """Its simple now, but when chat rooms come this will be more convoluted."""
     perms = check_perms(user)
-    user_muted = check_mute(user, None)
+    user_muted = False# check_mute(user, None)
 
     if userid != user.uuid:
         return ('permission', 12, user_muted)

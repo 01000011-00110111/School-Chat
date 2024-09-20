@@ -141,4 +141,4 @@ def clear_all_mutes(**kwargs):
     for room in Chat.chats.values():
         room.muted.clear()
     message = format_system_msg(f"All mutes cleared by a {user.display_name}.")
-    room.add_message(message, user)
+    room.send_message(message)
