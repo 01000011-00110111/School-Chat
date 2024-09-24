@@ -163,6 +163,11 @@ function updateProjectCount() {
   projectNumber.innerHTML = `Workspace Projects: [${project_panels.length}]`;
 }
 
+const import_input = document.getElementById('import_theme_input')
+import_input.addEventListener('input', () => {
+  new_project()
+})
+
 // socket.on('response', (response) => {
 //   console.log(response)
 //   document.getElementById('response_text').innerHTML = response

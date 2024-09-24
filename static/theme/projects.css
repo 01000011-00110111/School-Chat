@@ -166,12 +166,20 @@ body {
 
 #ImportButton {
   height: 50%;
-  border: 0px;
   width: 37%;
   background: #363636;
   border-radius: 13px;
+  border: 0;
   color: white;
 }
+/* 
+#ImportLabel {
+  height: 50%;
+  width: 37%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+} */
 
 .HeaderBtn {
   background: #39393947;

@@ -1152,3 +1152,28 @@ notification .close_panel button {
   background-color: #2196F3;
   color: #fff;
 }
+
+#background_mode {
+  color: white;
+  background: transparent;
+  border: 0;
+  height: 40px;
+  width: 220px;
+  border-radius: 9px;
+  text-indent: 1px;
+  border: 1px solid gray;
+  font-size: 15px;
+  justify-self: center;
+}
+
+#media_label {
+  width: 220px;
+  height: 40px;
+  border-radius: 9px;
+  background: transparent;
+  color: white;
+  align-content: center;
+  text-indent: 12px;
+  border: 1px solid gray;
+  display: none;
+}

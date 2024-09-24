@@ -85,9 +85,6 @@
           <!-- content-seperator -->
         </div>
         <hr id="content-seperator">
-        <div style="height: 100%; display: flex; justify-content: space-evenly;">
-          <button id="applyButton" class="PropertiesButton">Apply</button>
-        </div>
       </div>
       <div id="c_fh">
         <drawer>
@@ -97,19 +94,23 @@
               <i class="fa-solid fa-chevron-down"></i>
             </button>
           </drawer_header>
+
           <drawer_content>
-            <div id="gradient_div">
-              <button id="gradient_mode_button" class="gradient">
-                <i class="fa-solid fa-circle-half-stroke"></i>
-              </button>
-              <p id="gradient_text">background mode:</p>
-            </div>
+            <select name="background_mode" id="background_mode">
+              <option value="solid_color">Solid Color</option>
+              <option value="gradient_color">Gradient Color</option>
+              <option value="background_image">Background Image</option>
+            </select>
 
             <div id="gradient_buttons_container">
               <button onclick="changeDirrection('left', 0);" class="gradient_dirrection_button">To Left</button>
               <button onclick="changeDirrection('right', 1);" class="gradient_dirrection_button">To Right</button>
               <button onclick="changeDirrection('top', 2);" class="gradient_dirrection_button">To Top</button>
               <button onclick="changeDirrection('bottom', 3);" class="gradient_dirrection_button">To Bottom</button>
+              <label for="media_importer" id="media_label">
+                <p id="media_name">Choose File</p>
+                <input type="file" name="media_importer" id="media_importer" accept="image/*" hidden/>
+              </label>
             </div>
           </drawer_content>
         </drawer>
@@ -306,7 +307,7 @@
 
   <div class="project_panel">
     <div id="left">
-      <button>
+      <button id="export_project_button">
         <i class="fa-solid fa-download"></i>
         Export
       </button>

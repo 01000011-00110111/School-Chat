@@ -34,12 +34,13 @@ document.getElementById("chat-room-settings").onsubmit = function(event) {
         locked: roomLocked,
     };
     socket.emit('update_room', updatedRoom);
-    
+    pushNotification("[SYSTEM]", `${updatedRoom.name} has been updated`, '/static/favicon.ico');
 };
 
 document.querySelector(".delete-room").onclick = function() {
     if (confirm("Are you sure you want to delete this room?")) {
         socket.emit('delete_room', room.vid);
+        pushNotification("[SYSTEM]", `${room.name} has been deleted`, '/static/favicon.ico');
     }
 };
 

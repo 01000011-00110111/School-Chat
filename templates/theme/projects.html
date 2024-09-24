@@ -61,9 +61,12 @@
 
       <div id="actionBar_container">
         <button id="ImportButton">
-          <i class="fa-solid fa-arrow-down"></i>
-          Import
+          <label for="import_theme_input" id="ImportLabel">
+            <i class="fa-solid fa-arrow-down"></i>
+            Import
+          </label>
         </button>
+        <input type="file" accept=".themifyProj" name="import_theme" id="import_theme_input" hidden/>
 
         <button id="NewProjectBtn" onclick="new_project();">
           <i class="fa-solid fa-plus"></i>
