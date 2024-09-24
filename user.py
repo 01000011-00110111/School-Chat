@@ -29,7 +29,7 @@ class User:
         self.limit = 0
         self.pause = False
         self.last_message = datetime.now()
-        self.mutes = user['mutes']
+        # self.mutes = user['mutes']
         self.online_list = []
         #other user values
         self.r_color = user['roleColor']
@@ -39,7 +39,7 @@ class User:
         self.profile = user['profile']
         self.theme = user['theme']
         self.locked = ['locked']
-        self.permission = user['permission']  # temp will go away
+        # self.permission = user['permission']  # temp will go away
         self.badges = user['badges']
         # self.blocked = user['blocked']
         # self.warned = user['warned']
@@ -133,58 +133,59 @@ class User:
         # add_user_class(obj, u["userId"])
         return obj
 
-    def send_limit(self):
+    def send_limit(self, room):
         """Prevent the user from sending if they have a status saying too."""
-        difference = datetime.now() - self.last_message
-        if self.limit <= 15 and difference.total_seconds() < 5:
-            self.limit += 1
-            self.last_message = datetime.now()
-            return True
-        if self.limit > 15 or self.pause:
+        now = datetime.now()
+        if self.limit >= 15 or self.pause:
             if not self.pause:
                 self.pause = True
-                self.mutes.append({'spam': datetime.now() + timedelta(minutes=5)})
+                room.muted[self.uuid] = now + timedelta(minutes=5)
+                self.limit = 0
             return False
 
-        self.limit = 0
-        self.last_message = datetime.now()
+        difference = (now - self.last_message).total_seconds()
+        if difference < 5:
+            self.limit += 1
+        else:
+            self.limit = 0
+        self.last_message = now
         return True
 
 
-    def check_mute(self):
-        """Checks the mute/ban status."""
-        current_time = datetime.now()
-        to_remove = []
+    # def check_mute(self):
+    #     """Checks the mute/ban status."""
+    #     current_time = datetime.now()
+    #     to_remove = []
 
-        for mute in self.mutes:
-            for mute_duration in mute.values():
-                if mute_duration <= current_time:
-                    to_remove.append(mute)
+    #     for mute in self.mutes:
+    #         for mute_duration in mute.values():
+    #             if mute_duration <= current_time:
+    #                 to_remove.append(mute)
 
-        for remove in to_remove:
-            self.mutes.remove(remove)
+    #     for remove in to_remove:
+    #         self.mutes.remove(remove)
 
-        if not self.mutes:
-            self.pause = False
+    #     if not self.mutes:
+    #         self.pause = False
 
-        return bool(to_remove)
+    #     return bool(to_remove)
 
-    def get_perm(self, roomid):
-        """Retuns permission to send if the user is not muted/banned."""
-        mute_list = self.mutes
-        current_time = datetime.now()
+    # def get_perm(self, roomid):
+    #     """Retuns permission to send if the user is not muted/banned."""
+    #     mute_list = self.mutes
+    #     current_time = datetime.now()
 
-        for mute_entry in mute_list:
-            if isinstance(mute_entry, dict):
-                if "all" in mute_entry and mute_entry["all"] >= current_time:
-                    return True
-                self.check_mute()
+    #     for mute_entry in mute_list:
+    #         if isinstance(mute_entry, dict):
+    #             if "all" in mute_entry and mute_entry["all"] >= current_time:
+    #                 return True
+    #             self.check_mute()
 
-                if roomid in mute_entry and mute_entry[roomid] >= current_time:
-                    return True
-                self.check_mute()
+    #             if roomid in mute_entry and mute_entry[roomid] >= current_time:
+    #                 return True
+    #             self.check_mute()
 
-        return False
+    #     return False
 
     def update_account(self, account_details):
         """Update the user's account details."""

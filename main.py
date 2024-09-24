@@ -426,17 +426,17 @@ def create_chat() -> ResponseReturnValue:
 
         if name == "":
             return flask.render_template("create_chat.html", error="Please enter a name")
-        
+
         if " " in name or len(name) > 10:
             return flask.render_template(
 "chat_control/create_chat.html", error="Name can not contain spaces and must be under 10 letters!"
             )
-        
+
         if inital_msg == "":
             return flask.render_template(
                 "chat_control/create_chat.html", error="Please enter an initial message"
             )
-        
+
         create_chat_room(name, inital_msg, user)
         return flask.redirect(flask.url_for("chat_page", name=name, success=True))
 
@@ -494,7 +494,7 @@ def get_logs_page() -> ResponseReturnValue:
     user = User.get_user_by_id(uuid)
 
     if 'adminpass' in user.perm:
-        return flask.render_template("Backup-chat.html")
+        return flask.render_template("chat/Backup-chat.html")
 
     return flask.redirect(flask.url_for("chat_page"))
 
@@ -568,7 +568,7 @@ def customize_accounts() -> ResponseReturnValue:
     # Handle file upload
     profile_location = (
         old_path if data.get("file") == blank else (
-            uploading.upload_file(data["file"], old_path) or old_path
+            uploading.upload_file(data["file"], old_path, "profiles") or old_path
         )
     )
 
@@ -982,20 +982,20 @@ def handle_message(_, message, vid, userid, private, hidden):
 def handle_chat_message(message, roomid, userid, hidden):
     """New New chat message handling pipeline."""
     room = Chat.create_or_get_chat(roomid)
+    if room is None:
+        return filtering.failed_message(7, roomid)
+
     user = User.get_user_by_id(userid)
     result = filtering.run_filter_chat(user, room, message, roomid, userid)
     if result[0] == "msg":
-        if room is not None and not hidden:
+        if not hidden:
             room.add_message(result[1], user)
             if "$sudo" in message and result[2] != 3:
                 filtering.find_cmds(message, user, roomid, room)
-            elif "$sudo" in message and result[2] == 3:
-                filtering.failed_message(("permission", 9), roomid)
-        elif room is not None and hidden:
-            if "$sudo" in message and result[2] != 3:
-                filtering.find_cmds(message, user, roomid, room)
+        elif "$sudo" in message and result[2] != 3:
+            filtering.find_cmds(message, user, roomid, room)
         else:
-            filtering.failed_message(7, roomid)
+            filtering.failed_message(("permission", 9), roomid)
     else:
         filtering.failed_message(result, roomid)
 

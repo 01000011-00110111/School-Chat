@@ -34,8 +34,8 @@
                 <h6 class="=extrabuttons" style="padding: 0 0 15px 0;"><a class="extrabuttons" href="/changelog" style="color: rgb(129, 129, 129);">Update log</a></h6>
                 <h6 style="padding: 0 0 15px 0;"><a class="extrabuttons" href="#TELL-THE-OWNERS-TO-GET-YOUR-OWN-CONTACT-FOR-YOU-AND-LET-THEM-CONTACT-US" style="color: rgb(129, 129, 129);">Contact us</a></h6>
                 <h6 style="padding: 0 0 15px 0;"><a class="extrabuttons" href="https://github.com/01000011-00110111/School-Chat" style="color: rgb(129, 129, 129);">Source Code</a></h6>
-                <h6 style="padding: 0 0 15px 0;"><a class="extrabuttons" href="./chat-creator" style="color: rgb(129, 129, 129);">Source Code</a></h6>
-                <h6 style="padding: 0 0 15px 0;"><a class="extrabuttons" href="./chat-settings" style="color: rgb(129, 129, 129);">Source Code</a></h6>
+                <h6 style="padding: 0 0 15px 0;"><a class="extrabuttons" href="/chat-creator" style="color: rgb(129, 129, 129);">Create Chat</a></h6>
+                <h6 style="padding: 0 0 15px 0;"><a class="extrabuttons" href="/chat-settings" style="color: rgb(129, 129, 129);">Chat Settings</a></h6>
             </div>
             <br>
             <br>
@@ -50,13 +50,13 @@
             <li><button command="sudo offline" trigger="$" privilege="user" class="sudo_cmd_button">$sudo offline</button></li>
             <li><button command="sudo report username_here reason_here" trigger="$" privilege="mod" class="sudo_cmd_button">$sudo report</button></li>
             <li><button command="sudo ping" trigger="$" privilege="user" class="sudo_cmd_button">$sudo ping</button></li>
-            <li><button command="sudo create $" trigger="$" privilege="user" class="sudo_cmd_button">$sudo create room</button></li>
+            <!-- <li><button command="sudo create $" trigger="$" privilege="user" class="sudo_cmd_button">$sudo create room</button></li> -->
             <li><button command="sudo song" trigger="$" privilege="user" class="sudo_cmd_button">$sudo song</button></li>
             <li><button command="sudo ecount" trigger="$" privilege="user" class="sudo_cmd_button">$sudo ecount</button></li>
             <li><button command="everyone" trigger="@" privilege="user" class="sudo_cmd_button">@everyone</button></li>
             <li><button command="username_here" trigger="@" privilege="user" class="sudo_cmd_button">@user_notify</button></li>
             <li><button command="*text_goes_here*" trigger="" privilege="style" class="sudo_cmd_button">&Bold</button></li>
-            <li><button command="/text_goes_here/" trigger="" privilege="style" class="sudo_cmd_button">&Italicize</button></li>
+            <li><button command="~text_goes_here~" trigger="" privilege="style" class="sudo_cmd_button">&Italicize</button></li>
             <li><button command="_text_goes_here_" trigger="" privilege="style" class="sudo_cmd_button">&Underline</button></li>
             <li><button command="[color]text_goes_here#" trigger="" privilege="style" class="sudo_cmd_button">&Color</button></li>
             {% block mod_commands %}{% endblock %}
