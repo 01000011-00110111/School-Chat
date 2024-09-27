@@ -25,7 +25,8 @@ def get_scoketid(uuid):
 def update_userlist(_, data, uuid):
     """Updates a user in the users list."""
     for key, value in data.items():
-        if key == 'status' and users_list[uuid]['status'] == 'offline-locked':
+        if key == 'status' and users_list[uuid]['status']\
+              in ['offline-locked','ilde-lock','active-locked']:
             continue
         users_list[uuid][key] = value
 
@@ -38,7 +39,8 @@ def update_display(data, uuid):
     """Updates a user in the users list."""
     # user_old = users_list[uuid]
     for key, value in data.items():
-        if key == 'status' and users_list[uuid]['status'] == 'offline-locked':
+        if key == 'status' and users_list[uuid]['status']\
+              in ['offline-locked','ilde-lock','active-locked']:
             continue
         users_list[uuid][key] = value
 

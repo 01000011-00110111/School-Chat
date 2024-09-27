@@ -4,6 +4,8 @@ backend/Backups/*
 # thanks to the one mac user
 .DS_Store
 
+static/images/profiles/*
+
 # chatlog
 backend/webserver.log
 backend/Chat-backup.txt
