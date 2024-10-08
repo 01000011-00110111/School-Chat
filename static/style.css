@@ -9,6 +9,10 @@ body, html {
   height: 100%;
   width: 100%;
   display: grid;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: cover !important;
+  overflow-y: scroll;
 }
 
 * {
@@ -80,6 +84,7 @@ body, html {
     width: 45px;
     height: 45px;
     border: 2px red solid;
+    object-fit: cover;
 }
 
 #chat {
@@ -318,24 +323,34 @@ body, html {
 
 /* signup page */
 .signuptext {
-  height: 40px;
-  width: 85%;
+  height: 46px;
+  width: 100%;
   text-align: left;
-  justify-self: center;
-  margin: 7px 0;
   color: #4f4f4f;
   text-indent: 12px;
   font-weight: normal;
   font-family: sans-serif;
   outline: none;
-  border: 0px;
-    border-bottom-width: 0px;
-    border-bottom-style: none;
-    border-bottom-color: currentcolor;
   text-decoration: none;
-  background: transparent;
-  border-bottom: 1.5px #555 solid;
+  background: #0000007d;
+  border: 1.5px #555 solid;
   font-size: 14px;
+  border-radius: 9px;
+  margin: 5px 0;
+}
+
+.signup_input_row {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  justify-content: space-between;
+}
+.signup_input_row div {
+  width: 46%;
+  display: grid;
+}
+.signup_input_row div {
+  width: 48%;
 }
 
 .signuptext:focus {
@@ -344,11 +359,11 @@ body, html {
 }
 
 .signupbtn {
-  width: 91%;
+  width: 182px;
   border-radius: 11px;
   height: 42px;
   color: white;
-  background: #000;
+  background: #ff8d33;
   font-size: 20px;
   border: 0px;
   margin-left: 23px;
@@ -473,12 +488,9 @@ body, html {
 
 .SignUpForm {
   background: #00000085;
-  height: 65%;
-  width: 64%;
-  border-radius: 12px;
+  height: 100%;
+  width: 100%;
   display: flex;
-  box-shadow: 0px 1px 31px 3px black;
-  border: 3px #ffffff4d solid;
   justify-self: center;
   align-self: center;
 }
@@ -782,13 +794,21 @@ input[type="file"] {
 
 #signupContainer1 {
   width: 100%;
-  align-items: center;
   display: grid;
+  border-left: 0.5px solid #353535;
+  background: #151515;
+  grid-template-columns: 87%;
+  justify-content: center;
+  align-items: center;
+  grid-template-rows: 21%;
 }
 
 #signupContainer2 {
-  width: 64%;
-  margin-top: 9%;
+  width: 47%;
+  background: #0f0f0f;
+  display: grid;
+  grid-template-columns: 83%;
+  justify-content: center;
 }
 
 #admin_menu {
@@ -1338,6 +1358,7 @@ version #arrowContainer {
   display: flex;
   align-items: center;
   min-height: 32px;
+  width: 45pc;
 }
 
 .banned {
@@ -1419,7 +1440,7 @@ version #arrowContainer {
 }
 
 .message_image_content {
-  align-self: baseline;
+  align-self: center;
   display: grid;
   align-content: center;
 }
@@ -1471,4 +1492,107 @@ version #arrowContainer {
   100% {
     color: blue;
   }
+}
+
+#disclaimer_background {
+  backdrop-filter: blur(5px);
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-content: center;
+  position: fixed;
+  display: grid;
+  z-index: 5;
+}
+
+.disclaimer {
+  position: fixed;
+  display: grid;
+  background: white;
+  color: black;
+  width: 600px;
+  height: 300px;
+  z-index: 5;
+  align-self: center;
+  justify-self: center;
+  border-radius: 6px;
+  box-shadow: 8px 8px 18px 5px #787878c4;
+  border: 1px solid #545454;
+  text-indent: 14px;
+  align-content: space-between;
+}
+
+.disclaimer_buttons {
+  display: flex;
+  width: 213px;
+  justify-content: space-between;
+  bottom: 6%;
+  position: relative;
+  right: 1%;
+  justify-self: end;
+}
+
+.disclaimer_buttons button {
+  width: 104px;
+  height: 43px;
+  align-items: center;
+  justify-content: center;
+  display: grid;
+  color: black;
+  font-size: 17px;
+  background: #9ff1f5;
+  border-radius: 7px;
+  border: 1px solid black;
+}
+
+.disclaimer_title {
+  height: 38px;
+  top: 30%;
+  position: relative;
+  border-bottom: 2px solid gray;
+}
+
+#stay_button {
+  color: #00c3ff;
+  border: 1px solid black;
+  background: transparent;
+}
+
+#continue_button {
+  background: red;
+  color: white;
+  border: 0;
+}
+
+#message_body {
+  text-align: left;
+  text-indent: 0;
+  width: 88%;
+  justify-self: center;
+}
+
+.details_container_signup {
+  width: 100%;
+  height: 130px;
+  border-radius: 18px;
+  background: #1a1a1a;
+  box-shadow: 3px 4px 7px -2px #aaaaaa36;
+  top: 5%;
+  position: relative;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+}
+
+#logo_container {
+  display: flex;
+  font-size: 50px;
+  justify-content: space-between;
+  width: fit-content;
+}
+
+#signup_form_controls {
+  width: 100%;
+  height: 86%;
+  display: grid;
 }

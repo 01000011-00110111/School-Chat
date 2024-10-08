@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/dev_portal/dev_portal.css">
+    <title>Portal</title>
+</head>
+<body>
+    <main>
+        <div id="sidebar">
+            <div class="top_header">
+                <div class="top_header_content">
+                    <img src="/static/AppIcon.png" height="50px" width="50px" draggable="false"/>
+                    <h2>Portal</h2>
+                </div>
+            </div>
+
+            <button onclick="openTab(event, 'Overview')" class="tablinks">
+                <i class="fa-solid fa-chart-pie"></i>
+                Overview
+            </button>
+
+            <button onclick="openTab(event, 'Users')" class="tablinks">
+                <i class="fa-solid fa-user-group"></i>
+                Users
+            </button>
+
+            <button onclick="openTab(event, 'Log')" class="tablinks">
+                <i class="fa-solid fa-file"></i>
+                Log
+            </button>
+
+            <button onclick="openTab(event, 'Rooms')" class="tablinks">
+                <i class="fa-solid fa-message"></i>
+                Rooms
+            </button>
+
+            <button onclick="openTab(event, 'Badges')" class="tablinks">
+                <i class="fa-solid fa-id-badge"></i>
+                Badges & Roles
+            </button>
+
+            <button onclick="openTab(event, 'System')" class="tablinks">
+                [SYSTEM]
+                System
+            </button>
+        </div>
+
+        <div id="dashboard_content">
+            <div id="dashboard_nav">
+                <div>
+                    <h1 id="tab_name">Overview</h1>
+                </div>
+
+                <div></div>
+
+                <div class="quick_user_details">
+                    <img src={{profile}} class="user_profile_picture" draggable="false"/>
+                    <div>
+                        <h3 class="users_username">{{username}}</h3>
+                        <p class="users_role">{{perm}}</p>
+                    </div>
+                </div>
+            </div>
+            <div id="dashboard_data">
+
+
+                <div id="Overview" class="tabcontent">
+                    <div class="flex">
+                        <div class="portal_table large grid">
+                            <div class="portal_table_header">
+                                <h3>Quick Server Stats</h3>
+                                <p class="portal_subtitled_text">Stats summary</p>
+                            </div>
+            
+                            <div class="portal_table_content flex">
+                                <div class="portal_table small" style="background: rgb(249, 100, 100);">
+                                    <div class="portal_table_header">
+                                        <h3>Runtime</h3>
+                                    </div>
+            
+                                    <div class="portal_table_content">
+                                        <p>0 day(s), 0 hour(s), 0 minute(s), 19 seconds.\</p>
+                                    </div>
+                                </div>
+            
+                                <div class="portal_table small" style="background: rgb(212, 249, 100);">
+                                    <div class="portal_table_header">
+                                        <h3>CPU Usage</h3>
+                                    </div>
+            
+                                    <div class="portal_table_content">
+                                        <p>16.5%</p>
+                                    </div>
+                                </div>
+            
+                                <div class="portal_table small" style="background: rgb(0, 47, 255);">
+                                    <div class="portal_table_header">
+                                        <h3>Disk Usage</h3>
+                                        <p>Total: 228.27 GB, Used: 10.10 GB</p>
+                                    </div>
+            
+                                    <div class="portal_table_content">
+            
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="portal_table large grid">
+                            <div class="portal_table_header">
+                                <h3>Chat Overview & Info</h3>
+                                <p class="portal_subtitled_text">Quick summary of the chat + other info</p>
+                            </div>
+
+                            <div class="portal_table_content flex">
+                                <div class="flex">
+                                    <div class="portal_table small">
+                                        <div class="portal_table_header">
+                                            <h3>/Main</h3>
+                                        </div>
+    
+                                        <div class="portal_table_content">
+                                            <p>Unlocked</p>
+                                            <p>Users online: 5</p>
+                                            <p>Mods online: 0</p>
+                                            <p>Admins online: 0</p>
+                                            <p>Devs online: 0</p>
+                                        </div>
+                                    </div>
+                                    <div class="portal_table small">
+                                        <div class="portal_table_header">
+                                            <h3>Server</h3>
+                                        </div>
+    
+                                        <div class="portal_table_content">
+                                            <p>New changes</p>
+                                            <p>Last restared: 6min</p>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                                <div class="grid" style="grid-template-rows: 5.3em;">
+                                    <div class="portal_table x-small center-content justify-center grid text-left" style="width: 236px;">
+                                        <h3>Current Chat Version</h3>
+                                        <p class="portal_subtitled_text" id="versionText"></p>
+                                    </div>
+                                    <div class="portal_table x-small center-content grid">
+                                        <h3>No new log updates</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    
+                    </div>
+                </div>
+
+                <div id="Users" class="tabcontent">
+                    <div class="portal_table xxl">
+                        <div class="portal_table_header">
+                            <h3>Users List</h3>
+                            <p class="portal_subtitled_text">A table of all the users on the chat</p>
+                        </div>
+
+                        <div class="portal_table_content">
+                            <ul>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="Log" class="tabcontent">
+                    <div class="portal_table xxl">
+                        <div class="portal_table_header">
+                            <h3>Chat Logs</h3>
+                            <p class="portal_subtitled_text">A list of all the messaged content on the chat</p>
+                        </div>
+
+                        <div class="portal_table_content">
+                            <ul>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="Rooms" class="tabcontent">
+
+                </div>
+
+                <div id="Badges" class="tabcontent">
+
+                </div>
+
+                <div id="System" class="tabcontent">
+                    <div class="flex">
+                        <div class="portal_table large grid">
+                            <div class="portal_table_header">
+                                <h3>System Integrity Automated Management</h3>
+                                <p class="portal_subtitled_text">This is the subsystem that controls [SYSTEM] on chat</p>
+                            </div>
+
+                            <div class="portal_table_content">
+
+                            </div>
+                        </div>
+
+                        <div class="portal_table large grid">
+                            <div class="portal_table_header">
+                                <h3>System Automated Messages (SAM System)</h3>
+                                <p class="portal_subtitled_text">SAM is the subsystem that controls [SYSTEM]'s scheduled message sending</p>
+                            </div>
+
+                            <div class="portal_table_content">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://kit.fontawesome.com/69e44b2a4c.js" crossorigin="anonymous"></script>
+        <script src="/static/dev_portal/dev_portal.js"></script>
+    </main>
+</body>
+</html>

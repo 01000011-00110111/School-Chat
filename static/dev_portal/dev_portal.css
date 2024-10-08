@@ -1,0 +1,214 @@
+body, html {
+    width: 100%;
+    height: 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+main {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.top_header {
+    display: flex;
+    color: black;
+    align-items: center;
+    height: 80px;
+    text-align: left;
+    text-indent: 12px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.top_header .top_header_content {
+    display: flex;
+    align-items: center;
+    border-radius: 12px;
+    border: 1px solid red;
+    width: 197px;
+    justify-content: left;
+    height: 57px;
+    text-indent: 24px;
+    padding: 0px 0px 0px 6px;
+}  
+
+#sidebar {
+    height: 100%;
+    width: 15%;
+    background: white;
+    display: grid;
+    align-content: baseline;
+    justify-content: center;
+    grid-template-columns: 80%;
+    z-index: 3;
+    box-shadow: 0px 74px 7px black;
+}
+
+#sidebar button {
+    background: transparent;
+    color: rgb(153, 153, 153);
+    height: 45px;
+    border: 0;
+    text-align: left;
+    text-indent: 10px;
+    border-radius: 10px;
+}
+
+#sidebar button:hover {
+    color: rgb(157, 157, 157);
+}
+
+#sidebar button.active {
+    background: #5d60ef;
+    color: white;
+}
+
+#dashboard_nav_text {
+    font-family: cursive;
+    color: white;
+}
+
+#dashboard_content {
+    width: 100%;
+    display: inline-grid;
+    grid-template-rows: 4.4em;
+}
+
+#dashboard_nav {
+    width: 100%;
+    height: 70px;
+    display: flex;
+    background: white;
+    box-shadow: 0px -2px 11px -1px black;
+    z-index: 2;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#dashboard_data {
+    width: 100%;
+    height: 100%;
+    background: rgb(228, 228, 228);
+}
+
+.user_profile_picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 13px;
+}
+
+.quick_user_details {
+    display: flex;
+    align-items: center;
+    text-indent: 7px;
+    margin: 15px;
+}
+
+.quick_user_details .users_username {
+    font-weight: bold;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.quick_user_details .users_role {
+    color: grey;
+    font-size: 17px;
+}
+
+#tab_name {
+    text-indent: 18px;
+}
+
+.portal_table {
+    background: white;
+    border-radius: 10px;
+    margin: 12px;
+    box-shadow: 0px 0px 7px -1px black;
+    text-align: left;
+}
+
+.portal_table_header {
+    background: transparent;
+    height: 40px;
+    align-content: center;
+    color: black;
+    padding-top: 12px;
+    text-indent: 17px;
+}
+
+.portal_table_content {
+    width: 100%;
+    height: 98%;
+}
+
+.portal_subtitled_text {
+    color: grey;
+    font-size: 17px;
+}
+
+.flex {
+    display: flex;
+}
+
+.grid {
+    display: grid;
+}
+
+.flat {
+    box-shadow: none !important;
+}
+
+.large {
+    width: 38em;
+    height: 15em;
+}
+
+.xxl {
+    width: 90em;
+    height: 48em;
+}
+
+.small {
+    width: 150px;
+    height: 150px;
+}
+
+.center-content {
+    align-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.justify-center {
+    justify-content: center;
+    justify-items: center;
+    text-align: center;
+}
+
+.self-center {
+    align-self: center;
+    justify-self: center;
+}
+
+.align-left {
+    align-items: baseline;
+    align-content: baseline;
+}
+
+.justify-left {
+    justify-content: left;
+    justify-items: left;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.x-small {
+    width: 150px;
+    height: 65px;
+}

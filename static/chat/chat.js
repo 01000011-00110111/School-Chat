@@ -147,6 +147,8 @@ function getMessage() {
     sendMessage(message, hidden);
 }
 
+let unreadMessages = 0;
+
 function sendMessage(message, hidden) {
     let user = getCookie('Username')
     let userid = getCookie('Userid')
@@ -166,6 +168,16 @@ function sendMessage(message, hidden) {
     window.scrollTo(0, chatDiv.scrollHeight);
 }
 
+socket.on('message_chat', () => {
+    const isInStandaloneMode = () =>
+        (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone) || document.referrer.includes('android-app://');
+  
+    if (isInStandaloneMode()) {
+        unreadMessages += 1;
+        navigator.setAppBadge(unreadMessages);
+    }
+});
+
 // setInterval(BTMLog, 3000)
 
 function renderChat(message_data) {
@@ -174,6 +186,7 @@ function renderChat(message_data) {
     let chatDiv = document.getElementById("chat");
     messages = renderMessage(message_data)
     chatDiv["innerHTML"] = chatDiv["innerHTML"] + messages + newline;
+    activate_hyperlinks();
 }
 
 

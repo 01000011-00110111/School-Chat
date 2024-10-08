@@ -49,21 +49,23 @@ const offline = document.getElementById("offline");
 const ColorPickers = document.querySelectorAll("#ColorPicker");
 const color_inputs = document.querySelectorAll("#color_display_input");
 const color_boxes = document.querySelectorAll('.color_picker');
-const dirrectionBox = document.getElementsByClassName('gradient_dirrection_button')
 const background_controller = document.getElementById("background_mode");
 const media_importer = document.getElementById("media_importer");
 const media_name = document.getElementById("media_name");
 const media_label = document.getElementById("media_label");
+const gradient_slider = document.getElementById("gradient_slider");
+const gradient_slider_value = document.getElementById("gradient_slider_value");
 
 // After this is the Theme & CSE code
 
 function saveProject() {
-  const online_users = document.querySelectorAll("#online_buttons");
+  const online_users = document.querySelectorAll("#onlineList_user");
   theme = {
     'body': body.style.background,
     'chat-text': chat.style.color,
     'chat-background': message.style.background,
     'chat-color': message.style.color,
+    'image-background': body.style.backgroundImage,
     // 'chatbox-background': chatbox.style.background,
     'sides-text': sides.style.color,
     'sides-background': sides.style.background,
@@ -99,7 +101,7 @@ function saveProject() {
 
 function publishProject() {
   const room_names = document.querySelectorAll("#room_names");
-  const online_users = document.querySelectorAll("#online_buttons");
+  const online_users = document.querySelectorAll("#onlineList_user");
   var room_names_background = "";
   var room_names_color = "";
   var online_users_color = "";
@@ -117,6 +119,7 @@ function publishProject() {
     'chat-text': chat.style.color,
     'chat-background': message.style.background,
     'chat-color': message.style.color,
+    'image-background': body.style.backgroundImage,
     // 'chatbox-background': chatbox.style.background,
     'sides-text': sides.style.color,
     'sides-background': sides.style.background,
@@ -215,7 +218,7 @@ const menuOwner = document.getElementById("menuOwner");
 
 // Opens a project
 function open_project(data) {
-  const online_users = document.querySelectorAll("#online_buttons");
+  const online_users = document.querySelectorAll("#onlineList_user");
 
   let colors = data.project
   let snav_iter = snavText.length;
@@ -225,6 +228,7 @@ function open_project(data) {
   body.style.background = colors['body']
   chat.style.background = colors['body']
   chat.style.color = colors['chat-text']
+  body.style.backgroundImage = colors['image-background']
   message.style.background = colors['chat-background']
   message.style.color = colors['chat-color']
   // chatbox.style.background = colors['chatbox-background']
@@ -286,19 +290,15 @@ setColorMode(0)
 const enableGradient = () => {
   ColorPickers[1].style.display = "flex";
   setColorMode(1);
-  let dirrection_iter = dirrectionBox.length;
-  for (let i = 0; i < dirrection_iter; i++) {
-    dirrectionBox[i].style.display = 'block'
-  }
+  gradient_slider.style.display = "block";
+  gradient_slider_value.style.display = "block";
 }
 
 const disableGradient = () => {
   ColorPickers[1].style.display = "none";
   setColorMode(0);
-  let dirrection_iter = dirrectionBox.length;
-  for (let i = 0; i < dirrection_iter; i++) {
-    dirrectionBox[i].style.display = 'none'
-  }
+  gradient_slider.style.display = "none";
+  gradient_slider_value.style.display = "none";
 }
 
 const enableImages = () => {
@@ -308,7 +308,6 @@ const enableImages = () => {
 
 const disableImages = () => {
   media_label.style.display = "none";
-  setColorMode(0)
 }
 
 const get_controller_state = () => {
@@ -371,18 +370,19 @@ for (let index = 0; index < drawer.length; index++) {
   })
 }
 
+gradient_slider.addEventListener('input', () => {
+  gradient_slider_value.value = gradient_slider.value;
+});
 
-var gradient_dirrection = "left";
-dirrectionBox[0].style.border = '1px darkgray solid'
+gradient_slider_value.addEventListener('input', () => {
+  gradient_slider.value = gradient_slider_value.value;
+});
 
-const changeDirrection = (dirrection, index) => {
-  gradient_dirrection = dirrection;
-  let dirrection_iter = dirrectionBox.length;
-  for (let i = 0; i < dirrection_iter; i++) {
-    dirrectionBox[i].style.border = 'none'
-  }
-  dirrectionBox[index].style.border = '1px darkgray solid'
-}
+const min = gradient_slider.min;
+const max = gradient_slider.max;;
+const slider_value = gradient_slider.value
+
+gradient_slider.style.background = `linear-gradient(to right, #404a70 0%, #404a70 ${(slider_value-min)/(max-min)*100}%, #DEE2E6 ${(slider_value-min)/(max-min)*100}%, #DEE2E6 100%)`;
 
 function extractRGBValues(rgbString) {
   const match = rgbString.match(/\d+/g);
@@ -438,7 +438,7 @@ AllContent.forEach((element) => {
         case "room_names":
           setProperties("enable", "enable", "disabled", "disabled");
           break;
-        case "online_buttons":
+        case "onlineList_user":
           setProperties("disabled", "enable", "disabled", "disabled");
           break;
         case "RoomDisplay":
@@ -552,6 +552,10 @@ AllContent.forEach((element) => {
         apply_changes();
       });
 
+      gradient_slider.oninput = function() {
+        apply_changes();
+      };
+
       const apply_changes = () => {
         if (SelectedLayer == menuOwner.innerHTML) {
 
@@ -576,16 +580,16 @@ AllContent.forEach((element) => {
 
           switch (currentColorMode) {
             case 'Solid':
-              document.getElementById(SelectedLayer).style.setProperty('background', ColorBox.value)
-              document.getElementById(SelectedLayer).style.setProperty('color', textColor.value)
-              document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value)
+              document.getElementById(SelectedLayer).style.setProperty('background', ColorBox.value);
+              document.getElementById(SelectedLayer).style.setProperty('color', textColor.value);
+              document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value);
               document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
               break;
             
             case 'Gradient':
-              document.getElementById(SelectedLayer).style.setProperty('background', `linear-gradient(to ${gradient_dirrection}, ${ColorBox.value}, ${gradientColor.value})`)
-              document.getElementById(SelectedLayer).style.setProperty('color', textColor.value)
-              document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value)
+              document.getElementById(SelectedLayer).style.setProperty('background', `linear-gradient(${gradient_slider.value}deg, ${ColorBox.value}, ${gradientColor.value})`);
+              document.getElementById(SelectedLayer).style.setProperty('color', textColor.value);
+              document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value);
               document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
               fetchColors();
               break;
@@ -621,7 +625,7 @@ AllContent.forEach((element) => {
 
       for (let index = 0; index < color_boxes.length; index++) {
         color_boxes[index].addEventListener('input', (event) => {
-          apply_changes()
+          apply_changes();
         });    
       }
       /////

@@ -663,21 +663,40 @@ def category():
     """Opens support documentation."""
     return flask.render_template("support/chat_docs.html")
 
+@app.route("/developer/portal")
+@login_required
+def portal():
+    """Opens developer portal"""
+    user = database.find_login_data(request.cookies.get("Userid"), True)
+    perm = ""
+    if "Debugpass" in user["SPermission"][0]:
+        perm = 'Developer'
+    elif "adminpass" in user["SPermission"][0]:
+        perm = 'Admin'
+    elif "modpass" in user["SPermission"][0]:
+        perm = 'Mod'
+    return flask.render_template("dev_portal/dev_portal.html", profile=user["profile"],
+    username = user["displayName"],
+    perm = perm)
 
 ##### THEME STUFF #####
 @app.route("/editor")
 @login_required
 def editor():
     """Opens the theme editor page."""
-    return flask.render_template("theme/editor.html")
+    user = database.find_login_data(request.cookies.get("Userid"), True)
+    return flask.render_template("theme/editor.html", profile=user["profile"],
+    username = user["displayName"],
+    role = user["role"])
 
 
 @app.route("/projects")
 @login_required
 def projects():
     """Opens the project page."""
-    return flask.render_template("theme/projects.html")
-
+    user = database.find_login_data(request.cookies.get("Userid"), True)
+    return flask.render_template("theme/projects.html",
+    profile=user["profile"])
 
 @socketio.on("get_projects")
 def handle_project_requests():
@@ -1134,4 +1153,4 @@ def teardown_request(_exception=None):
 
 if __name__ == "__main__":
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", port=5000, debug=False)
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)

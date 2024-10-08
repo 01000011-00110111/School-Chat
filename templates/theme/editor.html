@@ -103,10 +103,8 @@
             </select>
 
             <div id="gradient_buttons_container">
-              <button onclick="changeDirrection('left', 0);" class="gradient_dirrection_button">To Left</button>
-              <button onclick="changeDirrection('right', 1);" class="gradient_dirrection_button">To Right</button>
-              <button onclick="changeDirrection('top', 2);" class="gradient_dirrection_button">To Top</button>
-              <button onclick="changeDirrection('bottom', 3);" class="gradient_dirrection_button">To Bottom</button>
+              <input type="range" id="gradient_slider" value="90" max="360" min="0"/>
+              <input type="number" id="gradient_slider_value" value="90" max="360" min="0"/>
               <label for="media_importer" id="media_label">
                 <p id="media_name">Choose File</p>
                 <input type="file" name="media_importer" id="media_importer" accept="image/*" hidden/>
@@ -240,13 +238,15 @@
                   <br>
           </div>
         <div id="chat">
-          [Fri 03:30 PM]
-          <img class="pfp" src="https://www6.school-chat.us/static/profiles/81b4a197-a670-4497-9c3e-08cb87f44737.png">
-          <font color="#690e8b">Kokonoe</font>
-          (
-          <font class="Dev_colors-loop">Student&nbsp;Council&nbsp;President</font>
-          ) - 
-          <font color="#058cfa">This is a test message</font>
+          <div class="message"> 
+            <div class="message_image_content"><img class="message_pfp" src={{profile}}></div>
+            <div class="message_content">
+            <div class="user_info_div"><p style="color:#ff2600">{{username}}</p><p>*</p>
+            <p>Tue Oct 01 07:28 PM</p>
+            <p style="background:#3140ff; color: #ffffff;" class="badge">{{role}}</p><p style="background:dev; color: #ffffff;" class="badge dev"></p>
+            </div>
+            <div class="user_message_div"><p style="color:#00f900">This is a test message</p></div> </div>
+            </div>
         </div>
     
         <div id="sides">
@@ -260,44 +260,137 @@
             <!-- <hr id="online_border"> -->
             <div id="online_users">
               <div>
-                <font id="online" size="5%">Online: 3</font>
-                <br>
-                <br>
-                <button id="online_buttons">Guest user #1</button>
-                <br>
-                <br>
-                <br>
-                <button id="online_buttons">Guest user #2</button>
-                <br>
-                <br>
-                <br>
-                <button id="online_buttons">Guest user #3</button>
-                <br>
-                <br>
-                <br>
-                <font id="offline" size="5%">Offline: 5</font>
-                <br>
-                <br>
-                <button id="online_buttons">Guest user #4</button>
-                <br>
-                <br>
-                <br>
-                <button id="online_buttons">Guest user #5</button>
-                <br>
-                <br>
-                <br>
-                <button id="online_buttons">Guest user #6</button>
-                <br>
-                <br>
-                <br>
-                <button id="online_buttons">Guest user #7</button>
-                <br>
-                <br>
-                <br>
-                <button id="online_buttons">Guest user #8</button>
-                <br>
-                <br>
-                <br>
+                <font id="online" style="color: rgb(255, 255, 255);" size="5%">Online: 1</font> <font id="offline" style="color: rgb(255, 255, 255);" size="5%">Offline: 14</font>
+                <br><br> 
+                
+                <div class="onlineList_user_preview" id="onlineList_user" title="Guest user #1">
+                    <p style="background: transparent; color: white; text-align: center; position: absolute; left: 15%; margin-top: -30px; border-radius: 100px; min-width: 18px; min-height: 18px; height: min-content; width: min-content; align-content: center;" id="unread_indicator"></p>
+                    <img class="user_list_pfp" src="/static/favicon.ico">
+                    <div style="display: grid; left: -10px; position: relative;">
+                        <div style="display: grid; align-items: left; min-width: 120px;">
+                            <h3 style="color: rgb(255, 255, 255);">Guest user #1</h3>
+                            <p style="font-size: 12px;">Tester 1</p>
+                        </div>
+                    </div>
+                    <div style="display: grid;">
+                        <div style="background: lime; width: 10px; height: 10px; border-radius: 100px; right: 12px; position: relative;">
+
+                        </div>
+                    </div>
+                </div>
+            
+                
+                <div class="onlineList_user_preview" id="onlineList_user" title="Guest user #2">
+                    <p style="background: transparent; color: white; text-align: center; position: absolute; left: 15%; margin-top: -30px; border-radius: 100px; min-width: 18px; min-height: 18px; height: min-content; width: min-content; align-content: center;" id="unread_indicator"></p>
+                    <img class="user_list_pfp" src="/static/favicon.ico">
+                    <div style="display: grid; left: -10px; position: relative;">
+                        <div style="display: grid; align-items: left; min-width: 120px;">
+                            <h3 style="color: rgb(255, 255, 255);">Guest user #2</h3>
+                            <p style="font-size: 12px;">Tester 2</p>
+                        </div>
+                    </div>
+                    <div style="display: grid;">
+                        <div style="background: lime; width: 10px; height: 10px; border-radius: 100px; right: 12px; position: relative;">
+
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="onlineList_user_preview" id="onlineList_user" title="Guest user #3">
+                    <p style="background: transparent; color: white; text-align: center; position: absolute; left: 15%; margin-top: -30px; border-radius: 100px; min-width: 18px; min-height: 18px; height: min-content; width: min-content; align-content: center;" id="unread_indicator"></p>
+                    <img class="user_list_pfp" src="/static/favicon.ico">
+                    <div style="display: grid; left: -10px; position: relative;">
+                        <div style="display: grid; align-items: left; min-width: 120px;">
+                            <h3 style="color: rgb(255, 255, 255);">Guest user #3</h3>
+                            <p style="font-size: 12px;">Tester 3</p>
+                        </div>
+                    </div>
+                    <div style="display: grid;">
+                        <div style="background: lime; width: 10px; height: 10px; border-radius: 100px; right: 12px; position: relative;">
+
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="onlineList_user_preview" id="onlineList_user" title="Guest user #4">
+                    <p style="background: transparent; color: white; text-align: center; position: absolute; left: 15%; margin-top: -30px; border-radius: 100px; min-width: 18px; min-height: 18px; height: min-content; width: min-content; align-content: center;" id="unread_indicator"></p>
+                    <img class="user_list_pfp" src="/static/favicon.ico">
+                    <div style="display: grid; left: -10px; position: relative;">
+                        <div style="display: grid; align-items: left; min-width: 120px;">
+                            <h3 style="color: rgb(255, 255, 255);">Guest user #4</h3>
+                            <p style="font-size: 12px;">Tester 4</p>
+                        </div>
+                    </div>
+                    <div style="display: grid;">
+                        <div style="background: red; width: 10px; height: 10px; border-radius: 100px; right: 12px; position: relative;">
+
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="onlineList_user_preview" id="onlineList_user" title="Guest user #5">
+                    <p style="background: transparent; color: white; text-align: center; position: absolute; left: 15%; margin-top: -30px; border-radius: 100px; min-width: 18px; min-height: 18px; height: min-content; width: min-content; align-content: center;" id="unread_indicator"></p>
+                    <img class="user_list_pfp" src="/static/favicon.ico">
+                    <div style="display: grid; left: -10px; position: relative;">
+                        <div style="display: grid; align-items: left; min-width: 120px;">
+                            <h3 style="color: rgb(255, 255, 255);">Guest user #5</h3>
+                            <p style="font-size: 12px;">Tester 5</p>
+                        </div>
+                    </div>
+                    <div style="display: grid;">
+                        <div style="background: red; width: 10px; height: 10px; border-radius: 100px; right: 12px; position: relative;">
+
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="onlineList_user_preview" id="onlineList_user" title="Guest user #6">
+                    <p style="background: transparent; color: white; text-align: center; position: absolute; left: 15%; margin-top: -30px; border-radius: 100px; min-width: 18px; min-height: 18px; height: min-content; width: min-content; align-content: center;" id="unread_indicator"></p>
+                    <img class="user_list_pfp" src="/static/favicon.ico">
+                    <div style="display: grid; left: -10px; position: relative;">
+                        <div style="display: grid; align-items: left; min-width: 120px;">
+                            <h3 style="color: rgb(255, 255, 255);">Guest user #6</h3>
+                            <p style="font-size: 12px;">Tester 6</p>
+                        </div>
+                    </div>
+                    <div style="display: grid;">
+                        <div style="background: red; width: 10px; height: 10px; border-radius: 100px; right: 12px; position: relative;">
+
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="onlineList_user_preview" id="onlineList_user" title="Guest user #7">
+                    <p style="background: transparent; color: white; text-align: center; position: absolute; left: 15%; margin-top: -30px; border-radius: 100px; min-width: 18px; min-height: 18px; height: min-content; width: min-content; align-content: center;" id="unread_indicator"></p>
+                    <img class="user_list_pfp" src="/static/favicon.ico">
+                    <div style="display: grid; left: -10px; position: relative;">
+                        <div style="display: grid; align-items: left; min-width: 120px;">
+                            <h3 style="color: rgb(255, 255, 255);">Guest user #7</h3>
+                            <p style="font-size: 12px;">Tester 7</p>
+                        </div>
+                    </div>
+                    <div style="display: grid;">
+                        <div style="background: red; width: 10px; height: 10px; border-radius: 100px; right: 12px; position: relative;">
+
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="onlineList_user_preview" id="onlineList_user" title="Guest user #8">
+                    <p style="background: transparent; color: white; text-align: center; position: absolute; left: 15%; margin-top: -30px; border-radius: 100px; min-width: 18px; min-height: 18px; height: min-content; width: min-content; align-content: center;" id="unread_indicator"></p>
+                    <img class="user_list_pfp" src="/static/favicon.ico">
+                    <div style="display: grid; left: -10px; position: relative;">
+                        <div style="display: grid; align-items: left; min-width: 120px;">
+                            <h3 style="color: rgb(255, 255, 255);">Guest user #8</h3>
+                            <p style="font-size: 12px;">Tester 8</p>
+                        </div>
+                    </div>
+                    <div style="display: grid;">
+                        <div style="background: red; width: 10px; height: 10px; border-radius: 100px; right: 12px; position: relative;">
+
+                        </div>
+                    </div>
+                </div>
               </div>
             </div>
         </div>

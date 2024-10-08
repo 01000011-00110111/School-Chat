@@ -12,7 +12,7 @@
   <div class="main">
     <div class="Header">
       <div class="HeaderColumn">
-        <img id="TeamIcon" src="{{pfp}}">
+        <img id="TeamIcon" src="{{profile}}">
         <p id="TeamName"></p>
       </div>
 
@@ -53,7 +53,7 @@
         <h2 id="projectNumber"></h2>
         <div id="searchBox">
           <button class="SearchBtn"><i class="fa-solid fa-filter"></i></button>
-          <input type="text" placeholder="Search" id="searchInput">
+          <input type="text" placeholder="Search" id="searchInput" onkeyup="search_projects();">
           <button class="SearchBtn"><i class="fa-solid fa-magnifying-glass"></i></button>
           <button class="SearchBtn hidden" id="clearSearchButton"><i class="fa-solid fa-x"></i></button>
         </div>
