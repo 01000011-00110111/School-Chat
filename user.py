@@ -189,13 +189,9 @@ class User:
 
     def update_account(self, account_details):
         """Update the user's account details."""
-        self.m_color = account_details['message_color']
-        self.r_color = account_details['role_color']
-        self.u_color = account_details['user_color']
-        self.display_name = account_details['displayname']
-        self.role = account_details['role']
-        self.profile = account_details['profile']
-        self.theme = account_details['theme']
+        for key, value in account_details.items():
+            if key in self.__dict__:
+                setattr(self, key, value)
 
     def backup(self):
         """Backup the user's data."""

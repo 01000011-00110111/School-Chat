@@ -545,11 +545,13 @@ def settings_page() -> ResponseReturnValue:
 @login_required
 def customize_accounts() -> ResponseReturnValue:
     """Customize the account."""
-    return_val = None
+    user = User.get_user_by_id(request.cookies.get("Userid"))
+    user_email = database.get_email(user.uuid)
+    old_path = user.profile
+
     # Gather form and cookie data into a single dictionary
     data = {
-        "username": request.form.get("user"),
-        "userid": request.cookies.get("Userid"),
+        "username": request.cookies.get("Username"),
         "displayname": request.form.get("display"),
         "role": request.form.get("role"),
         "message_color": request.form.get("message_color"),
@@ -560,23 +562,18 @@ def customize_accounts() -> ResponseReturnValue:
         "theme": request.form.get("theme"),
     }
 
-    user = User.get_user_by_id(data["userid"])
-    user_email = database.get_email(user.uuid)
-    old_path = user.profile
-    blank = "<FileStorage: '' ('application/octet-stream')>"
+    account_update_data = {}
 
     # Handle file upload
     profile_location = (
-        old_path if data.get("file") == blank else (
-            uploading.upload_file(data["file"], old_path, "profiles") or old_path
-        )
+        old_path if data.get("file").filename == "" else
+        uploading.upload_file(data["file"], old_path, "profiles")
     )
 
     if profile_location == 0:
         return flask.render_template(
             "settings/settings.html", error="That file format is now allowed!", **data
         )
-        # profile_location = old_path
 
     # Check theme
     if data["theme"] is None:
@@ -585,7 +582,6 @@ def customize_accounts() -> ResponseReturnValue:
         )
 
     # Validate username and other inputs
-    theme = user.theme if data["theme"] == "" else data["theme"]
     result, error = accounting.run_regex_signup(data["username"], data["role"], data["displayname"])
     if result is not False:
         return flask.render_template("settings/settings.html", error=error, **data)
@@ -610,34 +606,41 @@ def customize_accounts() -> ResponseReturnValue:
         return flask.render_template(
             "settings/settings.html", error="That email is taken", **data
         )
+
     # Update account details
     if user.locked != "locked":
-        account_update_data = {
-            "userid": user.uuid,
-            "message_color": data["message_color"],
-            "role_color": data["role_color"],
-            "user_color": data["user_color"],
-            "displayname": data["displayname"],
-            "role": data["role"],
-            "profile": profile_location,
-            "theme": theme,
-            "email": data["email"],
-            # "badges": user.badges,
-        }
+        account_update_data["userid"] = user.uuid
+        if data["displayname"] != user.display_name:
+            account_update_data["display_name"] = data["displayname"]
+        if data["file"] != user.profile:
+            account_update_data["profile"] = profile_location
+        if data["role"] != user.role:
+            account_update_data["role"] = data["role"]
+        if data["message_color"] != user.m_color:
+            account_update_data["m_color"] = data["message_color"]
+        if data["role_color"] != user.r_color:
+            account_update_data["r_color"] = data["role_color"]
+        if data["user_color"] != user.u_color:
+            account_update_data["u_color"] = data["user_color"]
+        if data["email"] != user_email:
+            account_update_data["email"] = data["email"]
+        if data["theme"] != user.theme:
+            account_update_data["theme"] = data["theme"]
+
         database.update_account(account_update_data)
         user.update_account(account_update_data)
         if data["displayname"] != user.display_name:
-            update_display({"username": data["displayname"], "status": "active"}, data["userid"])
-        if data["profile"] != user.profile:
-            update_display({"profile": data["profile"], "status": "active"}, data["userid"])
-            emit("update_messages", broadcast=True)
+            update_display({"username": data["displayname"], "status": "active"}, account_update_data["userid"])
+        if data["file"] != user.profile:
+            update_display({"profile": profile_location, "status": "active"}, account_update_data["userid"])
+            emit("update_messages", namespace="/", broadcast=True)
         resp = flask.make_response(flask.redirect(flask.url_for("chat_page")))
         resp.set_cookie("Username", user.username)
-        resp.set_cookie("Theme", theme)
+        resp.set_cookie("Theme", data["theme"])
         resp.set_cookie("Profile", profile_location)
         resp.set_cookie("Userid", user.uuid)
         error = "Updated account!"
-        return_val = resp
+        return resp
     else:
         if user_email == data["email"]:
             return_val = flask.render_template(
@@ -652,6 +655,8 @@ def customize_accounts() -> ResponseReturnValue:
 
     log.log_accounts(f"The account {user} has updated some setting(s)")
     return return_val
+
+
 
 @app.route("/support/docs")
 def docx():

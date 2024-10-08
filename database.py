@@ -417,21 +417,19 @@ def add_accounts(data):
 def update_account(user_data):
     """Updates a user's account."""
     userid = user_data["userid"]
-    customization_data = {
-        "messageColor": user_data["message_color"],
-        "roleColor": user_data["role_color"],
-        "userColor": user_data["user_color"],
-        "displayName": user_data["displayname"],
-        "role": user_data["role"],
-        "profile": user_data["profile"],
-        "theme": user_data["theme"],
-        # "badges": user_data["badges"],
-    }
+    customization_data = {}
+    for key, value in user_data.items():
+        if key in Customization.collection.name:
+            if key == "email":
+                continue
+            customization_data[key] = value
 
     Customization.update_one(
         {"userId": userid}, {"$set": customization_data}, upsert=True
     )
-    ID.update_one({"userId": userid}, {"$set": {"email": user_data["email"]}}, upsert=True)
+    if "email" in user_data:
+        if user_data["email"] != "":
+            ID.update_one({"userId": userid}, {"$set": {"email": user_data["email"]}}, upsert=True)
 
 
 def backup_user(user):
