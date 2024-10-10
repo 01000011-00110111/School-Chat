@@ -1,0 +1,8 @@
+{
+    "links": [
+        {
+            "approved_links": ["localhost", "www6.school-chat.us"],
+            "banned_links": ["youtube.com", "google.com", "yahoo.com", "discord.com", "github.com"]
+        }
+    ]
+}

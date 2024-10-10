@@ -86,14 +86,6 @@ function saveProject() {
     'online-color': online.style.color,
     'offline-color': offline.style.color,
   }
-  // project = {
-  //   "name": theme_name1.value,
-  //   'author': [getCookie("Userid"), getCookie("DisplayName").replace(/"/g, '')],
-  //   theme: theme,
-  //   'status': 'private',
-  // }
-  // project.project = theme
-  // project.name = theme_name1.value
   socket.emit('save_project', project['themeID'], theme, theme_name1.value, false)
 }
 

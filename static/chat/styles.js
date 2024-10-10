@@ -22,12 +22,13 @@ const online = document.getElementById("online");
 const offline = document.getElementById("offline");
 
 function setTheme(data) {
-    const online_users = document.querySelectorAll("#online_buttons");
+    const online_users = document.querySelectorAll("#onlineList_user");
     let colors = data.theme
     theme = data.theme
     // let snav_iter = snavText.length;
     let extra_iter = extrabutton.length;
     body.style.background = colors['body']
+    body.style.backgroundImage = colors['image-background']
     chat_box.style.color = colors['chat-text']
     message.style.background = colors['chat-background']
     message.style.color = colors['chat-color']

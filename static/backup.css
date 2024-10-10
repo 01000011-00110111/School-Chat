@@ -1,0 +1,26 @@
+.navigation_buttons_container {
+    background: white;
+    border-radius: 12px;
+    height: 44px;
+    width: 174px;
+    right: 1%;
+    bottom: 2%;
+    position: fixed;
+    justify-content: space-around;
+    display: flex;
+    align-content: center;
+}
+
+.navigation_buttons_container button {
+    width: 45px;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    color: black;
+    font-size: 15px;
+}
+
+.navigation_buttons_container button:hover {
+    border-radius: 100px;
+    background: #c2c2c2;
+}

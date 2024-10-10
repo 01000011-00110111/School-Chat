@@ -53,7 +53,7 @@ function updateUserList(onlineList, offlineList) {
             unread_background = "red";
         }
         online += `
-            <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${onlineUser.username}')" title="${onlineUser.username}">
+            <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${onlineUser.username}')" title="${onlineUser.username} (${onlineUser.status})">
                 <p style="background: ${unread_background}; color: white; text-align: center; position: absolute; left: 15%; margin-top: -30px; border-radius: 100px; min-width: 18px; min-height: 18px; height: min-content; width: min-content; align-content: center;" id="unread_indicator">${unread}</p>
                 <img class="user_list_pfp" src="${onlineUser.profile}">
                 <div style="display: grid; left: -10px; position: relative;">
@@ -81,7 +81,7 @@ function updateUserList(onlineList, offlineList) {
             unread_background = "red";
         }
         offline += `
-            <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${offlineUser.username}')" title="${offlineUser.username}">
+            <div class="onlineList_user_preview" id="onlineList_user" onclick="openuserinfo('${offlineUser.username}')" title="${offlineUser.username} (${offlineUser.status})">
                 <p style="background: ${unread_background}; color: white; text-align: center; position: absolute; left: 15%; margin-top: -30px; border-radius: 100px; min-width: 18px; min-height: 18px; height: min-content; width: min-content; align-content: center;" id="unread_indicator">${unread}</p>
                 <img class="user_list_pfp" src="${offlineUser.profile}">
                 <div style="display: grid; left: -10px; position: relative;">
