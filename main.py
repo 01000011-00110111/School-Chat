@@ -630,9 +630,11 @@ def customize_accounts() -> ResponseReturnValue:
         database.update_account(account_update_data)
         user.update_account(account_update_data)
         if data["displayname"] != user.display_name:
-            update_display({"username": data["displayname"], "status": "active"}, account_update_data["userid"])
+            update_display({"username": data["displayname"],\
+                             "status": "active"}, account_update_data["userid"])
         if data["file"] != user.profile:
-            update_display({"profile": profile_location, "status": "active"}, account_update_data["userid"])
+            update_display({"profile": profile_location,\
+                             "status": "active"}, account_update_data["userid"])
             emit("update_messages", namespace="/", broadcast=True)
         resp = flask.make_response(flask.redirect(flask.url_for("chat_page")))
         resp.set_cookie("Username", user.username)
