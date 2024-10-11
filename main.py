@@ -17,6 +17,7 @@
 """
 
 import hashlib
+import io
 import logging
 import os
 import random
@@ -70,6 +71,11 @@ except ModuleNotFoundError:
 
 scheduler = APScheduler()
 
+def binary_to_file(binary_data):
+    file_like_object = io.BytesIO(binary_data)
+    return file_like_object
+
+
 def setup_func():
     """sets up the server"""
     if not os.path.exists("static/profiles"):
@@ -98,6 +104,11 @@ def setup_func():
     if not os.path.exists("backend/banned_words.txt"):
         with open("backend/banned_words.txt", "w", encoding="utf-8"):
             pass
+    if not os.path.exists("static/image/profiles"):
+        os.makedirs("static/image/profiles")
+    if not os.path.exists("static/image/themes"):
+        os.makedirs("static/image/themes")
+
     database.setup_chatrooms()
     word_lists.whitelist_words, word_lists.blacklist_words = word_lists.start()
 
@@ -548,6 +559,7 @@ def customize_accounts() -> ResponseReturnValue:
     user = User.get_user_by_id(request.cookies.get("Userid"))
     user_email = database.get_email(user.uuid)
     old_path = user.profile
+    return_val = "If you see this message somthing broke"
 
     # Gather form and cookie data into a single dictionary
     data = {
@@ -642,7 +654,7 @@ def customize_accounts() -> ResponseReturnValue:
         resp.set_cookie("Profile", profile_location)
         resp.set_cookie("Userid", user.uuid)
         error = "Updated account!"
-        return resp
+        return_val = resp
     else:
         if user_email == data["email"]:
             return_val = flask.render_template(
@@ -753,9 +765,19 @@ def send_project(theme_id):
 
 
 @socketio.on("save_project")
-def handle_save_project(theme_id, theme, name, publish):
+def handle_save_project(theme_id, theme, image, name, publish):
     """Saves/Publish a project."""
     socketid = request.sid
+    if image is not False:
+        image = binary_to_file(image)
+        path = uploading.upload_file_theme(theme_id, image)
+        if path == 0:
+            emit("response", ("File type not allowed", True), to=socketid)
+            return
+        if path == 1:
+            emit("response", ("Virus found in file", True), to=socketid)
+            return
+        theme["image-background"] = path
     database.save_project(theme_id, theme, name, publish)
     message = 'Project Published' if publish else 'Project Saved'
     emit("response", (message, False), to=socketid)

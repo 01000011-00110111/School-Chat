@@ -65,7 +65,7 @@ function saveProject() {
     'chat-text': chat.style.color,
     'chat-background': message.style.background,
     'chat-color': message.style.color,
-    'image-background': body.style.backgroundImage,
+    'image-background': "",//body.style.backgroundImage,
     // 'chatbox-background': chatbox.style.background,
     'sides-text': sides.style.color,
     'sides-background': sides.style.background,
@@ -88,9 +88,12 @@ function saveProject() {
     'online-color': online.style.color,
     'offline-color': offline.style.color,
   }
-  socket.emit('save_project', project['themeID'], theme, theme_name1.value, false)
+  const image = document.getElementById("media_importer").files[0];
+  if (image == undefined) {
+    image = false
+  }
+  socket.emit('save_project', project['themeID'], theme, image, theme_name1.value, false)
 }
-
 function publishProject() {
   const room_names = document.querySelectorAll("#room_names");
   const online_users = document.querySelectorAll("#onlineList_user");
@@ -111,7 +114,7 @@ function publishProject() {
     'chat-text': chat.style.color,
     'chat-background': message.style.background,
     'chat-color': message.style.color,
-    'image-background': body.style.backgroundImage,
+    'image-background': "",//body.style.backgroundImage,
     // 'chatbox-background': chatbox.style.background,
     'sides-text': sides.style.color,
     'sides-background': sides.style.background,
@@ -138,7 +141,11 @@ function publishProject() {
   // project.project = theme
   // project.name = theme_name1.value
   // project['status'] = 'public'
-  socket.emit('save_project', project['themeID'], theme, theme_name1.value, true)
+  const image = document.getElementById("media_importer").files[0];
+  if (image == undefined) {
+    image = false
+  }
+  socket.emit('save_project', project['themeID'], theme, image, theme_name1.value, true)
 }
 
 // Controls Sidenav
@@ -220,7 +227,7 @@ function open_project(data) {
   body.style.background = colors['body']
   chat.style.background = colors['body']
   chat.style.color = colors['chat-text']
-  body.style.backgroundImage = colors['image-background']
+  body.style.backgroundImage = `url(${colors['image-background']})`
   message.style.background = colors['chat-background']
   message.style.color = colors['chat-color']
   // chatbox.style.background = colors['chatbox-background']

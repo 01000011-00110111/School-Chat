@@ -5,6 +5,7 @@ backend/Backups/*
 .DS_Store
 
 static/images/profiles/*
+static/images/themes/*
 
 # chatlog
 backend/webserver.log

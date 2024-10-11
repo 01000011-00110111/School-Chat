@@ -76,3 +76,21 @@ def upload_file(file, old, location):
         replace_old_file(old)
     file.save(file_path)
     return f"/{file_path}"
+
+
+def upload_file_theme(theme_id, file):
+    """Adds the file to the static/images/themes dir."""
+    if not hasattr(file, 'filename'):
+        # If file-like object does not have a filename attribute, use a default filename
+        filename = f"{theme_id}.png"
+    else:
+        filename = file.filename
+
+    if not allowed_file(filename):
+        return 0
+    if scan_for_virus(file):
+        return 1
+    file_path = f"static/images/themes/{theme_id}.png"
+    with open(file_path, 'wb') as f:
+        f.write(file.read())
+    return f"/{file_path}"

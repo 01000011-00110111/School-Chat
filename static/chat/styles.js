@@ -28,7 +28,7 @@ function setTheme(data) {
     // let snav_iter = snavText.length;
     let extra_iter = extrabutton.length;
     body.style.background = colors['body']
-    body.style.backgroundImage = colors['image-background']
+    body.style.backgroundImage = `url(${colors['image-background']})`
     chat_box.style.color = colors['chat-text']
     message.style.background = colors['chat-background']
     message.style.color = colors['chat-color']
