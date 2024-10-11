@@ -19,6 +19,7 @@ def add_badge(**kwargs):
     color = kwargs["commands"]["v4"]
     dev = kwargs["user"]
     user = None
+    delete = False
     for users in User.Users.values():
         if users.display_name == target:
             user = users

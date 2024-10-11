@@ -72,6 +72,7 @@ except ModuleNotFoundError:
 scheduler = APScheduler()
 
 def binary_to_file(binary_data):
+    """Convert binary data to file-like object"""
     file_like_object = io.BytesIO(binary_data)
     return file_like_object
 
@@ -104,9 +105,9 @@ def setup_func():
     if not os.path.exists("backend/banned_words.txt"):
         with open("backend/banned_words.txt", "w", encoding="utf-8"):
             pass
-    if not os.path.exists("static/image/profiles"):
+    if not os.path.exists("static/images/profiles"):
         os.makedirs("static/images/profiles")
-    if not os.path.exists("static/image/themes"):
+    if not os.path.exists("static/images/themes"):
         os.makedirs("static/images/themes")
 
     database.setup_chatrooms()
