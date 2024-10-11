@@ -105,9 +105,9 @@ def setup_func():
         with open("backend/banned_words.txt", "w", encoding="utf-8"):
             pass
     if not os.path.exists("static/image/profiles"):
-        os.makedirs("static/image/profiles")
+        os.makedirs("static/images/profiles")
     if not os.path.exists("static/image/themes"):
-        os.makedirs("static/image/themes")
+        os.makedirs("static/images/themes")
 
     database.setup_chatrooms()
     word_lists.whitelist_words, word_lists.blacklist_words = word_lists.start()
