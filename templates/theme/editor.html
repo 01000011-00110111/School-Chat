@@ -85,6 +85,7 @@
           <!-- content-seperator -->
         </div>
         <hr id="content-seperator">
+        <button id="applyButton" class="PropertiesButton">Apply</button>
       </div>
       <div id="c_fh">
         <drawer>
@@ -105,10 +106,16 @@
             <div id="gradient_buttons_container">
               <input type="range" id="gradient_slider" value="90" max="360" min="0"/>
               <input type="number" id="gradient_slider_value" value="90" max="360" min="0"/>
+
               <label for="media_importer" id="media_label">
                 <p id="media_name">Choose File</p>
                 <input type="file" name="media_importer" id="media_importer" accept="image/*" hidden/>
               </label>
+              
+              <button id="remove_background_button">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+
             </div>
           </drawer_content>
         </drawer>

@@ -55,6 +55,9 @@ const media_name = document.getElementById("media_name");
 const media_label = document.getElementById("media_label");
 const gradient_slider = document.getElementById("gradient_slider");
 const gradient_slider_value = document.getElementById("gradient_slider_value");
+const rm_background = document.getElementById("remove_background_button");
+
+//const image = "";
 
 // After this is the Theme & CSE code
 
@@ -88,7 +91,7 @@ function saveProject() {
     'online-color': online.style.color,
     'offline-color': offline.style.color,
   }
-  const image = document.getElementById("media_importer").files[0];
+  let image = document.getElementById("media_importer").files[0];
   if (image == undefined) {
     image = false
   }
@@ -141,7 +144,7 @@ function publishProject() {
   // project.project = theme
   // project.name = theme_name1.value
   // project['status'] = 'public'
-  const image = document.getElementById("media_importer").files[0];
+  let image = document.getElementById("media_importer").files[0];
   if (image == undefined) {
     image = false
   }
@@ -293,6 +296,17 @@ const enableGradient = () => {
   gradient_slider_value.style.display = "block";
 }
 
+const check_images = () => {
+  if (body.style.background.includes('url("/static/images/themes/')) {
+    console.log(body.style.background)
+    rm_background.style.display = "block";
+  } else if (body.style.background.includes('url("undefined")')) {
+    rm_background.style.display = "none";
+    console.log("No image");
+    console.log(body.style.background.toString())
+  }
+}
+
 const disableGradient = () => {
   ColorPickers[1].style.display = "none";
   setColorMode(0);
@@ -302,11 +316,13 @@ const disableGradient = () => {
 
 const enableImages = () => {
   media_label.style.display = "block";
+  check_images();
   setColorMode(2);
 }
 
 const disableImages = () => {
   media_label.style.display = "none";
+  rm_background.style.display = "none";
 }
 
 const get_controller_state = () => {
@@ -544,10 +560,30 @@ AllContent.forEach((element) => {
         color_boxes[index].addEventListener('input', (event) => {
           ColorDisplay[index].style.background = color_boxes[index].value
           color_inputs[index].value = color_boxes[index].value
-        })
-      }
+        });
+      };
 
-      media_importer.addEventListener('input', (event) => {
+      let img_data = "";
+      media_importer.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                img_data = e.target.result;
+                body.style.backgroundImage = `url("${e.target.result}")`;
+            };
+
+            reader.readAsDataURL(file);
+        }
+        this.files = this.files
+        console.log(img_data);
+        apply_changes();
+      });
+
+      rm_background.addEventListener('click', () => {
+        media_importer.files[0] = "";
+        document.getElementById(SelectedLayer).style.setProperty('background-image', `url("")`)
         apply_changes();
       });
 
@@ -594,9 +630,9 @@ AllContent.forEach((element) => {
               break;
 
             case 'Image':
-              document.getElementById(SelectedLayer).style.setProperty('background-image', `url("${media_importer.value}")`)
-              document.getElementById(SelectedLayer).style.setProperty('color', textColor.value)
-              document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value)
+              body.style.setProperty('background-image', `url("${img_data}")`);
+              document.getElementById(SelectedLayer).style.setProperty('color', textColor.value);
+              document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value);
               document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
               break;
           }
@@ -622,10 +658,14 @@ AllContent.forEach((element) => {
         };
       };
 
+      applyButton.addEventListener('click', () => {
+        apply_changes();
+      });
+
       for (let index = 0; index < color_boxes.length; index++) {
         color_boxes[index].addEventListener('input', (event) => {
           apply_changes();
-        });    
+        });
       }
       /////
     }
