@@ -8,11 +8,15 @@ blacklist_words = []
 
 def start():
     """sets the whitlisted and blacklisted words."""
+    global whitelist_words, blacklist_words
     with open('backend/unbanned_words.txt', 'r', encoding="utf-8") as file:
         whitelist = list(file.read().splitlines())
 
     with open('backend/banned_words.txt', 'r', encoding="utf-8") as file:
         blacklist = list(file.read().splitlines())
+
+    whitelist_words = whitelist
+    blacklist_words = blacklist
 
     return whitelist, blacklist
 
@@ -22,4 +26,5 @@ banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
                     " ", "  ", "   ", "cseven", "cserver", 'system',
                     '[system]', '[System]', 'System')
 
-approved_links = ('/settings', '/backup', "/dev", "/admin", "/mod", "/projects", "/create-chat", "/chat-settings")
+approved_links = ('/settings', '/backup', "/dev", "/admin", "/mod", "/projects",\
+"/create-chat", "/chat-settings")

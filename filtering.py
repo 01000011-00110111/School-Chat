@@ -13,7 +13,7 @@ import cmds
 import log
 
 # import rooms
-import word_lists
+# import word_lists
 from online import get_scoketid
 from user import User
 from commands.other import format_system_msg
@@ -23,8 +23,11 @@ from commands.other import format_system_msg
 # import chat
 
 # get our custom whitelist words (that shouldnot be banned in the first place)
-profanity.load_censor_words(whitelist_words=word_lists.whitelist_words)
-profanity.add_censor_words(word_lists.blacklist_words)
+def setup_filter(wl, bl):
+    """sets up the whitelisted and blacklisted words."""
+    profanity.load_censor_words(whitelist_words=wl)
+    profanity.add_censor_words(bl)
+    return
 
 
 def run_filter_chat(user, room, message, roomid, userid):

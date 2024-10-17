@@ -41,10 +41,10 @@ from flask_socketio import SocketIO, emit
 import accounting
 import database
 
-import filtering
+import word_lists
 import log
 import uploading
-import word_lists
+import filtering
 from app_config import application
 from chat import Chat
 from commands.other import end_ping, format_system_msg
@@ -110,12 +110,12 @@ def setup_func():
     if not os.path.exists("static/images/themes"):
         os.makedirs("static/images/themes")
 
+    wl, bl = word_lists.start()
+    filtering.setup_filter(wl, bl)
     database.setup_chatrooms()
-    word_lists.whitelist_words, word_lists.blacklist_words = word_lists.start()
 
 
-if __name__ == "__main__":
-    setup_func()
+setup_func()
 if os.path.exists(os.path.abspath("setup.py")):
     setup.chcek_if_data_is_missing()
     setup.self_destruct()
@@ -1183,4 +1183,4 @@ def teardown_request(_exception=None):
 
 if __name__ == "__main__":
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+    socketio.run(app, host="0.0.0.0", port=5000)
