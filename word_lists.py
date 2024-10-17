@@ -26,5 +26,5 @@ banned_usernames = ('Admin', 'admin', '[admin]', '[ADMIN]', 'ADMIN', '[Admin]',
                     " ", "  ", "   ", "cseven", "cserver", 'system',
                     '[system]', '[System]', 'System')
 
-approved_links = ('/settings', '/backup', "/dev", "/admin", "/mod", "/projects",\
+approved_links = ('/settings', '/backup', "/developer/portal", "/projects",\
 "/create-chat", "/chat-settings")

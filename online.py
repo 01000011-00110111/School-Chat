@@ -87,15 +87,14 @@ def handle_forced_disconnect(userid, disconnect_callback):
         del user_connections[userid]
 
     try:
-        with current_app.app_context():
-            try:
-                u = User.get_user_by_id(userid)
-                if u and u.status != "offline-locked":
-                    u.status = "offline"
-                database.set_offline(userid)
-                update_userlist(None, {"status": "offline"}, userid)
-            except TypeError as e:
-                print(f"Error in forced disconnect: {e}")
+        try:
+            u = User.get_user_by_id(userid)
+            if u and u.status != "offline-locked":
+                u.status = "offline"
+            database.set_offline(userid)
+            update_userlist(None, {"status": "offline"}, userid)
+        except TypeError as e:
+            print(f"Error in forced disconnect: {e}")
     except RuntimeError as e:
         print(f"Runtime error in forced disconnect: {e}")
 

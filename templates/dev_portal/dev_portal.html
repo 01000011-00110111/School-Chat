@@ -81,7 +81,8 @@
                                     </div>
             
                                     <div class="portal_table_content">
-                                        <p>0 day(s), 0 hour(s), 0 minute(s), 19 seconds.\</p>
+                                        <!-- <p>0 day(s), 0 hour(s), 0 minute(s), 19 seconds.\</p> -->
+                                        <p id="runtime"></p>
                                     </div>
                                 </div>
             
@@ -91,14 +92,14 @@
                                     </div>
             
                                     <div class="portal_table_content">
-                                        <p>16.5%</p>
+                                        <p id="cpu_usage"></p>
                                     </div>
                                 </div>
             
                                 <div class="portal_table small" style="background: rgb(0, 47, 255);">
                                     <div class="portal_table_header">
                                         <h3>Disk Usage</h3>
-                                        <p>Total: 228.27 GB, Used: 10.10 GB</p>
+                                        <!-- <p id="disk_usage">Total: 228.27 GB, Used: 10.10 GB</p> -->
                                     </div>
             
                                     <div class="portal_table_content">
@@ -127,6 +128,7 @@
                                             <p>Mods online: 0</p>
                                             <p>Admins online: 0</p>
                                             <p>Devs online: 0</p>
+                                            <p style="color: red;">NOT IMPLEMENTED</p>
                                         </div>
                                     </div>
                                     <div class="portal_table small">
@@ -137,6 +139,7 @@
                                         <div class="portal_table_content">
                                             <p>New changes</p>
                                             <p>Last restared: 6min</p>
+                                            <p style="color: red;">NOT IMPLEMENTED</p>
                                         </div>
                                     </div>
                                 </div>
@@ -222,7 +225,10 @@
             </div>
         </div>
         <script src="https://kit.fontawesome.com/69e44b2a4c.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+        <script src="/static/static.js"></script>
         <script src="/static/dev_portal/dev_portal.js"></script>
+        <script type='text/javascript' defer>setInterval(update_server_status, 500);</script>
     </main>
 </body>
 </html>

@@ -40,6 +40,6 @@ if (window.location.pathname.includes("/chat")) {
         } else {
             status = 'active';
         }
-        socket.emit('heartbeat', status, None, None);
+        socket.emit('heartbeat', status, null, null);
     }, 25000);
 }
