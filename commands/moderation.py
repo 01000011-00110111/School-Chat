@@ -79,7 +79,7 @@ def mute(**kwargs):
     expiration = datetime.now() + timedelta(**{time[-1] + 's': duration})
     user, delete = other.get_user(target)
     if user is None:
-        room.send_message(f"{target} does not exist.")
+        room.send_message(other.format_system_msg(f"{target} does not exist."))
         return
     if delete:
         User.delete_user(user.uuid)

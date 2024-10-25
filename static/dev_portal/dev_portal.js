@@ -1,3 +1,14 @@
+function update_server_status() {
+  socket.emit('get_server_status')
+}
+
+socket.on('server_status', (uptime, cpu_usage, disk_total, disk_used) => {
+  console.log(uptime, cpu_usage, disk_total, disk_used)
+  document.getElementById('runtime').innerText = `${uptime.days}d ${uptime.hours}h ${uptime.minutes}m ${uptime.seconds}s`
+  document.getElementById('cpu_usage').innerText = cpu_usage
+  document.getElementById('disk_usage').innerText = `${disk_used}/${disk_total} GB`
+});
+
 function openTab(evt, tabName) {
     // Declare all variables
     var i, tabcontent, tablinks;
@@ -28,7 +39,7 @@ async function fetchVersionTag() {
       .filter(tag => !tag.name.includes('A'))
       
       // Get the latest tag
-      const latestTag = `Beta Version: 1.5-beta.1
+      const latestTag = `Beta Version: 1.5-beta.2
       Public Release: ${filteredTags[0]?.name || 'No tags found'}`
       
       // Set the tag name in the <var> element

@@ -31,6 +31,56 @@ def get_line_count(file, vid) -> List:
     return lines
 
 
+def get_server_stats() -> dict:
+    """Return server stats data."""
+    # System stats
+
+    p_in = psutil.Process()
+    uptime_seconds = time() - p_in.create_time()
+    days, seconds = divmod(int(uptime_seconds), 86400)
+    hours, minutes = divmod(seconds, 3600)
+    minutes, seconds = divmod(minutes, 60)
+
+    mem_info = p_in.memory_full_info()
+    mem_virt = mem_info.vms / (1024 ** 3)
+    mem_res = mem_info.rss / (1024 ** 3)
+
+    disk_usage = psutil.disk_usage('/')
+    net_io = psutil.net_io_counters()
+
+    return {
+        "uptime": {
+            "days": days,
+            "hours": hours,
+            "minutes": minutes,
+            "seconds": seconds
+        },
+        "cpu": {
+            "usage": psutil.cpu_percent(interval=1),
+            "physical_cores": psutil.cpu_count(logical=False),
+            "logical_cores": psutil.cpu_count(logical=True)
+        },
+        "disk": {
+            "total": f"{disk_usage.total / (1024 ** 3):.2f}",
+            "used": f"{disk_usage.used / (1024 ** 3):.2f}"
+        },
+        "memory": {
+            "virtual": f"{mem_virt:.2f}",
+            "resident": f"{mem_res:.2f}"
+        },
+        "network": {
+            "sent": f"{net_io.bytes_sent / (1024 ** 2):.2f}",
+            "received": f"{net_io.bytes_recv / (1024 ** 2):.2f}"
+        },
+        "system": {
+            "os": platform.system(),
+            "os_version": platform.version(),
+            "platform": platform.platform(),
+            "python_version": sys.version
+        }
+    }
+
+
 def get_stats(roomid, version, room) -> str:
     """Return extended stats list to chat."""
     # System stats
@@ -46,7 +96,7 @@ def get_stats(roomid, version, room) -> str:
         mem_res = mem_info.rss / (1024 ** 3)
 
     # Define full and partial helper functions
-    def full():
+    def full():#rework to use new func later
         #pylint: disable=E1121
         return (
             format_system_msg(

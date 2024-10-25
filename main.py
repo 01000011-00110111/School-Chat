@@ -41,13 +41,14 @@ from flask_socketio import SocketIO, emit
 import accounting
 import database
 
-import filtering
+import word_lists
 import log
 import uploading
-import word_lists
+import filtering
 from app_config import application
 from chat import Chat
 from commands.other import end_ping, format_system_msg
+from commands.debug import get_server_stats
 from online import (
     socketids,
     update_userlist,
@@ -110,12 +111,12 @@ def setup_func():
     if not os.path.exists("static/images/themes"):
         os.makedirs("static/images/themes")
 
+    wl, bl = word_lists.start()
+    filtering.setup_filter(wl, bl)
     database.setup_chatrooms()
-    word_lists.whitelist_words, word_lists.blacklist_words = word_lists.start()
 
 
-if __name__ == "__main__":
-    setup_func()
+setup_func()
 if os.path.exists(os.path.abspath("setup.py")):
     setup.chcek_if_data_is_missing()
     setup.self_destruct()
@@ -672,17 +673,18 @@ def customize_accounts() -> ResponseReturnValue:
     return return_val
 
 
-
 @app.route("/support/docs")
 def docx():
     """Opens support documentation."""
     return flask.render_template("support/documentation.html")
+
 
 @app.route("/support/docs/categories/<page>")
 def category():
     """Opens support documentation."""
     return flask.render_template("support/chat_docs.html")
 
+###### DEV PORTAL ######
 @app.route("/developer/portal")
 @login_required
 def portal():
@@ -691,13 +693,34 @@ def portal():
     perm = ""
     if "Debugpass" in user["SPermission"][0]:
         perm = 'Developer'
-    elif "adminpass" in user["SPermission"][0]:
-        perm = 'Admin'
-    elif "modpass" in user["SPermission"][0]:
-        perm = 'Mod'
-    return flask.render_template("dev_portal/dev_portal.html", profile=user["profile"],
-    username = user["displayName"],
-    perm = perm)
+    # elif "adminpass" in user["SPermission"][0]:
+    #     perm = 'Admin'
+    # elif "modpass" in user["SPermission"][0]:
+    #     perm = 'Mod'
+        return flask.render_template("dev_portal/dev_portal.html", profile=user["profile"],
+        username = user["displayName"],
+        perm = perm)
+    else:
+        return flask.redirect(flask.url_for("chat_page"))
+
+
+@socketio.on("get_server_status")
+def handle_server_status():
+    """Get the server status."""
+    socketid = request.sid
+    user = User.get_user_by_id(request.cookies.get("Userid"))
+    if user is None:
+        return flask.redirect(flask.url_for("login_page"))  
+    if "Debugpass" not in user.perm:
+        pass
+    server_status = get_server_stats()
+
+    emit("server_status", (server_status["uptime"], server_status["cpu"]["usage"],\
+        server_status["disk"]["total"], server_status["disk"]["used"]),
+        namespace="/", to=socketid)
+
+##### DEV PORTAL ######
+
 
 ##### THEME STUFF #####
 @app.route("/editor")
@@ -923,21 +946,22 @@ def handle_heartbeat(status, roomid, priv):
     socketid = request.sid
     userid = request.cookies.get("Userid")
 
-    if userid is not None:
-        user_last_heartbeat[userid] = time.time()
+    while app.app_context():
+        if userid is not None:
+            user_last_heartbeat[userid] = time.time()
 
-        if userid in user_connections:
-            if users_list[userid]['status'] != 'offline-locked':
-                users_list[userid]['status'] = status
-            emit("update_list", users_list[userid], namespace="/", broadcast=True)
-            if roomid is not None:
-                if priv == "true":
-                    room = get_messages(roomid, userid)
-                else:
-                    room = Chat.create_or_get_chat(roomid)
-                if socketid not in room.sids:
-                    socketids[userid] = socketid
-                    room.sids.append(socketid)
+            if userid in user_connections:
+                if users_list[userid]['status'] != 'offline-locked':
+                    users_list[userid]['status'] = status
+                emit("update_list", users_list[userid], namespace="/", broadcast=True)
+                if roomid is not None:
+                    if priv == "true":
+                        room = get_messages(roomid, userid)
+                    else:
+                        room = Chat.create_or_get_chat(roomid)
+                    if socketid not in room.sids:
+                        socketids[userid] = socketid
+                        room.sids.append(socketid)
 
 
 @socketio.on("get_rooms")
@@ -1183,4 +1207,4 @@ def teardown_request(_exception=None):
 
 if __name__ == "__main__":
     socketio.start_background_task(backup_classes)
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+    socketio.run(app, host="0.0.0.0", port=5000)
