@@ -18,6 +18,30 @@ socket.on("force_room_update", () => {
     socket.emit("get_rooms", userid);
 });
 
+socket.on("chat_muted", () => {
+    // if (user_perm[0] !== "Debugpass" || user_perm[0] !== "adminpass" || user_perm[0] !== "modpass") {
+    //     console.log("Locked")
+    //     const send_button = document.getElementById("send");
+
+    //     message.disabled = true;
+    //     message.placeholder = "You can't chat in this room";
+    //     send_button.disabled = true;
+    // } else {console.log("Not Locked"); null};
+    const send_button = document.getElementById("send");
+
+    message.disabled = true;
+    message.placeholder = "You can't chat in this room";
+    send_button.disabled = true;
+});
+
+socket.on('chat_unmuted', () => {
+    const send_button = document.getElementById("send");
+    console.info("Chat unmuted");
+    message.disabled = false;
+    message.placeholder = "";
+    send_button.disabled = true;
+});
+
 socket.on("reset_chat", (msg) => {
     let chatDiv = document.getElementById("chat");
     chatDiv.innerHTML = "";

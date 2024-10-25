@@ -1,24 +1,82 @@
 // Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in main.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
+
+/* eslint-disable no-unused-vars */
+
 let project = {}
+
+const indicator_types = {
+  'Deployed': 'lime',
+  'Undeployed': 'red',
+};
+
+/**
+ * Sets the project's name
+ * @param {*} name 
+ */
+const set_project_name = (name) => {
+  document.title = name + " - Theme Editor";
+}
+
+/**
+ * Set indicator sets the indicator's color and text
+ * @param {*} type string
+ * @argument {*} Undeployed "string" returns red
+ * @argument {*} Deployed "string" returns lime
+ */
+const set_indicator = (type) => {
+  const deployment_indicator = document.getElementById("deployment_indicator");
+  const deployment_text = document.getElementById("deployment_text");
+  indicator_types[type];
+  deployment_indicator.style.background = indicator_types[type];
+
+  if (type === "Deployed")
+  {
+    deployment_text.innerHTML = "Deployed";
+  }
+  else if (type === "Undeployed")
+  {
+    deployment_text.innerHTML = "Undeployed";
+  }
+}
+
+/**
+ * 
+ * @returns the state of the indicator
+ */
+function get_indicator() {
+  const deployment_indicator = document.getElementById("deployment_indicator");
+  if (deployment_indicator.background === indicator_types['Deployed']) {
+    return "Deployed";
+  }
+
+  else {
+    return "Undeployed";
+  }
+}
 
 let project_content = "";
 
+/**
+ * Opens the properties panel
+ */
 function OpenProperties() {
-  let controls = document.getElementById("controls");
-  
-  controls.style.marginLeft = "0%";
-  controls.style.transition = "all 1s";
+  controls.classList.add("open");
+  controls.classList.remove("close");
 }
 
+/**
+ * Closes the properties panel
+ */
 function CloseProperties() {
-  controls.style.marginLeft = "-22%";
-  controls.style.transition = "all 1s";
+  controls.classList.remove("open");
+  controls.classList.add("close");
 }
 
 // Document Object Model imports
 let theme_name1 = document.getElementById("n_name");
+let controls = document.getElementById("controls");
 
 let applyButton = document.getElementById("applyButton");
 let editmodeText = document.getElementById("editmodeText");
@@ -57,10 +115,14 @@ const gradient_slider = document.getElementById("gradient_slider");
 const gradient_slider_value = document.getElementById("gradient_slider_value");
 const rm_background = document.getElementById("remove_background_button");
 
+set_project_name(theme_name1.value);
 //const image = "";
 
 // After this is the Theme & CSE code
 
+/**
+ * Saves the project
+ */
 function saveProject() {
   const online_users = document.querySelectorAll("#onlineList_user");
   theme = {
@@ -97,6 +159,10 @@ function saveProject() {
   }
   socket.emit('save_project', project['themeID'], theme, image, theme_name1.value, false)
 }
+
+/**
+ * This publishes the theme project contents to the database
+ */
 function publishProject() {
   const room_names = document.querySelectorAll("#room_names");
   const online_users = document.querySelectorAll("#onlineList_user");
@@ -218,7 +284,10 @@ setSelectionMode(0)
 const AllContent = document.querySelectorAll("#ChatMockup");
 const menuOwner = document.getElementById("menuOwner");
 
-// Opens a project
+/**
+ * Opens a projct by passing data
+ * @param {*} data 
+ */
 function open_project(data) {
   const online_users = document.querySelectorAll("#onlineList_user");
 
@@ -262,20 +331,13 @@ function open_project(data) {
   online.style.color = colors['online-color']
   offline.style.color = colors['offline-color']
 
-  const deployment_indicator = document.getElementById("deployment_indicator");
-  const deployment_text = document.getElementById("deployment_text");
   if (data.status === "public") {
-    deployment_indicator.style.background = "lime";
-    deployment_text.innerHTML = "Deployed";
+    set_indicator("Deployed");
   } else {
-    deployment_indicator.style.background = "red";
-    deployment_text.innerHTML = "Undeployed";
+    set_indicator("Undeployed");
   }
 }
 
-const gradient_div = document.getElementById("gradient_div");
-const gradient_text = document.getElementById("gradient_text");
-const gradient_icon = document.getElementById("gradient_mode_button");
 const colorMode = ["Solid", "Gradient", "Image"];
 var currentColorMode;
 
@@ -298,12 +360,9 @@ const enableGradient = () => {
 
 const check_images = () => {
   if (body.style.background.includes('url("/static/images/themes/')) {
-    console.log(body.style.background)
     rm_background.style.display = "block";
   } else if (body.style.background.includes('url("undefined")')) {
     rm_background.style.display = "none";
-    console.log("No image");
-    console.log(body.style.background.toString())
   }
 }
 
@@ -342,7 +401,7 @@ const get_controller_state = () => {
   }
 }
 
-background_controller.addEventListener('input', (event) => {
+background_controller.addEventListener('input', () => {
   get_controller_state();
 });
 get_controller_state();
@@ -408,17 +467,48 @@ function extractRGBValues(rgbString) {
 }
 
 function rgbToHex(rgb) {
+  var r, g, b;
   r = rgb[0]
   g = rgb[1]
   b = rgb[2]
   return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
 }
 
-media_importer.addEventListener('input', (event) => {
+function hexToRgbA(hex, alpha){
+  var c;
+  if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+      c= hex.substring(1).split('');
+      if(c.length== 3){
+          c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+      }
+      c= '0x'+c.join('');
+      return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+`,${alpha})`;
+  }
+  throw new Error('Bad Hex');
+}
+
+function getAlphaFromCSS(colorString) {
+  // Check if it's an RGB or RGBA string
+  if (colorString.startsWith("rgb")) {
+    const rgbaValues = colorString.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)/);
+    if (rgbaValues) {
+      return rgbaValues[4] ? parseFloat(rgbaValues[4]) : 1; // Return 1 if no alpha value is present
+    }
+  }
+
+  // Check if it's a hex color with alpha
+  if (colorString.startsWith("#") && colorString.length === 9) {
+    const alphaHex = colorString.slice(7, 9);
+    return parseInt(alphaHex, 16) / 255; 
+  }
+
+  // Default to 1 if no alpha value can be extracted
+  return 1; 
+}
+
+media_importer.addEventListener('input', () => {
   media_name.innerHTML = media_importer.files[0].name;
 });
-
-var shadow_user = "";
 
 AllContent.forEach((element) => {
   element.addEventListener("click", (event) => {
@@ -426,13 +516,19 @@ AllContent.forEach((element) => {
       OpenProperties();
 
       var SelectedLayer = event.target.id;
+      var boxShadow_position = "";
       const ColorBox = document.getElementById("body-color");
       const gradientColor = document.getElementById("2nd-body-color")
       const textColor = document.getElementById("text-color");
       const borderColor = document.getElementById("border-color");
       const shadowColor = document.getElementById("shadow-color");
       const ColorDisplay = document.getElementsByClassName("ColorDisplay");
+      const transparency_input = document.getElementById("transparency_input");
+      const transparency_value = document.getElementById("transparency_value");
       menuOwner.innerHTML = SelectedLayer;
+
+      transparency_input.value = getAlphaFromCSS(document.getElementById(`${SelectedLayer}`).style.background);
+      transparency_value.innerHTML = transparency_input.value;
 
       switch(SelectedLayer) {
         case "topbar":
@@ -483,7 +579,7 @@ AllContent.forEach((element) => {
 
 
       const fetchColors = () => {
-        layer = document.getElementById(`${SelectedLayer}`)
+        let layer = document.getElementById(`${SelectedLayer}`)
         if (isGradient(layer.style.background)) {
             var c1 = layer.style.background
             .split(',')
@@ -501,7 +597,7 @@ AllContent.forEach((element) => {
           enableGradient()
         } else {
           var c0 = rgbToHex(extractRGBValues(layer.style.background));
-          var c1 = rgbToHex(extractRGBValues(layer.style.background));
+          c1 = rgbToHex(extractRGBValues(layer.style.background));
           setColorMode(0)
           disableGradient()
         }
@@ -531,9 +627,9 @@ AllContent.forEach((element) => {
           fetchColors();
 
           for (let index = 0; index < color_inputs.length; index++) {
-            color_inputs[index].addEventListener('focusout', (event) => {
+            color_inputs[index].addEventListener('focusout', () => {
               if (isGradient(document.getElementById(`${SelectedLayer}`).style.background)) {
-                color = document.getElementById(SelectedLayer).style.background
+                let color = document.getElementById(SelectedLayer).style.background
               .split(',')
               .map(color => color.trim())
               .slice(1)
@@ -557,7 +653,7 @@ AllContent.forEach((element) => {
           }
 
       for (let index = 0; index < color_boxes.length; index++) {
-        color_boxes[index].addEventListener('input', (event) => {
+        color_boxes[index].addEventListener('input', () => {
           ColorDisplay[index].style.background = color_boxes[index].value
           color_inputs[index].value = color_boxes[index].value
         });
@@ -576,8 +672,6 @@ AllContent.forEach((element) => {
 
             reader.readAsDataURL(file);
         }
-        this.files = this.files
-        console.log(img_data);
         apply_changes();
       });
 
@@ -591,18 +685,23 @@ AllContent.forEach((element) => {
         apply_changes();
       };
 
+      transparency_input.oninput = function() {
+        transparency_value.innerHTML = this.value;
+        apply_changes();
+      };
+
       const apply_changes = () => {
         if (SelectedLayer == menuOwner.innerHTML) {
 
           switch (SelectedLayer) {
             case "topbar":
-              shadow_user = "0px -1px 44px 15px"
+              boxShadow_position = "0px -1px 44px 15px"
               break;
             case "activenav":
-              shadow_user = "10px 20px 17px 16px"
+              boxShadow_position = "10px 20px 17px 16px"
               break; 
             default:
-              shadow_user = ""
+              boxShadow_position = ""
               break;
           }
         
@@ -615,17 +714,17 @@ AllContent.forEach((element) => {
 
           switch (currentColorMode) {
             case 'Solid':
-              document.getElementById(SelectedLayer).style.setProperty('background', ColorBox.value);
+              document.getElementById(SelectedLayer).style.setProperty('background', hexToRgbA(ColorBox.value, transparency_input.value));
               document.getElementById(SelectedLayer).style.setProperty('color', textColor.value);
               document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value);
-              document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
+              document.getElementById(SelectedLayer).style.boxShadow = `${boxShadow_position} ${shadowColor.value}`;
               break;
             
             case 'Gradient':
-              document.getElementById(SelectedLayer).style.setProperty('background', `linear-gradient(${gradient_slider.value}deg, ${ColorBox.value}, ${gradientColor.value})`);
+              document.getElementById(SelectedLayer).style.setProperty('background', `linear-gradient(${gradient_slider.value}deg, ${hexToRgbA(ColorBox.value, transparency_input.value)}, ${hexToRgbA(gradientColor.value, transparency_input.value)})`);
               document.getElementById(SelectedLayer).style.setProperty('color', textColor.value);
               document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value);
-              document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
+              document.getElementById(SelectedLayer).style.boxShadow = `${boxShadow_position} ${shadowColor.value}`;
               fetchColors();
               break;
 
@@ -633,7 +732,7 @@ AllContent.forEach((element) => {
               body.style.setProperty('background-image', `url("${img_data}")`);
               document.getElementById(SelectedLayer).style.setProperty('color', textColor.value);
               document.getElementById(SelectedLayer).style.setProperty('border-color', borderColor.value);
-              document.getElementById(SelectedLayer).style.boxShadow = `${shadow_user} ${shadowColor.value}`;
+              document.getElementById(SelectedLayer).style.boxShadow = `${boxShadow_position} ${shadowColor.value}`;
               break;
           }
 
@@ -642,8 +741,8 @@ AllContent.forEach((element) => {
               body.style.background = chat.style.background;
             } 
             if (SelectedLayer === 'room_names') {
-              rooms = document.querySelectorAll('#room_names');
-              extra = document.getElementsByClassName('extrabuttons');
+              let rooms = document.querySelectorAll('#room_names');
+              let extra = document.getElementsByClassName('extrabuttons');
               for (let index = 0; index < rooms.length; index++) {
                 rooms[index].style.background = ColorBox.value;
                 rooms[index].style.color = textColor.value;        
@@ -663,26 +762,24 @@ AllContent.forEach((element) => {
       });
 
       for (let index = 0; index < color_boxes.length; index++) {
-        color_boxes[index].addEventListener('input', (event) => {
+        color_boxes[index].addEventListener('input', () => {
           apply_changes();
         });
       }
-      /////
+      // End of Line here
     }
   });
 });
 
-document.title = theme_name1.value + " - Theme Editor";
-
-theme_name1.addEventListener("focusout", (event) => {
-  document.title = theme_name1.value + " - Theme Editor";
+theme_name1.addEventListener("focusout", () => {
+  set_project_name(theme_name1.value);
 });
 
-exit_button.addEventListener('click', (event) => {
+exit_button.addEventListener('click', () => {
   window.location.href = "/projects";
 });
 
-editor_dropdown_button.addEventListener('click', (event) => {
+editor_dropdown_button.addEventListener('click', () => {
   if (editor_dropdown.style.display != "grid") {
     editor_dropdown.style.display = "grid";
   } else {
@@ -690,6 +787,9 @@ editor_dropdown_button.addEventListener('click', (event) => {
   }
 });
 
+/**
+ * Runs on startup
+ */
 function Runstartup() {
   value = sessionStorage.getItem("editing")
   if (value !== '') {
@@ -713,6 +813,11 @@ socket.on('response', (response, limit) => {
   pushNotification('System:', response, '/static/favicon.ico')
 });
 
+/**
+ * Downloads the project as a file by passing project's name and content
+ * @param {*} filename 
+ * @param {*} text 
+ */
 function download(filename, text) {
   var element = document.createElement('a');
   element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));

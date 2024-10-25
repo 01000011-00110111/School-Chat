@@ -1,4 +1,11 @@
+/**
+ * Sends an in-app push notification
+ * @param {*} sender 
+ * @param {*} message 
+ * @param {*} icon 
+ */
 const pushNotification = (sender, message, icon) => {
+    startSoundPlayer('/static/utils/esx_sound_library/sounds/notification_chime.mp3');
     createNotification(sender, message, icon);
   
     const remove_notification = () => {
@@ -8,8 +15,14 @@ const pushNotification = (sender, message, icon) => {
       } 
     }
     setTimeout(remove_notification, 6710)
-  }
-  
+}
+
+/**
+ * Creates an in-app push notification
+ * @param {*} title 
+ * @param {*} content 
+ * @param {*} img 
+ */
 const createNotification = (title, content, img) => {
     const notifcation = document.createElement('notification');
     const notification_title = document.createElement('h4');

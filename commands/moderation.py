@@ -48,6 +48,7 @@ def lock(**kwargs):
         message = other.format_system_msg("Chat Locked by Moderator.")
         room.add_message(message, user)
         room.set_lock_status(True)
+    emit('chat_muted')
 
 
 def unlock(**kwargs):
@@ -65,6 +66,7 @@ def unlock(**kwargs):
         message = other.format_system_msg("Chat Unlocked by Moderator.")
         room.add_message(message, user)
         room.set_lock_status(False)
+    emit('chat_unmuted')
 
 
 def mute(**kwargs):

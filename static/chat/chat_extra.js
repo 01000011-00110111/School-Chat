@@ -253,8 +253,6 @@ fetch('/static/link_data.json')
     .then((json) => {
         links.approved_links.push(json["links"][0]["approved_links"])
         links.banned_links.push(json["links"][0]["banned_links"])
-        console.log(`Approved Links: ${json["links"]["approved_links"]}`);
-        console.log(`Banned Links: ${json["links"]["banned_links"]}`);
         console.info("Link list has been updated");
     });
 };
