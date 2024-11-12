@@ -81,7 +81,6 @@ def upload_file(file, old, location):
 def upload_file_theme(theme_id, file):
     """Adds the file to the static/images/themes dir."""
     if not hasattr(file, 'filename'):
-        # If file-like object does not have a filename attribute, use a default filename
         filename = f"{theme_id}.png"
     else:
         filename = file.filename

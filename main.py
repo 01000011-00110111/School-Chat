@@ -710,7 +710,7 @@ def handle_server_status():
     socketid = request.sid
     user = User.get_user_by_id(request.cookies.get("Userid"))
     if user is None:
-        return flask.redirect(flask.url_for("login_page"))  
+        return flask.redirect(flask.url_for("login_page"))
     if "Debugpass" not in user.perm:
         pass
     server_status = get_server_stats()
@@ -962,6 +962,8 @@ def handle_heartbeat(status, roomid, priv):
                     if socketid not in room.sids:
                         socketids[userid] = socketid
                         room.sids.append(socketid)
+        break
+    emit("update_list_full", (list(users_list.values())), namespace="/", to=socketid)
 
 
 @socketio.on("get_rooms")

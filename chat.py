@@ -64,12 +64,13 @@ class Chat:
         self.banned = room["banned"]
         self.messages = database.get_messages(roomid)
         self.sids = []
+        self.images = [] #TO-DO: add images
 
 
     @classmethod
     def create_or_get_chat(cls, roomid):
         """Create a new chat or return an existing one."""
-        cls.log_rooms()
+        # cls.log_rooms()
         if roomid in cls.chats:
             return cls.chats[roomid]
         #### create new chat class#######

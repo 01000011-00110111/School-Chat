@@ -3,7 +3,6 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 import time
-from flask import current_app
 from flask_socketio import emit
 
 import database
