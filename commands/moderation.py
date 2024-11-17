@@ -86,7 +86,7 @@ def mute(**kwargs):
     room.mutes.append({str(user.uuid): expiration})
     message = other.format_system_msg(f"{user.display_name}\
             was muted by {sender.display_name}.")
-    room.add_message(message, user)
+    room.send_message(message, user)
 
 
 def unmute(**kwargs):
@@ -101,7 +101,7 @@ def unmute(**kwargs):
     if delete:
         User.delete_user(user.uuid)
     message = other.format_system_msg(f"{target} was unmuted by {kwargs['user'].display_name}.")
-    room.add_message(message, user)
+    room.send_message(message, user)
 
 
 # def ban(**kwargs):

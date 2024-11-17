@@ -190,7 +190,7 @@ def e_count_backup(**kwargs):
         text = file.read()
     count = len(re.findall(r'\be\b', text))
     msg = format_system_msg("Current count: " + str(count))
-    room.add_message(msg, user)
+    room.send_message(msg, user)
 
 
 def end_ping(start, roomid):

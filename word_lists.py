@@ -8,7 +8,7 @@ blacklist_words = []
 
 def start():
     """sets the whitlisted and blacklisted words."""
-    #pytlint: disable=W0603
+    # pytlint: disable=W0603
     global whitelist_words, blacklist_words
     with open('backend/unbanned_words.txt', 'r', encoding="utf-8") as file:
         whitelist = list(file.read().splitlines())

@@ -117,6 +117,10 @@ class Private:
         """Gets the unread count of a user."""
         return cls.chats[pmid].userlist
 
+    def send_message(self, message_text: str):
+        """Emits the message to the chat"""
+        emit("message_chat", (message_text), broadcast=True, namespace="/")
+
     def add_message(self, message_text: str, user, uuid) -> None:
         """Handler for messages so they get logged."""
         self.backup_values[1] = datetime.now()

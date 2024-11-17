@@ -162,7 +162,7 @@ def line_count(**kwargs):
     user = kwargs['user']
     lines = get_line_count("main", roomid)
     msg = format_system_msg(f"Line count is {lines}\n")
-    room.add_message(msg, user)
+    room.send_message(msg, user)
 
 
 def ping(**kwargs):
@@ -179,9 +179,9 @@ def send_cmd_logs(**kwargs):
     room = kwargs['room']
     msg = log.get_cmd_logs()
     if database.check_private(roomid):
-        room.add_message(msg, user)
+        room.send_message(msg, user)
     else:
-        room.add_message(msg, user)
+        room.send_message(msg, user)
 
 
 def clear_all_mutes(**kwargs):
