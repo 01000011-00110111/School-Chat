@@ -1,9 +1,0 @@
-eventlet
-flask
-flask_socketio
-flask_login
-flask_apscheduler
-gunicorn
-pymongo
-better_profanity
-psutil

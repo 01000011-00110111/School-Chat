@@ -1,0 +1,315 @@
+/* Copyright (C) 2023, 2024  cserver45, cseven
+   License info can be viewed in app.py or the LICENSE file inside the github repositiory located here:
+   https://github.com/01000011-00110111/School-Chat */
+$chat_background_color: black
+$sidenav_button_background_color: black
+  
+@property --background-color
+  syntax: "<color>"
+  inherits: true
+  initial-value: black
+
+
+body
+  margin: 0
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+
+
+code
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace
+
+
+.main
+  width: 100vw
+  height: 100vh
+  display: flex
+  background: $chat_background_color
+
+
+.chat_container
+  width: 100%
+  height: 100%
+  display: grid
+
+
+.main_chat_body
+  width: 100%
+  display: flex
+
+.chat
+  color: white
+  width: 100%
+  padding: 2rem
+  overflow-y: scroll
+  max-height: 43rem
+
+.topbar
+  margin: 0
+  height: 7.1vh
+  width: 100%
+  background: var(--background-color)
+  color: white
+  display: flex
+  place-items: center
+  justify-content: space-between
+  box-shadow: 0px -1px 44px 15px #191919
+
+
+.topbar div
+  display: flex
+
+
+.sidenav
+  position: relative
+  background: black
+  color: white
+  z-index: 2
+  height: 100vh
+  width: 4.5vw
+  justify-items: center
+  grid-template-columns: 100%
+  grid-template-rows: 88%
+  transition: all 0.5s ease-in-out
+  box-shadow: 2px 2px 1px 1px #191919
+
+  button 
+    display: none
+
+.sidenav li
+  list-style-type: none
+  
+
+
+.sidenav_opened
+  display: grid !important
+  width: 20rem
+  transition: all 0.5s ease-in-out
+
+  button
+    display: block
+
+  .sidenav_dropdown .content
+    height: 17rem
+    display: grid
+    align-content: space-around
+    padding: 0
+    justify-items: left
+    text-indent: 30px
+
+  .sidenav_dropdown li a
+    color: white
+    text-decoration: none
+    font-size: 20px
+
+  .sidenav_dropdown li a:hover
+    color: gray
+
+  .sidenav_button
+    font-size: 18px
+    background: $sidenav_button_background_color
+    // border: 1px solid gray
+    align-items: center
+    justify-content: left
+    padding-top: 0
+  
+  .sidenav_button p
+    display: flex
+
+.sidenav_button
+  width: 93%
+  height: 3rem
+  place-content: center
+  color: white
+  text-decoration: none
+  font-size: 30px
+  display: flex
+  padding-top: 5rem
+  border-radius: 12px
+
+.sidenav_button p
+  display: none
+
+.sidenav_dropdown
+  width: 100%
+  height: fit-content
+  display: grid
+  align-content: center
+  justify-items: center
+  grid-template-columns: 100%
+
+.sidenav_dropdown .content
+  width: 100%
+  height: fit-content
+  display: none
+
+#nav_button
+  width: 3rem
+  font-size: 29px
+  background: transparent
+  border: 0
+  color: white
+
+
+.bottom_bar
+  height: 7.3vh
+  width: 100%
+  display: flex
+  place-self: end
+  place-items: center
+  justify-content: center
+  background: black
+
+
+.message_box
+  display: flex
+  height: 6.1vh
+  width: 46rem
+  position: relative
+  place-items: center
+  background: white
+  border-radius: 6px
+  padding: 0px 1px 0px 0px
+
+
+#message_input
+  width: 92%
+  height: 2.7rem
+  outline: none
+  border: 0
+  font-size: 18px
+  text-indent: 7px
+  background: transparent
+
+
+#send_button
+  width: 3rem
+  min-width: fit-content
+  height: 2.7rem
+  background: rgb(0, 94, 255)
+  color: white
+  border-radius: 9px
+  border: 0
+  font-size: 20px
+  font-weight: bold
+  margin: 0px 4px
+
+
+#send_button:hover
+  color: rgb(212, 212, 212)
+
+
+#send_button:active
+  color: grey
+
+
+#file_import_input
+  display: none
+
+
+#file_import_button
+  height: 2rem
+  width: 2rem
+  border-radius: 100%
+  font-size: 20px
+  color: black
+  display: flex
+  place-items: center
+  justify-content: center
+  margin: 0px 0px 0px 5px
+  border: 0
+
+
+.profile_button
+  border-radius: 100px
+  width: 45px
+  height: 45px
+  border: 2px red solid
+  object-fit: cover
+  margin: 0px 20px 0px 0px
+
+
+.user_list
+  display: grid
+  background: black
+  color: white
+  height: 85.6vh
+  width: 17vw
+  justify-self: right
+  position: relative
+  right: 0%
+  border-left: 5px solid #000
+  grid-template-rows: repeat(auto-fit, minmax(calc(4em + 9px), 0fr))
+  // box-shadow: rgb(25, 25, 25) 10px 20px 17px 16px
+
+#user_search_input
+  margin-top: 11px
+  justify-self: center
+  outline: none
+  background: #181818
+  color: white
+  width: 90%
+  height: 2rem
+  border-radius: 6px
+  border: 1px solid aliceblue
+
+.users_container
+  width: 100%
+  height: fit-content
+  display: grid
+  align-content: baseline
+
+.user_card_mini
+  width: 100%
+  height: fit-content
+  min-height: 51px
+  display: flex
+  align-items: center
+  text-indent: 8px
+  border-radius: 12px
+
+.user_card_mini img
+  width: 2.7rem
+  height: 2.7rem
+  border-radius: 100px
+  border: 2px solid #404040
+
+.user_card_mini:hover
+  background: hsl(0, 0.00%, 31.80%)
+
+.user_message
+  background: transparent
+  width: fit-content
+  height: fit-content
+  min-height: 75px
+  min-width: fit-content
+  max-width: 260px
+  display: flex
+  align-items: center
+  padding: 6px
+  word-wrap: anywhere
+
+.message_image_container .user_profile_pciture
+  width: 3rem
+  height: 3rem
+  border-radius: 100px
+  border: 2px solid #404040
+
+.message_info
+  display: grid
+  grid-template-rows: 1.5rem
+  padding: 0px 9px
+
+.message_info_container
+  display: flex
+  align-items: center
+  min-height: 34px
+  width: 46pc
+
+.message_content_container
+  display: flex
+  align-items: center
+
+.message_content_container p
+  margin: 0.5rem 0px
