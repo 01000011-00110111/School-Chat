@@ -16,40 +16,15 @@
 
 """
 from sanic import Sanic
-from socketio_handler import sio
+from sanic_cors import CORS
 # import socketio
+import socketio_confg
+import message
+sio = socketio_confg.sio
 
-# Create a Sanic app and a Socket.IO server
-app = Sanic("School-Chat")
+app = Sanic("School-Chats")
+CORS(app, resources={r"/*": {"origins": "*"}}, automatic_options=True)
 sio.attach(app)
-app.static('/', '../frontend')
 
-# Example Socket.IO event
-@sio.event
-async def connect(sid):
-    """
-    This function is called when a client connects to the server.
-    """
-    print(f"Client connected: {sid}")
-    await sio.emit("server_message", {"message": "Welcome!"})
-
-@sio.event
-async def client_message(sid, data):
-    """
-    This function is called when a client sends a message to the server.
-    """
-    print(f"Message from client {sid}: {data}")
-    await sio.emit("server_message", {"message": "Echo: " + data["message"]})
-
-@sio.event
-async def disconnect(sid):
-    """
-    This function is called when a client disconnects from the server.
-    """
-    print(f"Client disconnected: {sid}")
-
-# __all__ = ['app', 'sio']
-
-# Start the server
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8000)
+    app.run(host="127.0.0.1", port=8000, debug=True)

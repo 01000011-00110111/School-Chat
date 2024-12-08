@@ -1,6 +1,5 @@
 __pycache__/*
 venv/*
-package-lock.json
 .DS_Store
 sc-build
 server
