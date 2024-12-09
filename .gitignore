@@ -5,3 +5,4 @@ sc-build
 server
 core/config/keys.conf
 chat/__pycache__/*
+/static/
