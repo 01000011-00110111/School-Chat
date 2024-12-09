@@ -13,25 +13,6 @@ import Chat from './pages/Chat';
 import socket from './socket'
 
 function App() {
-    const [messages, setMessages] = useState([]);
-    const [input, setInput] = useState("");
-
-    useEffect(() => {
-        // Listen for messages from the server
-        socket.on("server_message", (data) => {
-            setMessages((prev) => [...prev, data.message]);
-        });
-
-        return () => {
-            socket.off("server_message");
-        };
-    }, []);
-
-    const sendMessage = () => {
-        socket.emit("client_message", { message: input });
-        setInput("");
-    };
-
     return (
         <Router>
             <Routes>

@@ -51,15 +51,11 @@ function Chat() {
       updateChatRoom(room_name);
     }
 
-    socket.on("room_list", (rooms) => {
-        console.log("Received room list event, rooms: ", rooms); // Check the console output
-        const roomDisplay = document.getElementById("room_list");
-        let roomHTML = '';
-        for (let i = 0; i < rooms.length; i++) {
-            roomHTML += `<div>${rooms[i]}</div>`;
-        }
-        roomDisplay.innerHTML = roomHTML;
-      });
+    socket.on("room_list", (data) => {
+      const room_list = document.getElementById("room_list");
+      room_list.innerHTML = "<li><a href='/chat/Main' onClick={() => changeChatRoom('Main')}>Main</a></li>";
+    });
+
     function updateChatRoom(room_name) {
       const room_display = document.getElementById("room_display");
       room_display.innerHTML = room_name;

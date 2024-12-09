@@ -8,7 +8,7 @@ from socketio_confg import sio
 
 class Chat:
     """Chat class."""
-    all_chats = [room["roomName"] for room in database.get_rooms()]
+    all_chats = [(room["roomName"], room["roomid"]) for room in database.get_rooms()]
     chats = {}  # Dictionary to store existing chats
 
     def __init__(self, room, roomid):
