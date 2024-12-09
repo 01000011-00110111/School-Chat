@@ -4,3 +4,4 @@ venv/*
 sc-build
 server
 core/config/keys.conf
+chat/__pycache__/*

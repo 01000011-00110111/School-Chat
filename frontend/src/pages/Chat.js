@@ -5,42 +5,61 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faPaperPlane, faBars, faBorderAll, faGear, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
-// import { io } from "socket.io-client";
 import socket from '../socket'
-
-// const socket = io("http://127.0.0.1:8000");
+import { Chat_object, renderMessage, renderChat, loadChat } from '../static/images/js/message'
 
 function Chat() {
     const [chatrooms, setChatooms] = useState([])
     const [users, setUsers] = useState([{}])
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
+    const [roomid, setRoomid] = useState("");
 
     useEffect(() => {
-        socket.on("server_message", (data) => {
-            setMessages((prev) => [...prev, data.message]);
+        socket.on("message", (data) => {
+            renderChat(data['message']);
         });
 
         return () => {
-            socket.off("server_message");
+            socket.off("message");
+        };
+    }, []);
+
+    useEffect(() => {
+        socket.on("load_chat", (data) => {
+            updateChatRoom(data['name']);
+            setRoomid(data['roomid']);
+            loadChat(data['messages']);
+        });
+
+        return () => {
+            socket.off("load_chat");
         };
     }, []);
     
     const sendMessage = (e) => {
-        if ((e?.key === 'Enter' || e === undefined) && input.trim() !== '') {
-            socket.emit("client_message", { message: input });
+        if (input.trim() !== '') {
+            e?.preventDefault();
+            socket.emit("message", { message: input, roomid: roomid });
             setInput("");
         }
     };
 
-    document.addEventListener('keydown', sendMessage);
-  
     function changeChatRoom(room_name) {
       
       window.history.pushState({ room_name }, '', `/chat/${room_name}`)
       updateChatRoom(room_name);
     }
-  
+
+    socket.on("room_list", (rooms) => {
+        console.log("Received room list event, rooms: ", rooms); // Check the console output
+        const roomDisplay = document.getElementById("room_list");
+        let roomHTML = '';
+        for (let i = 0; i < rooms.length; i++) {
+            roomHTML += `<div>${rooms[i]}</div>`;
+        }
+        roomDisplay.innerHTML = roomHTML;
+      });
     function updateChatRoom(room_name) {
       const room_display = document.getElementById("room_display");
       room_display.innerHTML = room_name;
@@ -69,7 +88,7 @@ function Chat() {
                 <FontAwesomeIcon icon={faBorderAll}/>
                 <p>Chat Rooms</p>
                 </div>
-                <ul className='sidenav_dropdown content'>
+                <ul className='sidenav_dropdown content' id='room_list'>
 
                 </ul>
             </div>
@@ -96,25 +115,7 @@ function Chat() {
             </div>
             
             <div className='main_chat_body'>
-            <div className='chat'>
-                {messages.map((msg, idx) => (
-                    <div key={idx} className="user_message">
-                        <div className='message_image_container'>
-                            <img src='/static/images/AppIcon.png' alt='a users picture' className='user_profile_pciture'/>
-                        </div>
-                        <div className="message_info">
-                            <div className="message_info_container">
-                                <p>User</p>
-                                <p>*</p>
-                                <p>Fri Dec 06 01:44 PM</p>
-                            </div>
-
-                            <div className="message_content_container">
-                                {msg}
-                            </div>
-                        </div>
-                    </div>
-                ))}
+            <div className='chat' id='chat'>
             </div>
   
             <div className='user_list'>
@@ -135,7 +136,13 @@ function Chat() {
                     id='message_input' 
                     autoCapitalize='true' 
                     autoCorrect='true' 
-                    spellCheck='true'/>
+                    spellCheck='true'
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                            sendMessage();
+                        }
+                    }}
+                    />
                 <button 
                     id='send_button' 
                     onClick={sendMessage}>

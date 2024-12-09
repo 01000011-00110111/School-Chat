@@ -19,7 +19,7 @@ from sanic import Sanic
 from sanic_cors import CORS
 # import socketio
 import socketio_confg
-import message
+from chat import message
 sio = socketio_confg.sio
 
 app = Sanic("School-Chats")
