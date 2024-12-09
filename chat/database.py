@@ -1,4 +1,4 @@
-"""database.py: Backend functions for communicating with MongoDB.
+"""chat/database.py: Backend functions for communicating with MongoDB.
     Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in app.py or the LICENSE file.
 """

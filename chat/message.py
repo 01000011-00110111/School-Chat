@@ -1,4 +1,4 @@
-"""message.py: Backend functions for message handling.
+"""chat/message.py: Backend functions for message handling.
     Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in app.py or the LICENSE file.
 """
@@ -12,12 +12,11 @@ async def connect(sid, environ, _):
     This function is called when a client connects to the server.
     """
     # print(chat)
-    if "ilQvQwgOhm9kNAOrRqbr" in Chat.chats:
-        chat = Chat.get_chat("ilQvQwgOhm9kNAOrRqbr")
-    else:
-        chat = Chat.add_chat("ilQvQwgOhm9kNAOrRqbr")
+    # if "ilQvQwgOhm9kNAOrRqbr" in Chat.chats:
+    #     chat = Chat.get_chat("ilQvQwgOhm9kNAOrRqbr")
+    # else:
+    #     chat = Chat.add_chat("ilQvQwgOhm9kNAOrRqbr")
 
-    await sio.emit("load_chat", {"messages": chat.messages, "roomid": chat.vid, "name": chat.name})
     await sio.emit("room_list", {"rooms": Chat.all_chats}, to=sid)
 
 

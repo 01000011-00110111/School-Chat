@@ -1,9 +1,9 @@
-"""chat.py: Backend functions for message handling.
+"""chat/chat.py: Backend functions for message handling.
     Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in app.py or the LICENSE file.
 """
 from datetime import datetime
-import database
+import chat.database as database
 from socketio_confg import sio
 
 class Chat:
@@ -27,7 +27,7 @@ class Chat:
         self.muted = room["muted"]
         self.banned = room["banned"]
         self.messages = database.get_messages(roomid)
-        self.sids = []
+        self.sids = {}
         self.images = [] #TO-DO: add images
 
     @staticmethod

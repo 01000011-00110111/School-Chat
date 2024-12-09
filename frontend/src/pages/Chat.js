@@ -73,6 +73,8 @@ function Chat() {
     document.addEventListener('DOMContentLoaded', () => {
       const currentRoom = window.location.pathname.split('/')[2] || 'Main';
       updateChatRoom(currentRoom);
+      console.log(currentRoom)
+      socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr' });
     })
   
     const open_sidenav = () => {
