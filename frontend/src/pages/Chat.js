@@ -14,6 +14,7 @@ function Chat() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [roomid, setRoomid] = useState("");
+    const [rooms, setRooms] = useState([]);
 
     useEffect(() => {
         socket.on("message", (data) => {
@@ -40,21 +41,29 @@ function Chat() {
     const sendMessage = (e) => {
         if (input.trim() !== '') {
             e?.preventDefault();
+            console.log(roomid);
             socket.emit("message", { message: input, roomid: roomid });
             setInput("");
         }
     };
 
-    function changeChatRoom(room_name) {
+    function changeChatRoom(roomid, roomName) {
       
-      window.history.pushState({ room_name }, '', `/chat/${room_name}`)
-      updateChatRoom(room_name);
+    //   window.history.pushState({ roomName }, '', `/chat/${roomName}`)
+      updateChatRoom(roomName)
+      socket.emit("join_room", { roomid: roomid });
+      setRoomid(roomid);
     }
 
-    socket.on("room_list", (data) => {
-      const room_list = document.getElementById("room_list");
-      room_list.innerHTML = "<li><a href='/chat/Main' onClick={() => changeChatRoom('Main')}>Main</a></li>";
-    });
+    useEffect(() => {
+        socket.on("room_list", (data) => {
+            setRooms(data['rooms']);
+        });
+    
+        return () => {
+            socket.off("room_list");
+        };
+    }, []);
 
     function updateChatRoom(room_name) {
       const room_display = document.getElementById("room_display");
@@ -85,7 +94,11 @@ function Chat() {
                 <p>Chat Rooms</p>
                 </div>
                 <ul className='sidenav_dropdown content' id='room_list'>
-
+                    {rooms.map(([name, value], index) => (
+                        <li key={index} onClick={() => changeChatRoom(value, name)}>
+                            {name}
+                        </li>
+                    ))}
                 </ul>
             </div>
   
@@ -152,3 +165,4 @@ function Chat() {
 }
   
 export default Chat
+
