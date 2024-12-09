@@ -3,10 +3,11 @@ const Chat_object = {
 }
 
 function loadChat(data) {
-    Chat_object[0] = data;
+    Chat_object.messages = data
     console.log(data)
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
+    chatDiv["innerHTML"] = "";
     let msgs = ""; 
     for (let messageObj of data) {
         let message = renderMessage(messageObj);

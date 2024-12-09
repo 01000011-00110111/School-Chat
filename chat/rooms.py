@@ -10,9 +10,11 @@ from socketio_confg import sio
 @sio.on("join_room")
 async def join_room(sid, roomid):
     if roomid in Chat.chats:
-        chat = Chat.get_chat("ilQvQwgOhm9kNAOrRqbr")
+        chat = Chat.get_chat(roomid))
     else:
-        chat = Chat.add_chat("ilQvQwgOhm9kNAOrRqbr")
+        chat = Chat.add_chat(roomid)
 
-    await sio.emit("load_chat", {"messages": chat.messages, "roomid": chat.vid, "name": chat.name})
+    chat.sids.append(sid)
+
+    await sio.emit("load_chat", {"messages": chat.messages, "roomid": chat.vid, "name": chat.name}, to=sid)
     # await sio.emit("load_chat", {"messages": Chat.get_chat(data["roomid"]).messages, "roomid": data["roomid"]})

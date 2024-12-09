@@ -18,7 +18,7 @@ async def connect(sid, environ, _):
         chat = Chat.add_chat("ilQvQwgOhm9kNAOrRqbr")
 
     await sio.emit("load_chat", {"messages": chat.messages, "roomid": chat.vid, "name": chat.name})
-    await sio.emit("room_list", {"rooms": Chat.all_chats})
+    await sio.emit("room_list", {"rooms": Chat.all_chats}, to=sid)
 
 
 @sio.on("message")
