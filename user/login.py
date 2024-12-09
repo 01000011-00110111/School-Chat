@@ -1,3 +1,7 @@
+"""user/login.py: Backend functions for message handling.
+    Copyright (C) 2023, 2024  cserver45, cseven
+    License info can be viewed in app.py or the LICENSE file.
+"""
 from socketio_confg import sio
 from user.user import User
 import user.database as database
@@ -11,11 +15,20 @@ async def login(sid, data):
     username = data["username"]
     password = data["password"]
 
+    print(username, password)
+
     uuid = User.check_credentials(username, password)
 
     if uuid:
         user = User(username, database.get_user_data(uuid), uuid)
         User.Users[user.suuid] = user
-        await sio.emit("login_success", user.suuid, to=sid)
+        await sio.emit("login", {'suuid': user.suuid, 'status': 'successful'}, to=sid)
     else:
-        await sio.emit("login_fail", to=sid)
+        await sio.emit("login", { 'suuid': False, 'status': 'failed'}, to=sid)
+
+
+def check_suuid(suuid):
+    if suuid in User.Users:
+        return True
+    else:
+        return False

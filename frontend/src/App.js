@@ -10,12 +10,14 @@ import {
 } from "react-router-dom";
 import Settings from './pages/Settings';
 import Chat from './pages/Chat';
+import Login from './pages/Login';
 import socket from './socket'
 
 function App() {
     return (
         <Router>
             <Routes>
+              <Route path='/' element={<Login/>}/>  
               <Route path='/chat' element={<Chat/>}/>
               <Route path='/settings' element={<Settings/>}/>
             </Routes>

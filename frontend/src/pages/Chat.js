@@ -6,15 +6,22 @@ import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faPaperPlane, faBars, faBorderAll, faGear, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import socket from '../socket'
-import { Chat_object, renderMessage, renderChat, loadChat } from '../static/images/js/message'
+import { Chat_object, renderMessage, renderChat, loadChat } from '../static/js/message'
 
 function Chat() {
-    const [chatrooms, setChatooms] = useState([])
-    const [users, setUsers] = useState([{}])
+    const [chatrooms, setChatooms] = useState([]);
+    const [users, setUsers] = useState([{}]);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [roomid, setRoomid] = useState("");
     const [rooms, setRooms] = useState([]);
+
+    let suuid = sessionStorage.getItem("suuid");
+    let room = sessionStorage.getItem("room");
+
+    useEffect(() => {
+        socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
+    }, []);
 
     useEffect(() => {
         socket.on("message", (data) => {
@@ -41,18 +48,19 @@ function Chat() {
     const sendMessage = (e) => {
         if (input.trim() !== '') {
             e?.preventDefault();
-            console.log(roomid);
-            socket.emit("message", { message: input, roomid: roomid });
+            console.log(suuid);
+            socket.emit("message", { message: input, roomid: roomid, suuid: suuid });
             setInput("");
         }
     };
 
     function changeChatRoom(roomid, roomName) {
-      
-    //   window.history.pushState({ roomName }, '', `/chat/${roomName}`)
-      updateChatRoom(roomName)
-      socket.emit("join_room", { roomid: roomid });
-      setRoomid(roomid);
+        if (roomid === room) {
+            return;
+        }
+        updateChatRoom(roomName)
+        socket.emit("join_room", { roomid: roomid, suuid: suuid });
+        setRoomid(roomid);
     }
 
     useEffect(() => {
@@ -65,16 +73,32 @@ function Chat() {
         };
     }, []);
 
+    useEffect(() => {
+        socket.on("send_to_login", (data) => {
+            suuid = '';
+            sessionStorage.removeItem("suuid");
+            window.location.href = "/";
+        });
+    
+        return () => {
+            socket.off("send_to_login");
+        };
+    }, []);
+
     function updateChatRoom(room_name) {
       const room_display = document.getElementById("room_display");
       room_display.innerHTML = room_name;
     }
   
+    // window.addEventListener('load', () => {
+    //     console.log(suuid);
+    //     socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
+    //   });
+
     document.addEventListener('DOMContentLoaded', () => {
       const currentRoom = window.location.pathname.split('/')[2] || 'Main';
       updateChatRoom(currentRoom);
-      console.log(currentRoom)
-      socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr' });
+    //   socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
     })
   
     const open_sidenav = () => {
@@ -167,4 +191,5 @@ function Chat() {
 }
   
 export default Chat
+
 

@@ -1,11 +1,13 @@
-import asyncio
+"""user/user.py: Backend functions for message handling.
+    Copyright (C) 2023, 2024  cserver45, cseven
+    License info can be viewed in app.py or the LICENSE file.
+"""
+# import asyncio
 import hashlib
 import uuid
 from datetime import datetime
 
-import bcrypt # type: ignore
-
-from socketio_confg import sio
+# from socketio_confg import sio
 from user.database import get_login_data
 
 
@@ -15,12 +17,12 @@ class User:
     login_data = {(data["username"], data["password"]): data["userId"] for data in get_login_data()}
     Users = {}
 
-    def __init__(self, username, user, uuid):
+    def __init__(self, username, user, userid):
         """Initialize the user."""
         self.username = username
         self.display_name = user['displayName']
         self.perm = user['SPermission']
-        self.uuid = uuid
+        self.uuid = userid
         self.suuid = str(uuid.uuid4())
         self.status = user['status']
         self.active = True
@@ -46,12 +48,11 @@ class User:
         for (stored_username, stored_password), user_id in User.login_data.items():
             if stored_username == username:
                 # Compare the stored hashed password with the provided password
-                if bcrypt.checkpw(password.encode('utf-8'), stored_password):
+                if hashlib.sha384(password.encode('utf-8')).hexdigest() == stored_password:
                     return user_id
         return None
 
     @staticmethod
     def hash_password(password):
         """Hash a password for storing."""
-        salt = bcrypt.gensalt()
-        return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+        return hashlib.sha256(password.encode('utf-8')).hexdigest()

@@ -1,6 +1,36 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
+import socket from '../socket'
+import {setSuuid} from '../static/js/variables'
 
 function Login() {
+    const [username, setUsername] = useState("")
+    const [password, setPassword] = useState("")
+
+    useEffect(() => {
+        let uuid = sessionStorage.getItem("suuid");
+        if (uuid) {
+            setSuuid(uuid);
+            window.location.href = "/chat";
+        }
+    }, []);
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        console.log(username, password);
+        socket.emit("login", { username: username, password: password });
+    };
+
+    socket.on("login", (data) => {
+        if (data["status"] === 'successful') {
+            console.log(data);
+            setSuuid(data["suuid"]);
+            window.location.href = "/chat";
+        }
+        if (data["status"] === 'failed') {
+            console.log(data);
+        }
+    });
+
     return (
         <div id="login_container">
             <div id="left_login_container">
@@ -8,14 +38,14 @@ function Login() {
 
                 </div>
 
-                <form id="form_container">
+                <div id="form_container">
                     <div className="wrapper_panel">
                         <div>
                             <p>Username</p>
                         </div>
 
                         <div className="login_input">
-                            <input/>
+                            <input value={username} onChange={(e) => setUsername(e.target.value)}/>
                         </div>
                     </div>
 
@@ -26,14 +56,14 @@ function Login() {
                         </div>
 
                         <div className="login_input">
-                            <input/>
+                            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password"/>
                         </div>
                     </div>
 
                     <div className="wrapper_panel">
-                        <button>Login</button>
+                        <button onClick={handleLogin}>Login</button>
                     </div>
-                </form>
+                </div>
 
                 <div id="links_container">
 
@@ -67,3 +97,4 @@ function Login() {
 }
 
 export default Login
+

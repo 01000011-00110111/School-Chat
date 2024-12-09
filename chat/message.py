@@ -39,5 +39,6 @@ async def client_message(sid, data):
         'badges': [role_string, None],
         'date': date_str
     }
+    print(message)
     await Chat.get_chat(data["roomid"]).send_message(message)
     # await sio.emit("message", {"message": response})

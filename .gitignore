@@ -5,4 +5,6 @@ sc-build
 server
 core/config/keys.conf
 chat/__pycache__/*
+user/__pycache__/*
 /static/
+.vscode/*

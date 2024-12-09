@@ -47,6 +47,6 @@ class Chat:
         """Send a message to the chat."""
         self.messages.append(message)
         self.config["last_message"] = datetime.now()
-        for sid in self.sids:
+        for _, sid in self.sids.items():
             await sio.emit("message", {"message": message}, to=sid)
         # await sio.emit("message", {"message": message})
