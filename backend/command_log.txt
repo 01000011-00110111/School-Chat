@@ -1,0 +1,216 @@
+[Mon 09:10] Kazu: help
+[Sun 23:23] Kazu: help
+[Sun 23:39] Kazu: help
+[Sun 23:39] Kazu: offline
+[Sun 23:39] Kazu: online
+[Sun 23:48] Kazu: help
+[Sun 23:50] Kazu: ping
+[Sun 23:50] Kazu: help
+[Sun 23:51] Kazu: create "cmd_test"
+[Mon 00:19] Kazu: help
+[Mon 00:20] Kazu: offline
+[Mon 00:20] Kazu: online
+[Mon 00:43] Kazu: cmd_logs
+[Mon 00:43] Kazu: cmd_logs
+[Mon 00:47] Kazu: help
+[Mon 00:50] Kazu: help
+[Mon 00:50] Kazu: ping
+[Mon 00:55] Kazu: help
+[Mon 01:00] Kazu: help
+[Mon 01:07] Kazu: song e
+[Mon 01:07] Kazu: song something
+[Mon 01:13] Kazu: help
+[Mon 01:14] Kazu: help
+[Mon 01:24] Kazu: help
+[Mon 01:40] Kazu: reset
+[Mon 02:26] Kazu: song Never gonna give you up
+[Mon 11:00] Kazu: ping
+[Mon 14:00] Kazu: help
+[Mon 14:10] Kazu: cmd_logs
+[Mon 14:41] Kazu: cmd_logs
+[Mon 14:41] Kazu: cmd_logs
+[Mon 15:35] Kazu: lines
+[Mon 15:38] Kazu: report_list
+[Mon 15:45] Kazu: help
+[Mon 15:46] Kazu: offline
+[Mon 15:46] Kazu: online
+[Mon 15:50] Kazu: lines
+[Mon 15:50] Kazu: help
+[Mon 16:35] Kazu: help
+[Mon 23:04] Kazu: help
+[Tue 01:40] Kazu: unlock
+[Tue 12:49] Kazu: cmd_logs
+[Tue 19:47] Kazu: e
+[Tue 20:42] Kazu: help
+[Tue 20:42] Kazu: song e
+[Tue 22:59] Kazu: help
+[Wed 01:51] Kazu: help
+[Wed 02:02] Kazu: lock
+[Wed 02:03] Kazu: song e
+[Wed 02:04] Kazu: song e
+[Wed 02:05] Kazu: song e
+[Wed 02:05] Kazu: song e
+[Wed 02:06] Kazu: song e
+[Wed 02:09] Kazu: song e
+[Wed 15:18] Kazu: send_as_admin
+[Wed 15:18] Kazu: send_admin e
+[Wed 15:20] Kazu: admin_message hello
+[Wed 23:09] Kazu: helpsudo help
+[Wed 23:32] Kazu: help
+[Thu 03:45] Kazu: locksudo lock
+[Thu 03:45] Kazu: lock
+[Thu 03:46] Kazu: unlocksudo unlock
+[Thu 03:46] Kazu: unlock
+[Thu 03:50] Kazu: statussudo status
+[Thu 04:54] Kazu: help
+[Thu 05:11] Kazu: lock
+[Thu 05:12] Kazu: unlock
+[Thu 05:12] Kazu: lock
+[Thu 05:12] Kazu: lock
+[Thu 05:13] Kazu: lock
+[Thu 05:14] Kazu: lock
+[Thu 05:15] Kazu: lock
+[Thu 05:16] Kazu: lock
+[Thu 05:16] Kazu: lock
+[Thu 05:17] Kazu: unlock
+[Thu 05:17] Kazu: lock
+[Thu 05:18] Kazu: lock
+[Thu 05:18] Kazu: unlock
+[Thu 05:18] MasterMods: lock
+[Thu 05:18] Kazu: lock
+[Thu 05:21] Kazu: lock
+[Thu 05:21] Kazu: lock
+[Thu 05:21] Kazu: lock
+[Thu 05:21] Kazu: unlock
+[Thu 05:21] Kazu: lock
+[Thu 05:22] Kazu: clear
+[Thu 05:22] Kazu: lock
+[Thu 05:23] Kazu: lock
+[Thu 05:23] Kazu: lock
+[Thu 05:23] Kazu: lock
+[Thu 21:49] Kazu: unlock
+[Thu 22:10] Kazu: celar
+[Thu 22:10] Kazu: clear
+[Fri 00:17] Kazu: locksudo lock
+[Fri 00:17] Kazu: lock
+[Fri 00:17] Kazu: unlocksudo unlock
+[Fri 00:18] Kazu: unlock
+[Fri 00:18] Kazu: clear
+[Fri 12:32] Kazu: help
+[Fri 12:33] Kazu: clear
+[Fri 12:56] Kazu: help
+[Fri 18:06] Kazu: clear
+[Tue 09:26] Kazu: clear
+[Tue 09:45] Kazu: poll
+[Fri 00:08] Kazu: lock
+[Fri 00:10] Kazu: lock
+[Fri 00:11] Kazu: unlock
+[Fri 00:11] Kazu: lock
+[Fri 01:02] Kazu: unlock
+[ Thu 10:55 PM] Kazu: clear
+[ Thu 11:27 PM] Kazu: clear
+[ Thu 11:34 PM] Kazu: clear
+[ Thu 11:36 PM] Kazu: clear
+[ Thu 11:39 PM] Kazu: clear
+[ Fri 12:08 AM] Kazu: clear
+[ Fri 12:20 AM] Kazu: rc
+[ Fri 12:31 AM] Kazu: clear
+[ Fri 01:01 AM] Kazu: clear
+[ Fri 11:34 AM] Kazu: mute @NinjaMasterMods
+[ Fri 11:35 AM] Kazu: mute NinjaMasterMods
+[ Fri 11:36 AM] Kazu: mute 
+[ Fri 11:42 AM] Kazu: ban NinjaMasterMods
+[ Fri 11:42 AM] Kazu: help
+[ Fri 11:43 AM] Kazu: clear
+[ Fri 11:46 AM] Kazu: mue
+[ Fri 11:46 AM] Kazu: mute NinjaMasterMods
+[ Fri 11:46 AM] Kazu: mute *NinjaMasterMods
+[ Fri 11:46 AM] Kazu: mute @NinjaMasterMods
+[ Fri 11:46 AM] Kazu: mute [NinjaMasterMods]
+[ Fri 11:46 AM] Kazu: help
+[ Fri 11:48 AM] Kazu: mute NinjaMasterMods
+[ Fri 11:48 AM] Kazu: mute@ NinjaMasterMods
+[ Fri 11:48 AM] Kazu: mute @NinjaMasterMods
+[ Fri 11:49 AM] Kazu: help
+[ Fri 11:49 AM] Kazu: clear
+[ Fri 11:49 AM] Kazu: mute CastyiGlitchxz
+[ Fri 11:53 AM] Kazu: help
+[ Fri 12:39 PM] Kazu: clear
+[ Fri 01:14 PM] Kazu: rc
+[ Fri 01:15 PM] Kazu: create chat
+[ Fri 01:16 PM] Kazu: help
+[ Fri 01:16 PM] Kazu: lines
+[ Fri 01:20 PM] Kazu: cmd_logs
+[ Sat 03:22 PM] Kazu: clear
+[ Sun 01:12 AM] Kazu: offline
+[ Sun 01:13 AM] Kazu: online
+[ Sun 01:13 AM] Kazu: lines
+[ Sun 01:13 AM] Kazu: cmd_logs
+[ Sun 01:14 AM] Kazu: pstats
+[ Sun 01:14 AM] Kazu: rc
+[ Sun 02:12 PM] Kazu: remove_badge
+[ Sun 02:12 PM] Kazu: add_badge e
+[ Sun 02:12 PM] Kazu: add_badge
+[ Sun 02:12 PM] Kazu: clear
+[ Sun 03:03 PM] Kazu: help
+[ Sun 03:14 PM] Kazu: help
+[ Sun 06:25 PM] Kazu: help
+[ Wed 10:41 PM] Kazu: status
+[ Wed 12:14 AM] Kazu: help
+[ Wed 12:15 AM] Kazu: add_badge CastyiGlitchxz Specialist #00e1e5 #ffffff
+[ Wed 09:51 PM] Kazu: clear
+[ Wed 09:57 PM] Kazu: clear
+[ Wed 09:59 PM] MasterMods: clear
+[ Wed 10:00 PM] Kazu: clear
+[ Wed 10:04 PM] Kazu: clear
+[ Wed 10:24 PM] Kazu: clear
+[ Fri 12:51 AM] Kazu: clear
+[ Fri 01:02 AM] Kazu: clear
+[ Fri 01:19 AM] Kazu: clear
+[ Fri 02:47 AM] Kazu: clear
+[ Sat 03:47 AM] Kazu: clear
+[ Thu 01:11 AM] Kazu: celar
+[ Thu 01:11 AM] Kazu: clear
+[ Thu 01:11 AM] Kazu: clear
+[ Thu 01:19 AM] Kazu: clear
+[ Mon 09:16 AM] Kazu: mute NinjaMasterMods 1m
+[ Mon 09:16 AM] Kazu: help
+[ Mon 09:16 AM] Kazu: mute @NinjaMasterMods 1s
+[ Mon 09:17 AM] Kazu: mute @NinjaMasterMods 1minute
+[ Mon 09:17 AM] Kazu: mute NinjaMasterMods 1s
+[ Mon 09:17 AM] Kazu: mute NinjaMasterMods 11s
+[ Mon 09:17 AM] Kazu: mute @NinjaMasterMods 11s w
+[ Mon 09:17 AM] Kazu: unmute NinjaMasterMods
+[ Mon 09:18 AM] Kazu: clear
+[ Mon 09:18 AM] Kazu: lock
+[ Mon 09:21 AM] Kazu: lock
+[ Mon 09:21 AM] Kazu: unlock
+[ Mon 09:21 AM] Kazu: lock
+[ Mon 09:23 AM] Kazu: lock
+[ Mon 09:23 AM] Kazu: lock
+[ Mon 09:24 AM] Kazu: lock
+[ Mon 09:25 AM] Kazu: lock
+[ Mon 09:25 AM] Kazu: lock
+[ Mon 09:26 AM] Kazu: lock
+[ Mon 09:34 AM] Kazu: lock
+[ Mon 09:36 AM] Kazu: clear
+[ Mon 09:40 AM] Kazu: unlock
+[ Mon 09:40 AM] MasterMods: lock
+[ Mon 09:45 AM] Kazu: lock
+[ Mon 09:46 AM] Kazu: lock
+[ Mon 09:47 AM] Kazu: lock
+[ Mon 09:47 AM] Kazu: lock
+[ Mon 09:48 AM] Kazu: lock
+[ Mon 09:51 AM] Kazu: unmute
+[ Mon 09:51 AM] Kazu: unlock
+[ Mon 09:51 AM] Kazu: unmute
+[ Mon 09:51 AM] Kazu: clear
+[ Mon 09:51 AM] Kazu: unlock
+[ Mon 09:52 AM] Kazu: unlock
+[ Mon 09:54 AM] Kazu: unlock
+[ Mon 10:03 AM] Kazu: lock
+[ Mon 10:07 AM] Kazu: lock
+[ Mon 10:08 AM] Kazu: mute
+[ Mon 10:08 AM] Kazu: lock
+[ Wed 06:51 AM] Kazu: mute
+[ Wed 06:53 AM] Kazu: mute
