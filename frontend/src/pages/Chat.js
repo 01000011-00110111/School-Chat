@@ -7,17 +7,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faPaperPlane, faBars, faBorderAll, faGear, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import socket from '../socket'
 import { Chat_object, renderMessage, renderChat, loadChat } from '../static/js/message'
+import { setupTimer } from '../static/js/online'
 
 function Chat() {
     const [chatrooms, setChatooms] = useState([]);
     const [users, setUsers] = useState([{}]);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
-    const [roomid, setRoomid] = useState("");
     const [rooms, setRooms] = useState([]);
 
     let suuid = sessionStorage.getItem("suuid");
-    let room = sessionStorage.getItem("room");
+    let rid = sessionStorage.getItem("roomid");
 
     useEffect(() => {
         socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
@@ -26,6 +26,7 @@ function Chat() {
     useEffect(() => {
         socket.on("message", (data) => {
             renderChat(data['message']);
+            setMessages([...messages, data['message']]);
         });
 
         return () => {
@@ -35,9 +36,10 @@ function Chat() {
 
     useEffect(() => {
         socket.on("load_chat", (data) => {
-            updateChatRoom(data['name']);
-            setRoomid(data['roomid']);
+            updateChatRoom(data['roomid'], data['name']);
+            sessionStorage.setItem("roomid", data['roomid']);
             loadChat(data['messages']);
+            setMessages(data['messages']);
         });
 
         return () => {
@@ -48,24 +50,22 @@ function Chat() {
     const sendMessage = (e) => {
         if (input.trim() !== '') {
             e?.preventDefault();
-            console.log(suuid);
-            socket.emit("message", { message: input, roomid: roomid, suuid: suuid });
+            socket.emit("message", { message: input, roomid: rid, suuid: suuid });
             setInput("");
         }
     };
 
     function changeChatRoom(roomid, roomName) {
-        if (roomid === room) {
-            return;
+        if (roomid !== rid) {
+            updateChatRoom(roomid, roomName)
+            socket.emit("join_room", { roomid: roomid, suuid: suuid });
         }
-        updateChatRoom(roomName)
-        socket.emit("join_room", { roomid: roomid, suuid: suuid });
-        setRoomid(roomid);
     }
 
     useEffect(() => {
         socket.on("room_list", (data) => {
             setRooms(data['rooms']);
+            setChatooms(data['rooms']);
         });
     
         return () => {
@@ -85,19 +85,16 @@ function Chat() {
         };
     }, []);
 
-    function updateChatRoom(room_name) {
+    function updateChatRoom(roomid,  room_name) {
       const room_display = document.getElementById("room_display");
+      rid = roomid;
       room_display.innerHTML = room_name;
     }
   
-    // window.addEventListener('load', () => {
-    //     console.log(suuid);
-    //     socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
-    //   });
 
     document.addEventListener('DOMContentLoaded', () => {
       const currentRoom = window.location.pathname.split('/')[2] || 'Main';
-      updateChatRoom(currentRoom);
+      updateChatRoom(rid ,currentRoom);
     //   socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
     })
   
@@ -155,6 +152,8 @@ function Chat() {
   
             <div className='user_list'>
                 <input type='text' placeholder='Search for a user' id='user_search_input'/>
+                <ul id='user_list'>
+                </ul>
             </div>
             </div>
   

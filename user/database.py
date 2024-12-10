@@ -83,3 +83,42 @@ def get_user_data(uuid):
         return result
     except IndexError:
         return None
+
+def get_online_data():
+    """Retrieves all data required to login."""
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "Customization",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "customization",
+            }
+        },
+        {
+            "$lookup": {
+                "from": "Permission",
+                "localField": "userId",
+                "foreignField": "userId",
+                "as": "permissions",
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "uuid": "$userId",
+                "status": "$status",
+                "role": {"$arrayElemAt": ["$customization.role", 0]},
+                "profile": {"$arrayElemAt": ["$customization.profile", 0]},
+                "displayName": {"$arrayElemAt": ["$customization.displayName", 0]},
+                # "roleColor": {"$arrayElemAt": ["$customization.roleColor", 0]},
+                # "userColor": {"$arrayElemAt": ["$customization.userColor", 0]},
+                "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
+            }
+        },
+    ]
+    try:
+        result = list(ID.aggregate(pipeline))
+        return result
+    except IndexError:
+        return None

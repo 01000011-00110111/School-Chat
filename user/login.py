@@ -28,6 +28,9 @@ async def login(sid, data):
 
 
 def check_suuid(suuid):
+    """
+    Checks if a user is logged in.
+    """
     if suuid in User.Users:
         return True
     else:

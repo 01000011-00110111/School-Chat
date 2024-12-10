@@ -1,10 +1,4 @@
-const Chat_object = {
-    messages: []
-}
-
 function loadChat(data) {
-    Chat_object.messages = data
-    console.log(data)
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     chatDiv["innerHTML"] = "";
@@ -18,7 +12,6 @@ function loadChat(data) {
 }
 
 function renderChat(message_data) {
-    // console.log(messages)
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     chatDiv["innerHTML"] = chatDiv["innerHTML"] + renderMessage(message_data) + newline;
@@ -26,10 +19,6 @@ function renderChat(message_data) {
 }
 
 function renderMessage(message_data) {
-    // console.log(message_data)
-    // console.log(messages)
-    // let newline = "<br>";
-    // let chatDiv = document.getElementById("chat");
     let badges = '';
     for (let i = 0; i < message_data["badges"].length; i++) {
         if (message_data["badges"][i] !== null) {
@@ -50,4 +39,4 @@ function renderMessage(message_data) {
     `
 }
 
-export { Chat_object, renderChat, renderMessage, loadChat }
+export { renderChat, renderMessage, loadChat }

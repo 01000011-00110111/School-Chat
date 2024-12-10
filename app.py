@@ -21,6 +21,7 @@ from sanic_cors import CORS
 import socketio_confg
 from chat import message, rooms, chat
 from user import login
+from online import online
 sio = socketio_confg.sio
 
 app = Sanic("School-Chats")

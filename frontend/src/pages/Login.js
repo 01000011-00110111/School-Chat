@@ -16,13 +16,11 @@ function Login() {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        console.log(username, password);
         socket.emit("login", { username: username, password: password });
     };
 
     socket.on("login", (data) => {
         if (data["status"] === 'successful') {
-            console.log(data);
             setSuuid(data["suuid"]);
             window.location.href = "/chat";
         }
