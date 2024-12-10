@@ -3,6 +3,7 @@ from socketio_confg import sio
 # from user import user, database
 from user.database import get_online_data
 from user.user import User
+from chat.rooms import Chat
 
 userlist = get_online_data()
 socketids = {}
@@ -14,6 +15,7 @@ async def connect(sid, environ):
 
     if namespace != "/":
         await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
+        await sio.emit("room_list", {"rooms": Chat.all_chats}, to=sid)
 
 
 @sio.event

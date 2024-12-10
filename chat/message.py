@@ -6,19 +6,6 @@ from datetime import datetime
 from chat.chat import Chat
 from socketio_confg import sio
 
-@sio.on("connect")
-async def connect(sid, environ, _):
-    """
-    This function is called when a client connects to the server.
-    """
-    # print(chat)
-    # if "ilQvQwgOhm9kNAOrRqbr" in Chat.chats:
-    #     chat = Chat.get_chat("ilQvQwgOhm9kNAOrRqbr")
-    # else:
-    #     chat = Chat.add_chat("ilQvQwgOhm9kNAOrRqbr")
-
-    await sio.emit("room_list", {"rooms": Chat.all_chats}, to=sid)
-
 
 @sio.on("message")
 async def client_message(sid, data):

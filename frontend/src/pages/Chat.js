@@ -1,7 +1,7 @@
 // Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in app.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
-import React from 'react'
+import React, { use } from 'react'
 import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faPaperPlane, faBars, faBorderAll, faGear, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
@@ -33,6 +33,18 @@ function Chat() {
             socket.off("message");
         };
     }, []);
+
+    useEffect(() => {
+        socket.on("reset_chat", (msg) => {
+            let chatDiv = document.getElementById("chat");
+            chatDiv.innerHTML = "";
+            renderChat((msg));
+        });
+
+            return () => {
+                socket.off("reset_chat");
+            };
+        }, []);
 
     useEffect(() => {
         socket.on("load_chat", (data) => {
@@ -141,7 +153,7 @@ function Chat() {
                 <button onClick={() => open_sidenav()} id='nav_button'>
                 <FontAwesomeIcon icon={faBars}/>
                 </button>
-                <h2 id='room_display'></h2>
+                <h2 id='room_display'>loading...</h2>
             </div>
             <img alt='A users profile' src='/react-sanic-app/src/logo.svg' className='profile_button'/>
             </div>
