@@ -20,6 +20,7 @@ function App() {
               <Route path='/' element={<Login/>}/>  
               <Route path='/chat' element={<Chat/>}/>
               <Route path='/settings' element={<Settings/>}/>
+              <Route path="/login" element={<Login/>}/>
             </Routes>
         </Router>
     );

@@ -33,7 +33,8 @@ function Login() {
         <div id="login_container">
             <div id="left_login_container">
                 <div id="form_header">
-
+                    <h1>Login</h1>
+                    <p>Don't have an account yet? <a href="#">Sign Up</a></p>
                 </div>
 
                 <div id="form_container">
@@ -69,7 +70,7 @@ function Login() {
             </div>
 
             <div id="right_preview_container">
-                <h1>School Chat</h1>
+                <h1 id="Title">School Chat</h1>
 
                 <div className="quick_look_container">
                     <p>School chat was made by cserver, and cseven for chatting with friends but grew into a bigger project.</p>

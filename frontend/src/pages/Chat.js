@@ -164,8 +164,8 @@ function Chat() {
   
             <div className='user_list'>
                 <input type='text' placeholder='Search for a user' id='user_search_input'/>
-                <ul id='user_list'>
-                </ul>
+                <div id='user_list'>
+                </div>
             </div>
             </div>
   
@@ -183,7 +183,7 @@ function Chat() {
                     autoCapitalize='true' 
                     autoCorrect='true' 
                     spellCheck='true'
-                    onKeyPress={(e) => {
+                    onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             sendMessage();
                         }

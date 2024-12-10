@@ -36,7 +36,10 @@ code
 
 .main_chat_body
   width: 100%
+  height: 85vh
   display: flex
+  position: relative
+  top: -0.7%
 
 .chat
   color: white
@@ -234,14 +237,19 @@ code
   display: grid
   background: black
   color: white
-  height: 85.6vh
-  width: 17vw
+  height: 100vh
+  width: 15vw
   justify-self: right
-  position: relative
+  position: fixed
   right: 0%
   border-left: 5px solid #000
   grid-template-rows: repeat(auto-fit, minmax(calc(4em + 9px), 0fr))
+  overflow-y: scroll
+  overflow-x: hidden
   // box-shadow: rgb(25, 25, 25) 10px 20px 17px 16px
+
+#user_list
+  height: 100vh
 
 #user_search_input
   margin-top: 11px
@@ -274,6 +282,18 @@ code
   height: 2.7rem
   border-radius: 100px
   border: 2px solid #404040
+
+.userlist_user_details
+  display: grid
+  align-content: center
+  grid-template-rows: 100%
+  height: 1.7rem
+
+.userlist_display_name
+  font-size: 18px
+
+.userlist_role
+  font-size: 12px
 
 .user_card_mini:hover
   background: hsl(0, 0.00%, 31.80%)
@@ -313,3 +333,68 @@ code
 
 .message_content_container p
   margin: 0.5rem 0px
+
+// Settings Page CSS
+
+.settings_page
+  display: flex
+
+.settings_navigation_container
+  margin: 4px
+  background: black
+  border-radius: 12px
+  width: 11rem
+  height: fit-content
+  min-height: 15rem
+  display: grid
+  box-shadow: 2px 2px 3px 1px gray
+
+.settings_navigation_container button
+  border: 0
+  background: transparent
+  color: white
+  font-size: 15px
+
+.settings_container
+  background: red
+  width: 90vw
+  height: 100vh
+
+// Login Page CSS
+
+#login_container
+  width: 100vw
+  height: 100vh
+  display: flex
+  transition:  0.5s all ease-in-out
+
+#left_login_container
+  width: 25rem
+  border: 1px solid gray
+  display: grid
+  justify-content: center
+
+#form_container
+  width: 100%
+  height: 100%
+
+.login_input
+  color: gray
+
+#right_preview_container
+  width: 72%
+  display: grid
+  justify-items: center
+
+.rules_container
+  border: 1px solid gray
+
+#Title 
+  font-size: 80px
+  align-self: center
+  color: #dd7016
+  text-shadow: 7px 3px 7px #464646
+
+#Title::selection
+  color: red
+
