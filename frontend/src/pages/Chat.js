@@ -20,6 +20,10 @@ function Chat() {
     let rid = sessionStorage.getItem("roomid");
 
     useEffect(() => {
+        socket.emit("chatpage");
+    }, []);
+
+    useEffect(() => {
         socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
     }, []);
 
