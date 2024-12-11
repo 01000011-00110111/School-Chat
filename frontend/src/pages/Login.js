@@ -1,4 +1,6 @@
 import React, {useState, useEffect} from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import socket from '../socket'
 import {setSuuid} from '../static/js/variables'
 
@@ -39,33 +41,41 @@ function Login() {
 
                 <div id="form_container">
                     <div className="wrapper_panel">
-                        <div>
+                        <div className="panel_text">
                             <p>Username</p>
                         </div>
 
                         <div className="login_input">
-                            <input value={username} onChange={(e) => setUsername(e.target.value)}/>
+                            <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Enter your username"/>
+                            <button>
+                                <FontAwesomeIcon icon={faEye}/>
+                            </button>
                         </div>
                     </div>
 
                     <div className="wrapper_panel">
-                        <div>
+                        <div className="panel_text">
                             <p>Password</p>
                             <a href="/reset-password">Forgot Password?</a>
                         </div>
 
                         <div className="login_input">
-                            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password"/>
+                            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter your password"/>
+                            <button>
+                                <FontAwesomeIcon icon={faEye}/>
+                            </button>
                         </div>
                     </div>
 
                     <div className="wrapper_panel">
-                        <button onClick={handleLogin}>Login</button>
+                        <button onClick={handleLogin} className="login_button">Login</button>
                     </div>
                 </div>
 
                 <div id="links_container">
-
+                    <a href="https://github.com/01000011-00110111/School-Chat/releases" target="_blank">Releases</a>
+                    <a href=".">???</a>
+                    <a href="https://github.com/01000011-00110111/School-Chat" target="_blank">Github</a>
                 </div>
             </div>
 
