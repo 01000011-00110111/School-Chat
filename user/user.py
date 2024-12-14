@@ -7,6 +7,8 @@ import hashlib
 import uuid
 from datetime import datetime
 
+# pylint: disable=W0406
+
 # from socketio_confg import sio
 from user.database import get_login_data
 

@@ -1,4 +1,8 @@
-import asyncio
+"""online/online.py: Backend functions for message handling.
+    Copyright (C) 2023, 2024  cserver45, cseven
+    License info can be viewed in app.py or the LICENSE file.
+"""
+# import asyncio
 from socketio_confg import sio
 # from user import user, database
 from user.database import get_online_data

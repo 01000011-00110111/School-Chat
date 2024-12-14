@@ -3,7 +3,9 @@
     License info can be viewed in main.py or the LICENSE file.
 """
 from datetime import datetime
-import private.database as database
+# pylint: disable=W0406
+from private import database
+# import private.database as database
 
 
 class Private:
