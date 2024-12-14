@@ -14,6 +14,8 @@ socketids = {}
 #     namespace = environ.get("PATH_INFO", "/")
 
 #     if namespace != "/":@sio.on("chatpage")
+# async def connect(sid):@sio.on("chatpage")
+@sio.on("chatpage")
 async def connect(sid):
     """Handle startup system."""
     await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
