@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 import socket from '../socket'
 import {setSuuid} from '../static/js/variables'
 
@@ -36,7 +36,7 @@ function Login() {
             <div id="left_login_container">
                 <div id="form_header">
                     <h1>Login</h1>
-                    <p>Don't have an account yet? <a href="#">Sign Up</a></p>
+                    <p>Don't have an account yet? <a href="/signup">Sign Up</a></p>
                 </div>
 
                 <div id="form_container">
@@ -73,9 +73,9 @@ function Login() {
                 </div>
 
                 <div id="links_container">
-                    <a href="https://github.com/01000011-00110111/School-Chat/releases" target="_blank">Releases</a>
+                    <a href="https://github.com/01000011-00110111/School-Chat/releases" target="_blank" rel="noreferrer">Releases</a>
                     <a href=".">???</a>
-                    <a href="https://github.com/01000011-00110111/School-Chat" target="_blank">Github</a>
+                    <a href="https://github.com/01000011-00110111/School-Chat" target="_blank" rel="noreferrer">Github</a>
                 </div>
             </div>
 
@@ -97,7 +97,7 @@ function Login() {
                         </ul>
                     </div>
                     <p>
-                        (if you have more rules open the Issue <a href="#">rules</a> and comment the rule there!)
+                        (if you have more rules open the Issue <a href="https://github.com/01000011-00110111/School-Chat/discussions/categories/ideas">rules</a> and comment the rule there!)
                     </p>
                 </div>
             </div>

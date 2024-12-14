@@ -4,17 +4,7 @@ import socket from "../../socket";
 //     setInterval(callback, interval);
 // }
 
-function cx_create_template(user_name, profile_picture, user_role) {
-    const user_template = `
-    <div class='user_card_mini'>
-        <img src=${profile_picture} alt='hi' className='user_profile_picture'/>
-        <div class='userlist_user_details'>
-            <p class='userlist_display_name'>${user_name}</p>
-            <p class='userlist_role'>${cut_replace(user_role, 21)}</p>
-        </div>
-    </div>`
-    return user_template
-}
+let user_data = {};
 
 const cut_replace = (text, length) => {
     if (text == null) {
@@ -29,16 +19,49 @@ const cut_replace = (text, length) => {
     return text + "...";
 }
 
-socket.on('online', (data) => {
-    console.log(data["data"])
-    const usl = document.getElementById("user_list")
-    data["data"].map((element, index) => {
-        console.log(JSON.stringify(element))
-        usl.innerHTML += cx_create_template(element["displayName"], element["profile"], element["role"]);
+const show_profile_modal = (user, role, pfp) => {
+    const profile_modal = document.getElementsByClassName("background_blur")[0];
+    const close_modal_button = document.getElementsByClassName("close_modal_button")[0];
 
-        console.log(index)
-        return 0;
-    },[])
+    /** Repsonsible for setting modals options correctly */
+    const profile_modal_button = document.getElementsByClassName("profile_modal_button")[1];
+    const modal_user_name = document.getElementById("modal_user_name");
+    const modal_user_role = document.getElementById("modal_user_role");
+    const modal_user_picture = document.getElementById("modal_user_picture");
+    /** End of code */
+
+    if (!profile_modal.classList.contains('show_modal')) {
+        profile_modal.classList.add('show_modal');
+        profile_modal_button.setAttribute('click', `opendms("${user}")`)
+        modal_user_name.innerHTML = user;
+        modal_user_role.innerHTML = role;
+        modal_user_picture.src = pfp ? pfp : "/icons/favicon.ico";
+    }
+    
+    close_modal_button.addEventListener('click', () => { 
+        profile_modal.classList.remove('show_modal');
+    });
+}
+
+const fetch_user = (user_name, role, profile_picture) => {
+    console.log(`${user_name} : ${role} : ${profile_picture}`)
+    show_profile_modal(user_name, role, profile_picture)
+}
+
+const SetUsersList = ({user_name, profile_picture, user_role, index}) => {
+    return (
+        <div className="user_card_mini" onClick={() => fetch_user(user_name, user_role, profile_picture)}>
+            <img src={profile_picture ? profile_picture : "/icons/favicon.ico"} alt="hi" className="user_profile_picture"/>
+            <div className="userlist_user_details">
+                <p className="userlist_display_name" key={index}>{user_name}</p>
+                <p className="userlist_role" key={index}>{cut_replace(user_role, 21)}</p>
+            </div>
+        </div>
+    )
+}
+
+socket.on('online', (data) => {
+    user_data=data
 })
 
 // setupTimer(() => {
@@ -48,4 +71,4 @@ socket.on('online', (data) => {
 //     socket.emit('heartbeat', status, rid, suuid);
 // }, 30000);
 
-export { }
+export { SetUsersList, user_data, show_profile_modal }

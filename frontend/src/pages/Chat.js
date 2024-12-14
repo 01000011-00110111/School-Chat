@@ -4,10 +4,10 @@
 import React, { use } from 'react'
 import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faPaperPlane, faBars, faBorderAll, faGear, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faPaperPlane, faBars, faBorderAll, faGear, faRightFromBracket, faMessage, faChevronRight, faXmark, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import socket from '../socket'
 import { Chat_object, renderMessage, renderChat, loadChat } from '../static/js/message'
-import { setupTimer } from '../static/js/online'
+import { setupTimer, SetUsersList, ShowModal, user_data } from '../static/js/online'
 
 function Chat() {
     const [chatrooms, setChatooms] = useState([]);
@@ -73,6 +73,7 @@ function Chat() {
 
     function changeChatRoom(roomid, roomName) {
         if (roomid !== rid) {
+            window.history.pushState({ roomName }, '', `/chat/${roomName}`);
             updateChatRoom(roomid, roomName)
             socket.emit("join_room", { roomid: roomid, suuid: suuid });
         }
@@ -106,6 +107,11 @@ function Chat() {
       rid = roomid;
       room_display.innerHTML = room_name;
     }
+
+    window.addEventListener('popstate', (event) => {
+        const roomName = event.state ? event.state.roomName : 'Main';
+        updateChatRoom(rid, roomName);
+    });
   
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -153,24 +159,43 @@ function Chat() {
   
         <div className='chat_container'>
             <div className='topbar'>
-            <div>
-                <button onClick={() => open_sidenav()} id='nav_button'>
-                <FontAwesomeIcon icon={faBars}/>
-                </button>
-                <h2 id='room_display'>loading...</h2>
-            </div>
-            <img alt='A users profile' src='/react-sanic-app/src/logo.svg' className='profile_button'/>
+                <div>
+                    <button onClick={() => open_sidenav()} id='nav_button'>
+                    <FontAwesomeIcon icon={faBars}/>
+                    </button>
+                    <h2 id='room_display'>loading...</h2>
+                </div>
+
+                <div className='profile_card'>
+                    <div className='profile_preview'>
+                        <img className='profile_button' alt='profile' src='/icons/favicon.ico'/>
+                        <div className='profile_user_preview'>
+                            <p>CastyiGlitchxz</p>
+                            <div className='profile_status'>
+                                <div style={{background: "lime"}}></div>
+                                <p>Online</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div className='main_chat_body'>
-            <div className='chat' id='chat'>
-            </div>
-  
-            <div className='user_list'>
-                <input type='text' placeholder='Search for a user' id='user_search_input'/>
-                <div id='user_list'>
+                <div className='chat' id='chat'>
                 </div>
-            </div>
+    
+                <div className='user_list'>
+                    <input type='text' placeholder='Search for a user' id='user_search_input'/>
+                    <div id='user_list'>
+                        {(typeof user_data["data"] === "undefined") ? (
+                            <p>Fetching Data</p>
+                        ) :  (
+                            user_data["data"].map((user, index) => (
+                                <SetUsersList user_name={user["displayName"]} profile_picture={user["profile"]} user_role={user["role"]} key={index}/>
+                            ))
+                        )}
+                    </div>
+                </div>
             </div>
   
             <div className='bottom_bar'>
@@ -199,6 +224,45 @@ function Chat() {
                 <FontAwesomeIcon icon={faPaperPlane}/>
                 </button>
             </div>
+            </div>
+        </div>
+
+        <div className='background_blur'>
+            <div className='user_profile_modal'>
+                <div className='profile_modal_options'>
+                <div className='profile_modal_button'>
+                        <span>
+                            <FontAwesomeIcon icon={faUserPlus}/>
+                            <p>Add Friend</p>
+                        </span>
+                        <FontAwesomeIcon icon={faChevronRight}/>
+                    </div>
+
+                    <div className='profile_modal_button'>
+                        <span>
+                            <FontAwesomeIcon icon={faMessage}/>
+                            <p>DM</p>
+                        </span>
+                        <FontAwesomeIcon icon={faChevronRight}/>
+                    </div>
+                </div>
+
+                <div className='profile_details'>
+                    <button className='close_modal_button'>
+                        <FontAwesomeIcon icon={faXmark}/>
+                    </button>
+                    <div className='modal_user_details'>
+                        <img src={null} id='modal_user_picture'/>
+                        <div className='modal_extra_details'>
+                            <h1 id='modal_user_name'>Display Name</h1>
+                            <p id='modal_user_role'>Role</p>
+                        </div>
+                    </div>
+                    <div className='modal_badge_list'>
+                        <p className=' badge admin'>admin</p>
+                        <p className='badge mod'>OG Badge</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

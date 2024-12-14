@@ -18,6 +18,24 @@ function renderChat(message_data) {
     // activate_hyperlinks();
 }
 
+/**
+ * This function converts HTML tags into plain text, HTML will not be display in chat using this method.
+ * @param {*} input 
+ * @returns 
+ */
+function escapeHTML(input) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    };
+    return input.replace(/[&<>"']/g, function(match) {
+        return map[match];
+    });
+}
+
 function renderMessage(message_data) {
     let badges = '';
     for (let i = 0; i < message_data["badges"].length; i++) {

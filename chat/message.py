@@ -13,7 +13,7 @@ async def client_message(sid, data):
     This function is called when a client sends a message to the server.
     """
     # print(f"Message from client {sid}: {data}")
-    profile = "<img class='message_pfp' src='/frontend/public/favicon.ico'></img>"
+    profile = "<img class='user_profile_picture' src='/icons/favicon.ico'></img>"
     user_string = "<p style='color: #ff7f00;'>[SYSTEM]</p>"
     message_string = f"<p style='color: #ffffff;'>{data['message']}</p>"
     role_string = "<p style='background:\

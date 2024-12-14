@@ -230,9 +230,77 @@ code {
   border-radius: 100px;
   width: 45px;
   height: 45px;
-  border: 2px red solid;
   object-fit: cover;
-  margin: 0px 20px 0px 0px;
+  margin: 0px 9px 0px 0px;
+}
+
+.profile_card {
+  display: grid;
+  text-align: center;
+  right: 1%;
+  position: fixed;
+  border: 1.5px solid rebeccapurple;
+  width: 191px;
+  height: 55px;
+  align-content: center;
+  padding: 0px 5px;
+  border-radius: 12px;
+}
+
+.profile_preview {
+  display: flex;
+  align-items: center;
+}
+
+.profile_preview .profile_user_preview {
+  display: grid;
+  color: white;
+  left: 0px;
+  position: relative;
+  grid-template-rows: 18px;
+  margin: 0;
+  padding: 0;
+}
+
+.profile_user_preview .profile_status {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  text-indent: 6px;
+}
+
+.profile_status p {
+  max-height: 1rem;
+}
+
+.profile_preview .profile_status div {
+  border-radius: 100px;
+  height: 10px;
+  width: 10px;
+}
+
+.profile_card a {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.profile_card a:hover {
+  border-radius: 10px;
+  background: #2d2d2d;
+  border: rgba(199, 43, 7, 0.8980392157) 0.5px solid;
+}
+
+.card_opened {
+  transform: translate(0, 6%);
+  transition: ease-in-out 0.4s;
+}
+
+.card_closed {
+  transform: translate(0, 0);
+  opacity: 0;
+  transition: ease-in-out 0.4s;
 }
 
 .user_list {
@@ -322,7 +390,7 @@ code {
   word-wrap: anywhere;
 }
 
-.message_image_container .user_profile_pciture {
+.message_image_container .user_profile_picture {
   width: 3rem;
   height: 3rem;
   border-radius: 100px;
@@ -542,6 +610,116 @@ code {
 
 #Title::selection {
   color: red;
+}
+
+.background_blur {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  display: none;
+  backdrop-filter: blur(0.2rem);
+  z-index: 3;
+  place-content: center;
+}
+
+.user_profile_modal {
+  width: 60vw;
+  height: 50vh;
+  background: black;
+  color: white;
+  border-radius: 12px;
+  position: fixed;
+  display: flex;
+  place-self: center;
+  justify-self: center;
+  box-shadow: 3px 4px 10px 4px #181818;
+}
+
+.profile_modal_options {
+  width: 13rem;
+  border-right: 1px solid white;
+  display: grid;
+  justify-items: center;
+  grid-template-rows: repeat(auto-fit, minmax(calc(1.9em + 9px), 0fr));
+  grid-template-columns: 100%;
+  padding: 1rem 0px;
+}
+
+.profile_details {
+  width: 39rem;
+  padding: 0px 0px 0px 2rem;
+}
+
+.modal_user_details {
+  display: flex;
+  align-items: center;
+}
+
+.modal_extra_details {
+  display: grid;
+  grid-template-rows: 43px;
+  align-content: center;
+  justify-content: center;
+  height: 6rem;
+  text-indent: 16px;
+}
+
+#modal_user_picture {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 100px;
+  border: 1px solid red;
+}
+
+.profile_modal_button {
+  height: 2.4rem;
+  width: 86%;
+  background: transparent;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;
+  border: 0;
+  border-radius: 10px;
+  text-align: left;
+  align-items: center;
+  padding: 0px 7px;
+  text-indent: 11px;
+}
+
+.profile_modal_button span {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: inherit;
+}
+
+.profile_modal_button:hover {
+  background: gray;
+}
+
+.close_modal_button {
+  border: 0;
+  width: 2rem;
+  height: 2rem;
+  position: absolute;
+  font-size: 25px;
+  background: black;
+  border-radius: 100px;
+  color: red;
+  right: 1%;
+  top: 1%;
+  box-shadow: 1px 1px 10px gray;
+  border: 1px solid white;
+}
+
+.modal_badge_list {
+  display: flex;
+}
+
+.show_modal {
+  display: grid !important;
 }
 
 /*# sourceMappingURL=index.css.map */
