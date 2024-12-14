@@ -13,13 +13,11 @@ socketids = {}
 #     """Handle connection."""
 #     namespace = environ.get("PATH_INFO", "/")
 
-#     if namespace != "/":
-@sio.on("chatpage")
+#     if namespace != "/":@sio.on("chatpage")
 async def connect(sid):
     """Handle startup system."""
     await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
     await sio.emit("room_list", {"rooms": Chat.all_chats}, to=sid)
-
 
 @sio.event
 async def disconnect(sid):

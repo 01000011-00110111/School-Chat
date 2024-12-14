@@ -71,6 +71,10 @@ function Chat() {
         }
     };
 
+    const logout = () => {
+        socket.emit("logout", { suuid: suuid });
+    };
+
     function changeChatRoom(roomid, roomName) {
         if (roomid !== rid) {
             updateChatRoom(roomid, roomName)
@@ -106,6 +110,7 @@ function Chat() {
       rid = roomid;
       room_display.innerHTML = room_name;
     }
+    
   
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -145,7 +150,7 @@ function Chat() {
             <FontAwesomeIcon icon={faGear}/>
             <p>Settings</p>
             </a>
-            <a href='/logout' className='sidenav_button'>
+            <a className='sidenav_button' onClick={logout}>
             <FontAwesomeIcon icon={faRightFromBracket}/>
             <p>Logout</p>
             </a>
