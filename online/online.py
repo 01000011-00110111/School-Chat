@@ -12,13 +12,6 @@ from chat.rooms import Chat
 userlist = get_online_data()
 socketids = {}
 
-# @sio.event
-# async def connect(sid, environ):
-#     """Handle connection."""
-#     namespace = environ.get("PATH_INFO", "/")
-
-#     if namespace != "/":@sio.on("chatpage")
-# async def connect(sid):@sio.on("chatpage")
 @sio.on("chatpage")
 async def connect(sid):
     """Handle startup system."""
@@ -32,9 +25,17 @@ async def disconnect(sid):
 
 
 @sio.on("heartbeat")
-async def heartbeat(sid):
-    """Handle heartbeat events."""
-    await sio.emit("heartbeat", to=sid)
+async def handle_heartbeat(sid, status, roomid, suuid):
+    """Handle heartbeat from the client."""
+    if suuid is not None:
+        # User.Users[suuid]['status'] = status
+        # await sio.emit("online", {"update": "partial", "data": User.Users[suuid]}, to=sid)
+        if roomid is not None:
+            if roomid in Chat.all_chats:
+                chat = Chat.all_chats[roomid]
+                if sid not in chat.sids:
+                    chat.sids.append(sid)
+    await sio.emit("online", {"update": "full", "data": User.Users}, to=sid)
 
 
 @sio.on("online")
@@ -48,9 +49,36 @@ async def online(sid, suuid, status):
     await sio.emit("online", {"update": 'partial', "data": userlist[uuid]}, to=sid)
 
 
+@sio.on("update")
+async def handle_update(sid, data):
+    """Handle update events."""
+    uuid = User.Users[data['suuid']].uuid
+    update(data, uuid)
+    await sio.emit("online", {"update": 'partial', "data": userlist[uuid]}, to=sid)
+
+
 def update(data, uuid):
     """Update the online status of all users."""
     for key, value in data.items():
         if key == 'status' and userlist[uuid]['status'] == 'offline-locked':
             continue
         userlist[uuid][key] = value
+
+# def handle_forced_disconnect(userid, disconnect_callback):
+#     """Mark the user as offline if no heartbeat is received in time."""
+#     if userid in user_connections:
+#         for socketid in list(user_connections[userid]):
+#             disconnect_callback(socketid, userid)
+#         del user_connections[userid]
+
+#     try:
+#         try:
+#             u = User.get_user_by_id(userid)
+#             if u and u.status != "offline-locked":
+#                 u.status = "offline"
+#             database.set_offline(userid)
+#             update_userlist(None, {"status": "offline"}, userid)
+#         except TypeError as e:
+#             print(f"Error in forced disconnect: {e}")
+#     except RuntimeError as e:
+#         print(f"Runtime error in forced disconnect: {e}")

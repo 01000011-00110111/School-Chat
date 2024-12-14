@@ -1,8 +1,5 @@
 import socket from "../../socket";
 
-// function setupTimer(callback, interval) {
-//     setInterval(callback, interval);
-// }
 
 let user_data = {};
 
@@ -64,11 +61,27 @@ socket.on('online', (data) => {
     user_data=data
 })
 
-// setupTimer(() => {
-//     rid = window.sessionStorage.getItem("roomid")
-//     suuid = window.sessionStorage.getItem("suuid")
-//     let status = document.hidden ? 'idle' : 'active';
-//     socket.emit('heartbeat', status, rid, suuid);
-// }, 30000);
+function notifyStatusChange(status) {
+    socket.emit('update', { status: status, suuid: window.sessionStorage.getItem("suuid") });
+}
+
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        notifyStatusChange('idle');
+    } else {
+        notifyStatusChange('active');
+    }
+});
+
+const setupTimer = (cb, delay) => {
+    let id = setInterval(cb, delay);
+    return () => clearInterval(id);
+}
+setupTimer(() => {
+    let rid = window.sessionStorage.getItem("roomid");
+    let suuid = window.sessionStorage.getItem("suuid");
+    let status = document.hidden ? 'idle' : 'active';
+    socket.emit('heartbeat', status, rid, suuid);
+}, 30000);
 
 export { SetUsersList, user_data, show_profile_modal }

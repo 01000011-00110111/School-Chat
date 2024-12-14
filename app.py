@@ -22,6 +22,7 @@ import socketio_confg
 from chat import message, rooms, chat
 from user import login
 from online import online
+from private import private, rooms, message
 sio = socketio_confg.sio
 
 app = Sanic("School-Chats")

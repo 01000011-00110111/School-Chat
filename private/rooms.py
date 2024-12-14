@@ -25,7 +25,7 @@ async def join_room(sid, data):
         user = User.Users[suuid]
         uuid = user.uuid
         uuid2 = User.usernames(display_name)
-        pmid = Private.chats_userlist[format_userlist(uuid, uuid2)]
+        pmid = Private.chats_userlist[tuple(format_userlist(uuid, uuid2))]
 
         if pmid in Private.chats:
             chat = Private.get_chat(pmid)

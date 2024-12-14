@@ -31,5 +31,6 @@ def load_private_rooms():
     for room in Private.find():
         pmid = room["pmid"]
         userlist = room["userIds"]
-        private_rooms[userlist] = pmid
+        print(pmid, userlist)
+        private_rooms[tuple(userlist)] = pmid
     return private_rooms
