@@ -1,3 +1,10 @@
+"""system.py: Backend functions for communicating with MongoDB.
+    Copyright (C) 2023, 2024  cserver45, cseven
+    License info can be viewed in app.py or the LICENSE file.
+"""
+
+from datetime import datetime
+
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
     # return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'

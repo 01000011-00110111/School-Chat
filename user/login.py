@@ -27,6 +27,17 @@ async def login(sid, data):
         await sio.emit("login", { 'suuid': False, 'status': 'failed'}, to=sid)
 
 
+@sio.on("logout")
+async def logout(sid, data):
+    """
+    This function is called when a client sends a logout request to the server.
+    """
+    suuid = data["suuid"]
+    if suuid in User.Users:
+        del User.Users[suuid]
+        await sio.emit("send_to_login", to=sid)
+
+
 def check_suuid(suuid):
     """
     Checks if a user is logged in.

@@ -1,4 +1,8 @@
-import asyncio
+"""online/online.py: Backend functions for message handling.
+    Copyright (C) 2023, 2024  cserver45, cseven
+    License info can be viewed in app.py or the LICENSE file.
+"""
+# import asyncio
 from socketio_confg import sio
 # from user import user, database
 from user.database import get_online_data
@@ -13,13 +17,13 @@ socketids = {}
 #     """Handle connection."""
 #     namespace = environ.get("PATH_INFO", "/")
 
-#     if namespace != "/":
+#     if namespace != "/":@sio.on("chatpage")
+# async def connect(sid):@sio.on("chatpage")
 @sio.on("chatpage")
 async def connect(sid):
     """Handle startup system."""
     await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
     await sio.emit("room_list", {"rooms": Chat.all_chats}, to=sid)
-
 
 @sio.event
 async def disconnect(sid):

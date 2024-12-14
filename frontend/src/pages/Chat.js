@@ -71,6 +71,10 @@ function Chat() {
         }
     };
 
+    const logout = () => {
+        socket.emit("logout", { suuid: suuid });
+    };
+
     function changeChatRoom(roomid, roomName) {
         if (roomid !== rid) {
             window.history.pushState({ roomName }, '', `/chat/${roomName}`);
@@ -151,7 +155,7 @@ function Chat() {
             <FontAwesomeIcon icon={faGear}/>
             <p>Settings</p>
             </a>
-            <a href='/logout' className='sidenav_button'>
+            <a className='sidenav_button' onClick={logout}>
             <FontAwesomeIcon icon={faRightFromBracket}/>
             <p>Logout</p>
             </a>

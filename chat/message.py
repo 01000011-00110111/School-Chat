@@ -8,7 +8,7 @@ from socketio_confg import sio
 
 
 @sio.on("message")
-async def client_message(sid, data):
+async def client_message(_, data):
     """
     This function is called when a client sends a message to the server.
     """
