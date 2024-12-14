@@ -33,6 +33,13 @@ def get_login_data():
     """Returns the login data for a user."""
     return ID.find({}, {"_id": 0, "username": 1, "password": 1, "userId": 1})
 
+def get_diplay_name(uuid):
+    """Returns the display name for a user."""
+    display_name = Customization.find_one({"userId": uuid}, {"_id": 0, "displayName":1})\
+        ["displayName"]
+    uuid = Customization.find_one({"userId": uuid}, {"_id": 0, "userId": 1})["userId"]
+    return (display_name, uuid)
+
 def get_user_data(uuid):
     """Retrieves all data required to login."""
     pipeline = [
