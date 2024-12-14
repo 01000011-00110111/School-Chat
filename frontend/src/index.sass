@@ -334,6 +334,40 @@ code
 .message_content_container p
   margin: 0.5rem 0px
 
+.badge
+  width: 65px
+  min-width: max-content
+  padding: 12px 12px 12px 12px
+  height: 1px
+  text-align: center
+  align-items: center
+  display: flex
+  justify-content: center
+  border-radius: 7px
+  right: 1%
+  position: relative
+  margin: 0px 0px 0px 11px
+
+.banned 
+  background: red
+  color: white
+
+.user 
+  background: #554366
+  color: white
+
+.mod 
+  background: maroon
+  color: white
+
+.admin 
+  background: rgb(0, 172, 246)
+  color: white
+
+.dev 
+  background: rgb(38, 153, 0)
+  color: white
+
 // Settings Page CSS
 
 .settings_page
@@ -365,21 +399,73 @@ code
 #login_container
   width: 100vw
   height: 100vh
+  color: black
   display: flex
   transition:  0.5s all ease-in-out
 
 #left_login_container
   width: 25rem
-  border: 1px solid gray
+  border-right: 2px solid black
   display: grid
   justify-content: center
+  grid-template-columns: 87%
+  grid-template-rows: 23%
 
 #form_container
   width: 100%
   height: 100%
 
+#form_header
+  height: 8rem
+  margin: 31px 0px
+
+.wrapper_panel
+  width: 100%
+  height: 8rem
+  display: grid
+  grid-template-rows: 38px
+  align-content: center
+
 .login_input
+  width: 100%
+  height: auto
+  display: flex
   color: gray
+  min-height: 3rem
+  border-bottom: 1px solid gray
+
+.login_input input
+  width: 100%
+  height: initial
+  outline: none
+  border: 0
+
+.login_input button
+  border: 0
+  height: 100%
+  background: transparent
+  color: black
+  font-size: 25px
+
+.panel_text
+  display: flex
+  align-items: center
+  justify-content: space-between
+
+.login_button
+  width: 100%
+  height: 3rem
+  background: black
+  color: white
+  border: 0
+  border-radius: 12px
+  font-size: 27px
+  font-weight: bold
+
+.panel_text p
+  color: gray
+  font-style: italic
+  font-size: 14px
 
 #right_preview_container
   width: 72%
@@ -387,7 +473,26 @@ code
   justify-items: center
 
 .rules_container
+  width: 100%
+  line-height: 28px
   border: 1px solid gray
+  border-radius: 13px
+  padding: 13px
+
+#links_container
+  width: 100%
+  height: fit-content
+  display: flex
+  justify-content: space-around
+  align-self: end
+  padding: 0px 0px 4rem 0px
+
+#links_container a
+  color: black
+  text-decoration: none
+
+#links_container a:hover
+  text-decoration: black solid underline 2px
 
 #Title 
   font-size: 80px
