@@ -13,9 +13,17 @@ userlist = get_online_data()
 socketids = {}
 
 @sio.on("chatpage")
-async def connect(sid):
+async def connect(sid, data):
     """Handle startup system."""
+    user = User.Users[data["suuid"]]
+    user_data = {
+        "displayName": user.display_name,
+        "role": user.role,
+        "profile": user.profile,
+        "theme": user.theme
+    }
     await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
+    await sio.emit("user_data", user_data, to=sid)
     await sio.emit("room_list", {"rooms": Chat.all_chats}, to=sid)
 
 @sio.event
@@ -35,7 +43,7 @@ async def handle_heartbeat(sid, status, roomid, suuid):
                 chat = Chat.all_chats[roomid]
                 if sid not in chat.sids:
                     chat.sids.append(sid)
-    await sio.emit("online", {"update": "full", "data": User.Users}, to=sid)
+        # await sio.emit("online", {"update": "full", "data": User.Users}, to=sid)
 
 
 @sio.on("online")
@@ -52,9 +60,14 @@ async def online(sid, suuid, status):
 @sio.on("update")
 async def handle_update(sid, data):
     """Handle update events."""
-    uuid = User.Users[data['suuid']].uuid
-    update(data, uuid)
-    await sio.emit("online", {"update": 'partial', "data": userlist[uuid]}, to=sid)
+    print("update", data)
+    suuid = data['suuid']
+    if suuid in User.Users:
+        uuid = User.Users[suuid].uuid
+        update(data, uuid)
+        await sio.emit("online", {"update": 'partial', "data": userlist[uuid]}, to=sid)
+    else:
+        await sio.emit("send_to_login", to=sid)
 
 
 def update(data, uuid):

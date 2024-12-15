@@ -20,7 +20,7 @@ function Chat() {
     let rid = sessionStorage.getItem("roomid");
 
     useEffect(() => {
-        socket.emit("chatpage");
+        socket.emit("chatpage", { suuid: suuid });
     }, []);
 
     useEffect(() => {
@@ -91,6 +91,25 @@ function Chat() {
     
         return () => {
             socket.off("room_list");
+        };
+    }, []);
+
+    useEffect(() => {
+        socket.on("user_data", (data) => {
+            if (data["data"].length > 0) {
+                const user = data["data"][0];
+                const profilePreview = document.querySelector('.profile_user_preview');
+                const profileButton = profilePreview.querySelector('.profile_button');
+                const profileStatus = profilePreview.querySelector('.profile_status');
+                profileButton.src = user["profile"];
+                profilePreview.querySelector('p').innerHTML = user["displayName"];
+                profileStatus.querySelector('div').style.background = user["status"] === 'online' ? 'lime' : 'red';
+                profileStatus.querySelector('p').innerHTML = user["status"];
+            }
+        });
+    
+        return () => {
+            socket.off("user_data");
         };
     }, []);
 
@@ -172,13 +191,13 @@ function Chat() {
 
                 <div className='profile_card'>
                     <div className='profile_preview'>
-                        <img className='profile_button' alt='profile' src='/icons/favicon.ico'/>
+                        {/* <img className='profile_button' alt='profile' src='/icons/favicon.ico'/> */}
                         <div className='profile_user_preview'>
-                            <p>CastyiGlitchxz</p>
+                            {/* <p>CastyiGlitchxz</p>
                             <div className='profile_status'>
                                 <div style={{background: "lime"}}></div>
                                 <p>Online</p>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>
