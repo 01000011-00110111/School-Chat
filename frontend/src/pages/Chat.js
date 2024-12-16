@@ -7,7 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faPaperPlane, faBars, faBorderAll, faGear, faRightFromBracket, faMessage, faChevronRight, faXmark, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import socket from '../socket'
 import { Chat_object, renderMessage, renderChat, loadChat } from '../static/js/message'
-import { setupTimer, SetUsersList, ShowModal, user_data } from '../static/js/online'
+import { setupTimer, SetUsersList, user_data } from '../static/js/online'
+import context_menu from '../static/js/context_menu'
 
 function Chat() {
     const [chatrooms, setChatooms] = useState([]);
@@ -42,7 +43,7 @@ function Chat() {
         socket.on("reset_chat", (msg) => {
             let chatDiv = document.getElementById("chat");
             chatDiv.innerHTML = "";
-            renderChat((msg));
+            renderChat(msg);
         });
 
             return () => {
@@ -121,7 +122,7 @@ function Chat() {
     document.addEventListener('DOMContentLoaded', () => {
       const currentRoom = window.location.pathname.split('/')[2] || 'Main';
       updateChatRoom(rid ,currentRoom);
-    //   socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
+      // socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
     })
   
     const open_sidenav = () => {
@@ -174,7 +175,7 @@ function Chat() {
                     <div className='profile_preview'>
                         <img className='profile_button' alt='profile' src='/icons/favicon.ico'/>
                         <div className='profile_user_preview'>
-                            <p>CastyiGlitchxz</p>
+                            <p>User #1</p>
                             <div className='profile_status'>
                                 <div style={{background: "lime"}}></div>
                                 <p>Online</p>

@@ -12,7 +12,7 @@ function Login() {
         let uuid = sessionStorage.getItem("suuid");
         if (uuid) {
             setSuuid(uuid);
-            window.location.href = "/chat";
+            window.location.href = "/chat/Main";
         }
     }, []);
 
@@ -24,7 +24,7 @@ function Login() {
     socket.on("login", (data) => {
         if (data["status"] === 'successful') {
             setSuuid(data["suuid"]);
-            window.location.href = "/chat";
+            window.location.href = "/chat/Main";
         }
         if (data["status"] === 'failed') {
             console.log(data);
@@ -46,7 +46,7 @@ function Login() {
                         </div>
 
                         <div className="login_input">
-                            <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Enter your username"/>
+                            <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Enter your username" tabIndex={1} required/>
                             <button>
                                 <FontAwesomeIcon icon={faEye}/>
                             </button>
@@ -60,7 +60,7 @@ function Login() {
                         </div>
 
                         <div className="login_input">
-                            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter your password"/>
+                            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter your password" tabIndex={2} required/>
                             <button>
                                 <FontAwesomeIcon icon={faEye}/>
                             </button>
@@ -92,7 +92,6 @@ function Login() {
                             <li>Keep cursing to a minimal.</li>
                             <li>Do not make chat room names offensive.</li>
                             <li>Do not spam pings.</li>
-                            <li>No capitalized words.</li>
                             <li>Keep the language english (unless in a special chat room).</li>
                         </ul>
                     </div>
