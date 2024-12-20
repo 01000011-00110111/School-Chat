@@ -3,17 +3,17 @@
   "name": "A simple chat app, what else did you think it was?",
   "icons": [
     {
-      "src": "./client/src/static/images/AppIcon.png",
+      "src": "/icons/AppIcon.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "./client/src/static/images/AppIcon_192.png",
+      "src": "/icons/AppIcon_192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "./client/src/static/images/AppIcon_512.png",
+      "src": "/icons/AppIcon_512.png",
       "type": "image/png",
       "sizes": "512x512"
     }

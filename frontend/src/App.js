@@ -14,6 +14,7 @@ import {
 import Settings from './pages/Settings';
 import Chat from './pages/Chat';
 import Login from './pages/Login';
+
 function App() {
     function ProtectedRoute({ isAuthenticated, redirectPath = '/login', children }) {
         const location = useLocation();
@@ -34,6 +35,7 @@ function App() {
               <Route path='/chat/:id' element={<Chat/>}/>
               <Route path='/settings' element={<Settings/>}/>
               <Route path="/login" element={<Login/>}/>
+              <Route path="*" element={<p>404 page not found</p>}/>
             </Routes>
         </Router>
     );

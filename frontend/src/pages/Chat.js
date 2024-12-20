@@ -138,6 +138,19 @@ function Chat() {
     return (
     <div className='main'>
         <div className='sidenav'>
+            <div className='profile_card'>
+                <div className='profile_preview'>
+                    <img className='profile_button' alt='profile' src='/icons/favicon.ico'/>
+                    <div className='profile_user_preview'>
+                        <p>User #1</p>
+                        <div className='profile_status'>
+                            <div style={{background: "lime"}}></div>
+                            <p>Online</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div className='sidenav_dropdown'>
                 <div className='sidenav_button'>
                 <FontAwesomeIcon icon={faBorderAll}/>
@@ -153,12 +166,12 @@ function Chat() {
             </div>
   
             <a href='/settings' className='sidenav_button'>
-            <FontAwesomeIcon icon={faGear}/>
-            <p>Settings</p>
+                <FontAwesomeIcon icon={faGear}/>
+                <p>Settings</p>
             </a>
             <a className='sidenav_button' onClick={logout}>
-            <FontAwesomeIcon icon={faRightFromBracket}/>
-            <p>Logout</p>
+                <FontAwesomeIcon icon={faRightFromBracket} color='red'/>
+                <p>Logout</p>
             </a>
         </div>
   
@@ -169,19 +182,6 @@ function Chat() {
                     <FontAwesomeIcon icon={faBars}/>
                     </button>
                     <h2 id='room_display'>loading...</h2>
-                </div>
-
-                <div className='profile_card'>
-                    <div className='profile_preview'>
-                        <img className='profile_button' alt='profile' src='/icons/favicon.ico'/>
-                        <div className='profile_user_preview'>
-                            <p>User #1</p>
-                            <div className='profile_status'>
-                                <div style={{background: "lime"}}></div>
-                                <p>Online</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             

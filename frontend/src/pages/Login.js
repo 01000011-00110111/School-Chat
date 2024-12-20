@@ -47,9 +47,6 @@ function Login() {
 
                         <div className="login_input">
                             <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Enter your username" tabIndex={1} required/>
-                            <button>
-                                <FontAwesomeIcon icon={faEye}/>
-                            </button>
                         </div>
                     </div>
 

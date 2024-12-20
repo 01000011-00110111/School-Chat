@@ -1,6 +1,46 @@
 /* Copyright (C) 2023, 2024  cserver45, cseven
  * License info can be viewed in app.py or the LICENSE file inside the github repositiory located here:
  * https://github.com/01000011-00110111/School-Chat */
+.badge {
+  width: 65px;
+  min-width: max-content;
+  padding: 12px 12px 12px 12px;
+  height: 1px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 7px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+.banned {
+  background: red;
+  color: white;
+}
+
+.user {
+  background: #554366;
+  color: white;
+}
+
+.mod {
+  background: maroon;
+  color: white;
+}
+
+.admin {
+  background: rgb(0, 172, 246);
+  color: white;
+}
+
+.dev {
+  background: rgb(38, 153, 0);
+  color: white;
+}
+
 @property --background-color {
   syntax: "<color>";
   inherits: true;
@@ -71,7 +111,7 @@ code {
   width: 4.5vw;
   justify-items: center;
   grid-template-columns: 100%;
-  grid-template-rows: 88%;
+  grid-template-rows: 4rem 51rem;
   transition: all 0.5s ease-in-out;
   box-shadow: 2px 2px 1px 1px #191919;
 }
@@ -113,9 +153,22 @@ code {
   align-items: center;
   justify-content: left;
   padding-top: 0;
+  text-indent: 6px;
 }
 .sidenav_opened .sidenav_button p {
   display: flex;
+}
+.sidenav_opened .profile_card {
+  top: 10%;
+  justify-content: left;
+  transition: ease-in-out all 1s;
+  border-radius: 12px;
+}
+.sidenav_opened .profile_preview .profile_user_preview {
+  display: grid;
+}
+.sidenav_opened .profile_button {
+  margin: 0px 9px 0px 6px;
 }
 
 .sidenav_button {
@@ -231,20 +284,19 @@ code {
   width: 45px;
   height: 45px;
   object-fit: cover;
-  margin: 0px 9px 0px 0px;
 }
 
 .profile_card {
-  display: grid;
+  display: flex;
   text-align: center;
-  right: 1%;
-  position: fixed;
   border: 1.5px solid rebeccapurple;
-  width: 191px;
+  width: 95%;
   height: 55px;
-  align-content: center;
-  padding: 0px 5px;
-  border-radius: 12px;
+  align-items: center;
+  justify-content: center;
+  top: 0.5%;
+  position: relative;
+  border-radius: 100px;
 }
 
 .profile_preview {
@@ -253,7 +305,7 @@ code {
 }
 
 .profile_preview .profile_user_preview {
-  display: grid;
+  display: none;
   color: white;
   left: 0px;
   position: relative;
@@ -419,71 +471,38 @@ code {
   margin: 0.5rem 0px;
 }
 
-.badge {
-  width: 65px;
-  min-width: max-content;
-  padding: 12px 12px 12px 12px;
-  height: 1px;
-  text-align: center;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  border-radius: 7px;
-  right: 1%;
-  position: relative;
-  margin: 0px 0px 0px 11px;
-}
-
-.banned {
-  background: red;
-  color: white;
-}
-
-.user {
-  background: #554366;
-  color: white;
-}
-
-.mod {
-  background: maroon;
-  color: white;
-}
-
-.admin {
-  background: rgb(0, 172, 246);
-  color: white;
-}
-
-.dev {
-  background: rgb(38, 153, 0);
-  color: white;
-}
-
 .settings_page {
   display: flex;
 }
 
 .settings_navigation_container {
   margin: 4px;
-  background: black;
-  border-radius: 12px;
-  width: 11rem;
+  color: black;
+  width: 20rem;
   height: fit-content;
   min-height: 15rem;
   display: grid;
-  box-shadow: 2px 2px 3px 1px gray;
+  justify-content: center;
+  grid-template-columns: 92%;
 }
 
 .settings_navigation_container button {
   border: 0;
-  background: transparent;
-  color: white;
+  width: 100%;
+  height: 3rem;
+  background: white;
+  color: black;
   font-size: 15px;
+  text-align: left;
+  border-radius: 9px;
+}
+
+.settings_navigation_container button:hover {
+  background: #edeaf2;
 }
 
 .settings_container {
-  background: red;
-  width: 90vw;
+  width: 90%;
   height: 100vh;
 }
 

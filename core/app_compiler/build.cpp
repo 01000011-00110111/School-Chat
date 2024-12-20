@@ -14,7 +14,7 @@ void build(char device[]) {
 int compile_sass(char *input_file, char *output_file) {
     const char *path = "./frontend/src";
     char command[256];
-    snprintf(command, sizeof(command), "cd %s && sass --watch %s compiled_css/%s", path, input_file, output_file);
+    snprintf(command, sizeof(command), "cd %s && sass --watch sass/%s compiled_css/%s", path, input_file, output_file);
     system(command);
     return 0;
 }
@@ -69,9 +69,9 @@ int main(int argc, char *argv[]) {
         print("is linux device \n");
         strcpy(device_type, "Linux");
     }
-
+    
     if (argv[1] == std::string("-c")) {
-        if (check_file_exist(argv[2], "./frontend/src/")==0 && check_file_exist(argv[3], "./frontend/src/compiled_css/")==0) {
+        if (check_file_exist(argv[2], "./frontend/src/sass/")==0 && check_file_exist(argv[3], "./frontend/src/compiled_css/")==0) {
             compile_sass(argv[2], argv[3]);
             print("\nFinished compiling {} -> {}", argv[2], argv[3]);
         }

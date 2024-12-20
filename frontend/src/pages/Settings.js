@@ -2,12 +2,14 @@
 // License info can be viewed in app.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 import React from "react";
+import {Tabs, Tab } from "../static/js/react_tabs";
 
 const Settings = () => {
     return (
         <div className="settings_page">
             <div className="settings_navigation_container">
-                <button>Close</button>
+                <h3>Settings</h3>
+
                 <button>My Profile</button>
                 <button>Account</button>
                 <button>Notifications</button>
@@ -16,11 +18,17 @@ const Settings = () => {
             </div>
 
             <div className="settings_container">
-                <div>
-                    <img className=""/>
-                    <h3>UserName</h3>
-                    <p>Role</p>
-                </div>
+                <Tabs>
+                    <Tab label={"Account"}>
+                        <img className=""/>
+                        <h3>UserName</h3>
+                        <p>Role</p>
+                    </Tab>
+
+                    <Tab label={"p"}>
+                        p
+                    </Tab>
+                </Tabs>
             </div>
         </div>
     )
