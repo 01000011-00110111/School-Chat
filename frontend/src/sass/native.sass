@@ -1,0 +1,36 @@
+.toggle-button
+    width: fit-content
+    height: fit-content
+    background-color: #fff
+    display: flex
+    align-items: center
+    justify-content: center
+
+.toggle-label
+    background-color: #d2d2d2
+    width: 68px
+    height: 33px
+    border-radius: 200px
+    cursor: pointer
+    position: relative
+    transition: 0.2s
+
+
+.toggle-label::before
+  position: absolute
+  content: ""
+  background-color: #fff
+  width: 25px
+  height: 25px
+  border-radius: 200px
+  margin: 4px
+  transition: 0.2s
+
+#toggle:checked + .toggle-label
+    background-color: #20096d
+
+#toggle:checked + .toggle-label::before
+    transform: translateX(35px)
+
+#toggle
+    display: none
