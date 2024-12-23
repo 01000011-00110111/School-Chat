@@ -1,6 +1,88 @@
 /* Copyright (C) 2023, 2024  cserver45, cseven
  * License info can be viewed in app.py or the LICENSE file inside the github repositiory located here:
  * https://github.com/01000011-00110111/School-Chat */
+.badge {
+  width: 65px;
+  min-width: max-content;
+  padding: 12px 12px 12px 12px;
+  height: 1px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 7px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+.banned {
+  background: red;
+  color: white;
+}
+
+.user {
+  background: #554366;
+  color: white;
+}
+
+.mod {
+  background: maroon;
+  color: white;
+}
+
+.admin {
+  background: rgb(0, 172, 246);
+  color: white;
+}
+
+.dev {
+  background: rgb(38, 153, 0);
+  color: white;
+}
+
+.toggle-button {
+  width: fit-content;
+  height: fit-content;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-label {
+  background-color: #d2d2d2;
+  width: 68px;
+  height: 33px;
+  border-radius: 200px;
+  cursor: pointer;
+  position: relative;
+  transition: 0.2s;
+}
+
+.toggle-label::before {
+  position: absolute;
+  content: "";
+  background-color: #fff;
+  width: 25px;
+  height: 25px;
+  border-radius: 200px;
+  margin: 4px;
+  transition: 0.2s;
+}
+
+#toggle:checked + .toggle-label {
+  background-color: #20096d;
+}
+
+#toggle:checked + .toggle-label::before {
+  transform: translateX(35px);
+}
+
+#toggle {
+  display: none;
+}
+
 @property --background-color {
   syntax: "<color>";
   inherits: true;
@@ -65,11 +147,14 @@ code {
 .sidenav {
   position: relative;
   background: black;
+  display: flex;
+  flex-direction: column;
   color: white;
   z-index: 2;
   height: 100vh;
   width: 4.5vw;
   justify-items: center;
+  align-items: center;
   grid-template-columns: 100%;
   grid-template-rows: 88%;
   transition: all 0.5s ease-in-out;
@@ -116,6 +201,19 @@ code {
 }
 .sidenav_opened .sidenav_button p {
   display: flex;
+}
+.sidenav_opened .profile_card {
+  top: 10%;
+  justify-content: left;
+  border-radius: 12px;
+  transition: ease-in-out all 1s;
+  width: 95%;
+}
+.sidenav_opened .profile_preview .profile_user_preview {
+  display: grid;
+}
+.sidenav_opened .profile_button {
+  margin: 0px 9px 0px 6px;
 }
 
 .sidenav_button {
@@ -240,7 +338,7 @@ code {
   right: 1%;
   position: fixed;
   border: 1.5px solid rebeccapurple;
-  width: 191px;
+  width: 3.55rem;
   height: 55px;
   align-content: center;
   padding: 0px 5px;

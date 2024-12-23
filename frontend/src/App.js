@@ -14,7 +14,10 @@ import {
 import Settings from './pages/Settings';
 import Chat from './pages/Chat';
 import Login from './pages/Login';
+import Portal from "./pages/Portal";
+
 function App() {
+    let isSuperUser = false;
     function ProtectedRoute({ isAuthenticated, redirectPath = '/login', children }) {
         const location = useLocation();
       
@@ -34,6 +37,12 @@ function App() {
               <Route path='/chat/:id' element={<Chat/>}/>
               <Route path='/settings' element={<Settings/>}/>
               <Route path="/login" element={<Login/>}/>
+              <Route path="/portal" element={
+                <ProtectedRoute isAuthenticated={isSuperUser}>
+                  <Portal/>
+                </ProtectedRoute>
+              }/>
+              <Route path="*" element={<p>404 page not found</p>}/>
             </Routes>
         </Router>
     );
