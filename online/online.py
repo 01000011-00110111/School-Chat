@@ -33,7 +33,7 @@ async def disconnect(sid):
 
 
 @sio.on("heartbeat")
-async def handle_heartbeat(sid, status, roomid, suuid):
+async def handle_heartbeat(sid, _, roomid, suuid):
     """Handle heartbeat from the client."""
     if suuid is not None:
         # User.Users[suuid]['status'] = status
@@ -60,7 +60,7 @@ async def online(sid, suuid, status):
 @sio.on("update")
 async def handle_update(sid, data):
     """Handle update events."""
-    print("update", data)
+    # print("update", data)
     suuid = data['suuid']
     if suuid in User.Users:
         uuid = User.Users[suuid].uuid

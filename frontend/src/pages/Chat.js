@@ -94,18 +94,16 @@ function Chat() {
         };
     }, []);
 
+
     useEffect(() => {
         socket.on("user_data", (data) => {
-            if (data["data"].length > 0) {
-                const user = data["data"][0];
-                const profilePreview = document.querySelector('.profile_user_preview');
-                const profileButton = profilePreview.querySelector('.profile_button');
-                const profileStatus = profilePreview.querySelector('.profile_status');
-                profileButton.src = user["profile"];
-                profilePreview.querySelector('p').innerHTML = user["displayName"];
-                profileStatus.querySelector('div').style.background = user["status"] === 'online' ? 'lime' : 'red';
-                profileStatus.querySelector('p').innerHTML = user["status"];
-            }
+            const profilePreview = document.querySelector('.profile_user_preview');
+            const profileButton = document.getElementById('profile_button');
+            // const profileStatus = profilePreview.querySelector('.profile_status');
+            profileButton.src = data["profile"] ? data["profile"] : "/icons/favicon.ico";
+            profilePreview.querySelector('p').innerHTML = data["displayName"];
+            // profileStatus.querySelector('div').style.background = data["status"] === 'online' ? 'lime' : 'red';
+            // profileStatus.querySelector('p').innerHTML = data["status"];
         });
     
         return () => {
@@ -137,11 +135,11 @@ function Chat() {
     });
   
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const currentRoom = window.location.pathname.split('/')[2] || 'Main';
-      updateChatRoom(rid ,currentRoom);
-    //   socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
-    })
+    // document.addEventListener('DOMContentLoaded', () => {
+    //   const currentRoom = window.location.pathname.split('/')[2] || 'Main';
+    //   updateChatRoom(rid ,currentRoom);
+    // //   socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
+    // })
   
     const open_sidenav = () => {
       const sidenav = document.getElementsByClassName("sidenav")[0];
@@ -191,13 +189,13 @@ function Chat() {
 
                 <div className='profile_card'>
                     <div className='profile_preview'>
-                        {/* <img className='profile_button' alt='profile' src='/icons/favicon.ico'/> */}
+                        <img className='profile_button' id='profile_button' src='/icons/favicon.ico'/>
                         <div className='profile_user_preview'>
-                            {/* <p>CastyiGlitchxz</p>
+                            <p>loading...</p>
                             <div className='profile_status'>
                                 <div style={{background: "lime"}}></div>
                                 <p>Online</p>
-                            </div> */}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -210,12 +208,12 @@ function Chat() {
                 <div className='user_list'>
                     <input type='text' placeholder='Search for a user' id='user_search_input'/>
                     <div id='user_list'>
-                        {(typeof user_data["data"] === "undefined") ? (
-                            <p>Fetching Data</p>
-                        ) :  (
-                            user_data["data"].map((user, index) => (
+                        {user_data["data"] ? (
+                            Object.entries(user_data["data"]).map(([key, user], index) => (
                                 <SetUsersList user_name={user["displayName"]} profile_picture={user["profile"]} user_role={user["role"]} key={index}/>
                             ))
+                        ) : (
+                            <p>Fetching Data</p>
                         )}
                     </div>
                 </div>
