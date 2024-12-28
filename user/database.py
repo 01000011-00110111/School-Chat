@@ -123,6 +123,8 @@ def get_online_data():
     ]
     try:
         result = list(ID.aggregate(pipeline))
-        return result
+        result_dict = {user["uuid"]: user for user in result}
+        return result_dict
+        # return result
     except IndexError:
         return None
