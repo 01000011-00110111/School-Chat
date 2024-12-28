@@ -195,7 +195,7 @@ function Chat() {
                             <p>Fetching Data</p>
                         ) :  (
                             user_data["data"].map((user, index) => (
-                                <SetUsersList user_name={user["displayName"]} profile_picture={user["profile"]} user_role={user["role"]} key={index}/>
+                                <SetUsersList user_name={user["displayName"]} profile_picture={user["profile"]} user_role={user["role"]} status={user["status"]} key={index}/>
                             ))
                         )}
                     </div>

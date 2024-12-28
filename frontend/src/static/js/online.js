@@ -3,6 +3,12 @@ import socket from "../../socket";
 
 let user_data = {};
 
+let status_conversion = {
+    "active": "lime",
+    "offline": "red",
+    "idle": "yellow",
+}
+
 const cut_replace = (text, length) => {
     if (text == null) {
         return "";
@@ -45,7 +51,7 @@ const fetch_user = (user_name, role, profile_picture) => {
     show_profile_modal(user_name, role, profile_picture)
 }
 
-const SetUsersList = ({user_name, profile_picture, user_role, index}) => {
+const SetUsersList = ({user_name, profile_picture, user_role, index, status}) => {
     return (
         <div className="user_card_mini" onClick={() => fetch_user(user_name, user_role, profile_picture)}>
             <img src={profile_picture ? profile_picture : "/icons/favicon.ico"} alt="hi" className="user_profile_picture"/>
@@ -53,6 +59,7 @@ const SetUsersList = ({user_name, profile_picture, user_role, index}) => {
                 <p className="userlist_display_name" key={index}>{user_name}</p>
                 <p className="userlist_role" key={index}>{cut_replace(user_role, 21)}</p>
             </div>
+            <div className="status_indicator" style={{background: status}}>{status}</div>
         </div>
     )
 }
