@@ -16,6 +16,7 @@ import Chat from './pages/Chat';
 import Login from './pages/Login';
 import Portal from "./pages/Portal";
 
+
 function App() {
     let isSuperUser = false;
     function ProtectedRoute({ isAuthenticated, redirectPath = '/login', children }) {

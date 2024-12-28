@@ -1,0 +1,41 @@
+.badge {
+  width: 65px;
+  min-width: max-content;
+  padding: 12px 12px 12px 12px;
+  height: 1px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-radius: 7px;
+  right: 1%;
+  position: relative;
+  margin: 0px 0px 0px 11px;
+}
+
+.banned {
+  background: red;
+  color: white;
+}
+
+.user {
+  background: #554366;
+  color: white;
+}
+
+.mod {
+  background: maroon;
+  color: white;
+}
+
+.admin {
+  background: rgb(0, 172, 246);
+  color: white;
+}
+
+.dev {
+  background: rgb(38, 153, 0);
+  color: white;
+}
+
+/*# sourceMappingURL=badges.css.map */

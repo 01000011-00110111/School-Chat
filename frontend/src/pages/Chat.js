@@ -7,7 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faPaperPlane, faBars, faBorderAll, faGear, faRightFromBracket, faMessage, faChevronRight, faXmark, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import socket from '../socket'
 import { Chat_object, renderMessage, renderChat, loadChat } from '../static/js/message'
-import { setupTimer, SetUsersList, ShowModal, user_data } from '../static/js/online'
+import { setupTimer, SetUsersList, user_data } from '../static/js/online'
+import context_menu from '../static/js/context_menu'
 
 function Chat() {
     const [chatrooms, setChatooms] = useState([]);
@@ -42,7 +43,7 @@ function Chat() {
         socket.on("reset_chat", (msg) => {
             let chatDiv = document.getElementById("chat");
             chatDiv.innerHTML = "";
-            renderChat((msg));
+            renderChat(msg);
         });
 
             return () => {
@@ -121,7 +122,7 @@ function Chat() {
     document.addEventListener('DOMContentLoaded', () => {
       const currentRoom = window.location.pathname.split('/')[2] || 'Main';
       updateChatRoom(rid ,currentRoom);
-    //   socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
+      // socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
     })
   
     const open_sidenav = () => {
@@ -137,6 +138,19 @@ function Chat() {
     return (
     <div className='main'>
         <div className='sidenav'>
+            <div className='profile_card'>
+                <div className='profile_preview'>
+                    <img className='profile_button' alt='profile' src='/icons/favicon.ico'/>
+                    <div className='profile_user_preview'>
+                        <p>User #1</p>
+                        <div className='profile_status'>
+                            <div style={{background: "lime"}}></div>
+                            <p>Online</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div className='sidenav_dropdown'>
                 <div className='sidenav_button'>
                 <FontAwesomeIcon icon={faBorderAll}/>
@@ -152,12 +166,12 @@ function Chat() {
             </div>
   
             <a href='/settings' className='sidenav_button'>
-            <FontAwesomeIcon icon={faGear}/>
-            <p>Settings</p>
+                <FontAwesomeIcon icon={faGear}/>
+                <p>Settings</p>
             </a>
             <a className='sidenav_button' onClick={logout}>
-            <FontAwesomeIcon icon={faRightFromBracket}/>
-            <p>Logout</p>
+                <FontAwesomeIcon icon={faRightFromBracket} color='red'/>
+                <p>Logout</p>
             </a>
         </div>
   
@@ -168,19 +182,6 @@ function Chat() {
                     <FontAwesomeIcon icon={faBars}/>
                     </button>
                     <h2 id='room_display'>loading...</h2>
-                </div>
-
-                <div className='profile_card'>
-                    <div className='profile_preview'>
-                        <img className='profile_button' alt='profile' src='/icons/favicon.ico'/>
-                        <div className='profile_user_preview'>
-                            <p>CastyiGlitchxz</p>
-                            <div className='profile_status'>
-                                <div style={{background: "lime"}}></div>
-                                <p>Online</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             

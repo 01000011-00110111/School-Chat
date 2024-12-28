@@ -1,36 +1,147 @@
-.toggle-button
+/* From Uiverse.io by namecho */ 
+.switch
+ --button-width: 3.5em
+ --button-height: 2em
+ --toggle-diameter: 1.5em
+ --button-toggle-offset: calc((var(--button-height) - var(--toggle-diameter)) / 2)
+ --toggle-shadow-offset: 10px
+ --toggle-wider: 3em
+ --color-grey: #cccccc
+ --color-green: #4296f4
+
+
+.slider
+ display: inline-block
+ width: var(--button-width)
+ height: var(--button-height)
+ background-color: var(--color-grey)
+ border-radius: calc(var(--button-height) / 2)
+ position: relative
+ transition: 0.3s all ease-in-out
+
+
+.slider::after
+ content: ""
+ display: inline-block
+ width: var(--toggle-diameter)
+ height: var(--toggle-diameter)
+ background-color: #fff
+ border-radius: calc(var(--toggle-diameter) / 2)
+ position: absolute
+ top: var(--button-toggle-offset)
+ transform: translateX(var(--button-toggle-offset))
+ box-shadow: var(--toggle-shadow-offset) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1)
+ transition: 0.3s all ease-in-out
+
+
+.switch input[type="checkbox"]:checked + .slider
+ background-color: var(--color-green)
+
+
+.switch input[type="checkbox"]:checked + .slider::after
+ transform: translateX(calc(var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)))
+ box-shadow: calc(var(--toggle-shadow-offset) * -1) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1)
+
+
+.switch input[type="checkbox"]
+ display: none
+
+
+.switch input[type="checkbox"]:active + .slider::after
+ width: var(--toggle-wider)
+
+
+.switch input[type="checkbox"]:checked:active + .slider::after
+ transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)))
+
+
+.textbox
+    width: 22rem
+    height: 2.7rem
+    display: flex
+    align-content: center
+    border-radius: 8px
+
+.textbox input
+    border: 0
+    width: 100%
+    height: 100%
+    background: transparent
+    outline: 0
+
+.native_checkbox
     width: fit-content
-    height: fit-content
-    background-color: #fff
     display: flex
     align-items: center
-    justify-content: center
+    gap: 0.4rem
+    margin: 4px 0
+ 
+.checkmark
+    width: 1.3rem
+    height: 1.3rem
+    border: 1.4px solid black
+    border-radius: 4px
+    display: flex
 
-.toggle-label
-    background-color: #d2d2d2
-    width: 68px
-    height: 33px
-    border-radius: 200px
-    cursor: pointer
-    position: relative
-    transition: 0.2s
+.check_input:checked ~ .checkmark
+    background: #00c3ff
+    transition: 0.3s all ease-in-out
 
+.check_input:disabled ~ .checkmark
+    background: #cccccc
 
-.toggle-label::before
-  position: absolute
-  content: ""
-  background-color: #fff
-  width: 25px
-  height: 25px
-  border-radius: 200px
-  margin: 4px
-  transition: 0.2s
-
-#toggle:checked + .toggle-label
-    background-color: #20096d
-
-#toggle:checked + .toggle-label::before
-    transform: translateX(35px)
-
-#toggle
+.check_input
     display: none
+
+.Card
+    background: white
+    box-shadow: 6px 6px 12px gray
+    width: 18rem
+    height: 24rem
+    display: flex
+    flex-direction: column
+    border-radius: 16px
+    justify-items: center
+    align-items: center
+
+.footer_alert
+    background: var(--alert_color)
+    width: 96%
+    border-radius: 8px
+    display: flex
+    place-items: center
+    justify-content: space-between
+    padding: 0 12px 0 12px
+    position: absolute
+    bottom: 1%
+    left: 1.3%
+
+.footer_alert .left_container
+    color: white
+
+.footer_alert .right_container
+    display: flex
+    gap: 0.5rem
+
+.footer_alert .right_container button
+    border: 0
+    width: fit-content
+    min-width: 4rem
+    height: 1.8rem
+    border-radius: 7px
+    font-size: 1rem
+    color: white
+    background: #00000069
+
+.line_button
+    border-radius: 12px
+    border: 1px solid gray
+    padding: 0px 11px 9px 11px
+    width: fit-content
+    min-width: 40rem
+
+.colored_bar
+    width: 100%
+    height: 0.4rem
+    border-radius: 3px
+    box-shadow: 1px 2px 5px gray
