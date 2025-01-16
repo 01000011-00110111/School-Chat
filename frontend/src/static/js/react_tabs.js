@@ -13,9 +13,9 @@ function Tabs({ children }) {
     );
 }
   
-function Tab({ label, children }) {
+function Tab({ label, children, style={} }) {
     return (
-      <div>
+      <div style={style}>
         {children}
       </div>
     );

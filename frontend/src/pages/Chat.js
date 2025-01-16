@@ -9,6 +9,7 @@ import socket from '../socket'
 import { Chat_object, renderMessage, renderChat, loadChat } from '../static/js/message'
 import { setupTimer, SetUsersList, user_data } from '../static/js/online'
 import context_menu from '../static/js/context_menu'
+import { storage } from '../static/js/storage'
 
 function Chat() {
     const [chatrooms, setChatooms] = useState([]);
@@ -81,6 +82,10 @@ function Chat() {
             window.history.pushState({ roomName }, '', `/chat/${roomName}`);
             updateChatRoom(roomid, roomName)
             socket.emit("join_room", { roomid: roomid, suuid: suuid });
+
+            if (JSON.parse(storage.get("app-nav-settings"))["nav_close_onroom"] === true) {
+                open_sidenav();
+            }
         }
     }
 

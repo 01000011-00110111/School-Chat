@@ -42,6 +42,15 @@ const TextBox = ({label, placeholder, default_value}) => {
     )
 }
 
+const EmailBox = ({label, placeholder, default_value}) => {
+    return (
+        <fieldset className="textbox">
+            <legend>{label}</legend>
+            <input type="email" placeholder={placeholder} value={null ? null : default_value}/>
+        </fieldset>
+    )
+}
+
 const CheckBox = ({ label, checked, disabled }) => {
     return (
         <label className="native_checkbox">
@@ -52,18 +61,18 @@ const CheckBox = ({ label, checked, disabled }) => {
     )
 }
 
-const Card = ({ width, height, children }) => {
+const Card = ({ width, height, children, label }) => {
     return (
         <div className="Card" style={{width: width, height: height}}>
-            <p>Profile</p>
+            <p>{label}</p>
             {children}
         </div>
     )
 }
 
-function FooterAlert({message, color, buttons = [], func = []}) {
+function FooterAlert({message, buttons = [], func = []}) {
     return (
-        <div className="footer_alert" style={document.querySelector(":root").style.setProperty("--alert_color", color)}>
+        <div className="footer_alert">
             <div className="left_container">
                 <p>{message}</p>
             </div>
@@ -108,4 +117,13 @@ function ColoredBar({colors = []}) {
     )
 }
 
-export {ToggleButton, TextBox, CheckBox, Card, FooterAlert, Modal, LineButton, ColoredBar}
+function LineColorDialog({title = "", id = "", className = ""}) {
+    return (
+        <label className="color_dialog" htmlFor={id}>
+            <input type="color" id={id} className={className}/>
+            <p>{title}</p>
+        </label>
+    )
+}
+
+export {ToggleButton, TextBox, EmailBox, CheckBox, Card, FooterAlert, Modal, LineButton, ColoredBar, LineColorDialog}

@@ -156,7 +156,7 @@
 }
 
 .footer_alert {
-  background: var(--alert_color);
+  background: var(--primary-accent-color);
   width: 96%;
   border-radius: 8px;
   display: flex;
@@ -203,13 +203,73 @@
   box-shadow: 1px 2px 5px gray;
 }
 
+.color_dialog {
+  width: 16rem;
+  min-width: fit-content;
+  height: 2.3rem;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: left;
+  text-indent: 7px;
+  border-radius: 10px;
+  border: 1.5px solid black;
+  padding: 5px;
+  margin: 4px 0;
+}
+
+.color_dialog input {
+  -webkit-appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+}
+
+.color_dialog input::-webkit-color-swatch {
+  border: none;
+  border-radius: 10px;
+  padding: 0;
+}
+
+.color_dialog input::-webkit-color-swatch-wrapper {
+  border: none;
+  border-radius: 10px;
+  padding: 0;
+}
+
+:root {
+  --topbar-background-color: black;
+  --topbar-text-color: white;
+  --usercard-text-color: white;
+  --sidenav-background-color: black;
+  --sidenav-text-color: white;
+  --sidenav-extend-button-color: white;
+  --sidenav-buttons-background-color: transparent;
+  --sidenav-buttons-text-color: white;
+  --bottom-bar-background-color: black;
+  --message-box-background-color: white;
+  --message-box-text-color: "null";
+  --send-button-background-color: rgb(0, 94, 255);
+  --send-button-text-color: white;
+  --userlist-background-color: black;
+  --userlist-text-color: white;
+  --userlist-border-color: black;
+}
+
 @property --background-color {
   syntax: "<color>";
   inherits: true;
   initial-value: black;
 }
 :root {
-  --alert_color: blue;
+  --background-accent-1: white;
+  --background-accent-2: gray;
+  --foreground-accent-1: black;
+  --foreground-accent-2: purple;
+  --primary-accent-color: purple;
 }
 
 body {
@@ -227,7 +287,7 @@ code {
   width: 100vw;
   height: 100vh;
   display: flex;
-  background: black;
+  background: var(--background-accent-1);
 }
 
 .chat_container {
@@ -256,8 +316,8 @@ code {
   margin: 0;
   height: 7.1vh;
   width: 100%;
-  background: var(--background-color);
-  color: white;
+  background: var(--topbar-background-color);
+  color: var(--topbar-text-color);
   display: flex;
   place-items: center;
   justify-content: space-between;
@@ -270,10 +330,10 @@ code {
 
 .sidenav {
   position: relative;
-  background: black;
+  background: var(--sidenav-background-color);
   display: flex;
   flex-direction: column;
-  color: white;
+  color: var(--sidenav-text-color);
   z-index: 2;
   height: 100vh;
   width: 4.5vw;
@@ -309,7 +369,7 @@ code {
   text-indent: 30px;
 }
 .sidenav_opened .sidenav_dropdown li a {
-  color: white;
+  color: var(--sidenav-buttons-text-color);
   text-decoration: none;
   font-size: 20px;
 }
@@ -318,7 +378,8 @@ code {
 }
 .sidenav_opened .sidenav_button {
   font-size: 18px;
-  background: black;
+  background: var(--sidenav-buttons-background-color);
+  color: var(--sidenav-buttons-text-color);
   align-items: center;
   justify-content: left;
   padding-top: 0;
@@ -345,7 +406,7 @@ code {
   width: 93%;
   height: 3rem;
   place-content: center;
-  color: white;
+  color: var(--sidenav-buttons-text-color);
   text-decoration: none;
   font-size: 30px;
   display: flex;
@@ -377,7 +438,7 @@ code {
   font-size: 29px;
   background: transparent;
   border: 0;
-  color: white;
+  color: var(--sidenav-extend-button-color);
 }
 
 .bottom_bar {
@@ -387,7 +448,7 @@ code {
   place-self: end;
   place-items: center;
   justify-content: center;
-  background: black;
+  background: var(--bottom-bar-background-color);
 }
 
 .message_box {
@@ -396,7 +457,7 @@ code {
   width: 46rem;
   position: relative;
   place-items: center;
-  background: white;
+  background: var(--message-box-background-color);
   border-radius: 6px;
   padding: 0px 1px 0px 0px;
 }
@@ -415,8 +476,8 @@ code {
   width: 3rem;
   min-width: fit-content;
   height: 2.7rem;
-  background: rgb(0, 94, 255);
-  color: white;
+  background: var(--send-button-background-color);
+  color: var(--send-button-text-color);
   border-radius: 9px;
   border: 0;
   font-size: 20px;
@@ -476,7 +537,7 @@ code {
 
 .profile_preview .profile_user_preview {
   display: none;
-  color: white;
+  color: var(--usercard-text-color);
   left: 0px;
   position: relative;
   grid-template-rows: 18px;
@@ -527,14 +588,14 @@ code {
 
 .user_list {
   display: grid;
-  background: black;
-  color: white;
+  background: var(--userlist-background-color);
+  color: var(--userlist-text-color);
   height: 100vh;
   width: 15vw;
   justify-self: right;
   position: fixed;
   right: 0%;
-  border-left: 5px solid #000;
+  border-left: 5px solid var(--userlist-border-color);
   grid-template-rows: repeat(auto-fit, minmax(calc(4em + 9px), 0fr));
   overflow-y: scroll;
   overflow-x: hidden;
@@ -642,12 +703,13 @@ code {
 }
 
 .settings_page {
+  background: var(--background-accent-1);
   display: flex;
 }
 
 .settings_navigation_container {
   margin: 4px;
-  color: black;
+  color: var(--foreground-accent-1);
   width: 20rem;
   height: fit-content;
   min-height: 15rem;
@@ -663,8 +725,8 @@ code {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: white;
-  color: black;
+  background: transparent;
+  color: var(--foreground-accent-1);
   font-size: 15px;
   text-align: left;
   border-radius: 9px;
@@ -742,9 +804,18 @@ code {
 #login_container {
   width: 100vw;
   height: 100vh;
-  color: black;
+  color: var(--foreground-accent-1);
+  background: var(--background-accent-1);
   display: flex;
   transition: 0.5s all ease-in-out;
+}
+
+.login_status {
+  color: red;
+  font-size: 22px;
+  margin: 5rem 0;
+  font-weight: 228;
+  text-shadow: 2px 2px 3px #848484;
 }
 
 #left_login_container {
@@ -786,6 +857,7 @@ code {
 .login_input input {
   width: 100%;
   height: initial;
+  background: transparent;
   outline: none;
   border: 0;
 }
@@ -862,6 +934,7 @@ code {
 
 #Title::selection {
   color: red;
+  text-shadow: 5px 0px 5px #464646;
 }
 
 .background_blur {

@@ -3,8 +3,8 @@
    https://github.com/01000011-00110111/School-Chat */  
 @use 'badges'
 @use 'native'
-  
-$chat_background_color: black
+@use 'themes'
+
 $sidenav_button_background_color: black
   
 @property --background-color
@@ -13,7 +13,13 @@ $sidenav_button_background_color: black
   initial-value: black
 
 :root
-  --alert_color: blue 
+  --background-accent-1: white
+  --background-accent-2: gray
+
+  --foreground-accent-1: black
+  --foreground-accent-2: purple
+  --primary-accent-color: purple
+  @extend %theme
 
 body
   margin: 0
@@ -30,7 +36,7 @@ code
   width: 100vw
   height: 100vh
   display: flex
-  background: $chat_background_color
+  background: var(--background-accent-1)
 
 
 .chat_container
@@ -57,8 +63,8 @@ code
   margin: 0
   height: 7.1vh
   width: 100%
-  background: var(--background-color)
-  color: white
+  background: var(--topbar-background-color)
+  color: var(--topbar-text-color)
   display: flex
   place-items: center
   justify-content: space-between
@@ -71,10 +77,10 @@ code
 
 .sidenav
   position: relative
-  background: black
+  background: var(--sidenav-background-color)
   display: flex
   flex-direction: column
-  color: white
+  color: var(--sidenav-text-color)
   z-index: 2
   height: 100vh
   width: 4.5vw
@@ -110,7 +116,7 @@ code
     text-indent: 30px
 
   .sidenav_dropdown li a
-    color: white
+    color: var(--sidenav-buttons-text-color)
     text-decoration: none
     font-size: 20px
 
@@ -119,7 +125,8 @@ code
 
   .sidenav_button
     font-size: 18px
-    background: $sidenav_button_background_color
+    background: var(--sidenav-buttons-background-color)
+    color: var(--sidenav-buttons-text-color)
     // border: 1px solid gray
     align-items: center
     justify-content: left
@@ -146,7 +153,7 @@ code
   width: 93%
   height: 3rem
   place-content: center
-  color: white
+  color: var(--sidenav-buttons-text-color)
   text-decoration: none
   font-size: 30px
   display: flex
@@ -174,7 +181,7 @@ code
   font-size: 29px
   background: transparent
   border: 0
-  color: white
+  color: var(--sidenav-extend-button-color)
 
 
 .bottom_bar
@@ -184,7 +191,7 @@ code
   place-self: end
   place-items: center
   justify-content: center
-  background: black
+  background: var(--bottom-bar-background-color)
 
 .message_box
   display: flex
@@ -192,7 +199,7 @@ code
   width: 46rem
   position: relative
   place-items: center
-  background: white
+  background: var(--message-box-background-color)
   border-radius: 6px
   padding: 0px 1px 0px 0px
 
@@ -209,8 +216,8 @@ code
   width: 3rem
   min-width: fit-content
   height: 2.7rem
-  background: rgb(0, 94, 255)
-  color: white
+  background: var(--send-button-background-color)
+  color: var(--send-button-text-color)
   border-radius: 9px
   border: 0
   font-size: 20px
@@ -263,7 +270,7 @@ code
 
 .profile_preview .profile_user_preview 
   display: none
-  color: white
+  color: var(--usercard-text-color)
   left: 0px
   position: relative
   grid-template-rows: 18px
@@ -313,14 +320,14 @@ code
 
 .user_list
   display: grid
-  background: black
-  color: white
+  background: var(--userlist-background-color)
+  color: var(--userlist-text-color)
   height: 100vh
   width: 15vw
   justify-self: right
   position: fixed
   right: 0%
-  border-left: 5px solid #000
+  border-left: 5px solid var(--userlist-border-color)
   grid-template-rows: repeat(auto-fit, minmax(calc(4em + 9px), 0fr))
   overflow-y: scroll
   overflow-x: hidden
@@ -415,11 +422,12 @@ code
 // Settings Page CSS
 
 .settings_page
+  background: var(--background-accent-1)
   display: flex
 
 .settings_navigation_container
   margin: 4px
-  color: black
+  color: var(--foreground-accent-1)
   width: 20rem
   height: fit-content
   min-height: 15rem
@@ -435,8 +443,8 @@ code
   display: flex
   align-items: center
   gap: 10px
-  background: white
-  color: black
+  background: transparent
+  color: var(--foreground-accent-1)
   font-size: 15px
   text-align: left
   border-radius: 9px
@@ -505,9 +513,17 @@ code
 #login_container
   width: 100vw
   height: 100vh
-  color: black
+  color: var(--foreground-accent-1)
+  background: var(--background-accent-1)
   display: flex
   transition:  0.5s all ease-in-out
+
+.login_status
+  color: red
+  font-size: 22px
+  margin: 5rem 0
+  font-weight: 228
+  text-shadow: 2px 2px 3px #848484
 
 #left_login_container
   width: 25rem
@@ -543,6 +559,7 @@ code
 .login_input input
   width: 100%
   height: initial
+  background: transparent
   outline: none
   border: 0
 
@@ -608,6 +625,7 @@ code
 
 #Title::selection
   color: red
+  text-shadow: 5px 0px 5px #464646
 
 .background_blur
   position: fixed

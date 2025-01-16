@@ -1,15 +1,27 @@
 // Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in app.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import {Tabs, Tab, TabButton } from "../static/js/react_tabs";
-import { ToggleButton, TextBox, CheckBox, Card, FooterAlert, Modal, LineButton, ColoredBar } from "../static/js/native";
-import { nav_settings } from "../static/js/storage";
+import { ToggleButton, TextBox, CheckBox, Card, FooterAlert, Modal, LineButton, ColoredBar, LineColorDialog, EmailBox } from "../static/js/native";
+import { storage } from "../static/js/storage";
 import { faArrowLeft, faAsterisk, faBell, faCircle, faHomeUser, faLaptopFile, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
 const Settings = () => {
+    const getInitialState = () => {
+        const value = JSON.parse(storage.get("app-nav-settings"))["nav_close_onroom"];
+        return value;
+    }
+
+    const [navState, setNavState] = useState(getInitialState);
+
+    const handleChange = (event) => {
+        setNavState(event.target.value);
+        storage.set("app-nav-settings", `{"nav_close_onroom": ${event.target.value}}`)
+    }
+
     const activate_notifications = () => {
         if (!"Notification" in window) {
             alert("This browser does not support desktop notifications");
@@ -46,33 +58,39 @@ const Settings = () => {
 
             <div className="settings_container">
                 <Tabs>
-                    <Tab label={"My Profile"}>
+                    <Tab label={"My Profile"} style={{display: "flex", gap: "2pc", paddingTop: "12px"}}>
                         <label htmlFor="profile" className="profile_picture_container">
                             {/* <div className="hover_container"></div> */}
                         </label>
 
-                        <Card height={"15rem"} width={"200px"}>
+                        <Card height={"15rem"} width={"200px"} label={"Profile"}>
                             <label htmlFor="profile">
                                 <img src={"/icons/favicon.ico"} className="user_picture" draggable="false" alt="The-Dev"/>
                                 <input type="file" accept="image/*" id="profile"/>
                             </label>
-                            <h3>The-Dev</h3>
+                            <h3 contentEditable spellCheck="false">The-Dev</h3>
                             
-                            <p>Benchy Master</p>
+                            <p contentEditable spellCheck="false">Benchy Master</p>
+                        </Card>
+
+                        <Card label={"Profile Colors"}>
+                            <LineColorDialog title="Username Color" id="username_color"/>
+                            <LineColorDialog title="Role Color" id="role_color"/>
+                            <LineColorDialog title="Message Color" id="message_color"/>
                         </Card>
                     </Tab>
 
                     <Tab label={"Account"}>
-                        <p>Account</p>
+                        <h2>Account</h2>
                         <p>Change your username</p>
                         <TextBox label={"Username"} placeholder={"Enter Username"}/>
 
                         <p>Change your email</p>
-                        <TextBox label={"Email"} placeholder={"Enter Email"}/>
+                        <EmailBox label={"Email"} placeholder={"Enter Email"}/>
                     </Tab>
 
                     <Tab label={"Notifications"}>
-                        <p>Notifications</p>
+                        <h2>Notifications</h2>
                         <ToggleButton onToggle={() => activate_notifications()}/>
                         <CheckBox label={"New Message"} disabled={false}/>
                         <CheckBox label={"User Ping"} disabled={false}/>
@@ -102,9 +120,9 @@ const Settings = () => {
                         <h2>Chat</h2>
 
                         <p>Close side navigational bar on chat room selection</p>
-                        <select>
-                            <option>No</option>
-                            <option>Yes</option>
+                        <select value={navState} onChange={handleChange}>
+                            <option value={false}>No</option>
+                            <option value={true}>Yes</option>
                         </select>
                     </Tab>
 
@@ -115,7 +133,7 @@ const Settings = () => {
                         </a>
                     </Tab>
                 </Tabs>
-                <FooterAlert message={"You have unsaved changes"} buttons={["Discard", "Save"]} func={[() => console.log("Button1"), () => console.log("Button2")]} color={"blue"}/>
+                <FooterAlert message={"You have unsaved changes"} buttons={["Discard", "Save"]} func={[() => console.log("Button1"), () => console.log("Button2")]}/>
             </div>
         </div>
     )
