@@ -3,11 +3,11 @@ import socket from "../../socket";
 
 let user_data = {};
 
-let status_conversion = {
-    "active": "lime",
-    "offline": "red",
-    "idle": "yellow",
-}
+// let status_conversion = {
+//     "active": "lime",
+//     "offline": "red",
+//     "idle": "yellow",
+// }
 
 const cut_replace = (text, length) => {
     if (text == null) {
@@ -65,7 +65,18 @@ const SetUsersList = ({user_name, profile_picture, user_role, index, status}) =>
 }
 
 socket.on('online', (data) => {
-    user_data=data
+    user_data = data;
+    if (data['update'] === 'full') {
+        const userListElement = document.getElementById("user_list");
+        userListElement.innerHTML = ""; // Clear the existing content
+        for (let key in data['data']) {
+            const userListElementHtml = SetUsersList(data['data'][key]);
+            userListElement.appendChild(userListElementHtml); // Append the new content
+        }
+    } else {
+        const userListElementHtml = SetUsersList(data['data']);
+        document.getElementById("user_list").appendChild(userListElementHtml);
+    }
 })
 
 function notifyStatusChange(status) {
@@ -78,8 +89,8 @@ document.addEventListener('visibilitychange', function() {
     } else {
         notifyStatusChange('active');
     }
-});
 
+function notifyStatusChange(status) {
 const setupTimer = (cb, delay) => {
     let id = setInterval(cb, delay);
     return () => clearInterval(id);
@@ -90,5 +101,4 @@ setupTimer(() => {
     let status = document.hidden ? 'idle' : 'active';
     socket.emit('heartbeat', status, rid, suuid);
 }, 30000);
-
 export { SetUsersList, user_data, show_profile_modal }

@@ -16,12 +16,14 @@ socketids = {}
 async def connect(sid, data):
     """Handle startup system."""
     user = User.Users[data["suuid"]]
+    uuid = user.uuid
     user_data = {
         "displayName": user.display_name,
         "role": user.role,
         "profile": user.profile,
         "theme": user.theme
     }
+    update({"status": 'active'}, uuid)
     await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
     await sio.emit("user_data", user_data, to=sid)
     await sio.emit("room_list", {"rooms": Chat.all_chats}, to=sid)
