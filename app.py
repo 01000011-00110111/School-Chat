@@ -1,3 +1,4 @@
+# ruff-ignore
 """app.py: Main webserver file for school-chat, a chat server
     Copyright (C) 2023, 2024  cserver45, cseven
 
