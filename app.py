@@ -20,10 +20,10 @@ from sanic_cors import CORS
 # import socketio
 import socketio_confg
 # ruff-ignore: F401
-from chat import message, rooms, chat # noqa: F401
+from chat import message, rooms, chat # noqa: F401 F811
 from user import login # noqa: F401
 from online import online # noqa: F401
-from private import private, rooms, message # noqa: F401
+from private import private, rooms, message # noqa: F401 F811
 sio = socketio_confg.sio
 
 app = Sanic("School-Chats")
