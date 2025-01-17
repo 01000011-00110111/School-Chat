@@ -1,4 +1,3 @@
-# ruff-ignore
 """app.py: Main webserver file for school-chat, a chat server
     Copyright (C) 2023, 2024  cserver45, cseven
 
@@ -20,10 +19,11 @@ from sanic import Sanic
 from sanic_cors import CORS
 # import socketio
 import socketio_confg
-from chat import message, rooms, chat
-from user import login
-from online import online
-from private import private, rooms, message
+# ruff-ignore: F401
+from chat import message, rooms, chat # noqa: F401
+from user import login # noqa: F401
+from online import online # noqa: F401
+from private import private, rooms, message # noqa: F401
 sio = socketio_confg.sio
 
 app = Sanic("School-Chats")
