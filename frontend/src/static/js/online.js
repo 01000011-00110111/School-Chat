@@ -1,10 +1,14 @@
+import { useState } from "react";
 import socket from "../../socket";
 
-// function setupTimer(callback, interval) {
-//     setInterval(callback, interval);
-// }
-
 let user_data = {};
+let par_user = {};
+
+let status_conversion = {
+    "active": "lime",
+    "offline": "red",
+    "idle": "orange",
+}
 
 const cut_replace = (text, length) => {
     if (text == null) {
@@ -48,7 +52,7 @@ const fetch_user = (user_name, role, profile_picture) => {
     show_profile_modal(user_name, role, profile_picture)
 }
 
-const SetUsersList = ({user_name, profile_picture, user_role, index}) => {
+const SetUsersList = ({user_name, profile_picture, user_role, index, status}) => {
     return (
         <div className="user_card_mini" onClick={() => fetch_user(user_name, user_role, profile_picture)}>
             <img src={profile_picture ? profile_picture : "/icons/favicon.ico"} alt="hi" className="user_profile_picture"/>
@@ -56,19 +60,41 @@ const SetUsersList = ({user_name, profile_picture, user_role, index}) => {
                 <p className="userlist_display_name" key={index}>{user_name}</p>
                 <p className="userlist_role" key={index}>{cut_replace(user_role, 21)}</p>
             </div>
+            <div className="status_indicator" style={{background: status_conversion[status]}}></div>
         </div>
     )
 }
 
 socket.on('online', (data) => {
-    user_data=data
+    par_user = data
+    if (data['update'] === 'partial') {
+        par_user = data;
+    } else {
+        user_data=data
+    }
 })
 
-// setupTimer(() => {
-//     rid = window.sessionStorage.getItem("roomid")
-//     suuid = window.sessionStorage.getItem("suuid")
-//     let status = document.hidden ? 'idle' : 'active';
-//     socket.emit('heartbeat', status, rid, suuid);
-// }, 30000);
+function notifyStatusChange(status) {
+    socket.emit('update', { status: status, suuid: window.sessionStorage.getItem("suuid") });
+}
 
-export { SetUsersList, user_data, show_profile_modal }
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        notifyStatusChange('idle');
+    } else {
+        notifyStatusChange('active');
+    }
+});
+
+const setupTimer = (cb, delay) => {
+    let id = setInterval(cb, delay);
+    return () => clearInterval(id);
+}
+setupTimer(() => {
+    let rid = window.sessionStorage.getItem("roomid");
+    let suuid = window.sessionStorage.getItem("suuid");
+    let status = document.hidden ? 'idle' : 'active';
+    socket.emit('heartbeat', status, rid, suuid);
+}, 30000);
+
+export { SetUsersList, user_data, show_profile_modal, par_user }

@@ -7,5 +7,6 @@ core/config/keys.conf
 chat/__pycache__/*
 user/__pycache__/*
 online/__pycache__/*
+private/__pycache__/*
 /static/
 .vscode/*

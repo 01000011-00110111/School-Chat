@@ -33,12 +33,9 @@ def get_login_data():
     """Returns the login data for a user."""
     return ID.find({}, {"_id": 0, "username": 1, "password": 1, "userId": 1})
 
-def get_diplay_name(uuid):
-    """Returns the display name for a user."""
-    display_name = Customization.find_one({"userId": uuid}, {"_id": 0, "displayName":1})\
-        ["displayName"]
-    uuid = Customization.find_one({"userId": uuid}, {"_id": 0, "userId": 1})["userId"]
-    return (display_name, uuid)
+def get_diplay_names():
+    """Returns all users."""
+    return Customization.find({}, {"_id": 0, "displayName": 1, "userId": 1})
 
 def get_user_data(uuid):
     """Retrieves all data required to login."""
@@ -126,6 +123,8 @@ def get_online_data():
     ]
     try:
         result = list(ID.aggregate(pipeline))
-        return result
+        result_dict = {user["uuid"]: user for user in result}
+        return result_dict
+        # return result
     except IndexError:
         return None
