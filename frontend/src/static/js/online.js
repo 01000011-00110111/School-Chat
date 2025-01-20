@@ -1,13 +1,14 @@
+import { useState } from "react";
 import socket from "../../socket";
 
-
 let user_data = {};
+let par_user = {};
 
-// let status_conversion = {
-//     "active": "lime",
-//     "offline": "red",
-//     "idle": "yellow",
-// }
+let status_conversion = {
+    "active": "lime",
+    "offline": "red",
+    "idle": "orange",
+}
 
 const cut_replace = (text, length) => {
     if (text == null) {
@@ -59,23 +60,17 @@ const SetUsersList = ({user_name, profile_picture, user_role, index, status}) =>
                 <p className="userlist_display_name" key={index}>{user_name}</p>
                 <p className="userlist_role" key={index}>{cut_replace(user_role, 21)}</p>
             </div>
-            <div className="status_indicator" style={{background: status}}>{status}</div>
+            <div className="status_indicator" style={{background: status_conversion[status]}}></div>
         </div>
     )
 }
 
 socket.on('online', (data) => {
-    user_data = data;
-    if (data['update'] === 'full') {
-        const userListElement = document.getElementById("user_list");
-        userListElement.innerHTML = ""; // Clear the existing content
-        for (let key in data['data']) {
-            const userListElementHtml = SetUsersList(data['data'][key]);
-            userListElement.appendChild(userListElementHtml); // Append the new content
-        }
+    par_user = data
+    if (data['update'] === 'partial') {
+        par_user = data;
     } else {
-        const userListElementHtml = SetUsersList(data['data']);
-        document.getElementById("user_list").appendChild(userListElementHtml);
+        user_data=data
     }
 })
 
@@ -89,8 +84,8 @@ document.addEventListener('visibilitychange', function() {
     } else {
         notifyStatusChange('active');
     }
+});
 
-function notifyStatusChange(status) {
 const setupTimer = (cb, delay) => {
     let id = setInterval(cb, delay);
     return () => clearInterval(id);
@@ -101,4 +96,5 @@ setupTimer(() => {
     let status = document.hidden ? 'idle' : 'active';
     socket.emit('heartbeat', status, rid, suuid);
 }, 30000);
-export { SetUsersList, user_data, show_profile_modal }
+
+export { SetUsersList, user_data, show_profile_modal, par_user }

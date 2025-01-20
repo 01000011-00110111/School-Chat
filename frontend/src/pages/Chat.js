@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faPaperPlane, faBars, faBorderAll, faGear, faRightFromBracket, faMessage, faChevronRight, faXmark, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import socket from '../socket'
 import { Chat_object, renderMessage, renderChat, loadChat } from '../static/js/message'
-import { setupTimer, SetUsersList, ShowModal, user_data } from '../static/js/online'
+import { par_user, setupTimer, SetUsersList, ShowModal, user_data } from '../static/js/online'
 
 function Chat() {
     const [chatrooms, setChatooms] = useState([]);
@@ -15,6 +15,15 @@ function Chat() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [rooms, setRooms] = useState([]);
+    const [ostatus, setostatus] = useState("")
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setostatus(par_user['data']['status']);
+        }, 1000)
+
+        return () => clearInterval(interval)
+    })
 
     let suuid = sessionStorage.getItem("suuid");
     let rid = sessionStorage.getItem("roomid");
@@ -210,7 +219,7 @@ function Chat() {
                     <div id='user_list'>
                         {user_data["data"] ? (
                             Object.entries(user_data["data"]).map(([key, user], index) => (
-                                <SetUsersList user_name={user["displayName"]} profile_picture={user["profile"]} user_role={user["role"]} key={index}/>
+                                <SetUsersList user_name={user["displayName"]} profile_picture={user["profile"]} user_role={user["role"]} key={index} status={ par_user['data']['uuid'] === user['uuid'] ? ostatus : user['status']}/>
                             ))
                         ) : (
                             <p>Fetching Data</p>

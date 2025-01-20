@@ -56,7 +56,7 @@ async def online(sid, suuid, status):
     update({"status": status}, uuid)
     # socketids[uuid] = sid
 
-    await sio.emit("online", {"update": 'partial', "data": userlist[uuid]}, to=sid)
+    await sio.emit("online", {"update": 'partial', "data": userlist[uuid]})
 
 
 @sio.on("update")
@@ -67,7 +67,7 @@ async def handle_update(sid, data):
     if suuid in User.Users:
         uuid = User.Users[suuid].uuid
         update(data, uuid)
-        await sio.emit("online", {"update": 'partial', "data": userlist[uuid]}, to=sid)
+        await sio.emit("online", {"update": 'partial', "data": userlist[uuid]})
     else:
         await sio.emit("send_to_login", to=sid)
 
