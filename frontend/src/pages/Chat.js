@@ -8,7 +8,7 @@ import { faPlus, faPaperPlane, faBars, faBorderAll, faGear, faRightFromBracket, 
 import socket from '../socket'
 import { Chat_object, renderMessage, renderChat, loadChat } from '../static/js/message'
 import { setupTimer, SetUsersList, user_data } from '../static/js/online'
-import context_menu from '../static/js/context_menu'
+import context_menu, { handle_create } from '../static/js/context_menu'
 import { storage } from '../static/js/storage'
 
 function Chat() {
@@ -196,7 +196,7 @@ function Chat() {
     
                 <div className='user_list'>
                     <input type='text' placeholder='Search for a user' id='user_search_input'/>
-                    <div id='user_list'>
+                    <ul id='user_list'>
                         {(typeof user_data["data"] === "undefined") ? (
                             <p>Fetching Data</p>
                         ) :  (
@@ -204,7 +204,7 @@ function Chat() {
                                 <SetUsersList user_name={user["displayName"]} profile_picture={user["profile"]} user_role={user["role"]} key={index}/>
                             ))
                         )}
-                    </div>
+                    </ul>
                 </div>
             </div>
   

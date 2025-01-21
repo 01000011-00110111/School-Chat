@@ -47,13 +47,13 @@ const fetch_user = (user_name, role, profile_picture) => {
 
 const SetUsersList = ({user_name, profile_picture, user_role, index}) => {
     return (
-        <div className="user_card_mini" onClick={() => fetch_user(user_name, user_role, profile_picture)}>
+        <li className="user_card_mini" onClick={() => fetch_user(user_name, user_role, profile_picture)}>
             <img src={profile_picture ? profile_picture : "/icons/favicon.ico"} alt="hi" className="user_profile_picture"/>
             <div className="userlist_user_details">
                 <p className="userlist_display_name" key={index}>{user_name}</p>
                 <p className="userlist_role" key={index}>{cut_replace(user_role, 21)}</p>
             </div>
-        </div>
+        </li>
     )
 }
 

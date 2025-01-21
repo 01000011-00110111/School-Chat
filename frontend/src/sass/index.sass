@@ -13,10 +13,10 @@ $sidenav_button_background_color: black
   initial-value: black
 
 :root
-  --background-accent-1: white
-  --background-accent-2: gray
+  --background-accent-1: black
+  --background-accent-2: #4e4e4e
 
-  --foreground-accent-1: black
+  --foreground-accent-1: white
   --foreground-accent-2: purple
   --primary-accent-color: purple
   @extend %theme
@@ -335,6 +335,7 @@ code
 
 #user_list
   height: 100vh
+  padding: 0
 
 #user_search_input
   margin-top: 11px
@@ -346,6 +347,7 @@ code
   height: 2rem
   border-radius: 6px
   border: 1px solid aliceblue
+  text-indent: 6px
 
 .users_container
   width: 100%
@@ -418,6 +420,26 @@ code
 
 .message_content_container p
   margin: 0.5rem 0px
+
+.native_context_menu
+  top: 0px
+  left: 0px
+  width: 330px
+  height: 160px
+  background: #ffffffd4
+  position: fixed
+  display: grid
+  z-index: 5
+  border-radius: 13px
+
+.native_context_menu button
+  background: transparent
+  color: black
+  font-size: 16px
+  font-weight: 350
+  border: 0
+  text-align: left
+  text-indent: 14px
 
 // Settings Page CSS
 
@@ -527,7 +549,7 @@ code
 
 #left_login_container
   width: 25rem
-  border-right: 2px solid black
+  border-right: 2px solid var(--background-accent-2)
   display: grid
   justify-content: center
   grid-template-columns: 87%
@@ -560,6 +582,7 @@ code
   width: 100%
   height: initial
   background: transparent
+  color: var(--foreground-accent-1)
   outline: none
   border: 0
 
@@ -584,6 +607,10 @@ code
   border-radius: 12px
   font-size: 27px
   font-weight: bold
+  box-shadow: 1px 2px 6px 0px #5f5f5f
+
+.login_button:active
+  box-shadow: 0px 1px 3px 0px #505050
 
 .panel_text p
   color: gray
