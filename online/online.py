@@ -65,7 +65,7 @@ async def handle_update(sid, data):
     # print("update", data)
     suuid = data['suuid']
     if suuid in User.Users:
-        uuid = User.Users[suuid].uuid
+        uuid = User.Users[suuid].oline_id
         update(data, uuid)
         await sio.emit("online", {"update": 'partial', "data": userlist[uuid]})
     else:

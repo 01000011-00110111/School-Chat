@@ -9,6 +9,9 @@ from user.user import User
 from user.login import check_suuid
 from socketio_confg import sio
 
+
+@sio.on("leave_room_private")
+
 def format_userlist(uuid1, uuid2):
     """Formats the userlist value."""
     return sorted([uuid1, uuid2], key=lambda x: (not x.isdigit(), x.lower()))

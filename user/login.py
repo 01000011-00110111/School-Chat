@@ -6,7 +6,6 @@ from socketio_confg import sio
 from user.user import User
 import user.database as database
 
-
 @sio.on("login")
 async def login(sid, data):
     """
