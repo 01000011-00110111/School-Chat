@@ -10,13 +10,14 @@ from datetime import datetime
 # pylint: disable=W0406
 
 # from socketio_confg import sio
-from user.database import get_login_data
+from user.database import get_login_data, get_diplay_names
 
 
 class User:
     """Represents a logged in user."""
     # pylint: disable=too-many-instance-attributes
     login_data = {(data["username"], data["password"]): data["userId"] for data in get_login_data()}
+    usernames = {data["displayName"]: data["userId"] for data in get_diplay_names()}
     Users = {}
 
     def __init__(self, username, user, userid):
@@ -25,6 +26,7 @@ class User:
         self.display_name = user['displayName']
         self.perm = user['SPermission']
         self.uuid = userid
+        self.onlineId = user['onlineId']
         self.suuid = str(uuid.uuid4())
         self.status = user['status']
         self.active = True

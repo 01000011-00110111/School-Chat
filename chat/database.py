@@ -23,17 +23,10 @@ else:
     client = pymongo.MongoClient(mongo_pass)
 
 
-# accounts/user data
-# Accounts = client.Accounts
-# Permission = client.Accounts.Permission
-# Customization = client.Accounts.Customization
-# ID = client.Accounts.Accounts
-
 # chat room data
 Rooms = client.Rooms.Rooms
 Access = client.Rooms.Permission
 Messages = client.Rooms.Messages
-Private = client.Rooms.Private
 
 
 def get_room(roomid):
