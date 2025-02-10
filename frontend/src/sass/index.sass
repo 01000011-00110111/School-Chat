@@ -445,6 +445,7 @@ code
 
 .settings_page
   background: var(--background-accent-1)
+  color: var(--foreground-accent-1)
   display: flex
 
 .settings_navigation_container
@@ -481,9 +482,10 @@ code
 .settings_container select
   width: 22rem
   height: 3rem
-  border: 2px solid black
+  border: 2px solid var(--background-accent-2)
   border-radius: 6px
-  background: white
+  background: var(--background-accent-1)
+  color: var(--foreground-accent-1)
   font-size: 17px
 
 .profile_picture_container
@@ -750,3 +752,100 @@ code
 
 .show_modal
   display: grid !important
+
+.signup-main
+  background: linear-gradient(132deg, #181a1e, #000, #141414, #282828, #181a1e)
+  color: white
+  width: 100vw
+  height: 100vh
+
+.signup-prompt
+  width: 100vw
+  height: 88vh
+  display: grid
+  justify-content: center
+  align-content: space-around
+  grid-template-columns: 72vw
+  animation: "signup-appear" 1s ease-in alternate
+
+@keyframes signup-appear
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+.signup-prompt .prompt-step
+  justify-items: center
+  display: grid
+  height: fit-content
+  min-height: 46vh
+  gap: 17px
+
+.signup-prompt .textbox
+  width: 38rem !important
+
+.signup-prompt .textbox input
+  color: white
+
+.signup-bar
+  min-height: 8vh
+  display: flex
+  align-items: center
+  justify-content: space-between
+  color: white
+
+.signup-bar a
+  align-content: center
+  display: flex
+  align-items: center
+  gap: 0.6rem
+  text-decoration: none
+  color: #b5b5b5
+  transition:0.3s ease-in-out
+  cursor: pointer
+
+.signup-bar a:hover
+  color: white
+  scale: 1.1
+
+.signup-bar a::selection
+  background: transparent
+
+.navigate-button
+  border: 0
+  width: 10em
+  height: 37px
+  border-radius: 6px
+  color: white
+  background: #35353500
+  box-shadow: 1px 1px 3px 1px #313131
+  transition: 0.3s ease-in-out
+
+.navigate-button:hover
+  scale: 1.1
+
+.step-count
+  display: grid
+  justify-items: center
+  align-content: center
+  color: gray
+  grid-template-rows: 3rem 2rem
+
+.progressbar
+  border-radius: 4px
+  width: 3.5rem
+  height: 0.5rem
+  background: #ededed
+  // background "#29c3ff" when task completed
+  box-shadow: 1px 1px 4px black inset
+
+.step-container
+  display: flex
+  gap: 12px
+  height: fit-content
+  width: fit-content
+
+.dialog-content
+  display: flex
+  height: fit-content
+  gap: 1rem

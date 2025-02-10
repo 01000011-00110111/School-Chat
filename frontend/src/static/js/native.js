@@ -1,4 +1,7 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {useState} from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowUpRightFromSquare, faChevronLeft, faDownload, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 
 const ToggleButton = ( {onToggle = function(){}} ) => {
     const [isToggled, setIsToggled] = useState(false);
@@ -33,11 +36,11 @@ const ToggleButton = ( {onToggle = function(){}} ) => {
     );
 }
 
-const TextBox = ({label, placeholder, default_value}) => {
+const TextBox = ({label, placeholder, default_value, hidden, hidden_char}) => {
     return (
         <fieldset className="textbox">
             <legend>{label}</legend>
-            <input type="text" placeholder={placeholder} value={null ? null : default_value}/>
+            <input type={hidden ? "password" : "text"} placeholder={placeholder} value={null ? null : default_value} />
         </fieldset>
     )
 }
@@ -126,4 +129,76 @@ function LineColorDialog({title = "", id = "", className = ""}) {
     )
 }
 
-export {ToggleButton, TextBox, EmailBox, CheckBox, Card, FooterAlert, Modal, LineButton, ColoredBar, LineColorDialog}
+function Prompt({children}) {
+    const [step, currentStep] = useState(0);
+    
+    return (
+        <div className="signup-prompt">
+            <div className="signup-bar">
+                <a onClick={() => step === 0 ? window.location.href = '/' : currentStep(step-1)} title={step === 0 ? "Return to login screen" : "Return to previous step"}>
+                <FontAwesomeIcon icon={faChevronLeft}/>
+                {step === 0 ? "Cancel" : "Back"}
+                </a>
+
+                <h3>{children[step]["props"]["title"]}</h3>
+
+                <FontAwesomeIcon icon={faUserCircle} fontSize={27}/>
+            </div>
+
+            {children[step]}
+
+            <div>
+                <span className="step-count">
+                    <p>Step: {step+1}/{children.length}</p>
+
+                    <div className="step-container">
+                        {children.map((num, key) => (
+                            <span className="progressbar" style={step === key ? {background: "#29c3ff"} : {background: ""}} key={key} onClick={() => currentStep(key)}></span>
+                        ))}
+                    </div>
+
+                    <button className="navigate-button" onClick={() => step+1 === children.length ? currentStep(0) : currentStep(step+1)}>
+                        {step+1 === children.length ? "Finish" : "Continue"}
+                    </button>
+                </span>
+            </div>
+
+        </div>
+    )
+}
+
+function StepTitle() {
+    return (
+        <h3>{}</h3>
+    )
+}
+
+function PromptStep({children, title}) {
+    return (
+        <span className="prompt-step">
+            {children}
+        </span>
+    )
+}
+
+function WebEmbed({ url, title, options = {} }) {
+    return (
+        <div className="native-web-embed">
+            <iframe title={title} src={url}/>
+            <div className="native-web-embed-controls">
+                <div className="button-container">
+                    <a href={url} target="_blank" rel="noreferrer">
+                        <FontAwesomeIcon icon={faArrowUpRightFromSquare}/>
+                    </a>
+
+                    <a href={url} download={"TERMS AND CONDITIONS.pdf"}>
+                        <FontAwesomeIcon icon={faDownload }/>
+                    </a>
+                </div>
+                <p>{title}</p>
+            </div>
+        </div>
+    )
+}
+
+export {ToggleButton, TextBox, EmailBox, CheckBox, Card, FooterAlert, Modal, LineButton, ColoredBar, LineColorDialog, Prompt, PromptStep, StepTitle, WebEmbed}
