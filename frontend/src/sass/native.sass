@@ -79,7 +79,7 @@
 .checkmark
     width: 1.3rem
     height: 1.3rem
-    border: 1.4px solid black
+    border: 1.4px solid var(--background-accent-2)
     border-radius: 4px
     display: flex
 
@@ -157,7 +157,7 @@
     justify-content: left
     text-indent: 7px
     border-radius: 10px
-    border: 1.5px solid black
+    border: 1.5px solid var(--background-accent-2)
     padding: 5px
     margin: 4px 0
 
@@ -179,3 +179,41 @@
     border: none
     border-radius: 10px
     padding: 0
+
+.native-web-embed
+    width: 70vw
+    height: 48vh
+    border: 1px solid gray
+    border-radius: 9px
+
+.native-web-embed iframe
+    border: 0
+    width: inherit
+    height: 26.2rem
+    border-radius: inherit
+
+.native-web-embed-controls
+    background: #00000024
+    height: 5vh
+    border-radius: 0px 0px 8px 8px
+    display: flex
+    align-content: center
+    justify-content: space-between
+    padding: 0 21px 0 12px
+
+.button-container
+    align-items: center
+    width: fit-content
+    display: flex
+    gap: 5px
+
+.button-container a
+    border: 0.4px solid gray
+    border-radius: 8px
+    background: black
+    color: white
+    width: 2.5rem
+    height: 2.5rem
+    display: flex
+    align-items: center
+    justify-content: center
