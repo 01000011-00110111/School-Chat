@@ -34,3 +34,7 @@ def load_private_rooms():
         print(pmid, userlist)
         private_rooms[tuple(userlist)] = pmid
     return private_rooms
+
+def get_pmids():
+    """retuns all plivate room ids and userlist"""
+    return Private.find({}, {"_id": 0, "userIds": 1, "pmid": 1})

@@ -26,6 +26,7 @@ class User:
         self.display_name = user['displayName']
         self.perm = user['SPermission']
         self.uuid = userid
+        self.onlineId = user['onlineId']
         self.suuid = str(uuid.uuid4())
         self.status = user['status']
         self.active = True

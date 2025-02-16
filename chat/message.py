@@ -4,6 +4,7 @@
 """
 from datetime import datetime
 from chat.chat import Chat
+from chat.filtering import run_filter_chat
 from socketio_confg import sio
 
 
@@ -12,20 +13,7 @@ async def client_message(_, data):
     """
     This function is called when a client sends a message to the server.
     """
-    # print(f"Message from client {sid}: {data}")
-    profile = "<img class='user_profile_picture' src='/icons/favicon.ico'></img>"
-    user_string = "<p style='color: #ff7f00;'>[SYSTEM]</p>"
-    message_string = f"<p style='color: #ffffff;'>{data['message']}</p>"
-    role_string = "<p style='background:\
-#ff7f00; color: #ffffff;' class='badge'>System</p>"
-    date_str = datetime.now().strftime("%a %I:%M %p ")
-    message = {
-        'profile': profile,
-        'user': user_string,
-        'message': message_string,
-        'badges': [role_string, None],
-        'date': date_str
-    }
+    message = run_filter_chat(data["user"], data["room"], data["message"], data["roomid"], data["user"]["uuid"])
     print(message)
     await Chat.get_chat(data["roomid"]).send_message(message)
     # await sio.emit("message", {"message": response})

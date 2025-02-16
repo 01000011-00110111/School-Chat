@@ -35,7 +35,8 @@ function App() {
         <Router>
             <Routes>
               <Route path='/' element={<Login/>}/>  
-              <Route path='/chat/:id' element={<Chat/>}/>
+              <Route path='/chat' element={<Chat/>}/>
+              {/* <Route path='/chat/:id' element={<Chat/>}/> */}
               <Route path='/settings' element={<Settings/>}/>
               <Route path="/login" element={<Login/>}/>
               <Route path="/portal" element={

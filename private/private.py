@@ -10,6 +10,7 @@ from socketio_confg import sio
 from private import database
 # import private.database as database
 
+pmids = database.get_pmids()
 
 class Private:
     """The Private chat class."""

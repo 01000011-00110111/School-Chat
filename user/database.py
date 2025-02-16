@@ -4,6 +4,7 @@
 """
 
 import configparser
+import uuid
 
 # import hashlib
 # import secrets
@@ -90,6 +91,8 @@ def get_user_data(uuid):
 
 def get_online_data():
     """Retrieves all data required to login."""
+    import uuid
+
     pipeline = [
         {
             "$lookup": {
@@ -110,19 +113,63 @@ def get_online_data():
         {
             "$project": {
                 "_id": 0,
-                "uuid": "$userId",
+                "onlineId": "$onlineId",
                 "status": "$status",
                 "role": {"$arrayElemAt": ["$customization.role", 0]},
                 "profile": {"$arrayElemAt": ["$customization.profile", 0]},
                 "displayName": {"$arrayElemAt": ["$customization.displayName", 0]},
-                # "roleColor": {"$arrayElemAt": ["$customization.roleColor", 0]},
-                # "userColor": {"$arrayElemAt": ["$customization.userColor", 0]},
                 "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
             }
         },
     ]
     try:
         result = list(ID.aggregate(pipeline))
-        return result
+        result_dict = {user["onlineId"]: user for user in result}
+        return result_dict
     except IndexError:
         return None
+
+
+def add_accounts(data):
+    """Adds a single account to the database."""
+    username = data["username"]
+    password = data["password"]
+    userid = data["userid"]
+    email = data["email"]
+    role = data["role"]
+    displayname = data["displayname"]
+    # locked = data["locked"]
+
+    while True:
+        onlineid = str(uuid.uuid4())[:8]
+        if onlineid not in [user["onlineId"] for user in ID.find()]:
+            break
+
+    id_data = {
+        "userId": userid,
+        "onlineId": onlineid,
+        "username": username,
+        "password": password,
+        "email": email,
+        "status": "offline",
+    }
+    customization_data = {
+        "userId": userid,
+        "role": role,
+        "profile": "/icons/favicon.ico",
+        "theme": "dark",
+        "displayName": displayname,
+        "messageColor": "#ffffff",
+        "roleColor": "#e86c20",
+        "userColor": "#ffffff",
+    }
+    permission_data = {
+        "userId": userid,
+        "warned": "0",
+        "SPermission": [""],
+        "themeCount": 0,
+    }
+
+    ID.insert_one(id_data)
+    Customization.insert_one(customization_data)
+    Permission.insert_one(permission_data)
