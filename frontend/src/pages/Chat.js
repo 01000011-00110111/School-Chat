@@ -7,9 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faPaperPlane, faBars, faBorderAll, faGear, faRightFromBracket, faMessage, faChevronRight, faXmark, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import socket from '../socket'
 import { Chat_object, renderMessage, renderChat, loadChat } from '../static/js/message'
-import { setupTimer, SetUsersList, user_data } from '../static/js/online'
 import context_menu, { handle_create } from '../static/js/context_menu'
 import { storage } from '../static/js/storage'
+import { par_user, setupTimer, SetUsersList, ShowModal, user_data } from '../static/js/online'
 
 function Chat() {
     const [chatrooms, setChatooms] = useState([]);
@@ -17,12 +17,21 @@ function Chat() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [rooms, setRooms] = useState([]);
+    const [ostatus, setostatus] = useState("")
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setostatus(par_user['data']['status']);
+        }, 1000)
+
+        return () => clearInterval(interval)
+    })
 
     let suuid = sessionStorage.getItem("suuid");
     let rid = sessionStorage.getItem("roomid");
 
     useEffect(() => {
-        socket.emit("chatpage");
+        socket.emit("chatpage", { suuid: suuid });
     }, []);
 
     useEffect(() => {
@@ -100,6 +109,23 @@ function Chat() {
         };
     }, []);
 
+
+    useEffect(() => {
+        socket.on("user_data", (data) => {
+            const profilePreview = document.querySelector('.profile_user_preview');
+            const profileButton = document.getElementById('profile_button');
+            // const profileStatus = profilePreview.querySelector('.profile_status');
+            profileButton.src = data["profile"] ? data["profile"] : "/icons/favicon.ico";
+            profilePreview.querySelector('p').innerHTML = data["displayName"];
+            // profileStatus.querySelector('div').style.background = data["status"] === 'online' ? 'lime' : 'red';
+            // profileStatus.querySelector('p').innerHTML = data["status"];
+        });
+    
+        return () => {
+            socket.off("user_data");
+        };
+    }, []);
+
     useEffect(() => {
         socket.on("send_to_login", (data) => {
             suuid = '';
@@ -124,11 +150,11 @@ function Chat() {
     });
   
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const currentRoom = window.location.pathname.split('/')[2] || 'Main';
-      updateChatRoom(rid ,currentRoom);
-      // socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
-    })
+    // document.addEventListener('DOMContentLoaded', () => {
+    //   const currentRoom = window.location.pathname.split('/')[2] || 'Main';
+    //   updateChatRoom(rid ,currentRoom);
+    // //   socket.emit("join_room", { roomid: 'ilQvQwgOhm9kNAOrRqbr', suuid: suuid });
+    // })
   
     const open_sidenav = () => {
       const sidenav = document.getElementsByClassName("sidenav")[0];
@@ -188,6 +214,19 @@ function Chat() {
                     </button>
                     <h2 id='room_display'>loading...</h2>
                 </div>
+
+                <div className='profile_card'>
+                    <div className='profile_preview'>
+                        <img className='profile_button' id='profile_button' src='/icons/favicon.ico'/>
+                        <div className='profile_user_preview'>
+                            <p>loading...</p>
+                            <div className='profile_status'>
+                                <div style={{background: "lime"}}></div>
+                                <p>Online</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div className='main_chat_body'>
@@ -196,13 +235,13 @@ function Chat() {
     
                 <div className='user_list'>
                     <input type='text' placeholder='Search for a user' id='user_search_input'/>
-                    <ul id='user_list'>
-                        {(typeof user_data["data"] === "undefined") ? (
-                            <p>Fetching Data</p>
-                        ) :  (
-                            user_data["data"].map((user, index) => (
-                                <SetUsersList user_name={user["displayName"]} profile_picture={user["profile"]} user_role={user["role"]} key={index}/>
+                    <div id='user_list'>
+                        {user_data["data"] ? (
+                            Object.entries(user_data["data"]).map(([key, user], index) => (
+                                <SetUsersList user_name={user["displayName"]} profile_picture={user["profile"]} user_role={user["role"]} key={index} status={ par_user['data']['uuid'] === user['uuid'] ? ostatus : user['status']}/>
                             ))
+                        ) : (
+                            <p>Fetching Data</p>
                         )}
                     </ul>
                 </div>

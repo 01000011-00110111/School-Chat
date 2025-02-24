@@ -9,11 +9,14 @@ from user.user import User
 from user.login import check_suuid
 from socketio_confg import sio
 
+
+@sio.on("leave_room_private")
+
 def format_userlist(uuid1, uuid2):
     """Formats the userlist value."""
     return sorted([uuid1, uuid2], key=lambda x: (not x.isdigit(), x.lower()))
 
-@sio.on("join_room")
+@sio.on("join_room_private")
 async def join_room(sid, data):
     """
     This function is called when a client joins a room.
