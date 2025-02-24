@@ -112,10 +112,12 @@
     place-items: center
     justify-content: space-between
     padding: 0 12px 0 12px
-    position: absolute
+    position: fixed
     bottom: 1%
     left: 1.3%
     box-shadow: 2px 2px 7px black
+    transition: 0.5s ease-in-out
+    transform: translate(0, 10vh)
 
 .footer_alert .left_container
     color: white
@@ -133,6 +135,10 @@
     font-size: 1rem
     color: white
     background: #00000069
+
+.footer_alert.on_screen
+    transform: translate(0, 0vh)
+    position: absolute
 
 .line_button
     border-radius: 12px

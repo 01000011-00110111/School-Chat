@@ -36,28 +36,28 @@ const ToggleButton = ( {onToggle = function(){}} ) => {
     );
 }
 
-const TextBox = ({label, placeholder, default_value, hidden, hidden_char}) => {
+const TextBox = ({label, placeholder, default_value, hidden, hidden_char, onUpdate, name}) => {
     return (
         <fieldset className="textbox">
             <legend>{label}</legend>
-            <input type={hidden ? "password" : "text"} placeholder={placeholder} value={null ? null : default_value} />
+            <input type={hidden ? "password" : "text"} placeholder={placeholder} value={null ? null : default_value} onInput={onUpdate} name={name}/>
         </fieldset>
     )
 }
 
-const EmailBox = ({label, placeholder, default_value}) => {
+const EmailBox = ({label, placeholder, default_value, onUpdate, name}) => {
     return (
         <fieldset className="textbox">
             <legend>{label}</legend>
-            <input type="email" placeholder={placeholder} value={null ? null : default_value}/>
+            <input type="email" placeholder={placeholder} value={null ? null : default_value} onInput={onUpdate} name={name}/>
         </fieldset>
     )
 }
 
-const CheckBox = ({ label, checked, disabled }) => {
+const CheckBox = ({ label, checked, disabled, onUpdate, name, value, onInput }) => {
     return (
         <label className="native_checkbox">
-            <input type="checkbox" className="check_input" checked={checked} disabled={disabled}/>
+            <input type="checkbox" className="check_input" checked={checked} disabled={disabled} onChange={onUpdate} name={name} value={value} onInput={onInput}/>
             <span className="checkmark"></span>
             {label}
         </label>
@@ -120,10 +120,10 @@ function ColoredBar({colors = []}) {
     )
 }
 
-function LineColorDialog({title = "", id = "", className = ""}) {
+function LineColorDialog({title = "", id = "", className = "", onUpdate, default_value}) {
     return (
         <label className="color_dialog" htmlFor={id}>
-            <input type="color" id={id} className={className}/>
+            <input type="color" id={id} className={className} onInput={onUpdate} value={null ? null : default_value}/>
             <p>{title}</p>
         </label>
     )
