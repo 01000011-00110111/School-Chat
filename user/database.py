@@ -38,6 +38,10 @@ def get_diplay_names():
     """Returns all users."""
     return Customization.find({}, {"_id": 0, "displayName": 1, "userId": 1})
 
+def username_exists(username):
+    """Checks if a username already exists in the database."""
+    return ID.find_one({"username": username})
+
 def get_user_data(uuid):
     """Retrieves all data required to login."""
     pipeline = [
@@ -91,7 +95,6 @@ def get_user_data(uuid):
 
 def get_online_data():
     """Retrieves all data required to login."""
-    import uuid
 
     pipeline = [
         {
@@ -134,11 +137,19 @@ def add_accounts(data):
     """Adds a single account to the database."""
     username = data["username"]
     password = data["password"]
-    userid = data["userid"]
     email = data["email"]
     role = data["role"]
-    displayname = data["displayname"]
+    displayname = data["displayName"]
+    user_color = data["userColor"]
+    role_color = data["roleColor"]
+    message_color = data["messageColor"]
+    print(username, password, email, role, displayname, user_color, role_color, message_color)
     # locked = data["locked"]
+
+    while True:
+        userid = str(uuid.uuid4())[:8]
+        if userid not in [user["userId"] for user in ID.find()]:
+            break
 
     while True:
         onlineid = str(uuid.uuid4())[:8]
@@ -159,9 +170,9 @@ def add_accounts(data):
         "profile": "/icons/favicon.ico",
         "theme": "dark",
         "displayName": displayname,
-        "messageColor": "#ffffff",
-        "roleColor": "#e86c20",
-        "userColor": "#ffffff",
+        "messageColor": message_color,
+        "roleColor": role_color,
+        "userColor": user_color,
     }
     permission_data = {
         "userId": userid,
@@ -173,3 +184,4 @@ def add_accounts(data):
     ID.insert_one(id_data)
     Customization.insert_one(customization_data)
     Permission.insert_one(permission_data)
+    # return userid

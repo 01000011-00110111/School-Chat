@@ -1,6 +1,6 @@
 from socketio_confg import sio
 from user.user import User
-from user.database import database
+from user import database
 
 @sio.on("signup")
 async def signup(sid, data):
@@ -25,12 +25,9 @@ async def signup(sid, data):
         await sio.emit("signup", {'suuid': False, 'status': 'failed', 'reason': 'weak_password'}, to=sid)
         return
 
-    # Attempt to sign up
-    uuid = User.sign_up(username, password)
+    database.add_accounts(data)
 
-    if uuid:
-        user = User(username, database.get_user_data(uuid), uuid)
-        User.Users[user.suuid] = user
-        await sio.emit("signup", {'suuid': user.suuid, 'status': 'successful'}, to=sid)
-    else:
-        await sio.emit("signup", {'suuid': False, 'status': 'failed', 'reason': 'internal_error'}, to=sid)
+    # if uuid:
+    #     await sio.emit("signup", {'suuid': user.suuid, 'status': 'successful'}, to=sid)
+    # else:
+    #     await sio.emit("signup", {'suuid': False, 'status': 'failed', 'reason': 'internal_error'}, to=sid)

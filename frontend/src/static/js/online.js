@@ -61,7 +61,7 @@ const SetUsersList = ({user_name, profile_picture, user_role, index, status}) =>
                 <p className="userlist_role" key={index}>{cut_replace(user_role, 21)}</p>
             </div>
             <div className="status_indicator" style={{background: status_conversion[status]}}></div>
-        </div>
+        </li>
     )
 }
 

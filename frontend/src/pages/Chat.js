@@ -243,7 +243,7 @@ function Chat() {
                         ) : (
                             <p>Fetching Data</p>
                         )}
-                    </ul>
+                    </div>
                 </div>
             </div>
   

@@ -6,7 +6,6 @@
 import re
 from datetime import datetime
 from better_profanity import profanity
-from flask_socketio import emit
 
 # import cmds
 # import log
@@ -118,7 +117,7 @@ def failed_message(reason_code, roomid):
         8: "No sending code snippets in chat.",
     }
     fail_msg = fail_reasons.get(reason_code, "Unknown error occurred.")
-    emit("message_chat", (format_system_msg(fail_msg), roomid), namespace="/")
+    # emit("message_chat", (format_system_msg(fail_msg), roomid), namespace="/")
 
 def run_filter_chat(user, room, message, roomid, userid):
     """Filters messages before sending in a chat room."""
