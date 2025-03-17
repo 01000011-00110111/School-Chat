@@ -15,12 +15,42 @@ const Settings = () => {
         return value;
     }
 
+    const on_update = (event = Event) => {
+        console.log(event)
+        console.log("Changes detected!")
+        document.querySelectorAll(".footer_alert")[0].classList.add("on_screen");
+    }
+
     const [navState, setNavState] = useState(getInitialState);
+    const [formInfo, setformInfo] = useState({
+        displayName: "The-Dev",
+        role: "BenchyMaster",
+        usernameColor: "#000000",
+        roleColor: "#000000",
+        messageColor: "#000000",
+        username: "C7",
+        email: "testemail@123.com",
+        newMessagePing: false,
+        userPing: true,
+        privateMessagePing: false,
+    });
 
     const handleChange = (event) => {
         setNavState(event.target.value);
         storage.set("app-nav-settings", `{"nav_close_onroom": ${event.target.value}}`)
+        on_update(event);
     }
+
+    const setInformation = (event) => {
+        const {name, value} = event.target;
+        setformInfo(prevState => ({
+            ...prevState,
+            [name]: value,
+        }));
+        console.log(value)
+        console.log(formInfo.newMessagePing)
+        on_update(event);
+    };
 
     const activate_notifications = () => {
         if (!"Notification" in window) {
@@ -66,40 +96,40 @@ const Settings = () => {
                         <Card height={"15rem"} width={"200px"} label={"Profile"}>
                             <label htmlFor="profile">
                                 <img src={"/icons/favicon.ico"} className="user_picture" draggable="false" alt="The-Dev"/>
-                                <input type="file" accept="image/*" id="profile"/>
+                                <input type="file" accept="image/*" id="profile" onChange={(e) => on_update(e)}/>
                             </label>
-                            <h3 contentEditable spellCheck="false">The-Dev</h3>
+                            <input spellCheck="false" type="text" value={formInfo.displayName} onChange={setInformation} name="displayName" id="displayname_input" placeholder="Enter Display Name"/>
                             
-                            <p contentEditable spellCheck="false">Benchy Master</p>
+                            <input spellCheck="false" type="text" value={formInfo.role} onChange={setInformation} name="role" id="role_input" placeholder="Enter Role"/>
                         </Card>
 
                         <Card label={"Profile Colors"}>
-                            <LineColorDialog title="Username Color" id="username_color"/>
-                            <LineColorDialog title="Role Color" id="role_color"/>
-                            <LineColorDialog title="Message Color" id="message_color"/>
+                            <LineColorDialog title="Username Color" id="username_color" onUpdate={setInformation} name="usernameColor" default_value={formInfo.usernameColor}/>
+                            <LineColorDialog title="Role Color" id="role_color" onUpdate={setInformation} name="roleColor" default_value={formInfo.roleColor}/>
+                            <LineColorDialog title="Message Color" id="message_color" onUpdate={setInformation} name="messageColor" default_value={formInfo.messageColor}/>
                         </Card>
                     </Tab>
 
                     <Tab label={"Account"}>
                         <h2>Account</h2>
                         <p>Change your username</p>
-                        <TextBox label={"Username"} placeholder={"Enter Username"}/>
+                        <TextBox label={"Username"} placeholder={"Enter Username"} default_value={formInfo.username} onUpdate={setInformation} name="username"/>
 
                         <p>Change your email</p>
-                        <EmailBox label={"Email"} placeholder={"Enter Email"}/>
+                        <EmailBox label={"Email"} placeholder={"Enter Email"} default_value={formInfo.email} onUpdate={setInformation} name="email"/>
                     </Tab>
 
                     <Tab label={"Notifications"}>
                         <h2>Notifications</h2>
                         <ToggleButton onToggle={() => activate_notifications()}/>
-                        <CheckBox label={"New Message"} disabled={false}/>
-                        <CheckBox label={"User Ping"} disabled={false}/>
-                        <CheckBox label={"Private Message"} disabled={false}/>
+                        <CheckBox label={"New Message"} disabled={false} onUpdate={setInformation} name="newMessagePing" checked={formInfo.newMessagePing}/>
+                        <CheckBox label={"User Ping"} disabled={false} onUpdate={setInformation} name="userPing" checked={formInfo.userPing}/>
+                        <CheckBox label={"Private Message"} disabled={false} onUpdate={setInformation} name="privateMessagePing" checked={formInfo.privateMessagePing}/>
                     </Tab>
 
                     <Tab label={"Appearance"}>
                         <h2>Appearance</h2>
-                        <CheckBox label={"Sync theme across devices"}/>
+                        <CheckBox label={"Sync theme across devices"} onUpdate={(e) => on_update(e)}/>
                         <Modal>
                             <LineButton>
                                 <div style={{display: "flex", alignItems: "center", gap: "0.4rem"}}>
@@ -133,7 +163,7 @@ const Settings = () => {
                         </a>
                     </Tab>
                 </Tabs>
-                <FooterAlert message={"You have unsaved changes"} buttons={["Discard", "Save"]} func={[() => console.log("Button1"), () => console.log("Button2")]}/>
+                <FooterAlert message={"You have unsaved changes"} buttons={["Discard", "Save"]} func={[() => console.log("Button1"), () => document.querySelectorAll(".footer_alert")[0].classList.remove("on_screen")]}/>
             </div>
         </div>
     )
