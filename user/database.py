@@ -143,11 +143,11 @@ def add_accounts(data):
     user_color = data["userColor"]
     role_color = data["roleColor"]
     message_color = data["messageColor"]
-    print(username, password, email, role, displayname, user_color, role_color, message_color)
+    # print(username, password, email, role, displayname, user_color, role_color, message_color)
     # locked = data["locked"]
 
     while True:
-        userid = str(uuid.uuid4())[:8]
+        userid = str(uuid.uuid4())
         if userid not in [user["userId"] for user in ID.find()]:
             break
 
