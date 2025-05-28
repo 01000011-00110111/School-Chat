@@ -127,21 +127,24 @@ def run_filter_chat(user, roomid, message, suuid):
     room = Chat.get_chat(roomid)
     if suuid != user.suuid:
         return ('permission', 7, False)
-    
+
 
     perms = check_permissions(user)
     if room.config["locked"] is True and perms not in ['dev', 'admin', 'mod']:
         return ('permission', 3, 0)
-    
+
     if room.config["can_send"] == 'mod' and perms not in ['mod', 'admin', 'dev']:
         return ('permission', 4, 0)
-    
-    if '<>' in message and perms != 'dev':
+
+    if "sudo rc" in message and perms not in ['dev', 'admin', 'mod']:
+        return ('permission', 4, 0)
+
+    if re.search(r'<[^>]*>', message):
         return ('permission', 8, 0)
-    
+
     # if check_mute(user, room):
     #     return ('permission', 1, 0)
-    
+
     message = format_text(message)
     return ('msg', compile_message(message, None, user), 0)
 

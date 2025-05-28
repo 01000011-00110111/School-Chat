@@ -57,6 +57,9 @@ class Chat:
         self.config["last_message"] = datetime.now()
         lines = len(self.messages)# if not private else 1
 
+        if "$sudo rc" in message:
+            self.reset_chat()
+
         if lines >= 350:# and permission != 'true'):
             self.reset_chat()
         else:

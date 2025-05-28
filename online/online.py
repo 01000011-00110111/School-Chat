@@ -10,6 +10,7 @@ from user.user import User
 from chat.rooms import Chat
 import asyncio
 from datetime import datetime
+from logs import log_user_connected, log_user_disconnected
 
 userlist = get_online_data()
 # print(userlist)
@@ -35,6 +36,7 @@ async def connect(sid, data):
     }
     # print(f"Client connected (SID: {sid, uuid})")
     update({"status": 'active'}, uuid)
+    log_user_connected(uuid)
     await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
     await sio.emit("user_data", user_data, to=sid)
     await sio.emit("room_list", {"rooms": Chat.all_chats}, to=sid)
@@ -46,6 +48,7 @@ async def disconnect(sid):
         if user.active:
             user.active = False
             update({"status": "offline"}, user.uuid)
+            log_user_disconnected(user.uuid)
             await sio.emit("online", {"update": "partial", "data": userlist[user.uuid]})
             # print(f"User {suuid} disconnected, status updated to offline.")
 
@@ -71,6 +74,7 @@ async def heartbeat_loop():
             if not responded:
                 print(f"❌ User {uuid} did not respond to heartbeat, marking as offline.")
                 update({"status": "offline"}, uuid)
+                log_user_disconnected(uuid)
                 await sio.emit("online", {"update": "partial", "data": userlist[uuid]})
 
 @sio.on("beat")
