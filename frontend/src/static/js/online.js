@@ -92,15 +92,20 @@ export function UserList() {
             <input type='text' placeholder='Search for a user' id='user_search_input'/>
             <div id='user_list'>
                 {[Object.entries(user_data), Object.entries(par_user)].map((user, index) => (
-                    <li className="user_card_mini" key={index}>
-                        <p>{console.log(user, index)}</p>
-                        <img src={user[1]["profile"] ? user[1]["profile"] : "/icons/favicon.ico"} alt="hi" className="user_profile_picture"/>
-                        <div className="userlist_user_details">
-                            <p className="userlist_display_name">{user[1]["displayName"]}</p>
-                            <p className="userlist_role">{cut_replace(user[1]["role"], 21)}</p>
-                            <div className="status_indicator" style={{background: status_conversion[user[1]["status"]]}}></div>
-                        </div>
-                    </li>
+                    user.map((type) => (
+                        type[1] === 'partial' ?
+                            <li className="user_card_mini" key={index}>
+                                {/* <p>{console.log(user, index)}</p> */}
+                                <img src={user[1]["profile"] ? user[1]["profile"] : "/icons/favicon.ico"} alt="hi" className="user_profile_picture"/>
+                                <div className="userlist_user_details">
+                                    <p className="userlist_display_name">{user[1]["displayName"]}</p>
+                                    <p className="userlist_role">{cut_replace(user[1]["role"], 21)}</p>
+                                </div>
+                                <div className="status_indicator" style={{background: status_conversion[user[1]["status"]]}}></div>
+                            </li>
+                        : console.log("nothing")
+                    ))
+                    // <p>{console.log(user)}</p>
                 ))}
             </div>
         </div>

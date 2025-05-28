@@ -43,6 +43,7 @@ def is_color_too_close(color1, color2):
 
 @sio.on("save_settings")
 async def save_settings(sid, data):
+    """Handle the save settings event."""
     # Extract user settings from the data
     suuid = data.get("suuid")
     uuid = User[suuid].uuid
@@ -96,3 +97,17 @@ async def save_settings(sid, data):
     else:
         update(edits, uuid)
         await sio.emit("settings", {"status": "success", "edits": edits}, room=sid)
+
+
+@sio.on("get_settings")
+async def get_settings(sid, data):
+    """Handle the get settings event."""
+    suuid = data.get("suuid")
+    settings = {    
+        "displayName": User[suuid].display_name,
+        "role": User[suuid].role,
+        "usernameColor": User[suuid].username_color,
+        "roleColor": User[suuid].role_color,
+        "messageColor": User[suuid].message_color
+    }
+    await sio.emit("settings", {"status": "initial", "settings": settings}, room=sid)

@@ -8,6 +8,7 @@ import {Tabs, Tab, TabButton } from "../static/js/react_tabs";
 import { ToggleButton, TextBox, CheckBox, Card, FooterAlert, Modal, LineButton, ColoredBar, LineColorDialog, EmailBox } from "../static/js/native";
 import { storage } from "../static/js/storage";
 import { faArrowLeft, faAsterisk, faBell, faCircle, faHomeUser, faLaptopFile, faUserAlt } from "@fortawesome/free-solid-svg-icons";
+import socket from "../socket";
 
 const Settings = () => {
     const getInitialState = () => {
@@ -20,6 +21,19 @@ const Settings = () => {
         console.log("Changes detected!")
         document.querySelectorAll(".footer_alert")[0].classList.add("on_screen");
     }
+
+    // socket.on("settings", (data) => {
+    //     if (data.status === "initial") {
+           // this receives the initial settings from the server
+
+    //     } else if (data.status === "success") {
+           // this receives the success message from the server
+    //     } else if (data.status === "error") {
+    //         this receives the error messages from the server there can be multiple error messages up to 5 currently
+    //     }
+    // }); 
+
+    // socket.emit("settings", {data, suuid: window.sessionStorage.getItem("suuid")}); add this to the upload function to send data to the server
 
     const [navState, setNavState] = useState(getInitialState);
     const [formInfo, setformInfo] = useState({
