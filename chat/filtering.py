@@ -137,7 +137,7 @@ def run_filter_chat(user, roomid, message, suuid):
         return ('permission', 4, 0)
 
     if "sudo rc" in message and perms not in ['dev', 'admin', 'mod']:
-        return ('permission', 4, 0)
+        return ('permission', 5, 0)
 
     if re.search(r'<[^>]*>', message):
         return ('permission', 8, 0)

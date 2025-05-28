@@ -33,5 +33,12 @@ async def start_tasks(app, loop):
     sio.start_background_task(online.heartbeat_loop)
 sio.attach(app)
 
+@app.before_server_stop
+async def final_backup(app, _):
+    """Final backup before server stop."""
+    for roomid in chat.Chat.chats:
+        await chat.Chat.get_chat(roomid).backup(True)
+    print("Final backup completed.")
+
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5000, debug=False)

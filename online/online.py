@@ -10,7 +10,7 @@ from user.user import User
 from chat.rooms import Chat
 import asyncio
 from datetime import datetime
-from logs import log_user_connected, log_user_disconnected
+from logs.logs import log_user_connected, log_user_disconnected
 
 userlist = get_online_data()
 # print(userlist)

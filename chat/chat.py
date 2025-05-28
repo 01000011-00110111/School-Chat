@@ -7,6 +7,7 @@ from datetime import datetime
 import chat.database as database
 from socketio_confg import sio
 from system import format_system_msg
+import signal
 
 class Chat:
     """Chat class."""
@@ -56,7 +57,7 @@ class Chat:
         self.messages.append(message)
         self.config["last_message"] = datetime.now()
         lines = len(self.messages)# if not private else 1
-
+        print(message)
         if "$sudo rc" in message:
             self.reset_chat()
 
@@ -86,13 +87,13 @@ class Chat:
     async def run_backup_task(self):
         """Run the backup task every 15 minutes."""
         while True:
-            await self.backup()
+            await self.backup(False)
             await asyncio.sleep(15 * 60)
 
-    async def backup(self):
+    async def backup(self, force):
         """Backup the chat."""
         diff = datetime.now() - self.backup_values[1]
-        if diff.total_seconds() >= 60:
+        if diff.total_seconds() >= 60 or force:
             print("Backup")
             self.backup_values[0][0] += len(self.messages)
             self.backup_values[0][1] += len(self.messages)

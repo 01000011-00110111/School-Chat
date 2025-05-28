@@ -7,7 +7,7 @@ from chat.chat import Chat
 from user.user import User
 from chat.filtering import run_filter_chat
 from socketio_confg import sio
-from logs import log_message_sent
+from logs.logs import log_message_sent
 
 
 @sio.on("message")
@@ -21,6 +21,7 @@ async def client_message(_, data):
     log_message_sent(user.uuid, data["roomid"], data["message"])
 
     message = run_filter_chat(user, data["roomid"], data["message"], data["suuid"])
-    # print(message)
-    await Chat.get_chat(data["roomid"]).send_message(message[1])
-    # await sio.emit("message", {"message": response})
+
+
+    if message[0] == "msg":
+        await Chat.get_chat(data["roomid"]).send_message(message[1])
