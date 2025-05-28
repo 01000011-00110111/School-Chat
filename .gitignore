@@ -10,3 +10,4 @@ online/__pycache__/*
 private/__pycache__/*
 /static/
 .vscode/*
+logs/*

@@ -8,6 +8,8 @@ from socketio_confg import sio
 from user.database import get_online_data
 from user.user import User
 from chat.rooms import Chat
+import asyncio
+from datetime import datetime
 
 userlist = get_online_data()
 # print(userlist)
@@ -16,7 +18,14 @@ socketids = {}
 @sio.on("chatpage")
 async def connect(sid, data):
     """Handle startup system."""
-    user = User.Users[data["suuid"]]
+    suuid = data.get("suuid")
+    user = User.Users.get(suuid)
+
+    if not user:
+        print(f"❌ Invalid or expired user SUUID: {suuid}")
+        await sio.emit("send_to_login", to=sid)
+        return
+    
     uuid = user.uuid
     user_data = {
         "displayName": user.display_name,
@@ -32,33 +41,65 @@ async def connect(sid, data):
 
 @sio.event
 async def disconnect(sid):
-    """Handle disconnections."""
-    # print(f"Client disconnected (SID: {sid})")
+    """Handle disconnection of a client."""
+    for suuid, user in User.Users.items():
+        if user.active:
+            user.active = False
+            update({"status": "offline"}, user.uuid)
+            await sio.emit("online", {"update": "partial", "data": userlist[user.uuid]})
+            # print(f"User {suuid} disconnected, status updated to offline.")
 
+heartbeat_flags = {}
 
-@sio.on("heartbeat")
-async def handle_heartbeat(sid, _, roomid, suuid):
-    """Handle heartbeat from the client."""
-    if suuid is not None:
-        # User.Users[suuid]['status'] = status
-        # await sio.emit("online", {"update": "partial", "data": User.Users[suuid]}, to=sid)
-        if roomid is not None:
-            if roomid in Chat.all_chats:
-                chat = Chat.all_chats[roomid]
-                if sid not in chat.sids:
-                    chat.sids.append(sid)
-        # await sio.emit("online", {"update": "full", "data": User.Users}, to=sid)
+async def heartbeat_loop():
+    """Periodically check if users are online."""
+    print("✅ heartbeat_loop task started")
+    global heartbeat_flags
+    while True:
+        print("💓 Heartbeat loop called")
+        heartbeat_flags = {}
 
+        for uuid, status in userlist.items():
+            if status["status"] in ["active", "idle"]:
+                heartbeat_flags[uuid] = False  # False means not responded yet
 
-@sio.on("online")
-async def online(sid, suuid, status):
+        await sio.emit("heartbeat")  # Broadcast to all
+
+        await asyncio.sleep(5)
+
+        for uuid, responded in heartbeat_flags.items():
+            if not responded:
+                print(f"❌ User {uuid} did not respond to heartbeat, marking as offline.")
+                update({"status": "offline"}, uuid)
+                await sio.emit("online", {"update": "partial", "data": userlist[uuid]})
+
+@sio.on("beat")
+async def beat(sid, data):
+    """Handle heartbeat responses from clients."""
+    suuid = data.get("suuid")
+    user = User.Users.get(suuid)
+
+    if user:
+        update({"status": data.get("status", "active")}, user.uuid)
+
+        if user.uuid in heartbeat_flags:
+            heartbeat_flags[user.uuid] = True
+
+        await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
+    else:
+        await sio.emit("send_to_login", to=sid)
+
+# @sio.on("online")
+async def online(_, data):
     """Handle online events."""
-    # print("online", suuid, status)
+    suuid = data['suuid']
+    status = data['status']
     uuid = User.Users[suuid].uuid
     update({"status": status}, uuid)
     # socketids[uuid] = sid
 
     await sio.emit("online", {"update": 'partial', "data": userlist[uuid]})
+
 
 
 @sio.on("update")
@@ -67,7 +108,7 @@ async def handle_update(sid, data):
     # print("update", data)
     suuid = data['suuid']
     if suuid in User.Users:
-        uuid = User.Users[suuid]
+        uuid = User.Users[suuid].uuid
         update(data, uuid)
         await sio.emit("online", {"update": 'partial', "data": userlist[uuid]})
     else:
@@ -80,6 +121,13 @@ def update(data, uuid):
         if key == 'status' and userlist[uuid]['status'] == 'offline-locked':
             continue
         userlist[uuid][key] = value
+
+# def update(data, uuid):
+#     """Update the online status of a user."""
+#     if uuid not in userlist:
+#         return
+#     update_all(data, uuid)
+#     sio.emit("online", {"update": "partial", "data": userlist[uuid]}, to=socketids.get(uuid, None))
 
 # def handle_forced_disconnect(userid, disconnect_callback):
 #     """Mark the user as offline if no heartbeat is received in time."""
@@ -99,3 +147,6 @@ def update(data, uuid):
 #             print(f"Error in forced disconnect: {e}")
 #     except RuntimeError as e:
 #         print(f"Runtime error in forced disconnect: {e}")
+
+
+

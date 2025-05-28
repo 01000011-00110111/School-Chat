@@ -34,7 +34,7 @@ class User:
         self.pause = False
         self.last_message = datetime.now()
         # self.mutes = user['mutes']  # later ill add a mute db value # user['mute_time']
-        self.active = {}
+        # self.active = {}
         # other user values
         self.badges = user['badges']
         self.r_color = user['roleColor']

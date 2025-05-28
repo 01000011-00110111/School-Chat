@@ -94,3 +94,18 @@ def update_chat(chat):
     Messages.update_one(
         {"roomid": chat.vid}, {"$set": {"messages": chat.messages}}, upsert=True
     )
+
+def save_backup(chat):
+    """Saves a backup of the chatroom."""
+    # access_data = {
+    #     "whitelisted": chat.config.whitelisted,
+    #     "blacklisted": chat.config.banned,
+    #     "canSend": chat.config.can_send,
+    #     "locked": chat.config.locked,
+    #     "muted": chat.muted,
+    #     "banned": chat.banned,
+    # }
+
+    # Rooms.update_one({"roomid": chat.vid}, {"$set": room_data}, upsert=True)
+    # Access.update_one({"roomid": chat.vid}, {"$set": access_data}, upsert=True)
+    Messages.update_one({"roomid": chat.vid}, {"$set": {"messages": chat.messages}}, upsert=True)

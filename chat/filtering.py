@@ -97,13 +97,7 @@ def compile_message(message, profile_picture, user):
     perm_string = (f"<p style='background:{perm}; color: #ffffff;' class='badge {perm}'>"
                    f"{perm}</p>" if perm != 'user' else None)
     date_str = datetime.now().strftime("%a %I:%M %p ")
-    print(
-        'profile'+ profile,
-        'user'+ user_string,
-        'message'+ message_string,
-        'badges'+ role_string, perm_string,# + badges,
-        'date' + date_str
-    )
+
     return {
         'profile': profile,
         'user': user_string,

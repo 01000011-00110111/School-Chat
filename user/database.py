@@ -132,7 +132,9 @@ def get_online_data():
     ]
     try:
         result = list(ID.aggregate(pipeline))
-        result_dict = {user["uuid"]: user for user in result}
+        result_dict = {user["uuid"]: {key: val for key, val in user.items() if key != "uuid"} for user in result}
+        print(result_dict)
+        
         return result_dict
     except IndexError:
         return None
@@ -194,3 +196,24 @@ def add_accounts(data):
     Customization.insert_one(customization_data)
     Permission.insert_one(permission_data)
     # return userid
+
+
+def update(data, uuid):
+    """Updates user data in the database."""
+    customization_data = {}
+
+    if "role" in data:
+        customization_data["role"] = data["role"]
+    if "displayName" in data:   
+        customization_data["displayName"] = data["displayName"]
+    if "messageColor" in data:
+        customization_data["messageColor"] = data["messageColor"]
+    if "roleColor" in data:
+        customization_data["roleColor"] = data["roleColor"]
+    if "userColor" in data:
+        customization_data["userColor"] = data["userColor"]
+
+    Customization.update_one(
+        {"userId": uuid},
+        {"$set": customization_data}
+    )

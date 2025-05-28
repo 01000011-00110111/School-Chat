@@ -28,7 +28,10 @@ sio = socketio_confg.sio
 
 app = Sanic("School-Chats")
 CORS(app, resources={r"/*": {"origins": "*"}}, automatic_options=True)
+@app.before_server_start
+async def start_tasks(app, loop):
+    sio.start_background_task(online.heartbeat_loop)
 sio.attach(app)
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=False)

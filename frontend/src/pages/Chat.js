@@ -9,7 +9,7 @@ import socket from '../socket'
 import { Chat_object, renderMessage, renderChat, loadChat } from '../static/js/message'
 import context_menu, { handle_create } from '../static/js/context_menu'
 import { storage } from '../static/js/storage'
-import { par_user, setupTimer, SetUsersList, ShowModal, user_data } from '../static/js/online'
+import { par_user, setupTimer, ShowModal, user_data, UserList } from '../static/js/online'
 
 function Chat() {
     const [chatrooms, setChatooms] = useState([]);
@@ -18,6 +18,7 @@ function Chat() {
     const [input, setInput] = useState("");
     const [rooms, setRooms] = useState([]);
     const [ostatus, setostatus] = useState("")
+
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -232,19 +233,8 @@ function Chat() {
             <div className='main_chat_body'>
                 <div className='chat' id='chat'>
                 </div>
-    
-                <div className='user_list'>
-                    <input type='text' placeholder='Search for a user' id='user_search_input'/>
-                    <div id='user_list'>
-                        {user_data["data"] ? (
-                            Object.entries(user_data["data"]).map(([key, user], index) => (
-                                <SetUsersList user_name={user["displayName"]} profile_picture={user["profile"]} user_role={user["role"]} key={index} status={ par_user['data']['uuid'] === user['uuid'] ? ostatus : user['status']}/>
-                            ))
-                        ) : (
-                            <p>Fetching Data</p>
-                        )}
-                    </div>
-                </div>
+
+                <UserList />
             </div>
   
             <div className='bottom_bar'>

@@ -316,9 +316,9 @@
   initial-value: black;
 }
 :root {
-  --background-accent-1: white;
+  --background-accent-1: black;
   --background-accent-2: #4e4e4e;
-  --foreground-accent-1: black;
+  --foreground-accent-1: white;
   --foreground-accent-2: purple;
   --primary-accent-color: purple;
 }
@@ -489,7 +489,6 @@ code {
   width: 0.6rem;
   height: 0.6rem;
   border-radius: 100px;
-  margin: 19px;
   animation: color_fading 2s infinite;
 }
 
