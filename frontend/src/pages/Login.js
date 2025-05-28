@@ -13,7 +13,7 @@ function Login() {
         let uuid = sessionStorage.getItem("suuid");
         if (uuid) {
             setSuuid(uuid);
-            window.location.href = "/chat/Main";
+            window.location.href = "/chat";
         }
     }, []);
 
@@ -25,7 +25,7 @@ function Login() {
     socket.on("login", (data) => {
         if (data["status"] === 'successful') {
             setSuuid(data["suuid"]);
-            window.location.href = "/chat/Main";
+            window.location.href = "/chat";
         }
         if (data["status"] === 'failed') {
             console.log(data);

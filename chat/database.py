@@ -64,6 +64,7 @@ def get_room_data(roomid):
     ]
 
     result = list(Rooms.aggregate(pipeline))
+    print(result)
     if not result:
         get_room_data("ilQvQwgOhm9kNAOrRqbr")
 

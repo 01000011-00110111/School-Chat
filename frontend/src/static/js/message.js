@@ -37,10 +37,12 @@ function escapeHTML(input) {
 }
 
 function renderMessage(message_data) {
-    let badges = '';
-    for (let i = 0; i < message_data["badges"].length; i++) {
-        if (message_data["badges"][i] !== null) {
-            badges += message_data["badges"][i];
+    console.log(message_data);
+    let badges = message_data.badges || [];
+    for (let i = 0; i < message_data.badges.length; i++) {
+        console.log(message_data.badges, badges)
+        if (message_data.badges[i] !== null || message_data.badges[i] !== undefined) {
+            badges += message_data.badges[i];
         }
     }
 

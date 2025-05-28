@@ -26,16 +26,17 @@ class User:
         self.display_name = user['displayName']
         self.perm = user['SPermission']
         self.uuid = userid
-        self.onlineId = user['onlineId']
+        # self.onlineId = user['onlineId']
         self.suuid = str(uuid.uuid4())
         self.status = user['status']
         self.active = True
         self.limit = 0
         self.pause = False
         self.last_message = datetime.now()
-        self.mutes = user['mutes']  # later ill add a mute db value # user['mute_time']
+        # self.mutes = user['mutes']  # later ill add a mute db value # user['mute_time']
         self.active = {}
         # other user values
+        self.badges = user['badges']
         self.r_color = user['roleColor']
         self.m_color = user['messageColor']
         self.u_color = user['userColor']
@@ -60,3 +61,8 @@ class User:
     def hash_password(password):
         """Hash a password for storing."""
         return hashlib.sha256(password.encode('utf-8')).hexdigest()
+    
+    @staticmethod
+    def get_user(suuid):
+        """Get a user by their suuid."""
+        return User.Users.get(suuid, None)

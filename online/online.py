@@ -10,6 +10,7 @@ from user.user import User
 from chat.rooms import Chat
 
 userlist = get_online_data()
+# print(userlist)
 socketids = {}
 
 @sio.on("chatpage")
@@ -23,6 +24,7 @@ async def connect(sid, data):
         "profile": user.profile,
         "theme": user.theme
     }
+    # print(f"Client connected (SID: {sid, uuid})")
     update({"status": 'active'}, uuid)
     await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
     await sio.emit("user_data", user_data, to=sid)
@@ -31,7 +33,7 @@ async def connect(sid, data):
 @sio.event
 async def disconnect(sid):
     """Handle disconnections."""
-    print(f"Client disconnected (SID: {sid})")
+    # print(f"Client disconnected (SID: {sid})")
 
 
 @sio.on("heartbeat")
@@ -51,7 +53,7 @@ async def handle_heartbeat(sid, _, roomid, suuid):
 @sio.on("online")
 async def online(sid, suuid, status):
     """Handle online events."""
-    print("online", suuid, status)
+    # print("online", suuid, status)
     uuid = User.Users[suuid].uuid
     update({"status": status}, uuid)
     # socketids[uuid] = sid
@@ -65,7 +67,7 @@ async def handle_update(sid, data):
     # print("update", data)
     suuid = data['suuid']
     if suuid in User.Users:
-        uuid = User.Users[suuid].oline_id
+        uuid = User.Users[suuid]
         update(data, uuid)
         await sio.emit("online", {"update": 'partial', "data": userlist[uuid]})
     else:

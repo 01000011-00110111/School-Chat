@@ -11,6 +11,7 @@ from better_profanity import profanity
 # import log
 # from user import User
 # from commands.other import format_system_msg
+from chat.chat import Chat
 from system import format_system_msg
 
 def setup_filter(whitelist, blacklist):
@@ -83,9 +84,11 @@ def compile_message(message, profile_picture, user):
     r_color = user.r_color
     display_name = user.display_name
     role = profanity.censor(user.role)
-    perm = check_perms(user)
-    badges = [f"<p style='background:{badge[1]}; color: {badge[2]};' class='badge'>{badge[0]}</p>"
-              for badge in user.badges]
+    # perm = check_perms(user)
+    perm = 'user'
+    #badges = [f"<p style='background:{badge[1]}; color: {badge[2]};' class='badge'>{badge[0]}</p>"
+             # for badge in user.badges]
+   # print(f"Badges: {badges}")
 
     profile = "<img class='user_profile_picture' src='/icons/favicon.ico'></img>"
     user_string = f"<p style='color: {u_color};'>{display_name}</p>"
@@ -94,12 +97,18 @@ def compile_message(message, profile_picture, user):
     perm_string = (f"<p style='background:{perm}; color: #ffffff;' class='badge {perm}'>"
                    f"{perm}</p>" if perm != 'user' else None)
     date_str = datetime.now().strftime("%a %I:%M %p ")
-
+    print(
+        'profile'+ profile,
+        'user'+ user_string,
+        'message'+ message_string,
+        'badges'+ role_string, perm_string,# + badges,
+        'date' + date_str
+    )
     return {
         'profile': profile,
         'user': user_string,
         'message': message_string,
-        'badges': [role_string, perm_string] + badges,
+        'badges': [role_string, perm_string],# + badges,
         'date': date_str
     }
 
@@ -119,23 +128,25 @@ def failed_message(reason_code, roomid):
     fail_msg = fail_reasons.get(reason_code, "Unknown error occurred.")
     # emit("message_chat", (format_system_msg(fail_msg), roomid), namespace="/")
 
-def run_filter_chat(user, room, message, roomid, userid):
+def run_filter_chat(user, roomid, message, suuid):
     """Filters messages before sending in a chat room."""
-    if userid != user.uuid:
+    room = Chat.get_chat(roomid)
+    if suuid != user.suuid:
         return ('permission', 7, False)
     
+
     perms = check_permissions(user)
-    if room.config.locked and perms not in ['dev', 'admin', 'mod']:
+    if room.config["locked"] is True and perms not in ['dev', 'admin', 'mod']:
         return ('permission', 3, 0)
     
-    if room.config.can_send == 'mod' and perms not in ['mod', 'admin', 'dev']:
+    if room.config["can_send"] == 'mod' and perms not in ['mod', 'admin', 'dev']:
         return ('permission', 4, 0)
     
     if '<>' in message and perms != 'dev':
         return ('permission', 8, 0)
     
-    if check_mute(user, room):
-        return ('permission', 1, 0)
+    # if check_mute(user, room):
+    #     return ('permission', 1, 0)
     
     message = format_text(message)
     return ('msg', compile_message(message, None, user), 0)

@@ -15,6 +15,7 @@ class Chat:
 
     def __init__(self, room, roomid):
         """Initialize the chat."""
+        print(room['locked'])
         self.name = room["roomName"]
         self.vid = roomid
         self.config = {
@@ -64,6 +65,12 @@ class Chat:
         for _, sid in self.sids.items():
             await sio.emit("message", {"message": message}, to=sid)
         # await sio.emit("message", {"message": message})
+
+    # async def add_sid(self, sid, suuid):
+
+    async def check_user(self, suuid):
+        """Check if a user is in the chat."""
+        return False
 
     async def reset_chat(self):
         """Reset the chat."""

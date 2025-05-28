@@ -6,7 +6,7 @@
 import configparser
 import uuid
 
-# import hashlib
+import hashlib
 # import secrets
 # from datetime import datetime
 
@@ -42,6 +42,10 @@ def username_exists(username):
     """Checks if a username already exists in the database."""
     return ID.find_one({"username": username})
 
+def email_exists(email):
+    """Checks if an email already exists in the database."""
+    return ID.find_one({"email": email})
+
 def get_user_data(uuid):
     """Retrieves all data required to login."""
     pipeline = [
@@ -76,6 +80,7 @@ def get_user_data(uuid):
                 "roleColor": {"$arrayElemAt": ["$customization.roleColor", 0]},
                 "userColor": {"$arrayElemAt": ["$customization.userColor", 0]},
                 "theme": {"$arrayElemAt": ["$customization.theme", 0]},
+                "badges": {"$arrayElemAt": ["$customization.badges", 0]},
                 # "blocked": {"$arrayElemAt": ["$customization.blocked", 0]},
                 # "permission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
                 "mutes": {"$arrayElemAt": ["$permissions.mutes", 0]},
@@ -116,7 +121,7 @@ def get_online_data():
         {
             "$project": {
                 "_id": 0,
-                "onlineId": "$onlineId",
+                "uuid": "$userId",
                 "status": "$status",
                 "role": {"$arrayElemAt": ["$customization.role", 0]},
                 "profile": {"$arrayElemAt": ["$customization.profile", 0]},
@@ -127,7 +132,7 @@ def get_online_data():
     ]
     try:
         result = list(ID.aggregate(pipeline))
-        result_dict = {user["onlineId"]: user for user in result}
+        result_dict = {user["uuid"]: user for user in result}
         return result_dict
     except IndexError:
         return None
@@ -136,7 +141,6 @@ def get_online_data():
 def add_accounts(data):
     """Adds a single account to the database."""
     username = data["username"]
-    password = data["password"]
     email = data["email"]
     role = data["role"]
     displayname = data["displayName"]
@@ -156,6 +160,10 @@ def add_accounts(data):
         if onlineid not in [user["onlineId"] for user in ID.find()]:
             break
 
+    # Hash the password before storing it
+    password = hashlib.sha384(data["password"].encode('utf-8')).hexdigest()
+    # print(userid, onlineid, username, password, email, role, displayname, user_color, role_color, message_color)
+
     id_data = {
         "userId": userid,
         "onlineId": onlineid,
@@ -167,6 +175,7 @@ def add_accounts(data):
     customization_data = {
         "userId": userid,
         "role": role,
+        "badges": [],
         "profile": "/icons/favicon.ico",
         "theme": "dark",
         "displayName": displayname,
