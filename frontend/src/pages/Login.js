@@ -1,12 +1,16 @@
 import React, {useState, useEffect} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import socket from '../socket'
 import {setSuuid} from '../static/js/variables'
 
 function Login() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [showPassword, setShowPassowrd] = useState({
+        passwordState: "password",
+        iconState: faEye,
+    });
     const [loginStatus, setloginStatus] = useState("");
 
     useEffect(() => {
@@ -16,6 +20,10 @@ function Login() {
             window.location.href = "/chat/Main";
         }
     }, []);
+    
+    const show_password = () => {
+        showPassword.passwordState !== "text" ? setShowPassowrd({passwordState: "text", iconState: faEyeSlash}) : setShowPassowrd({passwordState: "password", iconState: faEye});
+    };
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -32,6 +40,7 @@ function Login() {
             setloginStatus("Username or Password is incorrect");
         }
     });
+
 
     return (
         <div id="login_container">
@@ -59,9 +68,9 @@ function Login() {
                         </div>
 
                         <div className="login_input">
-                            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter your password" tabIndex={2} required/>
-                            <button>
-                                <FontAwesomeIcon icon={faEye}/>
+                            <input value={password} onChange={(e) => setPassword(e.target.value)} type={showPassword.passwordState} placeholder="Enter your password" tabIndex={2} required/>
+                            <button onClick={() => show_password()}>
+                                <FontAwesomeIcon icon={showPassword.iconState}/>
                             </button>
                         </div>
                     </div>

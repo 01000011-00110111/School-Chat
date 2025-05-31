@@ -198,22 +198,22 @@ def add_accounts(data):
     # return userid
 
 
-def update(data, uuid):
+def update(data, user_id):
     """Updates user data in the database."""
     customization_data = {}
 
     if "role" in data:
         customization_data["role"] = data["role"]
-    if "displayName" in data:   
-        customization_data["displayName"] = data["displayName"]
-    if "messageColor" in data:
-        customization_data["messageColor"] = data["messageColor"]
-    if "roleColor" in data:
-        customization_data["roleColor"] = data["roleColor"]
-    if "userColor" in data:
-        customization_data["userColor"] = data["userColor"]
+    if "display_name" in data:   
+        customization_data["displayName"] = data["display_name"]
+    if "m_color" in data:
+        customization_data["messageColor"] = data["m_color"]
+    if "r_color" in data:
+        customization_data["roleColor"] = data["r_color"]
+    if "u_color" in data:
+        customization_data["userColor"] = data["u_color"]
 
     Customization.update_one(
-        {"userId": uuid},
+        {"userId": user_id},
         {"$set": customization_data}
     )

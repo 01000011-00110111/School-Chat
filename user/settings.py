@@ -31,12 +31,12 @@ def check_color(color, reference_color):
     """Check if the color is too close to the background color."""
     if is_color_too_close(color, reference_color):
         return False, "color is too close to the background color"
-    return True
+    return True, None
 
 def is_color_too_close(color1, color2):
     """Check if the two colors are too close."""
     # Example implementation assuming color is a hex string
-    threshold = 30
+    threshold = 80
     r1, g1, b1 = int(color1[1:3], 16), int(color1[3:5], 16), int(color1[5:7], 16)
     r2, g2, b2 = int(color2[1:3], 16), int(color2[3:5], 16), int(color2[5:7], 16)
     return (abs(r1-r2) < threshold and abs(g1-g2) < threshold and abs(b1-b2) < threshold)
@@ -46,12 +46,13 @@ async def save_settings(sid, data):
     """Handle the save settings event."""
     # Extract user settings from the data
     suuid = data.get("suuid")
-    uuid = User[suuid].uuid
-    display_name = data.get("display_name")
-    role = data.get("role")
-    username_color = data.get("username_color")
-    role_color = data.get("role_color")
-    message_color = data.get("message_color")
+    user = User.get_user(suuid)
+    uuid = user.uuid
+    display_name = data["formInfo"].get("displayName")
+    role = data["formInfo"].get("role")
+    username_color = data["formInfo"].get("usernameColor")
+    role_color = data["formInfo"].get("roleColor")
+    message_color = data["formInfo"].get("messageColor")
 
     errors = []
     edits = []
@@ -62,7 +63,7 @@ async def save_settings(sid, data):
         if not display_name_result[0]:
             errors.append(display_name_result)
         else:
-            edits.append({"displayName": display_name_result[1]})
+            edits.append({"display_name": display_name_result[1]})
 
     if role:
         role_result = set_role(role)
@@ -72,42 +73,47 @@ async def save_settings(sid, data):
             edits.append({"role": role_result})
 
     if username_color:
-        username_color_result = check_color(username_color, "#FFFFFF")
+        username_color_result = check_color(username_color, "#000000")
         if not username_color_result[0]:
             errors.append(username_color_result)
         else:
-            edits.append({"usernameColor": username_color_result[1]})
+            edits.append({"u_color": username_color})
 
     if role_color:
-        role_color_result = check_color(role_color, "#FFFFFF")
+        role_color_result = check_color(role_color, "#000000")
         if not role_color_result[0]:
             errors.append(role_color_result)
         else:
-            edits.append({"roleColor": role_color_result[1]})
+            edits.append({"r_color": role_color})
 
     if message_color:
-        message_color_result = check_color(message_color, "#FFFFFF")
+        message_color_result = check_color(message_color, "#000000")
         if not message_color_result[0]:
             errors.append(message_color_result)
         else:
-            edits.append({"messageColor": message_color_result[1]})
+            edits.append({"m_color": message_color})
 
     if errors:
         await sio.emit("settings", {"status": "error", "errors": errors}, room=sid)
     else:
         update(edits, uuid)
+        user.update(edits)
         await sio.emit("settings", {"status": "success", "edits": edits}, room=sid)
 
-
 @sio.on("get_settings")
-async def get_settings(sid, data):
+async def get_settings(sid, suuid):
     """Handle the get settings event."""
-    suuid = data.get("suuid")
-    settings = {    
-        "displayName": User[suuid].display_name,
-        "role": User[suuid].role,
-        "usernameColor": User[suuid].username_color,
-        "roleColor": User[suuid].role_color,
-        "messageColor": User[suuid].message_color
+    # suuid = data.get("suuid")
+    user = User.get_user(suuid)
+    if not user:
+        await sio.emit("settings", {"status": "error", "error": "User not found"}, room=sid)
+        return
+    settings = {
+        "displayName": user.display_name,
+        "role": user.role,
+        "usernameColor": user.u_color,
+        "roleColor": user.r_color,
+        "messageColor": user.m_color
     }
+    
     await sio.emit("settings", {"status": "initial", "settings": settings}, room=sid)

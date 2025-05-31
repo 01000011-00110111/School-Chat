@@ -66,3 +66,10 @@ class User:
     def get_user(suuid):
         """Get a user by their suuid."""
         return User.Users.get(suuid, None)
+    
+    def update(self, edits):
+        """Update the user with the given edits."""
+        for edit in edits:
+            for key, value in edit.items():
+                setattr(self, key, value)
+        User.Users[self.suuid] = self

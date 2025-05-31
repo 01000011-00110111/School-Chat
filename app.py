@@ -21,7 +21,7 @@ from sanic_cors import CORS
 import socketio_confg
 # ruff-ignore: F401
 from chat import message, rooms, chat # noqa: F401 F811
-from user import login, signup # noqa: F401
+from user import login, signup, settings # noqa: F401
 from online import online # noqa: F401
 from private import private, rooms, message # noqa: F401 F811
 sio = socketio_confg.sio
@@ -41,4 +41,4 @@ async def final_backup(app, _):
     print("Final backup completed.")
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=False)
+    app.run(host="127.0.0.1", port=5000, debug=True)

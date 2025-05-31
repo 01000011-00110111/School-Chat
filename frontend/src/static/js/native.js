@@ -57,7 +57,7 @@ const EmailBox = ({label, placeholder, default_value, onUpdate, name}) => {
 const CheckBox = ({ label, checked, disabled, onUpdate, name, value, onInput }) => {
     return (
         <label className="native_checkbox">
-            <input type="checkbox" className="check_input" checked={checked} disabled={disabled} onChange={onUpdate} name={name} value={value} onInput={onInput}/>
+            <input type="checkbox" className="check_input" checked={checked} disabled={disabled} onChange={onUpdate} name={name} value={value} onInput={onInput} />
             <span className="checkmark"></span>
             {label}
         </label>
@@ -120,10 +120,10 @@ function ColoredBar({colors = []}) {
     )
 }
 
-function LineColorDialog({title = "", id = "", className = "", onUpdate, default_value}) {
+function LineColorDialog({title = "", id = "", className = "", onUpdate, onChange, default_value, name}) {
     return (
         <label className="color_dialog" htmlFor={id}>
-            <input type="color" id={id} className={className} onInput={onUpdate} value={null ? null : default_value}/>
+            <input type="color" id={id} className={className} onInput={onUpdate} value={null ? null : default_value} onChange={onChange} name={name}/>
             <p>{title}</p>
         </label>
     )
@@ -201,4 +201,27 @@ function WebEmbed({ url, title, options = {} }) {
     )
 }
 
-export {ToggleButton, TextBox, EmailBox, CheckBox, Card, FooterAlert, Modal, LineButton, ColoredBar, LineColorDialog, Prompt, PromptStep, StepTitle, WebEmbed}
+const Poll = ({ title="", max, value=0, poll_options = {} }) => {
+    const [pollStats, setPollStats] = useState(poll_options);
+    console.log(pollStats)
+
+    return (
+        <div className="poll">
+            <p className="poll-title">{title}</p>
+            <div className="poll-options-container">
+                {Object.entries(pollStats).map((acc, key, index) => (
+                    <div className="poll-options-parent">
+                        <div className="poll-option">
+                            <p className="poll-option-text">{acc[0]}</p>
+                            <div className="poll-option-fill" style={{width: `${pollStats[acc[0]]}%`}}></div>
+                        </div>
+                        <p>{pollStats[acc[0]]}%</p>
+                        {console.log(pollStats["button 1"] )}
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
+
+export {ToggleButton, TextBox, EmailBox, CheckBox, Card, FooterAlert, Modal, LineButton, ColoredBar, LineColorDialog, Prompt, PromptStep, StepTitle, WebEmbed, Poll}

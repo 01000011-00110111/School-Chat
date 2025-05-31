@@ -1,16 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import socket from "../../socket";
 
-// Full user data - All users sent from backend;
-let user_data = {};
+function status_conversion(status) {
+    const status_map = {
+        "active": "online",
+        "offline": "offline",
+        "idle": "idle",
+    }
 
-// Partial user data;
-let par_user = {};
+    for (const [key, value] of Object.entries(status_map)) {
+        if (status === key) {
+            return value;
+        }
+    }
 
-let status_conversion = {
-    "active": "lime",
-    "offline": "red",
-    "idle": "orange",
+    return status_map.offline;
 }
 
 const cut_replace = (text, length) => {
@@ -50,30 +54,6 @@ const show_profile_modal = (user, role, pfp) => {
     });
 }
 
-// const SetUsersList = ({user_name, profile_picture, user_role, index, status}) => {
-//     console.log(status, user_name)
-//     return (
-//         <li className="user_card_mini" onClick={() => fetch_user(user_name, user_role, profile_picture)}>
-//             <img src={profile_picture ? profile_picture : "/icons/favicon.ico"} alt="hi" className="user_profile_picture"/>
-//             <div className="userlist_user_details">
-//                 <p className="userlist_display_name" key={index}>{user_name}</p>
-//                 <p className="userlist_role" key={index}>{cut_replace(user_role, 21)}</p>
-//             </div>
-//             <div className="status_indicator" style={{background: status_conversion[status]}}></div>
-//         </li>
-//     )
-// }
-
-socket.on('online', (data) => {
-    par_user = data
-    if (data['update'] === 'partial') {
-        par_user = data;
-    } else {
-        user_data = data["data"];
-    }
-    // console.log(user_data);
-})
-
 function notifyStatusChange(status) {
     socket.emit('update', { status: status, suuid: window.sessionStorage.getItem("suuid") });
 }
@@ -87,25 +67,43 @@ document.addEventListener('visibilitychange', function() {
 });
 
 export function UserList() {
+    const [userData, setUserData] = useState({
+        update_type: "",
+        data: {},
+    });
+
+    socket.on('online', (data) => {
+        if (data["update"] === "full" && data["data"] !== userData.data) {
+            setUserData({
+                update_type: data["update"],
+                data: data["data"],
+            });
+        }
+        
+        if (data['update'] === 'partial') {
+            setUserData({
+                update_type: data["update"],
+                data: data["data"],
+            });
+        }
+    });
+
     return (
-        <div className='user_list'>
-            <input type='text' placeholder='Search for a user' id='user_search_input'/>
-            <div id='user_list'>
-                {[Object.entries(user_data), Object.entries(par_user)].map((user, index) => (
-                    user.map((type) => (
-                        type[1] === 'partial' ?
-                            <li className="user_card_mini" key={index}>
-                                {/* <p>{console.log(user, index)}</p> */}
-                                <img src={user[1]["profile"] ? user[1]["profile"] : "/icons/favicon.ico"} alt="hi" className="user_profile_picture"/>
-                                <div className="userlist_user_details">
-                                    <p className="userlist_display_name">{user[1]["displayName"]}</p>
-                                    <p className="userlist_role">{cut_replace(user[1]["role"], 21)}</p>
-                                </div>
-                                <div className="status_indicator" style={{background: status_conversion[user[1]["status"]]}}></div>
-                            </li>
-                        : console.log("nothing")
-                    ))
-                    // <p>{console.log(user)}</p>
+        <div className="user_list">
+            <div id="user_count_container">
+                <p id="online_users_count">Online Users: 0</p>
+                <p id="offline_users_count">Offline Users: 0</p>
+            </div>
+
+            <div id="user_list">
+                {Object.entries(userData.data).map((update, index, data) => (
+                    <div key={index} className="userlist_user">
+                        <img src={update[1]["profile"] ? update[1]["profile"] : "/icons/favicon.ico"} alt="profile" className={`userlist_picture ${status_conversion(update[1]["status"])}`}/>
+                        <div className="userlist_info_container">
+                            <p className="userlist_displayname">{update[1]["displayName"]}</p>
+                            <p className="userlist_role">{cut_replace(update[1]["role"], 50)}</p>
+                        </div>
+                    </div>
                 ))}
             </div>
         </div>
@@ -133,4 +131,4 @@ window.addEventListener("beforeunload", (e) => {
 });
 
 
-export { user_data, show_profile_modal, par_user }
+export { show_profile_modal }

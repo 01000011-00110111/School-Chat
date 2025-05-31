@@ -3,7 +3,7 @@ venv/*
 .DS_Store
 sc-build
 server
-core/config/keys.conf
+/core/config/keys.conf
 chat/__pycache__/*
 user/__pycache__/*
 online/__pycache__/*

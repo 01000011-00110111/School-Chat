@@ -68,6 +68,7 @@
     height: 100%
     background: transparent
     outline: 0
+    color: var(--foreground-accent-1)
 
 .native_checkbox
     width: fit-content
@@ -94,7 +95,7 @@
     display: none
 
 .Card
-    background: white
+    background: var(--background-accent-1)
     box-shadow: 6px 6px 12px gray
     width: 18rem
     height: 24rem
@@ -103,6 +104,9 @@
     border-radius: 16px
     justify-items: center
     align-items: center
+
+.Card input
+    color: var(--foreground-accent-1)
 
 .footer_alert
     background: var(--primary-accent-color)
@@ -223,3 +227,52 @@
     display: flex
     align-items: center
     justify-content: center
+
+.poll
+    background: linear-gradient(134deg, #ffc9f7, #98cbf8, #2341b88c)
+    width: 45vw
+    height: 33vh
+    justify-content: center
+    display: grid
+    text-align: center
+    border: 0.4rem solid #854eff
+    border-radius: 18px
+    margin: 120px
+
+.poll-title
+    color: #854eff
+    font-size: 23px
+    font-weight: 510
+
+.poll-options-container
+    width: 100%
+    height: fit-content
+    display: grid
+    justify-content: center
+
+.poll-options-parent
+    display: flex
+    gap: 15px
+
+.poll-option
+    -webkit-appearance: none
+    height: 3pc
+    width: 16pc
+    background: #0000004f
+    text-align: center
+    position: relative
+    margin: 4px
+    border-radius: 6px
+
+.poll-option-fill
+    height: 100%
+    width: 0%
+    max-width: 100%
+    background: linear-gradient(134deg, #000, #656565, rgba(0, 0, 0, 0.55))
+    border-radius: inherit
+
+.poll-option-text
+    width: 100%
+    color: white
+    position: absolute
+    text-align: center

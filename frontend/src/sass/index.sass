@@ -5,13 +5,6 @@
 @use 'native'
 @use 'themes'
 
-$sidenav_button_background_color: black
-  
-@property --background-color
-  syntax: "<color>"
-  inherits: true
-  initial-value: black
-
 :root
   --background-accent-1: black
   --background-accent-2: #4e4e4e
@@ -35,44 +28,58 @@ code
 .main
   width: 100vw
   height: 100vh
-  display: flex
-  background: var(--background-accent-1)
+  display: grid
+  justify-content: center
+  justify-items: center
+  background: var(--main-background-color)
+  // background: linear-gradient(90deg,#9A93D8 13%, #007B79 58%, #384E82 91%)
+  // background: linear-gradient(red, purple)
 
 
 .chat_container
   width: 100%
   height: 100%
-  display: grid
-
-
-.main_chat_body
-  width: 100%
-  height: 85vh
   display: flex
-  position: relative
-  top: -0.7%
+  justify-content: space-between
+
+
+.chat_center
+  display: grid
+  width: 66vw
+  height: 90vh
+  border-radius: 12px
+  justify-content: center
+  background: var(--chat-background-color)
+  grid-template-columns: 100%
 
 .chat
   color: white
   width: 100%
-  padding: 2rem
+  padding: 1rem
   overflow-y: scroll
   max-height: 43rem
 
 .topbar
-  margin: 0
+  top: 0.5vh
   height: 7.1vh
-  width: 100%
+  width: 98vw
   background: var(--topbar-background-color)
   color: var(--topbar-text-color)
   display: flex
+  border-radius: 12px
   place-items: center
   justify-content: space-between
-  box-shadow: 0px -1px 44px 15px #191919
+  position: relative
 
 
 .topbar div
   display: flex
+
+#room_display
+  font-family: "Inter", sans-serif
+  font-size: 35px
+  font-weight: normal
+  margin: 15px
 
 
 .sidenav
@@ -82,14 +89,14 @@ code
   flex-direction: column
   color: var(--sidenav-text-color)
   z-index: 2
-  height: 100vh
+  height: 90vh
   width: 4.5vw
+  border-radius: 12px
   justify-items: center
   align-items: center
   grid-template-columns: 100%
-  grid-template-rows: 4rem 51rem
+  grid-template-rows: 24rem 0rem
   transition: all 0.5s ease-in-out
-  box-shadow: 2px 2px 1px 1px #191919
 
   button 
     display: none
@@ -101,17 +108,19 @@ code
 
 .sidenav_opened
   display: grid !important
-  width: 20rem
+  width: 15vw
   transition: all 0.5s ease-in-out
 
   button
     display: block
 
   .sidenav_dropdown .content
-    height: 17rem
+    background: #1F1E1E57
+    border-radius: 12px
+    height: fit-content
     display: grid
     align-content: space-around
-    padding: 0
+    padding: 8px 0px
     justify-items: left
     text-indent: 30px
 
@@ -125,23 +134,26 @@ code
 
   .sidenav_button
     font-size: 18px
-    background: var(--sidenav-buttons-background-color)
+    // background: var(--sidenav-buttons-background-color)
+    background: #1F1E1E57
     color: var(--sidenav-buttons-text-color)
-    // border: 1px solid gray
     align-items: center
     justify-content: left
     padding-top: 0
-    text-indent: 6px
+    text-indent: 13px
+    top: 10px
+    position: relative
   
   .sidenav_button p
     display: flex
 
   .profile_card
-    top: 10%
+    background: rgba(0, 0, 0, 0.1450980392)
+    bottom: 0.7vh
     justify-content: left
-    border-radius: 12px
+    border-radius: 10px
     transition: ease-in-out all 1s
-    width: 95%
+    width: 94%
 
   .profile_preview .profile_user_preview 
     display: grid
@@ -150,15 +162,15 @@ code
     margin: 0px 9px 0px 6px
 
 .sidenav_button
-  width: 93%
-  height: 3rem
+  width: 100%
+  height: 32px
   place-content: center
   color: var(--sidenav-buttons-text-color)
   text-decoration: none
   font-size: 30px
   display: flex
   padding-top: 5rem
-  border-radius: 12px
+  border-radius: 7px
 
 .sidenav_button p
   display: none
@@ -175,6 +187,17 @@ code
   width: 100%
   height: fit-content
   display: none
+
+.nav_buttons_container
+  width: 94%
+  height: fit-content
+  display: grid
+  justify-content: center
+  justify-content: center
+  grid-template-columns: 100%
+  grid-template-rows: 40px 40px 40px 40px
+  position: absolute
+  bottom: 8vh
 
 .status_indicator
   background: red
@@ -197,13 +220,14 @@ code
   display: flex
   place-self: end
   place-items: center
-  justify-content: center
+  justify-content: space-evenly
   background: var(--bottom-bar-background-color)
+  border-radius: 12px
 
 .message_box
   display: flex
   height: 6.1vh
-  width: 46rem
+  width: 83.4%
   position: relative
   place-items: center
   background: var(--message-box-background-color)
@@ -211,7 +235,7 @@ code
   padding: 0px 1px 0px 0px
 
 #message_input
-  width: 92%
+  width: 100%
   height: 2.7rem
   outline: none
   border: 0
@@ -220,9 +244,9 @@ code
   background: transparent
 
 #send_button
-  width: 3rem
+  width: 3.4rem
   min-width: fit-content
-  height: 2.7rem
+  height: 3.4rem
   background: var(--send-button-background-color)
   color: var(--send-button-text-color)
   border-radius: 9px
@@ -241,48 +265,54 @@ code
   display: none
 
 #file_import_button
-  height: 2rem
-  width: 2rem
-  border-radius: 100%
+  height: 3rem
+  width: 3rem
+  background: white
+  border-radius: 9px
   font-size: 20px
-  color: black
+  color: blue
   display: flex
   place-items: center
   justify-content: center
   margin: 0px 0px 0px 5px
   border: 0
 
+#remaining_chars
+  position: absolute
+  color: white
+  bottom: 7.4vh
+  left: 23.2vw
+  width: fit-content
+
 .profile_button
   border-radius: 100px
-  width: 45px
-  height: 45px
-  // border: 2px red solid
+  width: 40px
+  height: 40px
+  border: 1px solid #D1D1D1
   object-fit: cover
 
 .profile_card 
-    display: flex
-    text-align: center
-    border: 1.5px solid rebeccapurple
-    width: 3.55rem
-    height: 55px
-    align-items: center
-    justify-content: center
-    top: 0.5%
-    position: relative
-    border-radius: 100px
+  display: flex
+  text-align: center
+  width: 100%
+  height: 7%
+  align-items: center
+  position: absolute
+  align-self: center
 
 .profile_preview 
     display: flex
     align-items: center
 
-.profile_preview .profile_user_preview 
-  display: none
+.profile_user_preview 
+  display: grid
   color: var(--usercard-text-color)
   left: 0px
   position: relative
   grid-template-rows: 18px
   margin: 0
   padding: 0
+  gap: 4px
 
 .profile_user_preview .profile_status 
     display: flex
@@ -291,58 +321,52 @@ code
     text-indent: 6px
 
 .profile_status p
-  max-height: 1rem
+  font-size: 12px
+  font-weight: lighter
+  font-family: sans-serif
 
 
-.profile_preview .profile_status div 
-    border-radius: 100px
-    height: 10px
-    width: 10px
+.profile_status div 
+  background: lime
+  width: 0.5rem
+  height: 0.5rem
+  border-radius: 100%
 
-
-.profile_card a 
-    color: white
-    padding: 12px 16px
-    text-decoration: none
-    display: block
-
-
-.profile_card a:hover 
-    border-radius: 10px
-    background: #2d2d2d
-    border: #c72b07e5 0.5px solid
+#profile_card_username
+  font-size: 15px
 
 
 .card_opened 
-    transform: translate(0, 6%)
-    transition: ease-in-out 0.4s
+  transform: translate(0, 6%)
+  transition: ease-in-out 0.4s
 
 
 .card_closed 
-    transform: translate(0, 0)
-    opacity: 0
-    transition: ease-in-out 0.4s
-
-
+  transform: translate(0, 0)
+  opacity: 0
+  transition: ease-in-out 0.4s
 
 .user_list
   display: grid
   background: var(--userlist-background-color)
   color: var(--userlist-text-color)
-  height: 100vh
-  width: fit-content
-  justify-self: right
-  position: fixed
-  right: 0%
-  border-left: 5px solid var(--userlist-border-color)
+  height: 90vh
+  width: 15vw
+  border-radius: 12px
+  justify-content: center
+  justify-items: center
+  grid-template-columns: 100%
   grid-template-rows: repeat(auto-fit, minmax(calc(4em + 9px), 0fr))
   overflow-y: scroll
   overflow-x: hidden
-  // box-shadow: rgb(25, 25, 25) 10px 20px 17px 16px
 
 #user_list
+  display: grid
   height: 100vh
+  width: 96%
   padding: 0
+  grid-template-columns: 100%
+  grid-template-rows: repeat(auto-fit, minmax(calc(3.7em + 9px), 0fr))
 
 #user_search_input
   margin-top: 11px
@@ -355,6 +379,25 @@ code
   border-radius: 6px
   border: 1px solid aliceblue
   text-indent: 6px
+
+#user_count_container
+  width: 95%
+  height: 82%
+  display: grid
+  background: #FFFFFF08
+  border-radius: 5px
+  align-content: center
+  text-indent: 7px
+  position: relative
+  top: 0.5vh
+  grid-template-rows: 26px
+
+#online_users_count
+  font-size: 17px
+
+#offline_users_count
+  font-size: 12px
+  font-weight: lighter
 
 .users_container
   width: 100%
@@ -377,21 +420,50 @@ code
   border-radius: 100px
   border: 2px solid #404040
 
-.userlist_user_details
-  display: grid
-  align-content: center
-  grid-template-rows: 100%
-  height: 1.7rem
-  min-width: 61%
+.userlist_user
+  display: flex
+  align-items: center
+  gap: 6px
 
-.userlist_display_name
-  font-size: 18px
+.userlist_info_container
+  display: grid
+  width: 100%
+  height: 3rem
+  background: #FFFFFF08
+  border-radius: 5px
+  align-content: center
+  gap: 2px
+  text-indent: 4px
+
+.userlist_picture
+  width: 3rem
+  height: 3rem
+  border-radius: 100%
+
+.userlist_displayname
+  font-size: 19px
+  height: fit-content
+  padding: 0
+  margin: 0
 
 .userlist_role
   font-size: 12px
+  font-weight: lighter
+  height: fit-content
+  padding: 0
+  margin: 0
 
 .user_card_mini:hover
   background: hsl(0, 0.00%, 31.80%)
+
+.online
+  border: 1.5px solid #00FF04
+
+.offline
+  border: 1.5px solid #FF0000
+
+.idle
+  border: 1.5px solid orange
 
 .user_message
   background: transparent
@@ -666,7 +738,7 @@ code
   padding: 0px 0px 4rem 0px
 
 #links_container a
-  color: black
+  color: var(--foreground-accent-2)
   text-decoration: none
 
 #links_container a:hover

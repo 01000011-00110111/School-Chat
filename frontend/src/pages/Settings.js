@@ -1,7 +1,8 @@
 // Copyright (C) 2023, 2024  cserver45, cseven
 // License info can be viewed in app.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import {Tabs, Tab, TabButton } from "../static/js/react_tabs";
@@ -11,10 +12,29 @@ import { faArrowLeft, faAsterisk, faBell, faCircle, faHomeUser, faLaptopFile, fa
 import socket from "../socket";
 
 const Settings = () => {
+    const [errors, SetErrors] = useState([]);
+    
     const getInitialState = () => {
         const value = JSON.parse(storage.get("app-nav-settings"))["nav_close_onroom"];
         return value;
     }
+    let suuid = sessionStorage.getItem("suuid");
+
+    useEffect(() => {
+        socket.emit("check_suuid", suuid);
+    });
+
+    useEffect(() => {
+        socket.on("send_to_login", (data) => {
+            suuid = '';
+            sessionStorage.removeItem("suuid");
+            window.location.href = "/";
+        });
+
+        return () => {
+            socket.off("send_to_login");
+        };
+    }, []);
 
     const on_update = (event = Event) => {
         console.log(event)
@@ -22,32 +42,58 @@ const Settings = () => {
         document.querySelectorAll(".footer_alert")[0].classList.add("on_screen");
     }
 
-    // socket.on("settings", (data) => {
-    //     if (data.status === "initial") {
-           // this receives the initial settings from the server
-
-    //     } else if (data.status === "success") {
-           // this receives the success message from the server
-    //     } else if (data.status === "error") {
-    //         this receives the error messages from the server there can be multiple error messages up to 5 currently
-    //     }
-    // }); 
-
-    // socket.emit("settings", {data, suuid: window.sessionStorage.getItem("suuid")}); add this to the upload function to send data to the server
-
+    useEffect(() => {
+        socket.emit("get_settings", window.sessionStorage.getItem("suuid"));
+    }, [])
+    
+    
     const [navState, setNavState] = useState(getInitialState);
     const [formInfo, setformInfo] = useState({
-        displayName: "The-Dev",
-        role: "BenchyMaster",
+        displayName: "",
+        role: "",
         usernameColor: "#000000",
         roleColor: "#000000",
         messageColor: "#000000",
-        username: "C7",
+        username: "TestAcc",
         email: "testemail@123.com",
         newMessagePing: false,
         userPing: true,
         privateMessagePing: false,
     });
+    
+    useEffect(() => {
+        socket.on("settings", (data) => {
+            if (data.status === "error") {
+                const error_array = [];
+                Object.entries(data["errors"]).map((error, index) => {
+                    error_array.push(error[1][1])
+                })
+                console.log(error_array)
+                SetErrors(error_array);
+            } else {
+                SetErrors([]);
+                document.querySelectorAll(".footer_alert")[0].classList.remove("on_screen");
+            }
+
+            if (data.settings) {
+                setformInfo({
+                    displayName: data["settings"]["displayName"],
+                    role: data["settings"]["role"],
+                    usernameColor: data["settings"]["usernameColor"],
+                    roleColor: data["settings"]["roleColor"],
+                    messageColor: data["settings"]["messageColor"]
+                })
+            }
+
+        });
+    }, [formInfo])
+
+    // console.log(errors)
+
+    const save_settings = () => {
+        socket.emit("save_settings", {suuid: window.sessionStorage.getItem("suuid"), formInfo});
+
+    }
 
     const handleChange = (event) => {
         setNavState(event.target.value);
@@ -177,8 +223,18 @@ const Settings = () => {
                         </a>
                     </Tab>
                 </Tabs>
-                <FooterAlert message={"You have unsaved changes"} buttons={["Discard", "Save"]} func={[() => console.log("Button1"), () => document.querySelectorAll(".footer_alert")[0].classList.remove("on_screen")]}/>
+                <FooterAlert message={"You have unsaved changes"} buttons={["Discard", "Save"]} func={[() => console.log("Button1"), () => save_settings()]}/>
             </div>
+            
+            { errors.length === 0 ? "" :
+            <div className="settings_edits">
+                <h2>Failed to save due to improper settings</h2>
+                <ul>
+                    {errors.map((error, index) => (
+                        <li key={index}>{error}</li>
+                    ))}
+                </ul>
+            </div>}
         </div>
     )
 }

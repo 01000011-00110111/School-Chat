@@ -54,7 +54,6 @@ class Chat:
 
     async def send_message(self, message):
         """Send a message to the chat."""
-        self.messages.append(message)
         self.config["last_message"] = datetime.now()
         lines = len(self.messages)# if not private else 1
         print(message)
