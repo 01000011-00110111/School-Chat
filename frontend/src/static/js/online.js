@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import socket from "../../socket";
 
 function status_conversion(status) {
@@ -28,30 +28,6 @@ const cut_replace = (text, length) => {
     var last = text.lastIndexOf("");
     text = text.substring(0, last);
     return text + "...";
-}
-
-const show_profile_modal = (user, role, pfp) => {
-    const profile_modal = document.getElementsByClassName("background_blur")[0];
-    const close_modal_button = document.getElementsByClassName("close_modal_button")[0];
-
-    /** Repsonsible for setting modals options correctly */
-    const profile_modal_button = document.getElementsByClassName("profile_modal_button")[1];
-    const modal_user_name = document.getElementById("modal_user_name");
-    const modal_user_role = document.getElementById("modal_user_role");
-    const modal_user_picture = document.getElementById("modal_user_picture");
-    /** End of code */
-
-    if (!profile_modal.classList.contains('show_modal')) {
-        profile_modal.classList.add('show_modal');
-        profile_modal_button.setAttribute('click', `opendms("${user}")`)
-        modal_user_name.innerHTML = user;
-        modal_user_role.innerHTML = role;
-        modal_user_picture.src = pfp ? pfp : "/icons/favicon.ico";
-    }
-    
-    close_modal_button.addEventListener('click', () => { 
-        profile_modal.classList.remove('show_modal');
-    });
 }
 
 function notifyStatusChange(status) {
@@ -129,6 +105,3 @@ socket.on('heartbeat', () => {
 window.addEventListener("beforeunload", (e) => {
     socket.emit('beat', { status: 'offline', suuid: window.sessionStorage.getItem("suuid") });
 });
-
-
-export { show_profile_modal }

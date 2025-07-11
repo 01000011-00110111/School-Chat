@@ -14,7 +14,6 @@ import { Theme_System } from "../customization/theme_render";
 
 function Chat() {
     const [chatrooms, setChatooms] = useState([]);
-    const [users, setUsers] = useState([{}]);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [rooms, setRooms] = useState([]);
@@ -214,7 +213,7 @@ function Chat() {
             <div className="chat_container">
                 <div className="sidenav">
                     <div className="sidenav_dropdown">
-                        <div className="sidenav_button">
+                        <div className="sidenav_badge">
                             <FontAwesomeIcon icon={faBorderAll} />
                             <p>Chat Rooms</p>
                         </div>
@@ -267,12 +266,12 @@ function Chat() {
                     <div className="chat" id="chat"></div>
 
                     <div className="bottom_bar">
+                        <p id="remaining_chars">250 Characters Left</p>
+
                         <label htmlFor="file_import_input" id="file_import_button">
                             <FontAwesomeIcon icon={faPlus} />
                             <input id="file_import_input" type="file" title="files" />
                         </label>
-
-                        <p id="remaining_chars">250 Characters Left</p>
 
                         <div className="message_box">
                             <input
@@ -296,49 +295,11 @@ function Chat() {
                         <button id="send_button" onClick={sendMessage}>
                             <FontAwesomeIcon icon={faPaperPlane} />
                         </button>
+
                     </div>
                 </div>
                 
                 <UserList />
-            </div>
-
-            <div className="background_blur">
-                <div className="user_profile_modal">
-                    <div className="profile_modal_options">
-                        <div className="profile_modal_button">
-                            <span>
-                                <FontAwesomeIcon icon={faUserPlus} />
-                                <p>Add Friend</p>
-                            </span>
-                            <FontAwesomeIcon icon={faChevronRight} />
-                        </div>
-
-                        <div className="profile_modal_button">
-                            <span>
-                                <FontAwesomeIcon icon={faMessage} />
-                                <p>DM</p>
-                            </span>
-                            <FontAwesomeIcon icon={faChevronRight} />
-                        </div>
-                    </div>
-
-                    <div className="profile_details">
-                        <button className="close_modal_button">
-                            <FontAwesomeIcon icon={faXmark} />
-                        </button>
-                        <div className="modal_user_details">
-                            <img src={null} id="modal_user_picture" alt="something!"/>
-                            <div className="modal_extra_details">
-                                <h1 id="modal_user_name">Display Name</h1>
-                                <p id="modal_user_role">Role</p>
-                            </div>
-                        </div>
-                        <div className="modal_badge_list">
-                            <p className=" badge admin">admin</p>
-                            <p className="badge mod">OG Badge</p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     );
