@@ -1,5 +1,5 @@
 from socketio_confg import sio
-from user.user import User
+# from user.user import User
 from user import database
 import re
 

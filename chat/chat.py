@@ -7,7 +7,7 @@ from datetime import datetime
 import chat.database as database
 from socketio_confg import sio
 from system import format_system_msg
-import signal
+# import signal
 
 class Chat:
     """Chat class."""

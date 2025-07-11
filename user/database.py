@@ -46,7 +46,7 @@ def email_exists(email):
     """Checks if an email already exists in the database."""
     return ID.find_one({"email": email})
 
-def get_user_data(uuid):
+def get_user_data(user_id):
     """Retrieves all data required to login."""
     pipeline = [
         {
@@ -91,7 +91,7 @@ def get_user_data(uuid):
             }
         },
     ]
-    match = [{"$match": {"userId": uuid}}]
+    match = [{"$match": {"userId": user_id}}]
     try:
         result = list(ID.aggregate(match + pipeline))[0]
         return result
@@ -132,9 +132,10 @@ def get_online_data():
     ]
     try:
         result = list(ID.aggregate(pipeline))
-        result_dict = {user["uuid"]: {key: val for key, val in user.items() if key != "uuid"} for user in result}
+        result_dict = {user["uuid"]: {key: val for key, val in user.items() if key != "uuid"}\
+                        for user in result}
         print(result_dict)
-        
+
         return result_dict
     except IndexError:
         return None
@@ -164,7 +165,6 @@ def add_accounts(data):
 
     # Hash the password before storing it
     password = hashlib.sha384(data["password"].encode('utf-8')).hexdigest()
-    # print(userid, onlineid, username, password, email, role, displayname, user_color, role_color, message_color)
 
     id_data = {
         "userId": userid,
@@ -203,7 +203,7 @@ def update(data, user_id):
 
     if "role" in data:
         customization_data["role"] = data["role"]
-    if "display_name" in data:   
+    if "display_name" in data:
         customization_data["displayName"] = data["display_name"]
     if "m_color" in data:
         customization_data["messageColor"] = data["m_color"]

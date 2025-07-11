@@ -2,7 +2,7 @@
     Copyright (C) 2023, 2024  cserver45, cseven
     License info can be viewed in app.py or the LICENSE file.
 """
-from datetime import datetime
+# from datetime import datetime
 from chat.chat import Chat
 from user.user import User
 from chat.filtering import run_filter_chat

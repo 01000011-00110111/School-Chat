@@ -12,7 +12,7 @@ from better_profanity import profanity
 # from user import User
 # from commands.other import format_system_msg
 from chat.chat import Chat
-from system import format_system_msg
+# from system import format_system_msg
 
 def setup_filter(whitelist, blacklist):
     """Sets up whitelisted and blacklisted words."""
@@ -107,20 +107,20 @@ def compile_message(message, profile_picture, user):
     }
 
 
-def failed_message(reason_code, roomid):
-    """Handles failure messages based on permission checks."""
-    fail_reasons = {
-        1: "You are muted and cannot send messages.",
-        2: "You are banned from this chat room.",
-        3: "This chat room is locked.",
-        4: "You lack permissions to send messages here.",
-        5: "You have been rate-limited. Please wait.",
-        6: "You must verify your account before using this feature.",
-        7: "Pings are not allowed.",
-        8: "No sending code snippets in chat.",
-    }
-    fail_msg = fail_reasons.get(reason_code, "Unknown error occurred.")
-    # emit("message_chat", (format_system_msg(fail_msg), roomid), namespace="/")
+# def failed_message(reason_code, roomid):
+#     """Handles failure messages based on permission checks."""
+#     fail_reasons = {
+#         1: "You are muted and cannot send messages.",
+#         2: "You are banned from this chat room.",
+#         3: "This chat room is locked.",
+#         4: "You lack permissions to send messages here.",
+#         5: "You do not have permission to use this command.",
+#         6: "You must verify your account before using this feature.",
+#         7: "Pings are not allowed.",
+#         8: "No sending code in chat.",
+#     }
+#     fail_msg = fail_reasons.get(reason_code, "Unknown error occurred.")
+#     semit("message_chat", (format_system_msg(fail_msg), roomid), namespace="/")
 
 def run_filter_chat(user, roomid, message, suuid):
     """Filters messages before sending in a chat room."""
