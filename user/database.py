@@ -195,7 +195,6 @@ def add_accounts(data):
     ID.insert_one(id_data)
     Customization.insert_one(customization_data)
     Permission.insert_one(permission_data)
-    # return userid
 
 
 def update(data, user_id):
