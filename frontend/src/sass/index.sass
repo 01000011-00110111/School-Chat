@@ -85,8 +85,7 @@ code
 .sidenav
   position: relative
   background: var(--sidenav-background-color)
-  display: flex
-  flex-direction: column
+  display: grid
   color: var(--sidenav-text-color)
   z-index: 2
   height: 90vh
@@ -115,14 +114,15 @@ code
     display: block
 
   .sidenav_dropdown .content
+    width: 94%
+    height: fit-content
     background: #1F1E1E57
     border-radius: 12px
-    height: fit-content
     display: grid
     align-content: space-around
     padding: 8px 0px
     justify-items: left
-    text-indent: 30px
+    text-indent: 17px
 
   .sidenav_dropdown li a
     color: var(--sidenav-buttons-text-color)
@@ -133,16 +133,35 @@ code
     color: gray
 
   .sidenav_button
+    width: auto
+    height: 32px
     font-size: 18px
-    // background: var(--sidenav-buttons-background-color)
     background: #1F1E1E57
     color: var(--sidenav-buttons-text-color)
     align-items: center
     justify-content: left
     padding-top: 0
-    text-indent: 13px
+    gap: 7px
+    top: 10px
+    padding-left: 8px
+    position: relative
+    
+  .sidenav_badge
+    width: 73%
+    height: 32px
+    justify-content: center
+    padding: 0
+    font-size: 18px
+    background: #1F1E1E57
+    color: var(--sidenav-buttons-text-color)
+    align-items: center
+    justify-content: center
+    gap: 7px
     top: 10px
     position: relative
+
+  .sidenav_badge p
+    display: flex
   
   .sidenav_button p
     display: flex
@@ -154,8 +173,9 @@ code
     border-radius: 10px
     transition: ease-in-out all 1s
     width: 94%
+    justify-content: left
 
-  .profile_preview .profile_user_preview 
+  .profile_preview, .profile_user_preview 
     display: grid
 
   .profile_button
@@ -163,14 +183,27 @@ code
 
 .sidenav_button
   width: 100%
-  height: 32px
-  place-content: center
+  height: 50px
   color: var(--sidenav-buttons-text-color)
   text-decoration: none
   font-size: 30px
   display: flex
-  padding-top: 5rem
   border-radius: 7px
+  align-items: center
+  justify-content: center
+  gap: 12px
+
+.sidenav_badge
+  color: var(--sidenav-buttons-text-color)
+  text-decoration: none
+  font-size: 30px
+  display: flex
+  border-radius: 7px
+  align-items: center
+  justify-content: center
+
+.sidenav_badge p
+  display: none
 
 .sidenav_button p
   display: none
@@ -192,7 +225,6 @@ code
   width: 94%
   height: fit-content
   display: grid
-  justify-content: center
   justify-content: center
   grid-template-columns: 100%
   grid-template-rows: 40px 40px 40px 40px
@@ -227,7 +259,7 @@ code
 .message_box
   display: flex
   height: 6.1vh
-  width: 83.4%
+  width: 100%
   position: relative
   place-items: center
   background: var(--message-box-background-color)
@@ -278,11 +310,11 @@ code
   border: 0
 
 #remaining_chars
-  position: absolute
+  margin: 0px
   color: white
-  bottom: 7.4vh
-  left: 23.2vw
   width: fit-content
+  left: 18px
+  position: relative
 
 .profile_button
   border-radius: 100px
@@ -297,15 +329,15 @@ code
   width: 100%
   height: 7%
   align-items: center
+  justify-content: center
   position: absolute
-  align-self: center
 
 .profile_preview 
     display: flex
     align-items: center
 
 .profile_user_preview 
-  display: grid
+  display: none
   color: var(--usercard-text-color)
   left: 0px
   position: relative
@@ -753,103 +785,6 @@ code
 #Title::selection
   color: red
   text-shadow: 5px 0px 5px #464646
-
-.background_blur
-  position: fixed
-  width: 100%
-  height: 100%
-  display: none
-  backdrop-filter: blur(0.2rem)
-  z-index: 3
-  place-content: center
-
-.user_profile_modal
-  width: 60vw
-  height: 50vh
-  background: black
-  color: white
-  border-radius: 12px
-  position: fixed
-  display: flex
-  place-self: center
-  justify-self: center
-  box-shadow: 3px 4px 10px 4px #181818
-
-.profile_modal_options
-  width: 13rem
-  border-right: 1px solid white
-  display: grid
-  justify-items: center
-  grid-template-rows: repeat(auto-fit, minmax(calc(1.9em + 9px), 0fr))
-  grid-template-columns: 100%
-  padding: 1rem 0px
-
-.profile_details
-  width: 39rem
-  padding: 0px 0px 0px 2rem
-
-.modal_user_details
-  display: flex
-  align-items: center
-
-.modal_extra_details
-  display: grid
-  grid-template-rows: 43px
-  align-content: center
-  justify-content: center
-  height: 6rem
-  text-indent: 16px
-
-#modal_user_picture
-  width: 4rem
-  height: 4rem
-  border-radius: 100px
-  border: 1px solid red
-
-.profile_modal_button
-  height: 2.4rem
-  width: 86%
-  background: transparent
-  color: white
-  display: flex
-  justify-content: space-between
-  font-size: 20px
-  border: 0
-  border-radius: 10px
-  text-align: left
-  align-items: center
-  padding: 0px 7px
-  text-indent: 11px
-
-.profile_modal_button span
-  width: fit-content
-  display: flex
-  align-items: center
-  justify-content: space-between
-  height: inherit
-
-.profile_modal_button:hover
-  background: gray
-
-.close_modal_button
-  border: 0
-  width: 2rem
-  height: 2rem
-  position: absolute
-  font-size: 25px
-  background: black
-  border-radius: 100px
-  color: red
-  right: 1%
-  top: 1%
-  box-shadow: 1px 1px 10px gray
-  border: 1px solid white
-
-.modal_badge_list
-  display: flex
-
-.show_modal
-  display: grid !important
 
 .signup-main
   background: linear-gradient(132deg, #181a1e, #000, #141414, #282828, #181a1e)
