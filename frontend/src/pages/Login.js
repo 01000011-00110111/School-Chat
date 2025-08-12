@@ -1,12 +1,17 @@
 import React, {useState, useEffect} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import socket from '../socket'
 import {setSuuid} from '../static/js/variables'
 
 function Login() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [showPassword, setShowPassowrd] = useState({
+        passwordState: "password",
+        iconState: faEye,
+    });
+    const [loginStatus, setloginStatus] = useState("");
 
     useEffect(() => {
         let uuid = sessionStorage.getItem("suuid");
@@ -15,6 +20,10 @@ function Login() {
             window.location.href = "/chat/Main";
         }
     }, []);
+    
+    const show_password = () => {
+        showPassword.passwordState !== "text" ? setShowPassowrd({passwordState: "text", iconState: faEyeSlash}) : setShowPassowrd({passwordState: "password", iconState: faEye});
+    };
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -28,8 +37,10 @@ function Login() {
         }
         if (data["status"] === 'failed') {
             console.log(data);
+            setloginStatus("Username or Password is incorrect");
         }
     });
+
 
     return (
         <div id="login_container">
@@ -57,9 +68,9 @@ function Login() {
                         </div>
 
                         <div className="login_input">
-                            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter your password" tabIndex={2} required/>
-                            <button>
-                                <FontAwesomeIcon icon={faEye}/>
+                            <input value={password} onChange={(e) => setPassword(e.target.value)} type={showPassword.passwordState} placeholder="Enter your password" tabIndex={2} required/>
+                            <button onClick={() => show_password()}>
+                                <FontAwesomeIcon icon={showPassword.iconState}/>
                             </button>
                         </div>
                     </div>
@@ -67,6 +78,8 @@ function Login() {
                     <div className="wrapper_panel">
                         <button onClick={handleLogin} className="login_button">Login</button>
                     </div>
+
+                    <p className="login_status">{loginStatus}</p>
                 </div>
 
                 <div id="links_container">
@@ -92,6 +105,7 @@ function Login() {
                             <li>Keep the language english (unless in a special chat room).</li>
                         </ul>
                     </div>
+                    <p style={{color: "red"}}>Breaking the rules will cause you to be muted, continue to break will result in a ban</p>
                     <p>
                         (if you have more rules open the Issue <a href="https://github.com/01000011-00110111/School-Chat/discussions/categories/ideas">rules</a> and comment the rule there!)
                     </p>

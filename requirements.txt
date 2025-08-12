@@ -1,6 +1,7 @@
 aiofiles==24.1.0
 astroid==3.3.7
 bcrypt==4.2.1
+better-profanity==0.7.0
 bidict==0.23.1
 certifi==2024.8.30
 dill==0.3.9

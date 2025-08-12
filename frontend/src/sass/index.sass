@@ -2,15 +2,17 @@
    License info can be viewed in app.py or the LICENSE file inside the github repositiory located here:
    https://github.com/01000011-00110111/School-Chat */  
 @use 'badges'
-  
-$chat_background_color: black
-$sidenav_button_background_color: black
-  
-@property --background-color
-  syntax: "<color>"
-  inherits: true
-  initial-value: black
+@use 'native'
+@use 'themes'
 
+:root
+  --background-accent-1: black
+  --background-accent-2: #4e4e4e
+
+  --foreground-accent-1: white
+  --foreground-accent-2: purple
+  --primary-accent-color: purple
+  @extend %theme
 
 body
   margin: 0
@@ -26,58 +28,74 @@ code
 .main
   width: 100vw
   height: 100vh
-  display: flex
-  background: $chat_background_color
+  display: grid
+  justify-content: center
+  justify-items: center
+  background: var(--main-background-color)
+  // background: linear-gradient(90deg,#9A93D8 13%, #007B79 58%, #384E82 91%)
+  // background: linear-gradient(red, purple)
 
 
 .chat_container
   width: 100%
   height: 100%
-  display: grid
-
-
-.main_chat_body
-  width: 100%
-  height: 85vh
   display: flex
-  position: relative
-  top: -0.7%
+  justify-content: space-between
+
+
+.chat_center
+  display: grid
+  width: 66vw
+  height: 90vh
+  border-radius: 12px
+  justify-content: center
+  background: var(--chat-background-color)
+  grid-template-columns: 100%
 
 .chat
   color: white
   width: 100%
-  padding: 2rem
+  padding: 1rem
   overflow-y: scroll
   max-height: 43rem
 
 .topbar
-  margin: 0
+  top: 0.5vh
   height: 7.1vh
-  width: 100%
-  background: var(--background-color)
-  color: white
+  width: 98vw
+  background: var(--topbar-background-color)
+  color: var(--topbar-text-color)
   display: flex
+  border-radius: 12px
   place-items: center
   justify-content: space-between
-  box-shadow: 0px -1px 44px 15px #191919
+  position: relative
 
 
 .topbar div
   display: flex
 
+#room_display
+  font-family: "Inter", sans-serif
+  font-size: 35px
+  font-weight: normal
+  margin: 15px
+
 
 .sidenav
   position: relative
-  background: black
-  color: white
+  background: var(--sidenav-background-color)
+  display: grid
+  color: var(--sidenav-text-color)
   z-index: 2
-  height: 100vh
+  height: 90vh
   width: 4.5vw
+  border-radius: 12px
   justify-items: center
+  align-items: center
   grid-template-columns: 100%
-  grid-template-rows: 4rem 51rem
+  grid-template-rows: 24rem 0rem
   transition: all 0.5s ease-in-out
-  box-shadow: 2px 2px 1px 1px #191919
 
   button 
     display: none
@@ -89,22 +107,25 @@ code
 
 .sidenav_opened
   display: grid !important
-  width: 20rem
+  width: 15vw
   transition: all 0.5s ease-in-out
 
   button
     display: block
 
   .sidenav_dropdown .content
-    height: 17rem
+    width: 94%
+    height: fit-content
+    background: #1F1E1E57
+    border-radius: 12px
     display: grid
     align-content: space-around
-    padding: 0
+    padding: 8px 0px
     justify-items: left
-    text-indent: 30px
+    text-indent: 17px
 
   .sidenav_dropdown li a
-    color: white
+    color: var(--sidenav-buttons-text-color)
     text-decoration: none
     font-size: 20px
 
@@ -112,39 +133,77 @@ code
     color: gray
 
   .sidenav_button
+    width: auto
+    height: 32px
     font-size: 18px
-    background: $sidenav_button_background_color
-    // border: 1px solid gray
+    background: #1F1E1E57
+    color: var(--sidenav-buttons-text-color)
     align-items: center
     justify-content: left
     padding-top: 0
-    text-indent: 6px
+    gap: 7px
+    top: 10px
+    padding-left: 8px
+    position: relative
+    
+  .sidenav_badge
+    width: 73%
+    height: 32px
+    justify-content: center
+    padding: 0
+    font-size: 18px
+    background: #1F1E1E57
+    color: var(--sidenav-buttons-text-color)
+    align-items: center
+    justify-content: center
+    gap: 7px
+    top: 10px
+    position: relative
+
+  .sidenav_badge p
+    display: flex
   
   .sidenav_button p
     display: flex
 
   .profile_card
-    top: 10%
+    background: rgba(0, 0, 0, 0.1450980392)
+    bottom: 0.7vh
     justify-content: left
+    border-radius: 10px
     transition: ease-in-out all 1s
-    border-radius: 12px
+    width: 94%
+    justify-content: left
 
-  .profile_preview .profile_user_preview 
+  .profile_preview, .profile_user_preview 
     display: grid
 
   .profile_button
     margin: 0px 9px 0px 6px
 
 .sidenav_button
-  width: 93%
-  height: 3rem
-  place-content: center
-  color: white
+  width: 100%
+  height: 50px
+  color: var(--sidenav-buttons-text-color)
   text-decoration: none
   font-size: 30px
   display: flex
-  padding-top: 5rem
-  border-radius: 12px
+  border-radius: 7px
+  align-items: center
+  justify-content: center
+  gap: 12px
+
+.sidenav_badge
+  color: var(--sidenav-buttons-text-color)
+  text-decoration: none
+  font-size: 30px
+  display: flex
+  border-radius: 7px
+  align-items: center
+  justify-content: center
+
+.sidenav_badge p
+  display: none
 
 .sidenav_button p
   display: none
@@ -162,12 +221,21 @@ code
   height: fit-content
   display: none
 
+.nav_buttons_container
+  width: 94%
+  height: fit-content
+  display: grid
+  justify-content: center
+  grid-template-columns: 100%
+  grid-template-rows: 40px 40px 40px 40px
+  position: absolute
+  bottom: 8vh
+
 .status_indicator
   background: red
   width: 0.6rem
   height: 0.6rem
   border-radius: 100px
-  margin: 19px
   animation: color_fading 2s infinite
 
 #nav_button
@@ -175,7 +243,7 @@ code
   font-size: 29px
   background: transparent
   border: 0
-  color: white
+  color: var(--sidenav-extend-button-color)
 
 
 .bottom_bar
@@ -184,21 +252,22 @@ code
   display: flex
   place-self: end
   place-items: center
-  justify-content: center
-  background: black
+  justify-content: space-evenly
+  background: var(--bottom-bar-background-color)
+  border-radius: 12px
 
 .message_box
   display: flex
   height: 6.1vh
-  width: 46rem
+  width: 100%
   position: relative
   place-items: center
-  background: white
+  background: var(--message-box-background-color)
   border-radius: 6px
   padding: 0px 1px 0px 0px
 
 #message_input
-  width: 92%
+  width: 100%
   height: 2.7rem
   outline: none
   border: 0
@@ -207,11 +276,11 @@ code
   background: transparent
 
 #send_button
-  width: 3rem
+  width: 3.4rem
   min-width: fit-content
-  height: 2.7rem
-  background: rgb(0, 94, 255)
-  color: white
+  height: 3.4rem
+  background: var(--send-button-background-color)
+  color: var(--send-button-text-color)
   border-radius: 9px
   border: 0
   font-size: 20px
@@ -228,48 +297,54 @@ code
   display: none
 
 #file_import_button
-  height: 2rem
-  width: 2rem
-  border-radius: 100%
+  height: 3rem
+  width: 3rem
+  background: white
+  border-radius: 9px
   font-size: 20px
-  color: black
+  color: blue
   display: flex
   place-items: center
   justify-content: center
   margin: 0px 0px 0px 5px
   border: 0
 
+#remaining_chars
+  margin: 0px
+  color: white
+  width: fit-content
+  left: 18px
+  position: relative
+
 .profile_button
   border-radius: 100px
-  width: 45px
-  height: 45px
-  // border: 2px red solid
+  width: 40px
+  height: 40px
+  border: 1px solid #D1D1D1
   object-fit: cover
 
 .profile_card 
-    display: flex
-    text-align: center
-    border: 1.5px solid rebeccapurple
-    width: 95%
-    height: 55px
-    align-items: center
-    justify-content: center
-    top: 0.5%
-    position: relative
-    border-radius: 100px
+  display: flex
+  text-align: center
+  width: 100%
+  height: 7%
+  align-items: center
+  justify-content: center
+  position: absolute
 
 .profile_preview 
     display: flex
     align-items: center
 
-.profile_preview .profile_user_preview 
+.profile_user_preview 
   display: none
-  color: white
+  color: var(--usercard-text-color)
   left: 0px
   position: relative
   grid-template-rows: 18px
   margin: 0
   padding: 0
+  gap: 4px
 
 .profile_user_preview .profile_status 
     display: flex
@@ -278,57 +353,52 @@ code
     text-indent: 6px
 
 .profile_status p
-  max-height: 1rem
+  font-size: 12px
+  font-weight: lighter
+  font-family: sans-serif
 
 
-.profile_preview .profile_status div 
-    border-radius: 100px
-    height: 10px
-    width: 10px
+.profile_status div 
+  background: lime
+  width: 0.5rem
+  height: 0.5rem
+  border-radius: 100%
 
-
-.profile_card a 
-    color: white
-    padding: 12px 16px
-    text-decoration: none
-    display: block
-
-
-.profile_card a:hover 
-    border-radius: 10px
-    background: #2d2d2d
-    border: #c72b07e5 0.5px solid
+#profile_card_username
+  font-size: 15px
 
 
 .card_opened 
-    transform: translate(0, 6%)
-    transition: ease-in-out 0.4s
+  transform: translate(0, 6%)
+  transition: ease-in-out 0.4s
 
 
 .card_closed 
-    transform: translate(0, 0)
-    opacity: 0
-    transition: ease-in-out 0.4s
-
-
+  transform: translate(0, 0)
+  opacity: 0
+  transition: ease-in-out 0.4s
 
 .user_list
   display: grid
-  background: black
-  color: white
-  height: 100vh
-  width: fit-content
-  justify-self: right
-  position: fixed
-  right: 0%
-  border-left: 5px solid #000
+  background: var(--userlist-background-color)
+  color: var(--userlist-text-color)
+  height: 90vh
+  width: 15vw
+  border-radius: 12px
+  justify-content: center
+  justify-items: center
+  grid-template-columns: 100%
   grid-template-rows: repeat(auto-fit, minmax(calc(4em + 9px), 0fr))
   overflow-y: scroll
   overflow-x: hidden
-  // box-shadow: rgb(25, 25, 25) 10px 20px 17px 16px
 
 #user_list
+  display: grid
   height: 100vh
+  width: 96%
+  padding: 0
+  grid-template-columns: 100%
+  grid-template-rows: repeat(auto-fit, minmax(calc(3.7em + 9px), 0fr))
 
 #user_search_input
   margin-top: 11px
@@ -340,6 +410,26 @@ code
   height: 2rem
   border-radius: 6px
   border: 1px solid aliceblue
+  text-indent: 6px
+
+#user_count_container
+  width: 95%
+  height: 82%
+  display: grid
+  background: #FFFFFF08
+  border-radius: 5px
+  align-content: center
+  text-indent: 7px
+  position: relative
+  top: 0.5vh
+  grid-template-rows: 26px
+
+#online_users_count
+  font-size: 17px
+
+#offline_users_count
+  font-size: 12px
+  font-weight: lighter
 
 .users_container
   width: 100%
@@ -362,21 +452,50 @@ code
   border-radius: 100px
   border: 2px solid #404040
 
-.userlist_user_details
-  display: grid
-  align-content: center
-  grid-template-rows: 100%
-  height: 1.7rem
-  min-width: 61%
+.userlist_user
+  display: flex
+  align-items: center
+  gap: 6px
 
-.userlist_display_name
-  font-size: 18px
+.userlist_info_container
+  display: grid
+  width: 100%
+  height: 3rem
+  background: #FFFFFF08
+  border-radius: 5px
+  align-content: center
+  gap: 2px
+  text-indent: 4px
+
+.userlist_picture
+  width: 3rem
+  height: 3rem
+  border-radius: 100%
+
+.userlist_displayname
+  font-size: 19px
+  height: fit-content
+  padding: 0
+  margin: 0
 
 .userlist_role
   font-size: 12px
+  font-weight: lighter
+  height: fit-content
+  padding: 0
+  margin: 0
 
 .user_card_mini:hover
   background: hsl(0, 0.00%, 31.80%)
+
+.online
+  border: 1.5px solid #00FF04
+
+.offline
+  border: 1.5px solid #FF0000
+
+.idle
+  border: 1.5px solid orange
 
 .user_message
   background: transparent
@@ -414,14 +533,36 @@ code
 .message_content_container p
   margin: 0.5rem 0px
 
+.native_context_menu
+  top: 0px
+  left: 0px
+  width: 330px
+  height: 160px
+  background: #ffffffd4
+  position: fixed
+  display: grid
+  z-index: 5
+  border-radius: 13px
+
+.native_context_menu button
+  background: transparent
+  color: black
+  font-size: 16px
+  font-weight: 350
+  border: 0
+  text-align: left
+  text-indent: 14px
+
 // Settings Page CSS
 
 .settings_page
+  background: var(--background-accent-1)
+  color: var(--foreground-accent-1)
   display: flex
 
 .settings_navigation_container
   margin: 4px
-  color: black
+  color: var(--foreground-accent-1)
   width: 20rem
   height: fit-content
   min-height: 15rem
@@ -434,8 +575,11 @@ code
   border: 0
   width: 100%
   height: 3rem
-  background: white
-  color: black
+  display: flex
+  align-items: center
+  gap: 10px
+  background: transparent
+  color: var(--foreground-accent-1)
   font-size: 15px
   text-align: left
   border-radius: 9px
@@ -447,18 +591,97 @@ code
   width: 90%
   height: 100vh
 
+.settings_container select
+  width: 22rem
+  height: 3rem
+  border: 2px solid var(--background-accent-2)
+  border-radius: 6px
+  background: var(--background-accent-1)
+  color: var(--foreground-accent-1)
+  font-size: 17px
+
+.profile_picture_container
+  display: flex
+  width: fit-content
+  height: fit-content
+
+.user_picture
+  width: 5rem
+  height: 5rem
+  border-radius: 100px
+  border: 2px solid red
+
+#profile
+  display: none
+
+.hover_container
+  width: inherit
+  height: inherit
+  position: absolute
+
+.hover_container:hover
+  background: gray
+
+.settings_control_header
+  display: flex
+  place-items: center
+  gap: 0.6rem
+
+
+.return_button
+  width: 2.4rem !important
+  height: 2.4rem !important
+  display: flex
+  align-items: center
+  justify-content: center
+  border-radius: 100px
+  background: black
+  color: white
+  box-shadow: 2px 2px 10px gray
+  font-size: 20px !important
+  border: 0
+
+.return_button:active
+  box-shadow: 0.5px 0.5px 10px gray
+
+#displayname_input
+  background: transparent
+  width: 100%
+  margin: 1rem 0rem 0.3rem 0
+  border: 0
+  outline: none
+  text-align: center
+  font-size: 20px
+  font-weight: 500
+
+#role_input
+  background: transparent
+  width: 100%
+  border: 0
+  outline: none
+  text-align: center
+  font-size: 15px
+
 // Login Page CSS
 
 #login_container
   width: 100vw
   height: 100vh
-  color: black
+  color: var(--foreground-accent-1)
+  background: var(--background-accent-1)
   display: flex
   transition:  0.5s all ease-in-out
 
+.login_status
+  color: red
+  font-size: 22px
+  margin: 5rem 0
+  font-weight: 228
+  text-shadow: 2px 2px 3px #848484
+
 #left_login_container
   width: 25rem
-  border-right: 2px solid black
+  border-right: 2px solid var(--background-accent-2)
   display: grid
   justify-content: center
   grid-template-columns: 87%
@@ -490,6 +713,8 @@ code
 .login_input input
   width: 100%
   height: initial
+  background: transparent
+  color: var(--foreground-accent-1)
   outline: none
   border: 0
 
@@ -514,6 +739,10 @@ code
   border-radius: 12px
   font-size: 27px
   font-weight: bold
+  box-shadow: 1px 2px 6px 0px #5f5f5f
+
+.login_button:active
+  box-shadow: 0px 1px 3px 0px #505050
 
 .panel_text p
   color: gray
@@ -541,7 +770,7 @@ code
   padding: 0px 0px 4rem 0px
 
 #links_container a
-  color: black
+  color: var(--foreground-accent-2)
   text-decoration: none
 
 #links_container a:hover
@@ -555,100 +784,101 @@ code
 
 #Title::selection
   color: red
+  text-shadow: 5px 0px 5px #464646
 
-.background_blur
-  position: fixed
-  width: 100%
-  height: 100%
-  display: none
-  backdrop-filter: blur(0.2rem)
-  z-index: 3
-  place-content: center
-
-.user_profile_modal
-  width: 60vw
-  height: 50vh
-  background: black
+.signup-main
+  background: linear-gradient(132deg, #181a1e, #000, #141414, #282828, #181a1e)
   color: white
-  border-radius: 12px
-  position: fixed
-  display: flex
-  place-self: center
-  justify-self: center
-  box-shadow: 3px 4px 10px 4px #181818
+  width: 100vw
+  height: 100vh
 
-.profile_modal_options
-  width: 13rem
-  border-right: 1px solid white
+.signup-prompt
+  width: 100vw
+  height: 88vh
+  display: grid
+  justify-content: center
+  align-content: space-around
+  grid-template-columns: 72vw
+  animation: "signup-appear" 1s ease-in alternate
+
+@keyframes signup-appear
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+.signup-prompt .prompt-step
+  justify-items: center
+  display: grid
+  height: fit-content
+  min-height: 46vh
+  gap: 17px
+
+.signup-prompt .textbox
+  width: 38rem !important
+
+.signup-prompt .textbox input
+  color: white
+
+.signup-bar
+  min-height: 8vh
+  display: flex
+  align-items: center
+  justify-content: space-between
+  color: white
+
+.signup-bar a
+  align-content: center
+  display: flex
+  align-items: center
+  gap: 0.6rem
+  text-decoration: none
+  color: #b5b5b5
+  transition:0.3s ease-in-out
+  cursor: pointer
+
+.signup-bar a:hover
+  color: white
+  scale: 1.1
+
+.signup-bar a::selection
+  background: transparent
+
+.navigate-button
+  border: 0
+  width: 10em
+  height: 37px
+  border-radius: 6px
+  color: white
+  background: #35353500
+  box-shadow: 1px 1px 3px 1px #313131
+  transition: 0.3s ease-in-out
+
+.navigate-button:hover
+  scale: 1.1
+
+.step-count
   display: grid
   justify-items: center
-  grid-template-rows: repeat(auto-fit, minmax(calc(1.9em + 9px), 0fr))
-  grid-template-columns: 100%
-  padding: 1rem 0px
-
-.profile_details
-  width: 39rem
-  padding: 0px 0px 0px 2rem
-
-.modal_user_details
-  display: flex
-  align-items: center
-
-.modal_extra_details
-  display: grid
-  grid-template-rows: 43px
   align-content: center
-  justify-content: center
-  height: 6rem
-  text-indent: 16px
+  color: gray
+  grid-template-rows: 3rem 2rem
 
-#modal_user_picture
-  width: 4rem
-  height: 4rem
-  border-radius: 100px
-  border: 1px solid red
+.progressbar
+  border-radius: 4px
+  width: 3.5rem
+  height: 0.5rem
+  background: #ededed
+  // background "#29c3ff" when task completed
+  box-shadow: 1px 1px 4px black inset
 
-.profile_modal_button
-  height: 2.4rem
-  width: 86%
-  background: transparent
-  color: white
+.step-container
   display: flex
-  justify-content: space-between
-  font-size: 20px
-  border: 0
-  border-radius: 10px
-  text-align: left
-  align-items: center
-  padding: 0px 7px
-  text-indent: 11px
-
-.profile_modal_button span
+  gap: 12px
+  height: fit-content
   width: fit-content
+
+.dialog-content
   display: flex
-  align-items: center
-  justify-content: space-between
-  height: inherit
-
-.profile_modal_button:hover
-  background: gray
-
-.close_modal_button
-  border: 0
-  width: 2rem
-  height: 2rem
-  position: absolute
-  font-size: 25px
-  background: black
-  border-radius: 100px
-  color: red
-  right: 1%
-  top: 1%
-  box-shadow: 1px 1px 10px gray
-  border: 1px solid white
-
-.modal_badge_list
-  display: flex
-
-.show_modal
-  display: grid !important
+  height: fit-content
+  gap: 1rem

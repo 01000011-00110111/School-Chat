@@ -19,31 +19,26 @@ int start_backend() {
 }
 
 int main(int argc, char *argv[]) {
-    if (argv[1] == std::string("--run"))
-    {
-        start_backend();
-        start_frontend();
 
-        if (argv[2] == std::string("-debug=true")) {
+    for (int i = 0; i < argc; i++) {
+
+        if (argv[i] == std::string("-debug")) {
             paper("./core/config/keys.conf", "debug", "True");
             std::print("Debug: true");
-        }
+        } 
+        // else if (argv[i] == std::string("-nodebug")) {
+        //     paper("./core/config/keys.conf", "debug", "False");
+        //     std::print("Debug: false");
+        // }
 
-        if (argv[2] == std::string("-debug=false")) {
+        if (argv[i] == std::string("--run")) {
+            start_backend();
+            start_frontend();
             paper("./core/config/keys.conf", "debug", "False");
             std::print("Debug: false");
         }
+
     }
-    
-    // if (argv[1] == std::string("-df")) {
-    //     paper("./core/config/keys.conf", "debug", "False");
-    //     start_backend();
-    //     start_frontend();
-    // }
-    
-    // if (argv[1] == std::string("-dt")) {
-    //     paper("./core/config/keys.conf", "debug", "True");
-    //     start_backend();
-    //     start_frontend();
-    // }
+
+    return 0;
 }

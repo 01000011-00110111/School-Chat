@@ -2,6 +2,7 @@
 // License info can be viewed in app.py or the LICENSE file inside the github repositiory located here:
 // https://github.com/01000011-00110111/School-Chat
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include "platform.h"
 
@@ -16,6 +17,16 @@ int compile_sass(char *input_file, char *output_file) {
     char command[256];
     snprintf(command, sizeof(command), "cd %s && sass --watch sass/%s compiled_css/%s", path, input_file, output_file);
     system(command);
+    return 0;
+}
+
+int create_sass(std::string(name)) {
+    const char *path = "./frontend/src";
+    std::ofstream sass_file;
+    sass_file.open("./frontend/src/sass/" + name + ".sass");
+
+    std::ofstream css_file;
+    css_file.open("./frontend/src/compiled_css/" + name + ".css");
     return 0;
 }
 
@@ -75,6 +86,10 @@ int main(int argc, char *argv[]) {
             compile_sass(argv[2], argv[3]);
             print("\nFinished compiling {} -> {}", argv[2], argv[3]);
         }
+    }
+
+    if (argv[1] == std::string("-cress")) {
+        create_sass(argv[2]);
     }
 
     if (argv[1] == std::string("-cb")) {

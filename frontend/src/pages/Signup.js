@@ -1,0 +1,89 @@
+import React, { useState } from "react";
+import { Prompt, PromptStep, EmailBox, TextBox, LineColorDialog, WebEmbed, CheckBox } from "../static/js/native";
+import socket from "../socket";
+
+function Signup() {
+    const [formInfo, setformInfo] = useState({
+        displayName: "",
+        role: "",
+        usernameColor: "#000000",
+        roleColor: "#000000",
+        messageColor: '#000000',
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        conditionsAccepted: false,
+    });
+
+    const setInformation = (event) => {
+        const {name, value} = event.target;        
+        setformInfo(prevState => ({
+            ...prevState,
+            [name]: value,
+        }));
+
+        console.log(value)
+    };
+
+    const sendDataToServer = () => {
+        socket.emit('signup', {
+            email: formInfo.email,
+            username: formInfo.username,
+            displayName: formInfo.displayName,
+            password: formInfo.password,
+            confirmPassword: formInfo.confirmPassword,
+            role: formInfo.role,
+            displayNameColor: formInfo.usernameColor,
+            roleColor: formInfo.roleColor,
+            messageColor: formInfo.messageColor,
+            userColor: formInfo.usernameColor,
+            agreeToTerms: formInfo.conditionsAccepted,
+        });
+    }
+
+    function TestVal() {
+    console.log(`Email: ${formInfo.email}; Username: ${formInfo.username}; Display Name: ${formInfo.displayName}; 
+        Password: ${formInfo.password}; 
+        Confirm: ${formInfo.confirmPassword}; 
+        Role: ${formInfo.role}; 
+        Display Name Color: ${formInfo.usernameColor}; Role Color: ${formInfo.roleColor}; Message Color: ${formInfo.messageColor}; Agree?: ${formInfo.conditionsAccepted};`)
+    }
+
+    return (
+        <div className="signup-main">
+            <Prompt>
+                <PromptStep title={"Creation"}>   
+                    <EmailBox label={"Email"} placeholder={"Enter an email address"} onUpdate={setInformation} default_value={formInfo.email} name="email"/>
+                    <TextBox label={"Username"} placeholder={"Provide a username"} onUpdate={setInformation} default_value={formInfo.username} name="username"/>
+                    <TextBox label={"Display Name"} placeholder={"Provide a displayname"} onUpdate={setInformation} default_value={formInfo.displayName} name="displayName"/>
+                    <TextBox label={"Password"} placeholder={"Provide a password"} hidden onUpdate={setInformation} default_value={formInfo.password} name="password"/>
+                    <TextBox label={"Confirm Password"} placeholder={"Please confirm the previous entered password"} hidden onUpdate={setInformation} default_value={formInfo.confirmPassword} name="confirmPassword"/>
+                </PromptStep>
+
+                <PromptStep title={"Customization"}>
+                    <TextBox label={"Role"} placeholder={"Enter a custom role"} onUpdate={setInformation} default_value={formInfo.role} name="role"/>
+
+                    <div className="dialog-content">
+                        <LineColorDialog title="Display Name Color" onChange={setInformation} default_value={formInfo.usernameColor} name="usernameColor"/>
+                        <LineColorDialog title="Role Color" onChange={setInformation} default_value={formInfo.roleColor} name="roleColor"/>
+                        <LineColorDialog title="Message Color" onChange={setInformation} default_value={formInfo.messageColor} name="messageColor"/>
+                    </div>
+                </PromptStep>
+
+                <PromptStep title={"Agreements"}>
+                    <WebEmbed url={"./TERMS OF SERVICE.pdf#toolbar=0&navpanes=0&scrollbar=0"} title={"Terms & Conditions"}/>
+                    <CheckBox label={"Agree to Terms & Conditions"} onUpdate={setInformation} checked={formInfo.conditionsAccepted} value={false} name="conditionsAccepted"/>
+                </PromptStep>
+
+                <PromptStep title={"Finalization"}>
+                    <h1>Congratulations you're finished Signing up!</h1>
+                    <button onClick={() => TestVal()}>Test Values</button>
+                    <button onClick={sendDataToServer}>Send data to server</button>
+                </PromptStep>
+            </Prompt>
+        </div>
+  );
+}
+
+export default Signup;

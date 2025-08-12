@@ -1,28 +1,33 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, {useState} from "react";
+
+function set_tab() {}
 
 function Tabs({ children }) {
     const [activeTab, setActiveTab] = useState(0);
-  
+    set_tab = (tab_index) => {setActiveTab(tab_index)}
     return (
       <div>
-        <ul>
-          {children.map((child, index) => (
-            <li key={index} onClick={() => setActiveTab(index)}>
-              {child.props.label}
-            </li>
-          ))}
-        </ul>
         {children[activeTab]}
       </div>
     );
-  }
+}
   
-function Tab({ label, children }) {
+function Tab({ label, children, style={} }) {
     return (
-      <div>
+      <div style={style}>
         {children}
       </div>
     );
 }
 
-export {Tabs, Tab}
+function TabButton({ label, tab_index, icon}) {
+    return (
+      <button onClick={() => set_tab(tab_index)}>
+        <FontAwesomeIcon icon={icon}/>
+        {label}
+      </button>
+    );
+}
+
+export {Tabs, Tab, TabButton}

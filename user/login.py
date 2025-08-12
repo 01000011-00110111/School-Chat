@@ -14,7 +14,7 @@ async def login(sid, data):
     username = data["username"]
     password = data["password"]
 
-    print(username, password)
+    # print(username, password)
 
     uuid = User.check_credentials(username, password)
 
@@ -34,6 +34,14 @@ async def logout(sid, data):
     suuid = data["suuid"]
     if suuid in User.Users:
         del User.Users[suuid]
+        await sio.emit("send_to_login", to=sid)
+
+@sio.on("check_suuid")
+async def check_login_status(sid, suuid):
+    """e"""
+    if check_suuid(suuid):
+        pass
+    else:
         await sio.emit("send_to_login", to=sid)
 
 
