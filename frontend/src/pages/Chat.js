@@ -31,6 +31,9 @@ function Chat() {
         socket.on("message", (data) => {
             renderChat(data["message"]);
             setMessages([...messages, data["message"]]);
+            const chatDiv = document.getElementById("chat");
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+
         });
 
         return () => {

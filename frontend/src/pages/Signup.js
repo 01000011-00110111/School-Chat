@@ -6,8 +6,8 @@ function Signup() {
     const [formInfo, setformInfo] = useState({
         displayName: "",
         role: "",
-        usernameColor: "#000000",
-        roleColor: "#000000",
+        usernameColor: "#ffffff",
+        roleColor: "#ffffff",
         messageColor: '#000000',
         username: "",
         email: "",
@@ -38,7 +38,7 @@ function Signup() {
             roleColor: formInfo.roleColor,
             messageColor: formInfo.messageColor,
             userColor: formInfo.usernameColor,
-            agreeToTerms: formInfo.conditionsAccepted,
+            agreeToTerms: formInfo.conditionsAccepted === "on" ? true : false
         });
     }
 
@@ -73,13 +73,13 @@ function Signup() {
 
                 <PromptStep title={"Agreements"}>
                     <WebEmbed url={"./TERMS OF SERVICE.pdf#toolbar=0&navpanes=0&scrollbar=0"} title={"Terms & Conditions"}/>
-                    <CheckBox label={"Agree to Terms & Conditions"} onUpdate={setInformation} checked={formInfo.conditionsAccepted} value={false} name="conditionsAccepted"/>
+                    <CheckBox label={"Agree to Terms & Conditions"} onUpdate={setInformation} checked={formInfo.conditionsAccepted} name="conditionsAccepted"/>
                 </PromptStep>
 
                 <PromptStep title={"Finalization"}>
                     <h1>Congratulations you're finished Signing up!</h1>
-                    <button onClick={() => TestVal()}>Test Values</button>
-                    <button onClick={sendDataToServer}>Send data to server</button>
+                    {/* <button onClick={() => TestVal()}>Test Values</button> */}
+                    <button onClick={sendDataToServer}>Submit</button>
                 </PromptStep>
             </Prompt>
         </div>
