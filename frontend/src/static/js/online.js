@@ -46,13 +46,37 @@ export function UserList() {
     const [userData, setUserData] = useState({
         update_type: "",
         data: {},
+        length: {
+            online: 0,
+            offline: 0,
+        }
     });
 
     socket.on('online', (data) => {
+        function get_numbers() {
+            let online_users = 0;
+            let offline_users = 0;
+
+            Object.entries(data["data"]).map((update, index, data) => {
+                // console.log("Update:", update[1]["status"])
+                if (update[1]["status"] === "active" || update[1]["status"] === "idle") {
+                    online_users += 1;
+                } else if (update[1]["status"] === "offline") {
+                    offline_users += 1;
+                }
+            });
+
+            return {online_users, offline_users};
+        }
+
         if (data["update"] === "full" && data["data"] !== userData.data) {
             setUserData({
                 update_type: data["update"],
                 data: data["data"],
+                length: {
+                    online: get_numbers().online_users,
+                    offline: get_numbers().offline_users,
+                }
             });
         }
         
@@ -60,6 +84,10 @@ export function UserList() {
             setUserData({
                 update_type: data["update"],
                 data: data["data"],
+                length: {
+                    online: get_numbers().online_users,
+                    offline: get_numbers().offline_users,
+                }
             });
         }
     });
@@ -67,8 +95,8 @@ export function UserList() {
     return (
         <div className="user_list">
             <div id="user_count_container">
-                <p id="online_users_count">Online Users: 0</p>
-                <p id="offline_users_count">Offline Users: 0</p>
+                <p id="online_users_count">Online Users: {userData.length.online}</p>
+                <p id="offline_users_count">Offline Users: {userData.length.offline}</p>
             </div>
 
             <div id="user_list">

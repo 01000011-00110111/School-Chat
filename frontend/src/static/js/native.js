@@ -203,7 +203,7 @@ function WebEmbed({ url, title, options = {} }) {
 
 const Poll = ({ title="", max, value=0, poll_options = {} }) => {
     const [pollStats, setPollStats] = useState(poll_options);
-    console.log(pollStats)
+    // console.log(pollStats)
 
     return (
         <div className="poll">
@@ -216,7 +216,7 @@ const Poll = ({ title="", max, value=0, poll_options = {} }) => {
                             <div className="poll-option-fill" style={{width: `${pollStats[acc[0]]}%`}}></div>
                         </div>
                         <p>{pollStats[acc[0]]}%</p>
-                        {console.log(pollStats["button 1"] )}
+                        {/* {console.log(pollStats["button 1"] )} */}
                     </div>
                 ))}
             </div>
