@@ -33,7 +33,6 @@ function Chat() {
             setMessages([...messages, data["message"]]);
             const chatDiv = document.getElementById("chat");
             chatDiv.scrollTop = chatDiv.scrollHeight;
-
         });
 
         return () => {

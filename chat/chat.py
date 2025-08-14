@@ -52,16 +52,14 @@ class Chat:
         """Get a chat from the list of existing chats."""
         return Chat.chats[roomid]
 
-    async def send_message(self, message):
+    async def send_message(self, message, reset):
         """Send a message to the chat."""
         self.config["last_message"] = datetime.now()
         lines = len(self.messages)# if not private else 1
-        print(message)
-        if "$sudo rc" in message:
-            self.reset_chat()
-
-        if lines >= 350:# and permission != 'true'):
-            self.reset_chat()
+        # print(message)
+        if lines >= 350 or reset:# and permission != 'true'):
+            await self.reset_chat()
+            return
         else:
             self.messages.append(message)
 

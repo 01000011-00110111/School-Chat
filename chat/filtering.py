@@ -125,6 +125,7 @@ def compile_message(message, profile_picture, user):
 def run_filter_chat(user, roomid, message, suuid):
     """Filters messages before sending in a chat room."""
     room = Chat.get_chat(roomid)
+    reset = False
     if suuid != user.suuid:
         return ('permission', 7, False)
 
@@ -136,8 +137,10 @@ def run_filter_chat(user, roomid, message, suuid):
     if room.config["can_send"] == 'mod' and perms not in ['mod', 'admin', 'dev']:
         return ('permission', 4, 0)
 
-    if "sudo rc" in message and perms not in ['dev', 'admin', 'mod']:
+    if "$sudo rc" in message and perms not in ['dev', 'admin', 'mod']:
         return ('permission', 5, 0)
+    elif "$sudo rc" in message and perms in ['dev', 'admin', 'mod']:
+        reset = True
 
     if re.search(r'<[^>]*>', message):
         return ('permission', 8, 0)
@@ -146,7 +149,7 @@ def run_filter_chat(user, roomid, message, suuid):
     #     return ('permission', 1, 0)
 
     message = format_text(message)
-    return ('msg', compile_message(message, None, user), 0)
+    return ('msg', compile_message(message, None, user), 0, reset)
 
 # def run_filter_private(user, message, userid):
 #     """Filters messages for private chats."""

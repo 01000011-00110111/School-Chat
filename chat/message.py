@@ -24,4 +24,4 @@ async def client_message(_, data):
 
 
     if message[0] == "msg":
-        await Chat.get_chat(data["roomid"]).send_message(message[1])
+        await Chat.get_chat(data["roomid"]).send_message(message[1], message[3])
