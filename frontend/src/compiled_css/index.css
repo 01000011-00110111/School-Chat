@@ -469,6 +469,38 @@ code {
 
 .sidenav li {
   list-style-type: none;
+  background: rgba(35, 35, 35, 0.3019607843);
+  height: 26px;
+  border-radius: 5px;
+  box-shadow: 2px 2px #363636;
+  display: grid;
+  align-content: center;
+  padding: 3px;
+  left: 7px;
+  position: relative;
+  width: 90%;
+  text-indent: 7px;
+  font-size: 18px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.sidenav li:hover {
+  background: rgba(35, 35, 35, 0.3019607843);
+  border-radius: 7px;
+  box-shadow: 2px 2px #363636;
+  text-indent: 7px;
+  font-size: 17px;
+  font-weight: 480;
+}
+
+.sidenav li:active {
+  background: rgba(35, 35, 35, 0.3019607843);
+  border-radius: 7px;
+  box-shadow: 1px 1px #363636;
+  text-indent: 7px;
+  font-size: 17px;
+  font-weight: 400;
 }
 
 .sidenav_opened {
@@ -488,15 +520,11 @@ code {
   align-content: space-around;
   padding: 8px 0px;
   justify-items: left;
-  text-indent: 17px;
-}
-.sidenav_opened .sidenav_dropdown li a {
-  color: var(--sidenav-buttons-text-color);
-  text-decoration: none;
-  font-size: 20px;
-}
-.sidenav_opened .sidenav_dropdown li a:hover {
-  color: gray;
+  gap: 8px;
+  max-height: 19rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
 }
 .sidenav_opened .sidenav_button {
   width: auto;
@@ -546,6 +574,10 @@ code {
 }
 .sidenav_opened .profile_button {
   margin: 0px 9px 0px 6px;
+}
+.sidenav_opened .nav_buttons_container {
+  gap: 0px;
+  bottom: 8vh;
 }
 
 .sidenav_button {
@@ -600,9 +632,10 @@ code {
   display: grid;
   justify-content: center;
   grid-template-columns: 100%;
-  grid-template-rows: 40px 40px 40px 40px;
+  grid-template-rows: 40px 40px;
   position: absolute;
-  bottom: 8vh;
+  bottom: 2vh;
+  gap: 17px;
 }
 
 .status_indicator {
@@ -622,7 +655,7 @@ code {
 }
 
 .bottom_bar {
-  height: 7.3vh;
+  height: 9vh;
   width: 100%;
   display: flex;
   place-self: end;
@@ -1157,7 +1190,7 @@ code {
   border: 0;
   height: 100%;
   background: transparent;
-  color: black;
+  color: var(--foreground-accent-1);
   font-size: 25px;
 }
 

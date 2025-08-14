@@ -4,16 +4,16 @@
 
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPaperPlane, faBorderAll, faGear, faRightFromBracket, faMessage, faChevronRight, faXmark, faUserPlus } from '@fortawesome/free-solid-svg-icons'
-import socket from '../socket'
-import { Chat_object, renderMessage, renderChat, loadChat } from '../static/js/message'
-import { storage } from '../static/js/storage'
-import { UserList } from '../static/js/online'
+import { faPlus, faPaperPlane, faBorderAll, faGear, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import socket from '../socket';
+import { renderMessage, renderChat, loadChat } from '../static/js/message';
+import { storage } from '../static/js/storage';
+import { UserList } from '../static/js/online';
 import { update_appbadge } from "../static/js/app_badge";
 import { Theme_System } from "../customization/theme_render";
 
 function Chat() {
-    const [chatrooms, setChatooms] = useState([]);
+    // const [chatrooms, setChatooms] = useState([]);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [rooms, setRooms] = useState([]);
@@ -52,7 +52,7 @@ function Chat() {
 
     useEffect(() => {
         socket.on("load_chat", (data) => {
-            console.log(data['messages'])
+            // console.log(data['messages'])
             updateChatRoom(data["roomid"], data["name"]);
             sessionStorage.setItem("roomid", data["roomid"]);
             loadChat(data["messages"]);
@@ -62,7 +62,7 @@ function Chat() {
         return () => {
             socket.off("load_chat");
         };
-    }, []);
+    });
 
     const storeText = (event) => {
         const {value} = event.target;
@@ -133,7 +133,7 @@ function Chat() {
     useEffect(() => {
         socket.on("room_list", (data) => {
             setRooms(data["rooms"]);
-            setChatooms(data["rooms"]);
+            // setChatooms(data["rooms"]);
         });
 
         return () => {
@@ -181,12 +181,12 @@ function Chat() {
 
     const tms = new Theme_System();
     tms.set_theme([
-        "linear-gradient(90deg,#9A93D8 13%, #007B79 58%, #384E82 91%)",
-        "#19191949",
-        "#19191949",
+        "#000000",
+        "#000000",
+        "#000000",
         "white",
         "#ffffff", // This is the usercard, it doesn't work?
-        "#19191949",
+        "#0c0c0cff",
         "white",
         "purple",
         "white",
@@ -195,7 +195,7 @@ function Chat() {
         "white", // Doesn't work
         "rgb(0, 94, 255)",
         "white",
-        "#19191949",
+        "#000000",
         "white",
     ]);
     tms.render();
@@ -227,13 +227,13 @@ function Chat() {
                     </div>
 
                     <div className="nav_buttons_container">
-                        <a href='.' className='sidenav_button'>
+                        {/* <a href='.' className='sidenav_button'>
                             <p>DMs</p>
                         </a>
 
                         <a href='.' className='sidenav_button'>
                             <p>Create Chat</p>
-                        </a>
+                        </a> */}
 
                         <a href='/settings' className='sidenav_button'>
                             <FontAwesomeIcon icon={faGear}/>
@@ -266,30 +266,33 @@ function Chat() {
                     <div className="chat" id="chat"></div>
 
                     <div className="bottom_bar">
-                        <p id="remaining_chars">250 Characters Left</p>
 
                         <label htmlFor="file_import_input" id="file_import_button">
                             <FontAwesomeIcon icon={faPlus} />
                             <input id="file_import_input" type="file" title="files" />
                         </label>
 
-                        <div className="message_box">
-                            <input
-                                type="text"
-                                value={input}
-                                onChange={storeText}
-                                placeholder="Type your message"
-                                maxLength={250}
-                                id="message_input"
-                                autoCapitalize="true"
-                                autoCorrect="true"
-                                spellCheck="true"
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                        sendMessage();
-                                    }
-                                }}
-                            />
+                        <div style={{width: "83%", bottom: "10px", position: "relative", display: "grid", gap: "5px"}}>
+                            <p id="remaining_chars">250 Characters Left</p>
+
+                            <div className="message_box">
+                                <input
+                                    type="text"
+                                    value={input}
+                                    onChange={storeText}
+                                    placeholder="Type your message"
+                                    maxLength={250}
+                                    id="message_input"
+                                    autoCapitalize="true"
+                                    autoCorrect="true"
+                                    spellCheck="true"
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            sendMessage();
+                                        }
+                                    }}
+                                />
+                            </div>
                         </div>
 
                         <button id="send_button" onClick={sendMessage}>

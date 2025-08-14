@@ -15,6 +15,10 @@ const Settings = () => {
     const [errors, SetErrors] = useState([]);
     
     const getInitialState = () => {
+        if (!storage.get("app-nav-settings")) {
+            storage.set("app-nav-settings", '{"nav_close_onroom": false}');
+        }
+
         const value = JSON.parse(storage.get("app-nav-settings"))["nav_close_onroom"];
         return value;
     }
@@ -37,8 +41,7 @@ const Settings = () => {
     }, []);
 
     const on_update = (event = Event) => {
-        console.log(event)
-        console.log("Changes detected!")
+        // console.log("Changes detected!")
         document.querySelectorAll(".footer_alert")[0].classList.add("on_screen");
     }
 
@@ -68,7 +71,6 @@ const Settings = () => {
                 Object.entries(data["errors"]).map((error, index) => {
                     error_array.push(error[1][1])
                 })
-                console.log(error_array)
                 SetErrors(error_array);
             } else {
                 SetErrors([]);
@@ -189,7 +191,7 @@ const Settings = () => {
 
                     <Tab label={"Appearance"}>
                         <h2>Appearance</h2>
-                        <CheckBox label={"Sync theme across devices"} onUpdate={(e) => on_update(e)}/>
+                        {/* <CheckBox label={"Sync theme across devices"} onUpdate={(e) => on_update(e)}/>
                         <Modal>
                             <LineButton>
                                 <div style={{display: "flex", alignItems: "center", gap: "0.4rem"}}>
@@ -205,7 +207,7 @@ const Settings = () => {
                                 <option>Light</option>
                                 <option>Better Dark</option>
                             </select>
-                        </Modal>
+                        </Modal> */}
 
                         <h2>Chat</h2>
 
