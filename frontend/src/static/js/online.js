@@ -1,12 +1,11 @@
 import { useState } from "react";
 import socket from "../../socket";
-let freeze = false
 
 function status_conversion(status) {
     const status_map = {
         "active": "online",
         "offline": "offline",
-        "offline": "offline-locked",
+        // "offline": "offline-locked",
         "idle": "idle",
     }
 
@@ -57,6 +56,8 @@ export function UserList() {
     });
 
     socket.on('online', (data) => {
+        console.log(data)
+
         function get_numbers() {
             let online_users = 0;
             let offline_users = 0;
@@ -85,7 +86,7 @@ export function UserList() {
         }
         
         if (data['update'] === 'partial') {
-            setUserData({
+            setUserData(prev => prev, {
                 update_type: data["update"],
                 data: data["data"],
                 length: {

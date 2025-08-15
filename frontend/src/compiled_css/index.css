@@ -820,10 +820,12 @@ code {
 #user_list {
   display: grid;
   height: 100vh;
+  min-height: 100vh;
   width: 96%;
   padding: 0;
   grid-template-columns: 100%;
-  grid-template-rows: repeat(auto-fit, minmax(calc(3.7em + 9px), 0fr));
+  gap: 20px;
+  grid-template-rows: repeat(auto-fit, 3rem);
 }
 
 #user_search_input {
