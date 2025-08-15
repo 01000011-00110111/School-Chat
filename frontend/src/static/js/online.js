@@ -59,7 +59,7 @@ export function UserList() {
     });
 
     socket.on('online', (data) => {
-        if (freeze === True) {
+        if (freeze === true) {
             return
         }
 
