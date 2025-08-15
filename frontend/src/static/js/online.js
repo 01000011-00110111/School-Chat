@@ -38,10 +38,8 @@ function notifyStatusChange(status) {
 
 document.addEventListener('visibilitychange', function() {
     if (document.hidden) {
-        freeze = true
         notifyStatusChange('idle');
     } else {
-        freeze = false
         // socket.emit('status', window.sessionStorage.getItem("suuid"));
         notifyStatusChange('active');
     }
@@ -59,10 +57,6 @@ export function UserList() {
     });
 
     socket.on('online', (data) => {
-        if (freeze === true) {
-            return
-        }
-
         function get_numbers() {
             let online_users = 0;
             let offline_users = 0;
@@ -133,10 +127,8 @@ socket.on('heartbeat', () => {
     console.log("Heartbeat received:");
     if (!document.hidden) {
         socket.emit('beat', { status: 'active', suuid: window.sessionStorage.getItem("suuid") });
-    } else if (document.hidden) {
-        socket.emit('beat', { status: 'idle', suuid: window.sessionStorage.getItem("suuid") });
     } else {
-        socket.emit('beat', { status: 'offline', suuid: window.sessionStorage.getItem("suuid") });
+        socket.emit('beat', { status: 'idle', suuid: window.sessionStorage.getItem("suuid") });
     }
 });
 

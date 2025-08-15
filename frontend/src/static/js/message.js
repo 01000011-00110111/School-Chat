@@ -15,6 +15,7 @@ function renderChat(message_data) {
     let newline = "<br>";
     let chatDiv = document.getElementById("chat");
     chatDiv["innerHTML"] = chatDiv["innerHTML"] + renderMessage(message_data) + newline;
+    chatDiv.scrollTop = chatDiv.scrollHeight;
     // activate_hyperlinks();
 }
 
