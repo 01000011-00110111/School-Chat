@@ -56,14 +56,11 @@ export function UserList() {
     });
 
     socket.on('online', (data) => {
-        console.log(data)
-
         function get_numbers() {
             let online_users = 0;
             let offline_users = 0;
 
             Object.entries(data["data"]).map((update, index, data) => {
-                // console.log("Update:", update[1]["status"])
                 if (update[1]["status"] === "active" || update[1]["status"] === "idle") {
                     online_users += 1;
                 } else if (update[1]["status"] === "offline") {
