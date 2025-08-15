@@ -1,5 +1,6 @@
 import { useState } from "react";
 import socket from "../../socket";
+let freeze = false
 
 function status_conversion(status) {
     const status_map = {
@@ -37,12 +38,15 @@ function notifyStatusChange(status) {
 
 document.addEventListener('visibilitychange', function() {
     if (document.hidden) {
+        freeze = true
         notifyStatusChange('idle');
     } else {
-        socket.emit('status', window.sessionStorage.getItem("suuid"));
+        freeze = false
+        // socket.emit('status', window.sessionStorage.getItem("suuid"));
         notifyStatusChange('active');
     }
 });
+
 
 export function UserList() {
     const [userData, setUserData] = useState({
@@ -55,6 +59,10 @@ export function UserList() {
     });
 
     socket.on('online', (data) => {
+        if (freeze === True) {
+            return
+        }
+
         function get_numbers() {
             let online_users = 0;
             let offline_users = 0;
