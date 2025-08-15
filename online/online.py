@@ -43,7 +43,8 @@ async def connect(sid, data):
     await sio.emit("room_list", {"rooms": Chat.all_chats}, to=sid)
 
 @sio.on("refresh")
-async def refresh_list(sid, suuid)
+async def refresh_list(sid, suuid):
+    user = User.Users.get(suuid)
     if not user:
         print(f"❌ Invalid or expired user SUUID: {suuid}")
         await sio.emit("send_to_login", to=sid)
