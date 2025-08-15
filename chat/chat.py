@@ -52,6 +52,31 @@ class Chat:
         """Get a chat from the list of existing chats."""
         return Chat.chats[roomid]
 
+    @staticmethod
+    def get_all_chats(permission):
+        if "Debugpass" in permission:# if the user is a dev/owner give all accesss 
+            return Chat.all_chats
+
+        if "adminpass" in permission:# grants access to all rooms for admins and below
+                rooms = [room for room in Chat.all_chats if room["whitelisted"] != "devonly"]
+                return rooms
+        
+        if "modpass" in permission:# grants access to all roms for Mods and below
+            rooms = [
+                room for room in Chat.all_chats
+                if "devonly" not in room["whitelisted"]
+                and "adminonly" not in room["whitelisted"]
+            ]
+            return rooms
+        
+        rooms = [# defult returns rooms with no premission restrictions
+            room for room in Chat.all_chats
+            if "devonly" not in room["whitelisted"]
+            and "adminonly" not in room["whitelisted"]
+            and "modonly" not in room["whitelisted"]
+        ]
+        return rooms
+
     async def send_message(self, message, reset):
         """Send a message to the chat."""
         self.config["last_message"] = datetime.now()

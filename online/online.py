@@ -35,11 +35,21 @@ async def connect(sid, data):
         "theme": user.theme
     }
     # print(f"Client connected (SID: {sid, uuid})")
-    update({"status": 'active'}, uuid)
+    if user.status != "offline-lockced":
+         update({"status": 'active'}, uuid)
     # log_user_connected(uuid)
     await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
     await sio.emit("user_data", user_data, to=sid)
     await sio.emit("room_list", {"rooms": Chat.all_chats}, to=sid)
+
+@sio.on("refresh")
+async def refresh_list(sid, suuid)
+    if not user:
+        print(f"❌ Invalid or expired user SUUID: {suuid}")
+        await sio.emit("send_to_login", to=sid)
+        return
+    await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
+    
 
 @sio.event
 async def disconnect(sid):

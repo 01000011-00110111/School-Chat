@@ -5,6 +5,7 @@ function status_conversion(status) {
     const status_map = {
         "active": "online",
         "offline": "offline",
+        "offline": "offline-locked",
         "idle": "idle",
     }
 
@@ -38,6 +39,7 @@ document.addEventListener('visibilitychange', function() {
     if (document.hidden) {
         notifyStatusChange('idle');
     } else {
+        socket.emit('status', window.sessionStorage.getItem("suuid"));
         notifyStatusChange('active');
     }
 });
