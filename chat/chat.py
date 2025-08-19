@@ -64,7 +64,7 @@ class Chat:
             rooms = [
                 room for room in Chat.all_chats
                         if not any(
-                            role in room["whitelisted"]
+                            role in room.config["whitelisted"]
                             for role in ["devonly"]
                         )
                     ]
@@ -74,7 +74,7 @@ class Chat:
             rooms = [
                 room for room in Chat.all_chats
                 if not any(
-                    role in room["whitelisted"]
+                    role in room.config["whitelisted"]
                     for role in ["devonly", "adminonly"]
                 )
             ]
@@ -83,7 +83,7 @@ class Chat:
         rooms = [
             room for room in Chat.all_chats
             if not any(
-                role in room["whitelisted"]
+                role in room.config["whitelisted"]
                 for role in ["devonly", "adminonly", "modonly"]
             )
         ]
