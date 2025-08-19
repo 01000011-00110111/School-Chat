@@ -40,7 +40,7 @@ async def connect(sid, data):
     # log_user_connected(uuid)
     await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
     await sio.emit("user_data", user_data, to=sid)
-    await sio.emit("room_list", {"rooms": Chat.get_all_chats(user.permissions)}, to=sid)
+    await sio.emit("room_list", {"rooms": Chat.get_all_chats(user.perm)}, to=sid)
 
 @sio.on("refresh")
 async def refresh_list(sid, suuid):
