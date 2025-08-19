@@ -54,26 +54,38 @@ class Chat:
 
     @staticmethod
     def get_all_chats(permission):
-        if "Debugpass" in permission:# if the user is a dev/owner give all accesss 
+        """
+        Get all chats based on user permissions.
+        """
+        if "Debugpass" in permission:# if the user is a dev/owner give all accesss
             return Chat.all_chats
 
         if "adminpass" in permission:# grants access to all rooms for admins and below
-                rooms = [room for room in Chat.all_chats if room["whitelisted"] != "devonly"]
-                return rooms
-        
+            rooms = [
+                room for room in Chat.all_chats
+                        if not any(
+                            role in room["whitelisted"]
+                            for role in ["devonly"]
+                        )
+                    ]
+            return rooms
+
         if "modpass" in permission:# grants access to all roms for Mods and below
             rooms = [
                 room for room in Chat.all_chats
-                if "devonly" not in room["whitelisted"]
-                and "adminonly" not in room["whitelisted"]
+                if not any(
+                    role in room["whitelisted"]
+                    for role in ["devonly", "adminonly"]
+                )
             ]
             return rooms
-        
-        rooms = [# defult returns rooms with no premission restrictions
+
+        rooms = [
             room for room in Chat.all_chats
-            if "devonly" not in room["whitelisted"]
-            and "adminonly" not in room["whitelisted"]
-            and "modonly" not in room["whitelisted"]
+            if not any(
+                role in room["whitelisted"]
+                for role in ["devonly", "adminonly", "modonly"]
+            )
         ]
         return rooms
 
