@@ -35,7 +35,27 @@ def get_room(roomid):
 
 def get_rooms():
     """Returns all available permission data in that room."""
-    return Rooms.find()
+    pipeline = [
+        {"$match": {}},
+        {
+            "$lookup": {
+                "from": "Permission",
+                "localField": "roomid",
+                "foreignField": "roomid", 
+                "as": "access",
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "roomid": "$roomid",
+                "roomName": "$roomName",
+                "whitelisted": {"$arrayElemAt": ["$access.whitelisted", 0]},
+            }
+        },
+    ]
+
+    return list(Rooms.aggregate(pipeline))
 
 def get_room_data(roomid):
     """Returns all available permission data in that room."""
