@@ -11,7 +11,7 @@ from system import format_system_msg
 
 class Chat:
     """Chat class."""
-    all_chats = [(room["roomName"], room["roomid"]) for room in database.get_rooms()]
+    all_chats = [(room["roomName"], room["roomid"], room["whitelisted"]) for room in database.get_rooms()]
     chats = {}  # Dictionary to store existing chats
 
     def __init__(self, room, roomid):
@@ -64,7 +64,7 @@ class Chat:
             rooms = [
                 room for room in Chat.all_chats
                         if not any(
-                            role in room.config["whitelisted"]
+                            role in room["whitelisted"]
                             for role in ["devonly"]
                         )
                     ]
@@ -74,7 +74,7 @@ class Chat:
             rooms = [
                 room for room in Chat.all_chats
                 if not any(
-                    role in room.config["whitelisted"]
+                    role in room["whitelisted"]
                     for role in ["devonly", "adminonly"]
                 )
             ]
@@ -83,7 +83,7 @@ class Chat:
         rooms = [
             room for room in Chat.all_chats
             if not any(
-                role in room.config["whitelisted"]
+                role in room["whitelisted"]
                 for role in ["devonly", "adminonly", "modonly"]
             )
         ]
