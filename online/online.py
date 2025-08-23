@@ -19,18 +19,17 @@ socketids = {}
 
 async def user_list():
     """Return a secure user list."""
-    securelist = {#the first displayname is a filler
-        user["displayName"]: {"displayName": user["displayName"], "status": user["status"]}
+    securelist = {
+        user["displayName"]: user.copy()
         for user in userlist.values()
     }
     return securelist
 
 async def get_user(uuid):
     """Return a secure version of user data for a given UUID."""
-    for user in userlist.values():
-        if uuid in user.keys():
-            return {"displayName": user["displayName"], "status": user["status"]}
-    return None
+    if uuid in userlist:
+        user_copy = userlist[uuid].copy()
+        return {user_copy["displayName"]: user_copy}
 
 @sio.on("chatpage")
 async def connect(sid, data):
@@ -54,7 +53,7 @@ async def connect(sid, data):
     if user.status != "offline-lockced":
          update({"status": 'active'}, uuid)
     # log_user_connected(uuid)
-    securelist = await get_user(uuid)
+    securelist = await user_list()
     await sio.emit("online", {"update": "full", "data": securelist}, to=sid)
     await sio.emit("user_data", user_data, to=sid)
     await sio.emit("room_list", {"rooms": Chat.get_all_chats(user.perm)}, to=sid)
