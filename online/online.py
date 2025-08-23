@@ -29,6 +29,7 @@ async def get_user(uuid):
     """Return a secure version of user data for a given UUID."""
     if uuid in userlist:
         user_copy = userlist[uuid].copy()
+        print({user_copy["displayName"]: user_copy})
         return {user_copy["displayName"]: user_copy}
 
 @sio.on("chatpage")
@@ -140,6 +141,7 @@ async def handle_update(sid, data):
     """Handle update events."""
     # print("update", data)
     suuid = data['suuid']
+    del data['suuid']
     if suuid in User.Users:
         uuid = User.Users[suuid].uuid
         update(data, uuid)
@@ -155,32 +157,3 @@ def update(data, uuid):
         if key == 'status' and userlist[uuid]['status'] == 'offline-locked':
             continue
         userlist[uuid][key] = value
-
-# def update(data, uuid):
-#     """Update the online status of a user."""
-#     if uuid not in userlist:
-#         return
-#     update_all(data, uuid)
-#     sio.emit("online", {"update": "partial", "data": userlist[uuid]}, to=socketids.get(uuid, None))
-
-# def handle_forced_disconnect(userid, disconnect_callback):
-#     """Mark the user as offline if no heartbeat is received in time."""
-#     if userid in user_connections:
-#         for socketid in list(user_connections[userid]):
-#             disconnect_callback(socketid, userid)
-#         del user_connections[userid]
-
-#     try:
-#         try:
-#             u = User.get_user_by_id(userid)
-#             if u and u.status != "offline-locked":
-#                 u.status = "offline"
-#             database.set_offline(userid)
-#             update_userlist(None, {"status": "offline"}, userid)
-#         except TypeError as e:
-#             print(f"Error in forced disconnect: {e}")
-#     except RuntimeError as e:
-#         print(f"Runtime error in forced disconnect: {e}")
-
-
-

@@ -14,8 +14,13 @@ from better_profanity import profanity
 from chat.chat import Chat
 # from system import format_system_msg
 
-def setup_filter(whitelist, blacklist):
+def setup_filter(whitelist, blacklist, file):
     """Sets up whitelisted and blacklisted words."""
+    if file:
+        with open(file + '_blacklist', 'r') as f:
+            blacklist = f.read().splitlines()
+        with open(file + '_whitelist', 'r') as f:
+            whitelist = f.read().splitlines()
     profanity.load_censor_words(whitelist_words=whitelist)
     profanity.add_censor_words(blacklist)
 
@@ -158,3 +163,5 @@ def run_filter_chat(user, roomid, message, suuid):
     
 #     message = format_text(message)
 #     return ('msg', compile_message(message, user), 0)
+
+setup_filter("/chat/whitelist.txt", "/chat/blacklist.txt", True)

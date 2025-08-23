@@ -32,7 +32,9 @@ online/__pycache__/*
 private/__pycache__/*
 /static/
 .vscode/
-logs/*
+logs/app.log
+logs/messages.log
+logs/__pycache__/*
 
 # css
 frontend/src/compiled_css/*

@@ -1,0 +1,29 @@
+import logging
+
+# Configure logging
+logging.basicConfig(
+    filename='logs/app.log', 
+    filemode='a', 
+    format='%(asctime)s - %(levelname)s - %(message)s', 
+    level=logging.INFO
+)
+from datetime import datetime
+
+def log_message_sent(user_id, roomid, message):
+    message_logger = logging.getLogger('message_logger')
+    handler = logging.FileHandler('logs/messages.log')
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    message_logger.addHandler(handler)
+    message_logger.setLevel(logging.INFO)
+    
+    message_logger.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')} - [{roomid}]Message sent by {user_id}: {message}")
+    
+    message_logger.removeHandler(handler)
+    handler.close()
+
+def log_user_connected(user_id):
+    logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')} - User connected: {user_id}")
+
+def log_user_disconnected(user_id):
+    logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')} - User disconnected: {user_id}")
