@@ -27,9 +27,9 @@ async def user_list():
 
 async def get_user(uuid):
     """Return a secure version of user data for a given UUID."""
-    user = next((user for user in userlist.values() if user["uuid"] == uuid), None)
-    if user:
-        return {"displayName": user["displayName"], "status": user["status"]}
+    for user in userlist.values():
+        if uuid in user.keys():
+            return {"displayName": user["displayName"], "status": user["status"]}
     return None
 
 @sio.on("chatpage")
