@@ -16,6 +16,22 @@ userlist = get_online_data()
 # print(userlist)
 socketids = {}
 
+
+async def user_list():
+    """Return a secure user list."""
+    securelist = {#the first displayname is a filler
+        user["displayName"]: {"displayName": user["displayName"], "status": user["status"]}
+        for user in userlist.values()
+    }
+    return securelist
+
+async def get_user(uuid):
+    """Return a secure version of user data for a given UUID."""
+    user = next((user for user in userlist.values() if user["uuid"] == uuid), None)
+    if user:
+        return {"displayName": user["displayName"], "status": user["status"]}
+    return None
+
 @sio.on("chatpage")
 async def connect(sid, data):
     """Handle startup system."""
@@ -38,7 +54,8 @@ async def connect(sid, data):
     if user.status != "offline-lockced":
          update({"status": 'active'}, uuid)
     # log_user_connected(uuid)
-    await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
+    securelist = await get_user(uuid)
+    await sio.emit("online", {"update": "full", "data": securelist}, to=sid)
     await sio.emit("user_data", user_data, to=sid)
     await sio.emit("room_list", {"rooms": Chat.get_all_chats(user.perm)}, to=sid)
 
@@ -49,8 +66,8 @@ async def refresh_list(sid, suuid):
         print(f"❌ Invalid or expired user SUUID: {suuid}")
         await sio.emit("send_to_login", to=sid)
         return
-    await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
-    
+    securelist = await user_list()
+    await sio.emit("online", {"update": "full", "data": securelist}, to=sid)
 
 @sio.event
 async def disconnect(sid):
@@ -60,7 +77,8 @@ async def disconnect(sid):
             user.active = False
             update({"status": "offline"}, user.uuid)
             # log_user_disconnected(user.uuid)
-            await sio.emit("online", {"update": "partial", "data": userlist[user.uuid]})
+            securelist = await get_user(user.uuid)
+            await sio.emit("online", {"update": "partial", "data": securelist})
             # print(f"User {suuid} disconnected, status updated to offline.")
 
 heartbeat_flags = {}
@@ -86,7 +104,8 @@ async def heartbeat_loop():
                 print(f"❌ User {uuid} did not respond to heartbeat, marking as offline.")
                 update({"status": "offline"}, uuid)
                 # log_user_disconnected(uuid)
-                await sio.emit("online", {"update": "partial", "data": userlist[uuid]})
+                securelist = await get_user(uuid)
+                await sio.emit("online", {"update": "partial", "data": securelist})
 
 @sio.on("beat")
 async def beat(sid, data):
@@ -99,8 +118,8 @@ async def beat(sid, data):
 
         if user.uuid in heartbeat_flags:
             heartbeat_flags[user.uuid] = True
-
-        await sio.emit("online", {"update": "full", "data": userlist}, to=sid)
+            securelist = await user_list()
+            await sio.emit("online", {"update": "full", "data": securelist}, to=sid)
     else:
         await sio.emit("send_to_login", to=sid)
 
@@ -112,8 +131,8 @@ async def online(_, data):
     uuid = User.Users[suuid].uuid
     update({"status": status}, uuid)
     # socketids[uuid] = sid
-
-    await sio.emit("online", {"update": 'partial', "data": userlist[uuid]})
+    securelist = await user_list()
+    await sio.emit("online", {"update": 'partial', "data": securelist})
 
 
 
@@ -125,7 +144,8 @@ async def handle_update(sid, data):
     if suuid in User.Users:
         uuid = User.Users[suuid].uuid
         update(data, uuid)
-        await sio.emit("online", {"update": 'partial', "data": userlist[uuid]})
+        securelist = await get_user(uuid)
+        await sio.emit("online", {"update": 'partial', "data": securelist})
     else:
         await sio.emit("send_to_login", to=sid)
 
