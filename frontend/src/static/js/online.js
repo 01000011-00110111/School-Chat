@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import socket from "../../socket";
 
 function status_conversion(status) {
@@ -44,7 +44,6 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 
-
 export function UserList() {
     const [userData, setUserData] = useState({
         update_type: "",
@@ -55,43 +54,60 @@ export function UserList() {
         }
     });
 
-    socket.on('online', (data) => {
-        function get_numbers() {
+    useEffect(() => {
+        function get_numbers(usersObj) {
             let online_users = 0;
             let offline_users = 0;
-
-            Object.entries(data["data"]).map((update, index, data) => {
-                if (update[1]["status"] === "active" || update[1]["status"] === "idle") {
-                    online_users += 1;
-                } else if (update[1]["status"] === "offline") {
-                    offline_users += 1;
+    
+            Object.values(usersObj["data"]).forEach((user) => {
+    
+                console.log(user)
+    
+                if (user["status"] === "active" || user["status"] === "idle") {
+                    online_users++;
+                } else {
+                    offline_users++;
                 }
             });
-
-            return {online_users, offline_users};
+    
+            return { online_users, offline_users };
+        }
+    
+        function handleOnline(data) {
+            const { online_users, offline_users } = get_numbers(data);
+            
+            if (data["update"] === "full" && data["data"] !== userData.data) {
+                setUserData({
+                    update_type: data["update"],
+                    data: data["data"],
+                    length: {
+                        online: online_users,
+                        offline: offline_users,
+                    }
+                });
+            }
+            
+            if (data['update'] === 'partial') {
+                setUserData(prev => prev, {
+                    update_type: data["update"],
+                    data: data["data"],
+                    length: {
+                        online: online_users,
+                        offline: offline_users,
+                    }
+                });
+            }
         }
 
-        if (data["update"] === "full" && data["data"] !== userData.data) {
-            setUserData({
-                update_type: data["update"],
-                data: data["data"],
-                length: {
-                    online: get_numbers().online_users,
-                    offline: get_numbers().offline_users,
-                }
-            });
-        }
         
-        if (data['update'] === 'partial') {
-            setUserData(prev => prev, {
-                update_type: data["update"],
-                data: data["data"],
-                length: {
-                    online: get_numbers().online_users,
-                    offline: get_numbers().offline_users,
-                }
-            });
-        }
+        socket.on('online', handleOnline);
+        return () => socket.off("online", handleOnline);
+    }, [userData.data]);
+
+    const sortedUsers = Object.entries(userData.data).sort(([, a], [, b]) => {
+        const aOnline = a.status === "active" || a.status === "idle";
+        const bOnline = b.status === "active" || b.status === "idle";
+        return bOnline - aOnline;
     });
 
     return (
@@ -102,12 +118,17 @@ export function UserList() {
             </div>
 
             <div id="user_list">
-                {Object.entries(userData.data).map((update, index, data) => (
-                    <div key={index} className="userlist_user">
-                        <img src={update[1]["profile"] ? update[1]["profile"] : "/icons/favicon.ico"} alt="profile" className={`userlist_picture ${status_conversion(update[1]["status"])}`}/>
+                {sortedUsers.map(([id, user], index) => (
+                    <div key={id} className="userlist_user">
+                        <img 
+                            src={user.profile ? user.profile : "/icons/favicon.ico"} 
+                            alt="profile" 
+                            className={`userlist_picture ${status_conversion(user.status)}`} 
+                            title={status_conversion(user)} 
+                        />
                         <div className="userlist_info_container">
-                            <p className="userlist_displayname">{update[1]["displayName"]}</p>
-                            <p className="userlist_role">{cut_replace(update[1]["role"], 50)}</p>
+                            <p className="userlist_displayname">{user.displayName}</p>
+                            <p className="userlist_role">{cut_replace(user.role, 50)}</p>
                         </div>
                     </div>
                 ))}

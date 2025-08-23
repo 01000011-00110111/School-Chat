@@ -3,6 +3,10 @@
 // https://github.com/01000011-00110111/School-Chat
 import { io } from "socket.io-client";
 
-let socket = io();
+// let socket = io();
+
+let socket = io("http://localhost:5000",
+    {transports: ['websocket', 'polling', 'flashsocket']}
+    )
 
 export default socket;
