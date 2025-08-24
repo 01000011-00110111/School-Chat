@@ -72,10 +72,8 @@ async def disconnect(sid):
         if user.active:
             user.active = False
             update({"status": "offline"}, user.uuid)
-            # log_user_disconnected(user.uuid)
             securelist = await get_user(user.uuid)
             await sio.emit("online", {"update": "partial", "data": securelist})
-            # print(f"User {suuid} disconnected, status updated to offline.")
 
 heartbeat_flags = {}
 
@@ -99,7 +97,6 @@ async def heartbeat_loop():
             if not responded:
                 print(f"❌ User {uuid} did not respond to heartbeat, marking as offline.")
                 update({"status": "offline"}, uuid)
-                # log_user_disconnected(uuid)
                 securelist = await get_user(uuid)
                 await sio.emit("online", {"update": "partial", "data": securelist})
 
@@ -126,7 +123,6 @@ async def online(_, data):
     status = data['status']
     uuid = User.Users[suuid].uuid
     update({"status": status}, uuid)
-    # socketids[uuid] = sid
     securelist = await user_list()
     await sio.emit("online", {"update": 'partial', "data": securelist})
 

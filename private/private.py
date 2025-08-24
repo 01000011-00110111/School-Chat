@@ -57,7 +57,6 @@ class Private:
 
         for _, sid in self.sids.items():
             await sio.emit("message", {"message": message}, to=sid)
-        # await sio.emit("message", {"message": message})
 
     async def reset_chat(self):
         """Reset the chat."""

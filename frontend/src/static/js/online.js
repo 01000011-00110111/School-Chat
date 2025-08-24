@@ -38,7 +38,6 @@ document.addEventListener('visibilitychange', function() {
     if (document.hidden) {
         notifyStatusChange('idle');
     } else {
-        // socket.emit('status', window.sessionStorage.getItem("suuid"));
         notifyStatusChange('active');
     }
 });
@@ -133,10 +132,6 @@ export function UserList() {
     )
 }
 
-// const setupTimer = (cb, delay) => {
-//     let id = setInterval(cb, delay);
-//     return () => clearInterval(id);
-// }
 
 socket.on('heartbeat', () => {
     if (!document.hidden) {

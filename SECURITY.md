@@ -9,7 +9,7 @@ currently being supported with security updates.
 | Version | Supported          |
 | ------- | ------------------ |
 | 2.0   | :white_check_mark: |
-| 1.4.4   | :white_check_mark: |
+| 1.4.4   | :x: |
 | 1.3.x   | :x: |
 | 1.2.x   | :x:                |
 | 1.1.x   | :x:                |
