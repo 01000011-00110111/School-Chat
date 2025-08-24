@@ -54,7 +54,6 @@ function Chat() {
 
     useEffect(() => {
         socket.on("load_chat", (data) => {
-            // console.log(data['messages'])
             updateChatRoom(data["roomid"], data["name"]);
             sessionStorage.setItem("roomid", data["roomid"]);
             loadChat(data["messages"]);

@@ -25,7 +25,6 @@ export class Theme_System  {
             if (value !== undefined) {
                 root.style.setProperty(key, value)
             }
-            // console.log(key + " : " + value)
         }
     }
 

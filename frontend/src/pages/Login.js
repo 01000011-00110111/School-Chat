@@ -36,7 +36,6 @@ function Login() {
             window.location.href = "/chat/Main";
         }
         if (data["status"] === 'failed') {
-            // console.log(data);
             setloginStatus("Username or Password is incorrect");
         }
     });

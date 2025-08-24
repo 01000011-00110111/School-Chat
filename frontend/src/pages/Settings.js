@@ -41,7 +41,6 @@ const Settings = () => {
     }, []);
 
     const on_update = (event = Event) => {
-        // console.log("Changes detected!")
         document.querySelectorAll(".footer_alert")[0].classList.add("on_screen");
     }
 
@@ -90,8 +89,6 @@ const Settings = () => {
         });
     }, [formInfo])
 
-    // console.log(errors)
-
     const save_settings = () => {
         socket.emit("save_settings", {suuid: window.sessionStorage.getItem("suuid"), formInfo});
 
@@ -109,8 +106,6 @@ const Settings = () => {
             ...prevState,
             [name]: value,
         }));
-        console.log(value)
-        console.log(formInfo.newMessagePing)
         on_update(event);
     };
 

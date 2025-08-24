@@ -59,9 +59,6 @@ export function UserList() {
             let offline_users = 0;
     
             Object.values(usersObj["data"]).forEach((user) => {
-    
-                console.log(user)
-    
                 if (user["status"] === "active" || user["status"] === "idle") {
                     online_users++;
                 } else {
@@ -142,7 +139,6 @@ export function UserList() {
 // }
 
 socket.on('heartbeat', () => {
-    console.log("Heartbeat received:");
     if (!document.hidden) {
         socket.emit('beat', { status: 'active', suuid: window.sessionStorage.getItem("suuid") });
     } else {

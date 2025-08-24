@@ -38,7 +38,6 @@ function escapeHTML(input) {
 }
 
 function renderMessage(message_data) {
-    // console.log(message_data);
     let badges = message_data.badges || [];
     // for (let i = 0; i < message_data.badges.length; i++) {
     //     console.log(message_data.badges, badges)
