@@ -78,7 +78,6 @@ function Signup() {
 
                 <PromptStep title={"Finalization"}>
                     <h1>Congratulations you're finished Signing up!</h1>
-                    {/* <button onClick={() => TestVal()}>Test Values</button> */}
                     <button onClick={sendDataToServer}>Submit</button>
                 </PromptStep>
             </Prompt>
