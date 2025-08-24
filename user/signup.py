@@ -8,7 +8,6 @@ async def signup(sid, data):
     """
     This function is called when a client sends a signup request to the server.
     """
-    print(data)
     username = data.get("username", "").strip()
     password = data.get("password", "")
     email = data.get("email", "").strip()

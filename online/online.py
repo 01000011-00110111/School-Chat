@@ -13,7 +13,6 @@ import asyncio
 # from logs.logs import log_user_connected, log_user_disconnected
 
 userlist = get_online_data()
-# print(userlist)
 socketids = {}
 
 
@@ -29,7 +28,6 @@ async def get_user(uuid):
     """Return a secure version of user data for a given UUID."""
     if uuid in userlist:
         user_copy = userlist[uuid].copy()
-        print({user_copy["displayName"]: user_copy})
         return {user_copy["displayName"]: user_copy}
 
 @sio.on("chatpage")
@@ -137,7 +135,6 @@ async def online(_, data):
 @sio.on("update")
 async def handle_update(sid, data):
     """Handle update events."""
-    # print("update", data)
     suuid = data['suuid']
     del data['suuid']
     if suuid in User.Users:

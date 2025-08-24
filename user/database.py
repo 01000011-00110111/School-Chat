@@ -134,7 +134,6 @@ def get_online_data():
         result = list(ID.aggregate(pipeline))
         result_dict = {user["uuid"]: {key: val for key, val in user.items() if key != "uuid"}\
                         for user in result}
-        print(result_dict)
 
         return result_dict
     except IndexError:
