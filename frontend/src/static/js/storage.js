@@ -40,6 +40,4 @@ const storage = {
     }
 }
 
-// storage.set("app-nav-settings", '{"nav_close_onroom": true}')
-
 export {storage}

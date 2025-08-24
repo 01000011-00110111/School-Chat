@@ -42,14 +42,6 @@ function Signup() {
         });
     }
 
-    function TestVal() {
-    console.log(`Email: ${formInfo.email}; Username: ${formInfo.username}; Display Name: ${formInfo.displayName}; 
-        Password: ${formInfo.password}; 
-        Confirm: ${formInfo.confirmPassword}; 
-        Role: ${formInfo.role}; 
-        Display Name Color: ${formInfo.usernameColor}; Role Color: ${formInfo.roleColor}; Message Color: ${formInfo.messageColor}; Agree?: ${formInfo.conditionsAccepted};`)
-    }
-
     return (
         <div className="signup-main">
             <Prompt>
