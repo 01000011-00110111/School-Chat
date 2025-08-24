@@ -14,7 +14,6 @@ async def login(sid, data):
     username = data["username"]
     password = data["password"]
 
-    # print(username, password)
 
     uuid = User.check_credentials(username, password)
 

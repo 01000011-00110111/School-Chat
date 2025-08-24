@@ -93,7 +93,6 @@ def compile_message(message, profile_picture, user):
     perm = 'user'
     #badges = [f"<p style='background:{badge[1]}; color: {badge[2]};' class='badge'>{badge[0]}</p>"
              # for badge in user.badges]
-   # print(f"Badges: {badges}")
 
     profile = "<img class='user_profile_picture' src='/icons/favicon.ico'></img>"
     user_string = f"<p style='color: {u_color};'>{display_name}</p>"
@@ -156,12 +155,5 @@ def run_filter_chat(user, roomid, message, suuid):
     message = format_text(message)
     return ('msg', compile_message(message, None, user), 0, reset)
 
-# def run_filter_private(user, message, userid):
-#     """Filters messages for private chats."""
-#     if userid != user.uuid:
-#         return ('permission', 7, False)
-    
-#     message = format_text(message)
-#     return ('msg', compile_message(message, user), 0)
 
 setup_filter("/chat/whitelist.txt", "/chat/blacklist.txt", True)

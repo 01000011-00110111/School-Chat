@@ -50,10 +50,8 @@ async def connect(sid, data):
         "profile": user.profile,
         "theme": user.theme
     }
-    # print(f"Client connected (SID: {sid, uuid})")
     if user.status != "offline-lockced":
          update({"status": 'active'}, uuid)
-    # log_user_connected(uuid)
     securelist = await user_list()
     await sio.emit("online", {"update": "full", "data": securelist}, to=sid)
     await sio.emit("user_data", user_data, to=sid)

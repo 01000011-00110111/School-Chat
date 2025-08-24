@@ -16,7 +16,6 @@ class Chat:
 
     def __init__(self, room, roomid):
         """Initialize the chat."""
-        print(room['locked'])
         self.name = room["roomName"]
         self.vid = roomid
         self.config = {
@@ -93,7 +92,6 @@ class Chat:
         """Send a message to the chat."""
         self.config["last_message"] = datetime.now()
         lines = len(self.messages)# if not private else 1
-        # print(message)
         if lines >= 350 or reset:# and permission != 'true'):
             await self.reset_chat()
             return

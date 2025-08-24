@@ -32,11 +32,9 @@ async def join_room(sid, data):
 
         if user.suuid not in chat.sids:
             chat.sids[user.suuid] = sid
-            # chat.sids.append(sid)
 
         await sio.emit("load_chat",
                     {"messages": chat.messages, "roomid": chat.vid, "name": chat.name},
                     to=sid)
-        # print(f"User {user.display_name} joined room {chat.name} (SID: {sid})")
     else:
         await sio.emit("send_to_login", to=sid)

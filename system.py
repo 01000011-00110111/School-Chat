@@ -7,7 +7,6 @@ from datetime import datetime
 
 def format_system_msg(msg):
     """Format a message [SYSTEM] would send."""
-    # return f'[SYSTEM]: <font color="#ff7f00">{msg}</font>'
     profile = "<img class='user_profile_picture' src='/icons/favicon.ico'></img>"
     user_string = "<p style='color: #ff7f00;'>[SYSTEM]</p>"
     message_string = f"<p style='color: #ffffff;'>{msg}</p>"

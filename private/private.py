@@ -37,7 +37,6 @@ class Private:
         room = database.get_priv_data(pmid)
         chat = Private(room, pmid)
         Private.chats[pmid] = chat
-        # asyncio.create_task(chat.run_backup_task())
         return chat
 
     @staticmethod

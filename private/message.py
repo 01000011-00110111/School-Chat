@@ -12,7 +12,6 @@ async def client_message(_, data):
     """
     This function is called when a client sends a message to the server.
     """
-    # print(f"Message from client {sid}: {data}")
     profile = "<img class='user_profile_picture' src='/icons/favicon.ico'></img>"
     user_string = "<p style='color: #ff7f00;'>[SYSTEM]</p>"
     message_string = f"<p style='color: #ffffff;'>{data['message']}</p>"
@@ -27,4 +26,3 @@ async def client_message(_, data):
         'date': date_str
     }
     await Private.get_chat(data["pmid"]).send_message(message)
-    # await sio.emit("message", {"message": response})

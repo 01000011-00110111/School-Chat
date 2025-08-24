@@ -15,7 +15,6 @@ async def client_message(_, data):
     """
     This function is called when a client sends a message to the server.
     """
-    # print(data)
     user = User.get_user(data["suuid"])
 
     # log_message_sent(user.uuid, data["roomid"], data["message"])
