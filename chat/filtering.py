@@ -17,9 +17,9 @@ from chat.chat import Chat
 def setup_filter(whitelist, blacklist, file):
     """Sets up whitelisted and blacklisted words."""
     if file:
-        with open(file + '_blacklist', 'r') as f:
+        with open(file + '_blacklist', 'r', encoding='utf-8') as f:
             blacklist = f.read().splitlines()
-        with open(file + '_whitelist', 'r') as f:
+        with open(file + '_whitelist', 'r', encoding='utf-8') as f:
             whitelist = f.read().splitlines()
     profanity.load_censor_words(whitelist_words=whitelist)
     profanity.add_censor_words(blacklist)

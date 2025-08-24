@@ -1,15 +1,18 @@
 [Unit]
-AssertPathExists=/home/<user>/<dir_path>
+Description=School Chat Backend (Sanic) with React Build
 After=network-online.target
+AssertPathExists=/home/<user>/<dir_path>
 
 [Service]
+Type=simple
 WorkingDirectory=/home/<user>/<dir_path>
-ExecStart=gunicorn --bind 127.0.0.1:5000 --worker-class eventlet --threads 10 -w 1 main:app
+ExecStart=/usr/bin/python3 -m sanic app:app --host=127.0.0.1 --port=5000 --workers=1
 Restart=always
-RestartSec=1
+RestartSec=30
 PrivateTmp=true
 NoNewPrivileges=true
+User=chatserver
+Group=chatserver
 
 [Install]
 WantedBy=default.target
- 
