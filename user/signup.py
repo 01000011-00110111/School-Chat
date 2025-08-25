@@ -17,7 +17,7 @@ async def signup(sid, data):
     password = data.get("password", "")
     email = data.get("email", "").strip()
     display_name = data.get("displayName")
-    role = data.get("role")
+    # role = data.get("role") will add checks in 2.1 [FIX IN 2.1]
 
     # Validate input
     if not username or not password or not email:
