@@ -1,3 +1,6 @@
+// Copyright (C) 2023-2025  cserver45, cseven, CastyiGlitchxz
+// License info can be viewed in app.py or the LICENSE file inside the github repositiory located here:
+// https://github.com/01000011-00110111/School-Chat
 import React, {useState, useEffect} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
