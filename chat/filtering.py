@@ -1,6 +1,6 @@
 """filtering.py: Improved Filtering for usernames, permissions, and formatting.
-    Copyright (C) 2023, 2024  cserver45, cseven
-    License info can be viewed in main.py or the LICENSE file.
+    Copyright (C) 2023-2025  cserver45, cseven, CastyiGlitchxz
+    License info can be viewed in app.py or the LICENSE file.
 """
 
 import re

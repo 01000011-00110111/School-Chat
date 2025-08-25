@@ -1,3 +1,7 @@
+"""user/settings.py: manage backend functions for settings page.
+    Copyright (C) 2023-2025  cserver45, cseven, CastyiGlitchxz
+    License info can be viewed in app.py or the LICENSE file.
+"""
 # import re
 from socketio_confg import sio
 from user.database import update

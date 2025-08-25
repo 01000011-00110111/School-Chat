@@ -1,5 +1,5 @@
 """app.py: Main webserver file for school-chat, a chat server
-    Copyright (C) 2023, 2024  cserver45, cseven
+    Copyright (C) 2023-2025  cserver45, cseven, CastyiGlitchxz
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as

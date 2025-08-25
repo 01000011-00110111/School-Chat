@@ -1,3 +1,7 @@
+"""user/signup.py: functions for handling all account creation functions on the backend.
+    Copyright (C) 2023-2025  cserver45, cseven, CastyiGlitchxz
+    License info can be viewed in app.py or the LICENSE file.
+"""
 from socketio_confg import sio
 # from user.user import User
 from user import database

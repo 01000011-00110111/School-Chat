@@ -1,5 +1,5 @@
 """chat/message.py: Backend functions for message handling.
-    Copyright (C) 2023, 2024  cserver45, cseven
+    Copyright (C) 2023-2025  cserver45, cseven, CastyiGlitchxz
     License info can be viewed in app.py or the LICENSE file.
 """
 # from datetime import datetime

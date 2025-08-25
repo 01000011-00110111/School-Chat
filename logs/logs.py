@@ -1,3 +1,8 @@
+"""logs/logs.py: manage logs for backend services 
+    Copyright (C) 2023-2025  cserver45, cseven, CastyiGlitchxz
+    License info can be viewed in app.py or the LICENSE file.
+"""
+
 from datetime import datetime
 import logging
 
