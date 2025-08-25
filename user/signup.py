@@ -5,6 +5,7 @@
 from socketio_confg import sio
 # from user.user import User
 from user import database
+from logs.logs import log_signup
 import re
 
 @sio.on("signup")
@@ -15,6 +16,8 @@ async def signup(sid, data):
     username = data.get("username", "").strip()
     password = data.get("password", "")
     email = data.get("email", "").strip()
+    display_name = data.get("displayName")
+    role = data.get("role")
 
     # Validate input
     if not username or not password or not email:
@@ -41,6 +44,11 @@ async def signup(sid, data):
         print("Username already taken")
         return
 
+    if database.display_exists(display_name):
+        await sio.emit("signup", {'suuid': False, 'status': 'failed', 'reason': 'username_taken'}, to=sid)
+        print("Username already taken")
+        return
+
     # Check username format (example: alphanumeric, 3-10 characters)
     if not re.match(r'^[a-zA-Z0-9]{3,10}$', username):
         await sio.emit("signup", {'suuid': False, 'status': 'failed', 'reason': 'invalid_username'}, to=sid)
@@ -62,4 +70,5 @@ async def signup(sid, data):
 
     # Add account to the database
     database.add_accounts(data)
+    log_signup(email, username, display_name)
     await sio.emit("signup", {'suuid': True, 'status': 'successful'}, to=sid)

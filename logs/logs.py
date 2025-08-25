@@ -32,3 +32,6 @@ def log_user_connected(user_id):
 
 def log_user_disconnected(user_id):
     logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')} - User disconnected: {user_id}")
+
+def log_signup(email, username, display_name): #a very basic log for signup (all of logs.py needs improvements)
+    logging.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')} - Account created named: {username}, displayname: {display_name}, and email: {email}")

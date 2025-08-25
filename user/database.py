@@ -42,6 +42,10 @@ def username_exists(username):
     """Checks if a username already exists in the database."""
     return ID.find_one({"username": username})
 
+def display_exists(display_name):
+    """Checks if a username already exists in the database."""
+    return ID.find_one({"displayName": display_name})
+
 def email_exists(email):
     """Checks if an email already exists in the database."""
     return ID.find_one({"email": email})
