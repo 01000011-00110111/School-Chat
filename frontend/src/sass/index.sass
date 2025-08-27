@@ -820,19 +820,31 @@ code
   text-shadow: 5px 0px 5px #464646
 
 .signup-main
-  background: linear-gradient(132deg, #181a1e, #000, #141414, #282828, #181a1e)
+  // background: linear-gradient(132deg, #181a1e, #000, #141414, #282828, #181a1e)
+  background: #18151f
   color: white
   width: 100vw
   height: 100vh
 
 .signup-prompt
   width: 100vw
-  height: 88vh
-  display: grid
-  justify-content: center
-  align-content: space-around
-  grid-template-columns: 72vw
+  height: 100vh
+  display: flex
+  justify-content: space-evenly
+  align-items: center
+  // grid-template-columns: 72vw
   animation: "signup-appear" 1s ease-in alternate
+
+.signup-container-left
+    width: 39rem
+    height: 90vh
+    background: #2c2739
+    display: grid
+    align-content: center
+    grid-template-rows: 97%
+    grid-template-columns: 96%
+    justify-content: center
+    border-radius: 19px
 
 @keyframes signup-appear
   0%
@@ -841,14 +853,15 @@ code
     opacity: 1
 
 .signup-prompt .prompt-step
+  width: 55vw
   justify-items: center
   display: grid
   height: fit-content
-  min-height: 46vh
-  gap: 17px
+  min-height: 41vh
+  gap: 15px
 
 .signup-prompt .textbox
-  width: 38rem !important
+  width: 83% !important
 
 .signup-prompt .textbox input
   color: white
@@ -860,15 +873,30 @@ code
   justify-content: space-between
   color: white
 
-.signup-bar a
-  align-content: center
+.signup-container-left a
   display: flex
   align-items: center
   gap: 0.6rem
   text-decoration: none
-  color: #b5b5b5
+  color: #d0d0d0
   transition:0.3s ease-in-out
   cursor: pointer
+  width: fit-content
+  height: 1.5rem
+  border-radius: 8px
+  justify-content: center
+  justify-self: end
+  transition: all 1s ease-in-out
+  padding: 13px
+
+.signup-container-left a:hover
+  translate: -1rem 0rem
+  font-size: 17px
+  color: #b5b5b5
+
+.signup-container-left a:active
+  font-size: 15px
+  color: var(--foreground-accent-2)
 
 .signup-bar a:hover
   color: white
@@ -877,15 +905,27 @@ code
 .signup-bar a::selection
   background: transparent
 
+.signup-container-background
+  width: 100%
+  height: 100%
+  background-size: cover
+  border-radius: 14px
+  background-position-y: 9px
+  background-position-x: -12px
+  display: grid
+
 .navigate-button
+  font-family: monospace
   border: 0
-  width: 10em
-  height: 37px
+  width: 15rem
+  height: 40px
   border-radius: 6px
   color: white
-  background: #35353500
+  background: #4147ff
   box-shadow: 1px 1px 3px 1px #313131
   transition: 0.3s ease-in-out
+  font-size: 19px
+  border: 0.9px solid white
 
 .navigate-button:hover
   scale: 1.1
@@ -897,11 +937,14 @@ code
   color: gray
   grid-template-rows: 3rem 2rem
 
+.step-count p
+  color: white
+
 .progressbar
   border-radius: 4px
   width: 3.5rem
   height: 0.5rem
-  background: #ededed
+  background: #5b5b5b
   // background "#29c3ff" when task completed
   box-shadow: 1px 1px 4px black inset
 
@@ -912,6 +955,6 @@ code
   width: fit-content
 
 .dialog-content
-  display: flex
+  display: grid
   height: fit-content
   gap: 1rem

@@ -132,39 +132,42 @@ function LineColorDialog({title = "", id = "", className = "", onUpdate, onChang
     )
 }
 
-function Prompt({children}) {
+function Prompt({children, onFinish, lastPageText, cancelText}) {
     const [step, currentStep] = useState(0);
     
     return (
         <div className="signup-prompt">
-            <div className="signup-bar">
-                <a onClick={() => step === 0 ? window.location.href = '/' : currentStep(step-1)} title={step === 0 ? "Return to login screen" : "Return to previous step"}>
-                <FontAwesomeIcon icon={faChevronLeft}/>
-                {step === 0 ? "Cancel" : "Back"}
-                </a>
+            <div className="signup-container-left">
+                <div className="signup-container-background" style={{backgroundImage: "url('/icons/something.png')"}}>     
+                    <a onClick={() => step === 0 ? window.location.href = '/' : currentStep(step-1)} title={step === 0 ? "Return to login screen" : "Return to previous step"}>
+                        <FontAwesomeIcon icon={faChevronLeft}/>
+                        {step === 0 ? cancelText : "Back"}
+                    </a>
+
+                    <span className="step-count">
+                        <p>Step: {step+1}/{children.length}</p>
+
+                        <div className="step-container">
+                            {children.map((num, key) => (
+                                <span className="progressbar" style={step === key ? {background: "#29c3ff"} : {background: ""}} key={key} onClick={() => currentStep(key)}></span>
+                            ))}
+                        </div>
+
+                        <button className="navigate-button" onClick={() => step+1 === children.length ? onFinish() : currentStep(step+1)}>
+                            {step+1 === children.length ? lastPageText : "Continue"}
+                        </button>
+                    </span>
+                </div>
+
+            </div>
+            {/* <div className="signup-bar">
 
                 <h3>{children[step]["props"]["title"]}</h3>
 
                 <FontAwesomeIcon icon={faUserCircle} fontSize={27}/>
-            </div>
+            </div> */}
 
             {children[step]}
-
-            <div>
-                <span className="step-count">
-                    <p>Step: {step+1}/{children.length}</p>
-
-                    <div className="step-container">
-                        {children.map((num, key) => (
-                            <span className="progressbar" style={step === key ? {background: "#29c3ff"} : {background: ""}} key={key} onClick={() => currentStep(key)}></span>
-                        ))}
-                    </div>
-
-                    <button className="navigate-button" onClick={() => step+1 === children.length ? currentStep(0) : currentStep(step+1)}>
-                        {step+1 === children.length ? "Finish" : "Continue"}
-                    </button>
-                </span>
-            </div>
 
         </div>
     )
@@ -179,6 +182,7 @@ function StepTitle() {
 function PromptStep({children, title}) {
     return (
         <span className="prompt-step">
+            <h1>{title}</h1>
             {children}
         </span>
     )

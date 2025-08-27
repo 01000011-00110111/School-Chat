@@ -43,11 +43,12 @@ function Signup() {
             userColor: formInfo.usernameColor,
             agreeToTerms: formInfo.conditionsAccepted === "on" ? true : false
         });
+        window.location.href = ".";
     }
 
     return (
         <div className="signup-main">
-            <Prompt>
+            <Prompt onFinish={sendDataToServer} lastPageText={"Complete Signup"} cancelText={"Return to Login"}>
                 <PromptStep title={"Creation"}>   
                     <EmailBox label={"Email"} placeholder={"Enter an email address"} onUpdate={setInformation} default_value={formInfo.email} name="email"/>
                     <TextBox label={"Username"} placeholder={"Provide a username"} onUpdate={setInformation} default_value={formInfo.username} name="username"/>
@@ -69,11 +70,6 @@ function Signup() {
                 <PromptStep title={"Agreements"}>
                     <WebEmbed url={"./TERMS OF SERVICE.pdf#toolbar=0&navpanes=0&scrollbar=0"} title={"Terms & Conditions"}/>
                     <CheckBox label={"Agree to Terms & Conditions"} onUpdate={setInformation} checked={formInfo.conditionsAccepted} name="conditionsAccepted"/>
-                </PromptStep>
-
-                <PromptStep title={"Finalization"}>
-                    <h1>Congratulations you're finished Signing up!</h1>
-                    <button onClick={sendDataToServer}>Submit</button>
                 </PromptStep>
             </Prompt>
         </div>
