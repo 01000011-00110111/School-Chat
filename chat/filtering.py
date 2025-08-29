@@ -17,10 +17,10 @@ from chat.chat import Chat
 
 def get_wordlist():
     """sets the whitlisted and blacklisted words."""
-    with open('backend/unbanned_words.txt', 'r', encoding="utf-8") as file:
+    with open('chat/files/unbanned_words.txt', 'r', encoding="utf-8") as file:
         whitelist = list(file.read().splitlines())
 
-    with open('backend/banned_words.txt', 'r', encoding="utf-8") as file:
+    with open('chat/files/banned_words.txt', 'r', encoding="utf-8") as file:
         blacklist = list(file.read().splitlines())
 
     return whitelist, blacklist
