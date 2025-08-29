@@ -15,25 +15,22 @@ from better_profanity import profanity
 from chat.chat import Chat
 # from system import format_system_msg
 
-def setup_filter(whitelist=None, blacklist=None, directory=None):
+def get_wordlist():
+    """sets the whitlisted and blacklisted words."""
+    with open('backend/unbanned_words.txt', 'r', encoding="utf-8") as file:
+        whitelist = list(file.read().splitlines())
+
+    with open('backend/banned_words.txt', 'r', encoding="utf-8") as file:
+        blacklist = list(file.read().splitlines())
+
+    return whitelist, blacklist
+
+def setup_filter(whitelist, blacklist, file):
     """Sets up whitelisted and blacklisted words."""
-    
-    # Load blacklist from file if provided
-    if directory and blacklist:
-        with open(os.path.join(directory, blacklist), 'r', encoding='utf-8') as f:
-            blacklist_words = f.read().splitlines()
-    else:
-        blacklist_words = blacklist or []
-
-    # Load whitelist from file if provided
-    if directory and whitelist:
-        with open(os.path.join(directory, whitelist), 'r', encoding='utf-8') as f:
-            whitelist_words = f.read().splitlines()
-    else:
-        whitelist_words = whitelist or []
-
-    profanity.load_censor_words(whitelist_words=whitelist_words)
-    profanity.add_censor_words(blacklist_words)
+    if file:
+        whitelist, blacklist = get_wordlist()
+    profanity.load_censor_words(whitelist_words=whitelist)
+    profanity.add_censor_words(blacklist)
 
 def check_permissions(user):
     """Returns the highest permission level for a user."""
