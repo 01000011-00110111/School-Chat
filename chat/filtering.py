@@ -4,6 +4,7 @@
 """
 
 import re
+import os
 from datetime import datetime
 from better_profanity import profanity
 
