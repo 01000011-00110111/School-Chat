@@ -4,14 +4,9 @@
 """
 
 import re
-import os
 from datetime import datetime
 from better_profanity import profanity
 
-# import cmds
-# import log
-# from user import User
-# from commands.other import format_system_msg
 from chat.chat import Chat
 # from system import format_system_msg
 
