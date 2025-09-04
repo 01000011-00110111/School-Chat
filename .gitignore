@@ -38,4 +38,4 @@ logs/messages.log
 logs/__pycache__/*
 
 # css
-frontend/src/compiled_css/*
+frontend/src/compiled_css/
