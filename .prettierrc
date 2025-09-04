@@ -2,10 +2,8 @@
   "tabWidth": 4,
   "useTabs": false,
   "overrides": [
-    {
-      "files": [
-        "*.js"
-      ]
-    }
+      {
+          "files": ["*.js"]
+      }
   ]
 }

@@ -13,7 +13,6 @@ import {
 import Settings from "./pages/Settings";
 import Chat from "./pages/Chat";
 import Login from "./pages/Login";
-import Portal from "./pages/Portal";
 import Signup from "./pages/Signup";
 
 function App() {
@@ -43,14 +42,6 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route
-          path="/portal"
-          element={
-            <ProtectedRoute isAuthenticated={isSuperUser}>
-              <Portal />
-            </ProtectedRoute>
-          }
-        />
         <Route path="*" element={<p>404 page not found</p>} />
       </Routes>
     </Router>

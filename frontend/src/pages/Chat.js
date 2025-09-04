@@ -6,7 +6,7 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPaperPlane, faBorderAll, faGear, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import socket from '../socket';
-import { renderMessage, renderChat, loadChat } from '../static/js/message';
+import { renderChat, loadChat } from '../static/js/message';
 import { storage } from '../static/js/storage';
 import { UserList } from '../static/js/online';
 import { update_appbadge } from "../static/js/app_badge";
@@ -134,7 +134,6 @@ function Chat() {
     useEffect(() => {
         socket.on("room_list", (data) => {
             setRooms(data["rooms"]);
-            // setChatooms(data["rooms"]);
         });
 
         return () => {
@@ -228,14 +227,6 @@ function Chat() {
                     </div>
 
                     <div className="nav_buttons_container">
-                        {/* <a href='.' className='sidenav_button'>
-                            <p>DMs</p>
-                        </a>
-
-                        <a href='.' className='sidenav_button'>
-                            <p>Create Chat</p>
-                        </a> */}
-
                         <a href='/settings' className='sidenav_button'>
                             <FontAwesomeIcon icon={faGear}/>
                             <p>Settings</p>

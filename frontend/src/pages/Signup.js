@@ -25,8 +25,6 @@ function Signup() {
             ...prevState,
             [name]: value,
         }));
-
-        console.log(value)
     };
 
     const sendDataToServer = () => {
@@ -43,8 +41,14 @@ function Signup() {
             userColor: formInfo.usernameColor,
             agreeToTerms: formInfo.conditionsAccepted === "on" ? true : false
         });
-        window.location.href = ".";
-    }
+
+        socket.on('signup', (response) => {
+            console.log(response);
+            if (response.status === "successful") {
+                window.location.href = ".";
+            }
+        });
+    };
 
     return (
         <div className="signup-main">
