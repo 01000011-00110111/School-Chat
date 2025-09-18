@@ -1,0 +1,130 @@
+"""chat/chat.py: Backend functions for message handling.
+    Copyright (C) 2023-2025  cserver45, cseven, CastyiGlitchxz
+    License info can be viewed in app.py or the LICENSE file.
+"""
+import asyncio
+from datetime import datetime
+import chat.database as database
+from socketio_confg import sio
+from system import format_system_msg
+# import signal
+
+class Chat:
+    """Chat class."""
+    all_chats = [(room["roomName"], room["roomid"], room["whitelisted"]) for room in database.get_rooms()]
+    chats = {}  # Dictionary to store existing chats
+
+    def __init__(self, room, roomid):
+        """Initialize the chat."""
+        self.name = room["roomName"]
+        self.vid = roomid
+        self.config = {
+            "whitelisted" : room["whitelisted"],
+            "banned": room["blacklisted"],
+            "can_send": room["canSend"],
+            "locked": room["locked"],
+            "backups": [0, 0],
+            "last_message":  datetime.now()
+        }
+        # self.user_data = room["user_data"]
+        self.muted = room["muted"]
+        self.banned = room["banned"]
+        self.messages = database.get_messages(roomid)
+        self.sids = {}
+        self.images = [] #TO-DO: add images
+        self.backup_values = [
+            [0, 0], # 1st is total and 2nd is total sense last message
+            datetime.now()
+        ]
+
+    @staticmethod
+    def add_chat(roomid):
+        """Add a chat to the list of existing chats."""
+        room = database.get_room_data(roomid)
+        chat = Chat(room, roomid)
+        Chat.chats[roomid] = chat
+        asyncio.create_task(chat.run_backup_task())
+        return chat
+
+    @staticmethod
+    def get_chat(roomid):
+        """Get a chat from the list of existing chats."""
+        return Chat.chats[roomid]
+
+    @staticmethod
+    def get_all_chats(permission):
+        """
+        Get all chats based on user permissions.
+        """
+        if "Debugpass" in permission:# if the user is a dev/owner give all accesss
+            return Chat.all_chats
+
+        if "adminpass" in permission:# grants access to all rooms for admins and below
+            rooms = [
+                room for room in Chat.all_chats
+                        if not any(
+                            role in room[2]
+                            for role in ["devonly"]
+                        )
+                    ]
+            return rooms
+
+        if "modpass" in permission:# grants access to all roms for Mods and below
+            rooms = [
+                room for room in Chat.all_chats
+                if not any(
+                    role in room[2]
+                    for role in ["devonly", "adminonly"]
+                )
+            ]
+            return rooms
+
+        rooms = [
+            room for room in Chat.all_chats
+            if not any(
+                role in room[2]
+                for role in ["devonly", "adminonly", "modonly"]
+            )
+        ]
+        return rooms
+
+    async def send_message(self, message, reset):
+        """Send a message to the chat."""
+        self.config["last_message"] = datetime.now()
+        lines = len(self.messages)# if not private else 1
+        if lines >= 350 or reset:# and permission != 'true'):
+            await self.reset_chat()
+            return
+        else:
+            self.messages.append(message)
+
+        for _, sid in self.sids.items():
+            await sio.emit("message", {"message": message}, to=sid)
+
+    async def check_user(self, suuid):
+        """Check if a user is in the chat."""
+        return False
+
+    async def reset_chat(self):
+        """Reset the chat."""
+        self.messages.clear()
+        msg = format_system_msg('Message limit reached chat cleared.')
+        self.messages.append(msg)
+        for _, sid in self.sids.items():
+            await sio.emit("reset_chat", msg, to=sid)
+
+    async def run_backup_task(self):
+        """Run the backup task every 15 minutes."""
+        while True:
+            await self.backup(False)
+            await asyncio.sleep(15 * 60)
+
+    async def backup(self, force):
+        """Backup the chat."""
+        diff = datetime.now() - self.backup_values[1]
+        if diff.total_seconds() >= 60 or force:
+            print("Backup")
+            self.backup_values[0][0] += len(self.messages)
+            self.backup_values[0][1] += len(self.messages)
+            self.backup_values[1] = datetime.now()
+            database.save_backup(self)

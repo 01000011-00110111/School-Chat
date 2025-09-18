@@ -10,14 +10,13 @@ This chat is always gettings updated so keep updated on our work!
 # **Setup**:
 
 ### Requirements
-- Put your mongodb authentication string and other data into `example.keys.conf`
+- Put your mongodb authentication string and other data into `cores/config/example.keys.conf`
 - Rename `example.keys.conf` to `keys.conf`
 - In the data base make 2 databases named `Accounts` and `Rooms`
 - Inside of Accounts make 3 collections named `Accounts`, `Customization`, and `Permission`
 - Inside of Rooms make 4 collections named `Rooms`, `Permission`, `Messages`, and `Private`
 
 ## No systemd service (easy route)
-#### NOTE: `$sudo shutdown` and `$sudo restart` will NOT work if you do not use systemd! (commands are removed at this time)
 - Create a venv by running:
 ```bash
 python -m venv venv
@@ -31,57 +30,63 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 - Add your ssl pem and key into nginx and change them to your domain name
-- Paste this config file into the `sites-enabled` directory where you have nginx installed (usually its somthing like `/etc/nginx`), and name it what your domain name is called:
+- Paste this config file into the `sites-available` directory where you have nginx installed (usually its somthing like `/etc/nginx`), and name it what your domain name is called:
   - change `yourdomain` to what your domain name is called
   - for the ssl keys and certs, replace `yourdomain` with whatever you named them, if its not your domain name.
   - change `<where your files are stored>` to where you have this downloaded to.
 ```nginx
-# /etc/nginx/sites-enabled/yourdomain
 server {
     listen 80;
-    listen [::]:80;
-    server_name yourdomain www.yourdomain;
-    return 302 https://$server_name$request_uri;
+    server_name www.yourdomain;
+    return 301 https://$host$request_uri;
 }
 
-
 server {
-    server_name yourdomain www.yourdomain;
-
     listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-    # The security headers, to try and prevent XSS
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-    add_header Referrer-Policy "same-origin" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header X-Frame-Options "DENY" always;
-    add_header Permissions-Policy "microphone=(), camera=(), usb=(), picture-in-picture=(), payment=(), web-share=()" always;
-    add_header Content-Security-Policy "default-src 'self'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline' https://api.github.com; script-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; font-src 'self' https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/webfonts/; img-src *; connect-src 'self' https://api.github.com;";
-    # SSL certs go here
+    server_name www.yourdomain;
+
+    # SSL certificate paths (adjust to your actual cert files)
     ssl_certificate         /etc/ssl/yourdomain.pem;
     ssl_certificate_key     /etc/ssl/yourdomain.key;
-#    need to enable this in cloudflare dashboard, so we can confirm they are going through cloudflare, and not directly to the server
-#    ssl_client_certificate  /etc/ssl/cloudflare.crt;
-#    ssl_verify_client on;
 
+    # React build directory
+    root /home/<account_name>/<chat_dir>/frontend/build;
+    index index.html;
+
+    # Main frontend route handler (React)
     location / {
-        include proxy_params;
-        proxy_pass http://127.0.0.1:5000;
+        try_files $uri $uri/ /index.html;
     }
 
+    # Serve static assets (CSS, JS, etc.)
     location /static/ {
-        alias <where your files are stored>/static/;
+        root /home/<account_name>/<chat_dir>/frontend/build;
         expires 30d;
+        access_log off;
     }
 
+    # Handle WebSocket and API routes through Sanic (via Gunicorn)
     location /socket.io {
-        include proxy_params;
+        proxy_pass http://127.0.0.1:5000/socket.io;
         proxy_http_version 1.1;
         proxy_buffering off;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";
-        proxy_pass http://127.0.0.1:5000/socket.io;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:5000/api/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    #error_page 404 /index.html;
 }
 ```
 - enable and run nginx with this command:
@@ -90,7 +95,7 @@ sudo systemctl enable --now nginx.service
 ```
 - Run this command while in the venv to start the chat server, after nginx starts: 
 ```bash
-gunicorn --bind 127.0.0.1:5000 --worker-class eventlet --threads 10 -w 1 main:app
+sanic app:app --host=127.0.0.1 --port=5000 --workers=1
 ```
 
 
@@ -103,19 +108,15 @@ poetry install --extras "systemd"
  - `<dir_path>` to where the files are stored
  - `<user>` for what user this is running under
  - rename the file to chatserverd.service
-- Next, place that file inside the `~/.config/systemd/user` directory (create this if it does not exist)
-- Run this command to allow your user to run systemd services when not logged in (to start on startup):
-```bash
-sudo loginctl enable-linger <user>
-```
+- Next, place that file inside the `/etc/systemd/system` directory (create this if it does not exist)
 > (this must be run under a user that has root privlages)
 - run (under the user you intend to run this):
 ```bash
-systemctl --user daemon-reload
+systemctl daemon-reload
 ```
 - After nginx is running then, run:
 ```bash
-systemctl --user enable --now chatserverd.service
+systemctl enable --now chatserverd.service
 ```
 - it should just start working
 

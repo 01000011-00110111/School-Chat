@@ -1,35 +1,42 @@
-# file for excluding files from git repo (dev files)
-backend/Backups/*
-.vscode/*
-# thanks to the one mac user
-.DS_Store
+# dependencies
+frontend/node_modules
+frontend/.pnp
+frontend/.pnp.js
+frontend/package-lock.json
 
-# chatlog
-backend/webserver.log
-backend/Chat-backup.txt
-backend/command_log.txt
-airhorn_default.wav
-backend/chat-rooms_log.txt
-backend/permission.txt
-backend/accounts.txt
-backend/unbanned_words.txt
-backend/banned_words.txt
-config/keys.conf
-static/profiles
+# testing
+frontend/coverage
 
-# running files
+# production
+frontend/build
+
+# misc
+frontend/.DS_Store
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 __pycache__/*
-commands/__pycache__/*
-venv/*
-.mypy_cache/*
-node_modules/*
-.upm/*
-.config/*
-.pythonlibs/
-replit.nix
-.replit
-.local
-addons.py
-keys.py
-test.py
-setup.py.disabled
+venv/
+.DS_Store
+sc-build
+server
+/core/config/keys.conf
+chat/__pycache__/*
+user/__pycache__/*
+online/__pycache__/*
+private/__pycache__/*
+/static/
+.vscode/
+logs/app.log
+logs/messages.log
+logs/__pycache__/*
+chat/files
+
+# css
+frontend/src/compiled_css/

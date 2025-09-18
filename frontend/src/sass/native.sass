@@ -1,0 +1,278 @@
+/* From Uiverse.io by namecho */ 
+.switch
+ --button-width: 3.5em
+ --button-height: 2em
+ --toggle-diameter: 1.5em
+ --button-toggle-offset: calc((var(--button-height) - var(--toggle-diameter)) / 2)
+ --toggle-shadow-offset: 10px
+ --toggle-wider: 3em
+ --color-grey: #cccccc
+ --color-green: #4296f4
+
+
+.slider
+ display: inline-block
+ width: var(--button-width)
+ height: var(--button-height)
+ background-color: var(--color-grey)
+ border-radius: calc(var(--button-height) / 2)
+ position: relative
+ transition: 0.3s all ease-in-out
+
+
+.slider::after
+ content: ""
+ display: inline-block
+ width: var(--toggle-diameter)
+ height: var(--toggle-diameter)
+ background-color: #fff
+ border-radius: calc(var(--toggle-diameter) / 2)
+ position: absolute
+ top: var(--button-toggle-offset)
+ transform: translateX(var(--button-toggle-offset))
+ box-shadow: var(--toggle-shadow-offset) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1)
+ transition: 0.3s all ease-in-out
+
+
+.switch input[type="checkbox"]:checked + .slider
+ background-color: var(--color-green)
+
+
+.switch input[type="checkbox"]:checked + .slider::after
+ transform: translateX(calc(var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)))
+ box-shadow: calc(var(--toggle-shadow-offset) * -1) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1)
+
+
+.switch input[type="checkbox"]
+ display: none
+
+
+.switch input[type="checkbox"]:active + .slider::after
+ width: var(--toggle-wider)
+
+
+.switch input[type="checkbox"]:checked:active + .slider::after
+ transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)))
+
+
+.textbox
+    width: 22rem
+    height: 2.7rem
+    display: flex
+    align-content: center
+    border-radius: 8px
+
+.textbox input
+    border: 0
+    width: 100%
+    height: 100%
+    background: transparent
+    outline: 0
+    color: var(--foreground-accent-1)
+
+.native_checkbox
+    width: fit-content
+    display: flex
+    align-items: center
+    gap: 0.4rem
+    margin: 4px 0
+ 
+.checkmark
+    width: 1.3rem
+    height: 1.3rem
+    border: 1.4px solid var(--background-accent-2)
+    border-radius: 4px
+    display: flex
+
+.check_input:checked ~ .checkmark
+    background: #00c3ff
+    transition: 0.3s all ease-in-out
+
+.check_input:disabled ~ .checkmark
+    background: #cccccc
+
+.check_input
+    display: none
+
+.Card
+    background: var(--background-accent-1)
+    box-shadow: 6px 6px 12px gray
+    width: 18rem
+    height: 24rem
+    display: flex
+    flex-direction: column
+    border-radius: 16px
+    justify-items: center
+    align-items: center
+
+.Card input
+    color: var(--foreground-accent-1)
+
+.footer_alert
+    background: var(--primary-accent-color)
+    width: 96%
+    border-radius: 8px
+    display: flex
+    place-items: center
+    justify-content: space-between
+    padding: 0 12px 0 12px
+    position: fixed
+    bottom: 1%
+    left: 1.3%
+    box-shadow: 2px 2px 7px black
+    transition: 0.5s ease-in-out
+    transform: translate(0, 10vh)
+
+.footer_alert .left_container
+    color: white
+
+.footer_alert .right_container
+    display: flex
+    gap: 0.5rem
+
+.footer_alert .right_container button
+    border: 0
+    width: fit-content
+    min-width: 4rem
+    height: 1.8rem
+    border-radius: 7px
+    font-size: 1rem
+    color: white
+    background: #00000069
+
+.footer_alert.on_screen
+    transform: translate(0, 0vh)
+    position: absolute
+
+.line_button
+    border-radius: 12px
+    border: 1px solid gray
+    padding: 0px 11px 9px 11px
+    width: fit-content
+    min-width: 40rem
+
+.colored_bar
+    width: 100%
+    height: 0.4rem
+    border-radius: 3px
+    box-shadow: 1px 2px 5px gray
+
+.color_dialog
+    width: 16rem
+    min-width: fit-content
+    height: 2.3rem
+    display: flex
+    align-content: center
+    align-items: center
+    justify-content: left
+    text-indent: 7px
+    border-radius: 10px
+    border: 1.5px solid var(--background-accent-2)
+    padding: 5px
+    margin: 4px 0
+
+.color_dialog input
+    -webkit-appearance: none
+    border: 0
+    padding: 0
+    background: transparent
+    border-radius: 10px
+    width: 32px
+    height: 32px
+
+.color_dialog input::-webkit-color-swatch
+    border: none
+    border-radius: 10px
+    padding: 0
+
+.color_dialog input::-webkit-color-swatch-wrapper
+    border: none
+    border-radius: 10px
+    padding: 0
+
+.native-web-embed
+    width: 100%
+    height: 48vh
+    border: 1px solid gray
+    border-radius: 9px
+
+.native-web-embed iframe
+    border: 0
+    width: inherit
+    height: 26.2rem
+    border-radius: inherit
+
+.native-web-embed-controls
+    background: #00000024
+    height: 5vh
+    border-radius: 0px 0px 8px 8px
+    display: flex
+    align-content: center
+    justify-content: space-between
+    padding: 0 21px 0 12px
+
+.button-container
+    align-items: center
+    width: fit-content
+    display: flex
+    gap: 5px
+
+.button-container a
+    border: 0.4px solid gray
+    border-radius: 8px
+    background: black
+    color: white
+    width: 2.5rem
+    height: 2.5rem
+    display: flex
+    align-items: center
+    justify-content: center
+
+.poll
+    background: linear-gradient(134deg, #ffc9f7, #98cbf8, #2341b88c)
+    width: 45vw
+    height: 33vh
+    justify-content: center
+    display: grid
+    text-align: center
+    border: 0.4rem solid #854eff
+    border-radius: 18px
+    margin: 120px
+
+.poll-title
+    color: #854eff
+    font-size: 23px
+    font-weight: 510
+
+.poll-options-container
+    width: 100%
+    height: fit-content
+    display: grid
+    justify-content: center
+
+.poll-options-parent
+    display: flex
+    gap: 15px
+
+.poll-option
+    -webkit-appearance: none
+    height: 3pc
+    width: 16pc
+    background: #0000004f
+    text-align: center
+    position: relative
+    margin: 4px
+    border-radius: 6px
+
+.poll-option-fill
+    height: 100%
+    width: 0%
+    max-width: 100%
+    background: linear-gradient(134deg, #000, #656565, rgba(0, 0, 0, 0.55))
+    border-radius: inherit
+
+.poll-option-text
+    width: 100%
+    color: white
+    position: absolute
+    text-align: center
