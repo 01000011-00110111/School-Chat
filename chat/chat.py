@@ -113,7 +113,7 @@ class Chat:
         for _, sid in self.sids.items():
             await sio.emit("reset_chat", msg, to=sid)
 
-    async def ping():
+    async def ping(self):
         for _, sid in self.sids.items():
             await sio.emit("ping", to=sid)
 
