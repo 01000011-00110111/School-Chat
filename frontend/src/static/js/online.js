@@ -137,13 +137,18 @@ export function UserList() {
 
 
 socket.on('heartbeat', () => {
+    suuid = window.sessionStorage.getItem("suuid")
+    roomid = suuid = window.sessionStorage.getItem("roomid")
+    
     if (!document.hidden) {
-        socket.emit('beat', { status: 'active', suuid: window.sessionStorage.getItem("suuid") });
+        socket.emit('beat', { status: 'active', suuid: suuid, roomid: roomid });
     } else {
-        socket.emit('beat', { status: 'idle', suuid: window.sessionStorage.getItem("suuid") });
+        socket.emit('beat', { status: 'idle', suuid: suuid, roomid: roomid });
     }
 });
 
 window.addEventListener("beforeunload", (e) => {
-    socket.emit('beat', { status: 'offline', suuid: window.sessionStorage.getItem("suuid") });
+    suuid = window.sessionStorage.getItem("suuid")
+    roomid = suuid = window.sessionStorage.getItem("roomid")
+    socket.emit('beat', { status: 'offline', suuid: suuid, roomid: roomid });
 });
