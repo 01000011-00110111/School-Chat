@@ -50,6 +50,7 @@ async def connect(sid, data):
         "profile": user.profile,
         "theme": user.theme
     }
+    user.sid = sid
     if user.status != "offline-lockced":
          update({"status": 'active'}, uuid)
     securelist = await user_list()
@@ -116,6 +117,8 @@ async def beat(sid, data):
             chat = Chat.get_chat(roomid)
             if sid not in chat.sids:
                 chat.sids.append(sid)
+            if user.sid != sid:
+                user.sid = sid
         
 
         if user.uuid in heartbeat_flags:

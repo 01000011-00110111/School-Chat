@@ -20,22 +20,16 @@ class User:
     usernames = {data["displayName"]: data["userId"] for data in get_diplay_names()}
     Users = {}
 
-    def __init__(self, username, user, userid):
+    def __init__(self, username, user, userid, sid):
         """Initialize the user."""
         self.username = username
         self.display_name = user['displayName']
         self.perm = user['SPermission']
         self.uuid = userid
-        # self.onlineId = user['onlineId']
         self.suuid = str(uuid.uuid4())
         self.status = user['status']
         self.active = True
-        self.limit = 0
-        self.pause = False
         self.last_message = datetime.now()
-        # self.mutes = user['mutes']  # later ill add a mute db value # user['mute_time']
-        # self.active = {}
-        # other user values
         self.badges = user['badges']
         self.r_color = user['roleColor']
         self.m_color = user['messageColor']
@@ -43,8 +37,9 @@ class User:
         self.role = user['role']
         self.profile = user['profile']
         self.theme = user['theme']
-        self.locked = ['locked']
-        self.theme_count = user['themeCount']
+        self.sid = sid
+        # self.locked = ['locked']
+        # self.theme_count = user['themeCount']
         # self.blocked = user['blocked']
 
     @staticmethod
