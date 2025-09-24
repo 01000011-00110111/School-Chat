@@ -7,7 +7,9 @@ from socketio_confg import sio
 # from user import user, database
 from user.database import get_online_data
 from user.user import User
-from chat.rooms import Chat
+# from chat.rooms import Chat why was this grabbing the Chat class?
+from chat.chat import Chat
+
 import asyncio
 # from datetime import datetime
 # from logs.logs import log_user_connected, log_user_disconnected
@@ -105,9 +107,16 @@ async def beat(sid, data):
     """Handle heartbeat responses from clients."""
     suuid = data.get("suuid")
     user = User.Users.get(suuid)
+    status = data.get("status")
+    roomid = data.get("roomid")
 
     if user:
-        update({"status": data.get("status", "active")}, user.uuid)
+        update({"status": data.get("status", status)}, user.uuid)
+        if roomid is not False:
+            chat = Chat.get_chat(roomid)
+            if sid not in chat.sids:
+                chat.sids.append(sid)
+        
 
         if user.uuid in heartbeat_flags:
             heartbeat_flags[user.uuid] = True

@@ -113,6 +113,10 @@ class Chat:
         for _, sid in self.sids.items():
             await sio.emit("reset_chat", msg, to=sid)
 
+    async def ping(self):
+        for _, sid in self.sids.items():
+            await sio.emit("ping", to=sid)
+
     async def run_backup_task(self):
         """Run the backup task every 15 minutes."""
         while True:

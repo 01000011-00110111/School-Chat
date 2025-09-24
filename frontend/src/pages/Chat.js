@@ -11,6 +11,7 @@ import { storage } from '../static/js/storage';
 import { UserList } from '../static/js/online';
 import { update_appbadge } from "../static/js/app_badge";
 import { Theme_System } from "../customization/theme_render";
+import { _ } from "../static/js/static";
 
 function Chat() {
     // const [chatrooms, setChatooms] = useState([]);

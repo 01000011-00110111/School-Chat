@@ -47,7 +47,10 @@ def filter_message(message):
 
 def format_text(message):
     """Formats text with styling and hyperlinking."""
+    who = False
     message, modifications = to_hyperlink(message)
+    if "@" in message:
+        who = ping(message)
     
     patterns = [
         (re.compile(r'\*(.*?)\*', re.DOTALL), r'<b>\1</b>'),
@@ -60,7 +63,7 @@ def format_text(message):
     for pattern, repl in patterns:
         message = pattern.sub(repl, message)
     
-    return filter_message(message)
+    return filter_message(message), who
 
 def to_hyperlink(text):
     """Converts URLs and emails to clickable links."""
@@ -84,6 +87,13 @@ def to_hyperlink(text):
         modifications.append(match)
     
     return text, modifications
+
+def ping(message):
+    """checks who the user wants to ping"""
+    match = re.search(r'@(.+)', message)
+    if match:
+        who = match.group(1)
+    return who
 
 def compile_message(message, profile_picture, user):
     """Generates the structured message dictionary with updated formatting."""
@@ -140,8 +150,8 @@ def run_filter_chat(user, roomid, message, suuid):
     # if check_mute(user, room):
     #     return ('permission', 1, 0)
 
-    message = format_text(message)
-    return ('msg', compile_message(message, None, user), 0, reset)
+    message, who = format_text(message)
+    return ('msg', compile_message(message, None, user), 0, reset), who
 
 
 setup_filter("/chat/whitelist.txt", "/chat/blacklist.txt", True)
