@@ -62,8 +62,13 @@ const Settings = () => {
         userPing: true,
         privateMessagePing: false,
     });
+    const [themes, setThemes] = useState([]);
+    const [currentTheme, setCurrentTheme] = useState("");
     
     useEffect(() => {
+        const themeRef = storage.get("user-customization-settings");
+        setCurrentTheme(JSON.parse(themeRef).user_theme);
+
         socket.on("settings", (data) => {
             if (data.status === "error") {
                 const error_array = [];
@@ -89,10 +94,22 @@ const Settings = () => {
         });
     }, [formInfo])
 
+    useEffect(() => {
+        socket.emit("list_all_themes");
+
+        socket.on("returned_themes", (themes) => {
+            setThemes(themes);
+        })
+    }, [themes])
+
     const save_settings = () => {
         socket.emit("save_settings", {suuid: window.sessionStorage.getItem("suuid"), formInfo});
-
     }
+
+    const handleThemeChange = (e) => {
+        setCurrentTheme(e.target.value);
+        storage.set("user-customization-settings", `{"user_theme": "${e.target.value}"}`)
+    };
 
     const handleChange = (event) => {
         setNavState(event.target.value);
@@ -186,7 +203,7 @@ const Settings = () => {
 
                     <Tab label={"Appearance"}>
                         <h2>Appearance</h2>
-                        {/* <CheckBox label={"Sync theme across devices"} onUpdate={(e) => on_update(e)}/>
+                        <CheckBox label={"Sync theme across devices"} onUpdate={(e) => on_update(e)}/>
                         <Modal>
                             <LineButton>
                                 <div style={{display: "flex", alignItems: "center", gap: "0.4rem"}}>
@@ -197,12 +214,12 @@ const Settings = () => {
                                 <ColoredBar colors={["black", "gray", "lightgrey"]}/>
                             </LineButton>
 
-                            <select>
-                                <option>Dark</option>
-                                <option>Light</option>
-                                <option>Better Dark</option>
+                            <select onChange={handleThemeChange} value={currentTheme}>
+                                {themes.map((theme) => (
+                                    <option value={theme["id"]}>{theme["name"]}</option>
+                                ))}
                             </select>
-                        </Modal> */}
+                        </Modal>
 
                         <h2>Chat</h2>
 

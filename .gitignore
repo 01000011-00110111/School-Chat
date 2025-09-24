@@ -37,6 +37,7 @@ logs/app.log
 logs/messages.log
 logs/__pycache__/*
 chat/files
+/themes/
 
 # css
 frontend/src/compiled_css/

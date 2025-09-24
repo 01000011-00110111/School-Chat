@@ -65,6 +65,25 @@ function Chat() {
         };
     });
 
+    useEffect(() => {
+        const list = [];
+
+        const themeRef = storage.get("user-customization-settings");
+        socket.emit("load_theme", JSON.parse(themeRef).user_theme)
+
+        socket.once("send_theme", (theme) => {
+            const colors = theme.theme.colors;
+
+            for (const key in colors) {
+                list.push(colors[key])
+            }
+
+            const tms = new Theme_System();
+            tms.set_theme(list);
+            tms.render();
+        });
+    });
+
     const storeText = (event) => {
         const {value} = event.target;
         setInput(value);
@@ -179,26 +198,26 @@ function Chat() {
         }
     };
 
-    const tms = new Theme_System();
-    tms.set_theme([
-        "#000000",
-        "#000000",
-        "#000000",
-        "white",
-        "#ffffff", // This is the usercard, it doesn't work?
-        "#0c0c0cff",
-        "white",
-        "purple",
-        "white",
-        "transparent",
-        "white",
-        "white", // Doesn't work
-        "rgb(0, 94, 255)",
-        "white",
-        "#000000",
-        "white",
-    ]);
-    tms.render();
+    // const tms = new Theme_System();
+    // tms.set_theme([
+    //     "#000000",
+    //     "#000000",
+    //     "#000000",
+    //     "white",
+    //     "#ffffff", // This is the usercard, it doesn't work?
+    //     "#0c0c0cff",
+    //     "white",
+    //     "purple",
+    //     "white",
+    //     "transparent",
+    //     "white",
+    //     "white", // Doesn't work
+    //     "rgb(0, 94, 255)",
+    //     "white",
+    //     "#000000",
+    //     "white",
+    // ]);
+    // tms.render();
 
     return (
         <div className="main">
