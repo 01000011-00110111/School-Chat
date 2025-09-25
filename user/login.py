@@ -18,7 +18,7 @@ async def login(sid, data):
     uuid = User.check_credentials(username, password)
 
     if uuid:
-        user = User(username, database.get_user_data(uuid), uuid)
+        user = User(username, database.get_user_data(uuid), uuid, sid)
         User.Users[user.suuid] = user
         await sio.emit("login", {'suuid': user.suuid, 'status': 'successful'}, to=sid)
     else:

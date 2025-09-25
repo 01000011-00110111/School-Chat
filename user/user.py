@@ -9,7 +9,7 @@ from datetime import datetime
 
 # pylint: disable=W0406
 
-# from socketio_confg import sio
+from socketio_confg import sio
 from user.database import get_login_data, get_diplay_names
 
 
@@ -20,22 +20,16 @@ class User:
     usernames = {data["displayName"]: data["userId"] for data in get_diplay_names()}
     Users = {}
 
-    def __init__(self, username, user, userid):
+    def __init__(self, username, user, userid, sid):
         """Initialize the user."""
         self.username = username
         self.display_name = user['displayName']
         self.perm = user['SPermission']
         self.uuid = userid
-        # self.onlineId = user['onlineId']
         self.suuid = str(uuid.uuid4())
         self.status = user['status']
         self.active = True
-        self.limit = 0
-        self.pause = False
         self.last_message = datetime.now()
-        # self.mutes = user['mutes']  # later ill add a mute db value # user['mute_time']
-        # self.active = {}
-        # other user values
         self.badges = user['badges']
         self.r_color = user['roleColor']
         self.m_color = user['messageColor']
@@ -43,8 +37,9 @@ class User:
         self.role = user['role']
         self.profile = user['profile']
         self.theme = user['theme']
-        self.locked = ['locked']
-        self.theme_count = user['themeCount']
+        self.sid = sid
+        # self.locked = ['locked']
+        # self.theme_count = user['themeCount']
         # self.blocked = user['blocked']
 
     @staticmethod
@@ -63,9 +58,19 @@ class User:
         return hashlib.sha256(password.encode('utf-8')).hexdigest()
     
     @staticmethod
+    async def ping(display_name):
+        """Get a user by their suuid."""
+        print("eeeeeee")
+        for user in User.Users:
+            if user.display_name == display_name:
+                sio.emit("ping", to=user.sid)
+                
+    
+    @staticmethod
     def get_user(suuid):
         """Get a user by their suuid."""
         return User.Users.get(suuid, None)
+    
     
     def update(self, edits):
         """Update the user with the given edits."""
