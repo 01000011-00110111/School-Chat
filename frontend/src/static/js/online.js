@@ -150,5 +150,5 @@ socket.on('heartbeat', () => {
 window.addEventListener("beforeunload", (e) => {
     let suuid = window.sessionStorage.getItem("suuid")
     const roomid = window.sessionStorage.getItem("roomid")
-    socket.emit('beat', { status: 'offline', suuid: suuid, roomid: roomid });
+    socket.emit('offline', { suuid: suuid, roomid: roomid });
 });

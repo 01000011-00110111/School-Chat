@@ -128,11 +128,20 @@ async def beat(sid, data):
     else:
         await sio.emit("send_to_login", to=sid)
 
+@sio.on("offline")
+async def offline(sid, data):
+    """set user offline"""
+    suuid = data.get("suuid")
+    user = User.Users.get(suuid)
+    status = data.get("status")
+    roomid = data.get("roomid")
+    update({"status": "offline"}, user.uuid)
+
+
 # @sio.on("online")
 async def online(_, data):
     """Handle online events."""
     suuid = data['suuid']
-    status = data['status']
     uuid = User.Users[suuid].uuid
     update({"status": status}, uuid)
     securelist = await user_list()
