@@ -141,9 +141,9 @@ socket.on('heartbeat', () => {
     const roomid = window.sessionStorage.getItem("roomid")
     
     if (!document.hidden) {
-        socket.emit('beat', { status: 'active', suuid: suuid, roomid: roomid });
+        socket.emit('beat', { status: 'active', suuid: suuid, roomid: roomid }, false);
     } else {
-        socket.emit('beat', { status: 'idle', suuid: suuid, roomid: roomid });
+        socket.emit('beat', { status: 'idle', suuid: suuid, roomid: roomid }, false);
     }
 });
 

@@ -9,7 +9,7 @@ from datetime import datetime
 
 # pylint: disable=W0406
 
-# from socketio_confg import sio
+from socketio_confg import sio
 from user.database import get_login_data, get_diplay_names
 
 
@@ -58,9 +58,18 @@ class User:
         return hashlib.sha256(password.encode('utf-8')).hexdigest()
     
     @staticmethod
+    async def ping(display_name):
+        """Get a user by their suuid."""
+        for user in User.Users:
+            if user.display_name == display_name:
+                await sio.emit("ping", to=user.sid)
+                
+    
+    @staticmethod
     def get_user(suuid):
         """Get a user by their suuid."""
         return User.Users.get(suuid, None)
+    
     
     def update(self, edits):
         """Update the user with the given edits."""

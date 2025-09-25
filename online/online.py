@@ -104,7 +104,7 @@ async def heartbeat_loop():
                 await sio.emit("online", {"update": "partial", "data": securelist})
 
 @sio.on("beat")
-async def beat(sid, data):
+async def beat(sid, data, bypass):
     """Handle heartbeat responses from clients."""
     suuid = data.get("suuid")
     user = User.Users.get(suuid)
@@ -121,7 +121,7 @@ async def beat(sid, data):
                 user.sid = sid
         
 
-        if user.uuid in heartbeat_flags:
+        if user.uuid in heartbeat_flags and not bypass:
             heartbeat_flags[user.uuid] = True
             securelist = await user_list()
             await sio.emit("online", {"update": "full", "data": securelist}, to=sid)
