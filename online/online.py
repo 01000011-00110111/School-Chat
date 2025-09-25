@@ -82,8 +82,8 @@ heartbeat_flags = {}
 
 async def heartbeat_loop():
     """Periodically check if users are online."""
-    print("✅ heartbeat_loop task started")
     global heartbeat_flags
+    print("✅ heartbeat_loop task started")
     while True:
         # print("💓 Heartbeat loop called")
         heartbeat_flags = {}
@@ -94,7 +94,7 @@ async def heartbeat_loop():
 
         await sio.emit("heartbeat")  # Broadcast to all
 
-        await asyncio.sleep(5)
+        await asyncio.sleep(2.5)
 
         for uuid, responded in heartbeat_flags.items():
             if not responded:
@@ -104,7 +104,7 @@ async def heartbeat_loop():
                 await sio.emit("online", {"update": "partial", "data": securelist})
 
 @sio.on("beat")
-async def beat(sid, data, bypass):
+async def beat(sid, data, bypass=False):
     """Handle heartbeat responses from clients."""
     suuid = data.get("suuid")
     user = User.Users.get(suuid)
@@ -116,10 +116,9 @@ async def beat(sid, data, bypass):
         if roomid is not False:
             chat = Chat.get_chat(roomid)
             if sid not in chat.sids:
-                chat.sids.append(sid)
+                chat.sids[user.suuid] = sid
             if user.sid != sid:
                 user.sid = sid
-        
 
         if user.uuid in heartbeat_flags and not bypass:
             heartbeat_flags[user.uuid] = True
@@ -127,13 +126,6 @@ async def beat(sid, data, bypass):
             await sio.emit("online", {"update": "full", "data": securelist}, to=sid)
     else:
         await sio.emit("send_to_login", to=sid)
-
-@sio.on("offline")
-async def offline(sid, data):
-    """set user offline"""
-    suuid = data.get("suuid")
-    user = User.Users.get(suuid)
-    update({"status": "offline"}, user.uuid)
 
 
 # @sio.on("online")
@@ -168,3 +160,8 @@ def update(data, uuid):
         if key == 'status' and userlist[uuid]['status'] == 'offline-locked':
             continue
         userlist[uuid][key] = value
+
+# def update_user(edis, user):
+#     """updates the users profile data on the online list""" TODO: add later
+
+#     User.Users[self.suuid] = self

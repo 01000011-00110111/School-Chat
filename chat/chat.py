@@ -100,6 +100,7 @@ class Chat:
 
         for _, sid in self.sids.items():
             await sio.emit("message", {"message": message}, to=sid)
+        return
 
     async def check_user(self, suuid):
         """Check if a user is in the chat."""
@@ -114,6 +115,7 @@ class Chat:
             await sio.emit("reset_chat", msg, to=sid)
 
     async def ping(self):
+        """ping all users in the chat room"""
         for _, sid in self.sids.items():
             await sio.emit("ping", to=sid)
 

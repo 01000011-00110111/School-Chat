@@ -60,9 +60,10 @@ class User:
     @staticmethod
     async def ping(display_name):
         """Get a user by their suuid."""
+        print("eeeeeee")
         for user in User.Users:
             if user.display_name == display_name:
-                await sio.emit("ping", to=user.sid)
+                sio.emit("ping", to=user.sid)
                 
     
     @staticmethod

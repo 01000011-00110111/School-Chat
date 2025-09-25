@@ -139,16 +139,16 @@ export function UserList() {
 socket.on('heartbeat', () => {
     let suuid = window.sessionStorage.getItem("suuid")
     const roomid = window.sessionStorage.getItem("roomid")
-    
+
     if (!document.hidden) {
-        socket.emit('beat', { status: 'active', suuid: suuid, roomid: roomid }, false);
+        socket.emit('beat', { status: 'active', suuid: suuid, roomid: roomid });
     } else {
-        socket.emit('beat', { status: 'idle', suuid: suuid, roomid: roomid }, false);
+        socket.emit('beat', { status: 'idle', suuid: suuid, roomid: roomid });
     }
 });
 
 window.addEventListener("beforeunload", (e) => {
     let suuid = window.sessionStorage.getItem("suuid")
     const roomid = window.sessionStorage.getItem("roomid")
-    socket.emit('offline', { suuid: suuid, roomid: roomid });
+    socket.emit('offline', { suuid: suuid, roomid: roomid }, true);
 });
