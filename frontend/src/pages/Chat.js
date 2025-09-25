@@ -69,19 +69,21 @@ function Chat() {
     useEffect(() => {
         const list = [];
 
-        const themeRef = storage.get("user-customization-settings");
+        const themeRef = storage.get("user-customization-settings", "SESSION");
         socket.emit("load_theme", JSON.parse(themeRef).user_theme)
 
         socket.once("send_theme", (theme) => {
-            const colors = theme.theme.colors;
-
-            for (const key in colors) {
-                list.push(colors[key])
+            if (theme.theme) {                
+                const colors = theme.theme.colors;
+    
+                for (const key in colors) {
+                    list.push(colors[key])
+                }
+    
+                const tms = new Theme_System();
+                tms.set_theme(list);
+                tms.render();
             }
-
-            const tms = new Theme_System();
-            tms.set_theme(list);
-            tms.render();
         });
     });
 

@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import socket from '../socket'
 import {setSuuid} from '../static/js/variables'
+import { setup_storage } from "../static/js/storage";
 
 function Login() {
     const [username, setUsername] = useState("")
@@ -34,6 +35,8 @@ function Login() {
     };
 
     socket.on("login", (data) => {
+        setup_storage();
+
         if (data["status"] === 'successful') {
             setSuuid(data["suuid"]);
             window.location.href = "/chat/Main";

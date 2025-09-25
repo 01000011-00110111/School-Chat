@@ -15,11 +15,8 @@ const Settings = () => {
     const [errors, SetErrors] = useState([]);
     
     const getInitialState = () => {
-        if (!storage.get("app-nav-settings")) {
-            storage.set("app-nav-settings", '{"nav_close_onroom": false}');
-        }
-
-        const value = JSON.parse(storage.get("app-nav-settings"))["nav_close_onroom"];
+        const app_settings = storage.get("app-nav-settings", "LOCAL");
+        const value = JSON.parse(app_settings)["nav_close_onroom"];
         return value;
     }
     let suuid = sessionStorage.getItem("suuid");
@@ -66,15 +63,16 @@ const Settings = () => {
     const [currentTheme, setCurrentTheme] = useState("");
     
     useEffect(() => {
-        const themeRef = storage.get("user-customization-settings");
+        const themeRef = storage.get("user-customization-settings", "SESSION");
         setCurrentTheme(JSON.parse(themeRef).user_theme);
 
         socket.on("settings", (data) => {
             if (data.status === "error") {
                 const error_array = [];
                 Object.entries(data["errors"]).map((error, index) => {
-                    error_array.push(error[1][1])
-                })
+                    return error_array.push(error[1][1])
+                });
+
                 SetErrors(error_array);
             } else {
                 SetErrors([]);
@@ -108,12 +106,12 @@ const Settings = () => {
 
     const handleThemeChange = (e) => {
         setCurrentTheme(e.target.value);
-        storage.set("user-customization-settings", `{"user_theme": "${e.target.value}"}`)
+        storage.set("user-customization-settings", `{"user_theme": "${e.target.value}"}`, "SESSION")
     };
 
     const handleChange = (event) => {
         setNavState(event.target.value);
-        storage.set("app-nav-settings", `{"nav_close_onroom": ${event.target.value}}`)
+        storage.set("app-nav-settings", `{"nav_close_onroom": ${event.target.value}}`, "LOCAL")
         on_update(event);
     }
 
@@ -127,18 +125,18 @@ const Settings = () => {
     };
 
     const activate_notifications = () => {
-        if (!"Notification" in window) {
+        if (!("Notification" in window)) {
             alert("This browser does not support desktop notifications");
         } 
         
         else if (Notification.permission === "granted") {
-            const notification = new Notification("Notifications have been activated!");
+            new Notification("Notifications have been activated!");
         }
 
         else if (Notification.permission !== "denied") {
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    const notification = new Notification("Notifications have been activated!");
+                    new Notification("Notifications have been activated!");
                 }
             });
         }

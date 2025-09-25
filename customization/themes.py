@@ -22,12 +22,27 @@ from customization.theme_parser import create_theme_id, transform_theme
 
 PATH = "themes"
 dir_list = os.listdir(PATH)
-print(dir_list)
+
+def check_for_duplicate_ids():
+    """Checks all the theme files for their ids"""
+    files = [entry.name for entry in os.scandir(PATH) if entry.is_file()]
+    themes: list = []
+    for file in files:
+        if os.path.exists(os.path.join(PATH, file)):
+            themes.append(file.split(".ccf")[0])
+
+    return themes
 
 @sio.on("create_theme")
 async def create_theme(sid, author: str, name: str, data: dict, version: str):
     """Creates a theme from the provided arguments"""
     tid = create_theme_id()
+
+    for entries in check_for_duplicate_ids():
+        if tid == entries:
+            print(f"ID: {tid} is already associated with a theme.")
+            return
+
     items = ""
 
     for k,v in data.items():
@@ -45,7 +60,6 @@ async def create_theme(sid, author: str, name: str, data: dict, version: str):
 
     with open(os.path.join(PATH, tid + ".ccf"), 'w', encoding="utf-8") as fp:
         fp.write(textwrap.dedent(theme_format))
-
 
 def delete_theme(tid: str):
     """Deletes a theme from the passed ThemeID (tid)"""
@@ -80,6 +94,5 @@ async def list_all_themes(sid):
                 theme = transform_theme(lines)
 
                 themes.append({"name": theme["headers"]["name"], "id": file.split(".ccf")[0]})
-                # await sio.emit("returned_themes", {theme["headers"]["author"]: file.split(".ccf")[0]}, to=sid)
 
     await sio.emit("returned_themes", themes, to=sid)
