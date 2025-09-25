@@ -133,16 +133,15 @@ async def offline(sid, data):
     """set user offline"""
     suuid = data.get("suuid")
     user = User.Users.get(suuid)
-    status = data.get("status")
-    roomid = data.get("roomid")
     update({"status": "offline"}, user.uuid)
 
 
 # @sio.on("online")
-async def online(_, data):
+async def online(_, data): # Is this used anywhere?
     """Handle online events."""
     suuid = data['suuid']
     uuid = User.Users[suuid].uuid
+    status = data.get("status")
     update({"status": status}, uuid)
     securelist = await user_list()
     await sio.emit("online", {"update": 'partial', "data": securelist})
