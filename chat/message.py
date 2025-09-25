@@ -26,4 +26,6 @@ async def client_message(_, data):
         chat = Chat.get_chat(data["roomid"])
         if who == "everyone":
             await chat.ping()
+        else:
+            user.ping()
         await chat.send_message(message[1], message[3])

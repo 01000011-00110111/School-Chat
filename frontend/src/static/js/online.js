@@ -141,14 +141,14 @@ socket.on('heartbeat', () => {
     const roomid = window.sessionStorage.getItem("roomid")
     
     if (!document.hidden) {
-        socket.emit('beat', { status: 'active', suuid: suuid, roomid: roomid });
+        socket.emit('beat', { status: 'active', suuid: suuid, roomid: roomid }, false);
     } else {
-        socket.emit('beat', { status: 'idle', suuid: suuid, roomid: roomid });
+        socket.emit('beat', { status: 'idle', suuid: suuid, roomid: roomid }, false);
     }
 });
 
 window.addEventListener("beforeunload", (e) => {
     let suuid = window.sessionStorage.getItem("suuid")
     const roomid = window.sessionStorage.getItem("roomid")
-    socket.emit('beat', { status: 'offline', suuid: suuid, roomid: roomid });
+    socket.emit('beat', { status: 'offline', suuid: suuid, roomid: roomid }, true);
 });
