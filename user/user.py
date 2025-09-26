@@ -56,22 +56,20 @@ class User:
     def hash_password(password):
         """Hash a password for storing."""
         return hashlib.sha256(password.encode('utf-8')).hexdigest()
-    
-    @staticmethod
-    async def ping(display_name):
-        """Get a user by their suuid."""
-        print("eeeeeee")
-        for user in User.Users:
-            if user.display_name == display_name:
-                sio.emit("ping", to=user.sid)
-                
-    
+
     @staticmethod
     def get_user(suuid):
         """Get a user by their suuid."""
         return User.Users.get(suuid, None)
-    
-    
+
+    @classmethod
+    async def ping(cls, display_name):
+        """Get a user by their suuid."""
+        user = next((u for u in cls.Users.values() if u.display_name == display_name), None)
+
+        if user:
+            await sio.emit("ping", to=user.sid)
+
     def update(self, edits):
         """Update the user with the given edits."""
         for edit in edits:
