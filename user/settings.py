@@ -6,7 +6,7 @@
 from socketio_confg import sio
 from user.database import update
 from user.user import User
-from online.online import update
+from online.online import update_user
 
 from better_profanity import profanity
 
@@ -101,7 +101,7 @@ async def save_settings(sid, data):
     if errors:
         await sio.emit("settings", {"status": "error", "errors": errors}, room=sid)
     else:
-        update(edits, uuid)
+        update_user(edits, uuid)
         user.update(edits)
         update(edits, uuid)
         await sio.emit("settings", {"status": "success", "edits": edits}, room=sid)

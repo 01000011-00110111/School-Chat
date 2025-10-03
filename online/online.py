@@ -161,7 +161,12 @@ def update(data, uuid):
             continue
         userlist[uuid][key] = value
 
-# def update_user(edis, user):
-#     """updates the users profile data on the online list""" TODO: add later
-
-#     User.Users[self.suuid] = self
+async def update_user(edis, uuid):
+    """updates the users profile data on the online list"""
+    allowed_keys = {"role", "display_name"}
+    update_list = {k: v for k, v in edis.items() if k in allowed_keys}
+    if "display_name" in update_list:
+        update_list["displayName"] = update_list.pop("display_name")# I need to keep all common vars the same this is gonna be a pain to make later on
+    update(update_list, uuid)
+    securelist = await get_user(uuid)
+    await sio.emit("online", {"update": 'partial', "data": securelist})
