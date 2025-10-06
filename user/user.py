@@ -19,6 +19,7 @@ class User:
     login_data = {(data["username"], data["password"]): data["userId"] for data in get_login_data()}
     usernames = {data["displayName"]: data["userId"] for data in get_diplay_names()}
     Users = {}
+    logged_in = {}
 
     def __init__(self, username, user, userid, sid):
         """Initialize the user."""
@@ -70,9 +71,9 @@ class User:
         if user:
             await sio.emit("ping", to=user.sid)
 
-    def update(self, edits):
+    async def update(self, edits):
         """Update the user with the given edits."""
-        for edit in edits:
-            for key, value in edit.items():
-                setattr(self, key, value)
+        for key, value in edits.items():
+            setattr(self, key, value)
         User.Users[self.suuid] = self
+        return
