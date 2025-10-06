@@ -103,17 +103,17 @@ function Chat() {
         let total_remaining_chars = max_length - message_length;
 
         // Checks to see if the total messsage length is greater than 100 if so then change the text color to default (white)
-        if (total_remaining_chars > 100) {
+        if (total_remaining_chars > 125) {
             remaining_chars_display.style.color = "white";
         }
         
         // Checks to see if the total messsage length is less than or equal to 100 but more than 20 if so then change the text color to yellow
-        else if (total_remaining_chars <= 100 && total_remaining_chars > 20) {
+        else if (total_remaining_chars <= 125 && total_remaining_chars > 35) {
             remaining_chars_display.style.color = "yellow";
         }
 
         // Checks to see if the total messsage length is less than or equal to 20 if so then change the text color to red
-        else if (total_remaining_chars <= 20) {
+        else if (total_remaining_chars <= 35) {
             remaining_chars_display.style.color = "red";
         };
 
@@ -287,7 +287,7 @@ function Chat() {
                         </label>
 
                         <div style={{width: "83%", bottom: "10px", position: "relative", display: "grid", gap: "5px"}}>
-                            <p id="remaining_chars">250 Characters Left</p>
+                            <p id="remaining_chars">350 Characters Left</p>
 
                             <div className="message_box">
                                 <input
@@ -295,7 +295,7 @@ function Chat() {
                                     value={input}
                                     onChange={storeText}
                                     placeholder="Type your message"
-                                    maxLength={250}
+                                    maxLength={350}
                                     id="message_input"
                                     autoCapitalize="true"
                                     autoCorrect="true"
