@@ -120,8 +120,7 @@ systemctl enable --now chatserverd.service
 ```
 - it should just start working
 
-### This was created by:
-- [**cserver45**](https://github.com/cserver45) and [**C7**](https://github.com/01000011-00110111)
-
-### Contributors:
--  [**CastyiGlitchxz**](https://github.com/CastyiGlitchxz)
+### This was created and worked on by:
+- [**cserver45**](https://github.com/cserver45)
+- [**C7**](https://github.com/01000011-00110111)
+- [**CastyiGlitchxz**](https://github.com/CastyiGlitchxz)
