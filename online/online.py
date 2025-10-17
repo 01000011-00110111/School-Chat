@@ -170,3 +170,4 @@ async def update_user(edis, uuid):
     update(update_list, uuid)
     securelist = await get_user(uuid)
     await sio.emit("online", {"update": 'partial', "data": securelist})
+
