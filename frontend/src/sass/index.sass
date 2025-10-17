@@ -5,6 +5,7 @@
 @use 'badges'
 @use 'native'
 @use 'themes'
+@use 'themes' as *
 
 \:root
   --background-accent-1: black
@@ -13,7 +14,7 @@
   --foreground-accent-1: white
   --foreground-accent-2: purple
   --primary-accent-color: purple
-  @extend %theme
+  @include %theme
 
 body
   margin: 0
