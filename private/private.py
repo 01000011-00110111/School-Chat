@@ -15,7 +15,6 @@ pmids = database.get_pmids()
 class Private:
     """The Private chat class."""
     chats = {}  # Dictionary to store existing chats
-    chats_userlist = database.load_private_rooms()
 
     def __init__(self, private, pmid):
         """Initialize the chat."""
@@ -32,12 +31,17 @@ class Private:
         self.sids = {}
 
     @staticmethod
-    def add_chat(pmid):
+    def add_or_find_chat(pmid, us):
         """Add a chat to the list of existing chats."""
-        room = database.get_priv_data(pmid)
-        chat = Private(room, pmid)
-        Private.chats[pmid] = chat
-        return chat
+        if pmid not in Private.chats:
+            room = database.get_priv_data(pmid)
+            chat = Private(room, pmid)
+            Private.chats[pmid] = chat
+        else:
+            chat = get_chat(pmid)
+            if user.uuid in chat.userIds:
+            user.private_rooms[]
+            return chat
 
     @staticmethod
     def get_chat(roomid):

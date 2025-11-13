@@ -92,6 +92,7 @@ def get_user_data(user_id):
                 # "warned": {"$arrayElemAt": ["$permissions.location", 0]},
                 "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
                 "themeCount": {"$arrayElemAt": ["$permissions.themeCount", 0]},
+                "private_chats": {"$arrayElemAt": ["$permissions.private_chats", 0]},
             }
         },
     ]
@@ -192,6 +193,7 @@ def add_accounts(data):
         "warned": "0",
         "SPermission": [""],
         "themeCount": 0,
+        "private_chats": {},
     }
 
     ID.insert_one(id_data)
