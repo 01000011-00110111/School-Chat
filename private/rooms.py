@@ -4,6 +4,7 @@
 """
 # from datetime import datetime
 from private.private import Private
+from chat.chat import Chat
 # import chat.database as chatdb
 from user.user import User
 from user.login import check_suuid
@@ -26,26 +27,33 @@ async def join_room(sid, data):
     check = check_suuid(suuid)
     if check:
         user = User.Users[suuid]
-        uuid = user.uuid
-        uuid2 = User.usernames(display_name)
-        pmid = Private.chats_userlist[tuple(format_userlist(uuid, uuid2))]
-
-        if pmid in Private.chats:
-            chat = Private.get_chat(pmid)
-        else:
+        pmid = user.check_private_chat_permissions(display_name)
+        if not pmid:
             chat = Private.add_chat(pmid)
+        else:
+            chat = Private.get_chat(pmid)
 
-        for _, old_chat in Private.chats.items():
-            if user.suuid in old_chat.sids:
-                old_chat.sids.pop(user.suuid)
-                break
+        if chat is not None:
+            # for _, old_chat in Private.chats.items():
+            #     if user.suuid in old_chat.sids:
+            #         old_chat.sids.pop(user.suuid)
+            #         break
 
-        if user.suuid not in chat.sids:
-            chat.sids[user.suuid] = sid
-            # chat.sids.append(sid)
+            # if user.suuid not in chat.sids:
+            #     chat.sids[user.suuid] = sid
+            #     # chat.sids.append(sid)
 
-        await sio.emit("load_chat",
-                    {"messages": chat.messages, "pmid": chat.pmid, "name": chat.name},
-                    to=sid)
+            for chat_dict in (Chat.chats, Private.chats):
+                for _, old_chat in chat_dict.items():
+                    if user.suuid in old_chat.sids:
+                        old_chat.sids.pop(user.suuid)
+                        break
+
+            if user.suuid not in chat.sids:
+                chat.sids[user.suuid] = sid
+
+                await sio.emit("load_chat",
+                            {"messages": chat.messages, "pmid": chat.pmid, "name": chat.name},
+                            to=sid)
     else:
         await sio.emit("send_to_login", to=sid)

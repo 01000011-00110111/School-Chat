@@ -7,7 +7,7 @@ import re
 from datetime import datetime
 from better_profanity import profanity
 
-from chat.chat import Chat
+from private.private import Private
 # from system import format_system_msg
 
 def get_wordlist():
@@ -126,7 +126,7 @@ def compile_message(message, profile_picture, user):
 
 def run_filter_chat(user, roomid, message, suuid):
     """Filters messages before sending in a chat room."""
-    room = Chat.get_chat(roomid)
+    room = Private.get_chat(roomid)
     reset = False
     if suuid != user.suuid:
         return ('permission', 7, False)

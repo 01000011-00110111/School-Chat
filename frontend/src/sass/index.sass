@@ -5,15 +5,16 @@
 @use 'badges'
 @use 'native'
 @use 'themes'
+@use 'themes' as *
 
-:root
+\:root
   --background-accent-1: black
   --background-accent-2: #4e4e4e
 
   --foreground-accent-1: white
   --foreground-accent-2: purple
   --primary-accent-color: purple
-  @extend %theme
+  @include theme
 
 body
   margin: 0
@@ -879,7 +880,7 @@ code
   gap: 0.6rem
   text-decoration: none
   color: #000000
-  transition:0.3s ease-in-out
+  transition: 0.3s ease-in-out
   cursor: pointer
   width: fit-content
   height: 1.5rem

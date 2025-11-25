@@ -22,14 +22,14 @@ else:
 
 Private = client.Rooms.Private
 
-def load_private_rooms():
-    """Returns all available permission data in that room."""
-    private_rooms = {}
-    for room in Private.find():
-        pmid = room["pmid"]
-        userlist = room["userIds"]
-        private_rooms[tuple(userlist)] = pmid
-    return private_rooms
+# def load_private_rooms():
+#     """Returns all available permission data in that room."""
+#     private_rooms = {}
+#     for room in Private.find():
+#         pmid = room["pmid"]
+#         userlist = room["userIds"]
+#         private_rooms[tuple(userlist)] = pmid
+#     return private_rooms
 
 def get_pmids():
     """retuns all plivate room ids and userlist"""
