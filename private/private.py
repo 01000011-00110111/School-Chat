@@ -40,7 +40,8 @@ class Private:
         else:
             chat = get_chat(pmid)
             if user.uuid in chat.userIds:
-            user.private_rooms[]
+                # user.private_rooms[]
+                pass
             return chat
 
     @staticmethod
