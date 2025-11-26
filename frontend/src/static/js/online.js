@@ -45,6 +45,10 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 
+function open_private_chat() {
+    socket.emit("")
+}
+
 export function UserList() {
     const [userData, setUserData] = useState({
         update_type: "",
@@ -117,7 +121,7 @@ export function UserList() {
 
             <div id="user_list">
                 {sortedUsers.map(([id, user], index) => (
-                    <div key={id} className="userlist_user">
+                    <div key={id} className="userlist_user" onClick={open_private_chat()}>
                         <img 
                             src={user.profile ? user.profile : "/icons/favicon.ico"} 
                             alt="profile" 
