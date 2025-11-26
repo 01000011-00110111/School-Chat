@@ -39,6 +39,7 @@ logs/__pycache__/*
 chat/files
 /themes/
 customization/__pycache__/*
+private-old/*
 
 # css
 frontend/src/compiled_css/

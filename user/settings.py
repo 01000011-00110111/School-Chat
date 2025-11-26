@@ -101,11 +101,8 @@ async def save_settings(sid, data):
     if errors:
         await sio.emit("settings", {"status": "error", "errors": errors}, room=sid)
     else:
-        print("WHY")
         await update_DB(edits, uuid)
-        print("WHY2")
         await update_user(edits, uuid)
-        print("WHY3")
         await user.update(edits)
         await sio.emit("settings", {"status": "success", "edits": edits}, room=sid)
 

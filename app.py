@@ -23,7 +23,7 @@ import socketio_confg
 from chat import message, rooms, chat # noqa: F401 F811
 from user import login, signup, settings # noqa: F401
 from online import online # noqa: F401
-from private import private, rooms, message # noqa: F401 F811
+# from private import private, rooms, message # noqa: F401 F811
 from customization import themes # noqa: F401
 sio = socketio_confg.sio
 

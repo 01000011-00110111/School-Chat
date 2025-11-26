@@ -38,7 +38,7 @@ class User:
         self.role = user['role']
         self.profile = user['profile']
         self.theme = user['theme']
-        self.private_chats = user['private_chats']
+        # self.private_chats = user['private_chats']
         self.sid = sid
         # self.locked = ['locked']
         # self.theme_count = user['themeCount']

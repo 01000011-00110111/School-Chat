@@ -4,7 +4,7 @@
 """
 # from datetime import datetime
 from chat.chat import Chat
-from private.private import Private
+# from private.private import Private
 # import chat.database as chatdb
 from user.user import User
 from user.login import check_suuid
@@ -26,11 +26,11 @@ async def join_room(sid, data):
 
         user = User.Users[suuid]
 
-        for chat_dict in (Chat.chats, Private.chats):
-            for _, old_chat in chat_dict.items():
-                if user.suuid in old_chat.sids:
-                    old_chat.sids.pop(user.suuid)
-                    break
+        # for chat_dict in (Chat.chats, Private.chats):
+        #     for _, old_chat in chat_dict.items():
+        #         if user.suuid in old_chat.sids:
+        #             old_chat.sids.pop(user.suuid)
+        #             break
 
         if user.suuid not in chat.sids:
             chat.sids[user.suuid] = sid
