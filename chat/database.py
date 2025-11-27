@@ -7,7 +7,8 @@ import configparser
 
 # import hashlib
 # import secrets
-# from datetime import datetime
+from datetime import datetime
+from system import format_system_msg
 
 import pymongo
 
@@ -128,3 +129,38 @@ def save_backup(chat):
     # Rooms.update_one({"roomid": chat.vid}, {"$set": room_data}, upsert=True)
     # Access.update_one({"roomid": chat.vid}, {"$set": access_data}, upsert=True)
     Messages.update_one({"roomid": chat.vid}, {"$set": {"messages": chat.messages}}, upsert=True)
+
+def generate_main():
+    """Generates the Main chat room"""
+    result = Rooms.find_one({"roomid": "ilQvQwgOhm9kNAOrRqbr"})
+    if bool(result):
+        pass
+    
+    room_data = {
+        "roomid": "ilQvQwgOhm9kNAOrRqbr",
+        "generatedBy": "[SYSTEM]",
+        "mods": "",
+        "generatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+        "roomName": "Main",
+    }
+
+    access_data = {
+        "roomid": "ilQvQwgOhm9kNAOrRqbr",
+        "whitelisted": "everyone",
+        "blacklisted": "empty",
+        "canSend": "everyone",
+        "locked": "false",
+    }
+    message = {
+        "roomid": "ilQvQwgOhm9kNAOrRqbr",
+        "messages": [
+            format_system_msg(f"""<b>Main</b> created by <b>[SYSTEM]</b>
+            at {datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}.""")
+        ],
+    }
+
+    Rooms.insert_one(room_data)
+    Access.insert_one(access_data)
+    Messages.insert_one(message)
+
+generate_main()
