@@ -32,7 +32,7 @@ def private_create(userlist, pmid):
     """creates a private chat"""
     data = {
         "userids": userlist,
-        "messages": [{format_system_msg("Temp message")}],
+        "messages": [format_system_msg("Temp message")],
         "pmid": pmid,
     }
     Private.insert_one(data)
