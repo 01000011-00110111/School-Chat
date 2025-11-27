@@ -25,8 +25,7 @@ def get_all_chats():
     """Returns all private chats formatted as {(userA, userB): pmid}."""
     chats = {}
     for doc in Private.find({}, {"_id": 0, "userids": 1, "pmid": 1}):
-        key = tuple(sorted(doc["userids"]))
-        chats[key] = doc["pmid"]
+        doc["userids"] = doc["pmid"]
     return chats
 
 def private_create(userlist, pmid):
