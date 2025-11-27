@@ -132,7 +132,7 @@ def save_backup(chat):
 
 def generate_main():
     """Generates the Main chat room"""
-    result = Rooms.find_one({"roomid": roomid})
+    result = Rooms.find_one({"roomid": "ilQvQwgOhm9kNAOrRqbr"})
     if bool(result):
         pass
     
