@@ -7,7 +7,7 @@ import re
 from datetime import datetime
 from better_profanity import profanity
 
-from private.private import Private
+# from private.private import Private
 # from system import format_system_msg
 
 def get_wordlist():
