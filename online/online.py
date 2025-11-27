@@ -9,6 +9,7 @@ from user.database import get_online_data
 from user.user import User
 # from chat.rooms import Chat why was this grabbing the Chat class?
 from chat.chat import Chat
+from private.private import Private
 
 import asyncio
 # from datetime import datetime
@@ -115,8 +116,13 @@ async def beat(sid, data, bypass=False):
         update({"status": data.get("status", status)}, user.uuid)
         if roomid is not False:
             chat = Chat.get_chat(roomid)
-            if sid not in chat.sids:
-                chat.sids[user.suuid] = sid
+            if chat:
+                if sid not in chat.sids:
+                    chat.sids[user.suuid] = sid
+            else:
+                private = Private.get_chat(roomid)
+                if sid not in private.sids:
+                    private.sids[user.suuid] = sid
             if user.sid != sid:
                 user.sid = sid
 

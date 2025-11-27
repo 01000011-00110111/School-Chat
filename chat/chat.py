@@ -49,7 +49,7 @@ class Chat:
     @staticmethod
     def get_chat(roomid):
         """Get a chat from the list of existing chats."""
-        return Chat.chats[roomid]
+        return Chat.chats.get(roomid)
 
     @staticmethod
     def get_all_chats(permission):

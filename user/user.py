@@ -38,7 +38,6 @@ class User:
         self.role = user['role']
         self.profile = user['profile']
         self.theme = user['theme']
-        # self.private_chats = user['private_chats']
         self.sid = sid
         # self.locked = ['locked']
         # self.theme_count = user['themeCount']
@@ -78,10 +77,3 @@ class User:
             setattr(self, key, value)
         User.Users[self.suuid] = self
         return
-
-    async def check_private_chat_permissions(self, other_user):
-        """Check if the user has permission to access private chats."""
-        if other_user in self.private_chats:
-            return self.private_chats[other_user]
-        else:
-            return False

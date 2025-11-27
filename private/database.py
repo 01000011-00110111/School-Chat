@@ -19,3 +19,30 @@ if config['backend']['ENV'] == 'development': #this check is temp.
 else:
     client = pymongo.MongoClient(mongo_pass)
 
+Private = client.Rooms.Private
+
+def get_all_chats():
+    """Returns all private chats formatted as {(userA, userB): pmid}."""
+    chats = {}
+    for doc in Private.find({}, {"_id": 0, "userids": 1, "pmid": 1}):
+        key = tuple(sorted(doc["userids"]))
+        chats[key] = doc["pmid"]
+    return chats
+
+def private_create(userlist, pmid):
+    """creates a private chat"""
+    data = {
+        "userids": userlist,
+        "messages": [{"message": "Temp message"}],
+        "pmid": pmid,
+    }
+    Private.insert_one(data)
+    return data
+
+def get_private_chat(pmid):
+    """finds a private chat"""
+    return Private.find_one({"pmid": pmid})
+
+def save_backup(chat):
+    """Saves the private chat."""
+    Private.update_one({"pmid": chat.pmid}, {"$set": {"messages": chat.messages}}, upsert=True)
