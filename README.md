@@ -5,8 +5,6 @@
 # School-Chat
 This is a private chat made for chatting with friends. This chat has been made over our free time at highschool and is in no way made with the best ways you can do stuff. We use MongoDB for the database, with the backend written in python and a javascript front end. (while using nginx as a reverse proxy)
 
-This chat is always gettings updated so keep updated on our work!
-
 # **Setup**:
 
 ### Requirements
@@ -15,6 +13,7 @@ This chat is always gettings updated so keep updated on our work!
 - In the data base make 2 databases named `Accounts` and `Rooms`
 - Inside of Accounts make 3 collections named `Accounts`, `Customization`, and `Permission`
 - Inside of Rooms make 4 collections named `Rooms`, `Permission`, `Messages`, and `Private`
+> The Private collection is currently unused.
 
 ## No systemd service (easy route)
 - Create a venv by running:
@@ -120,8 +119,7 @@ systemctl enable --now chatserverd.service
 ```
 - it should just start working
 
-### This was created by:
-- [**cserver45**](https://github.com/cserver45) and [**C7**](https://github.com/01000011-00110111)
-
 ### Contributors:
--  [**CastyiGlitchxz**](https://github.com/CastyiGlitchxz)
+- [**cserver45**](https://github.com/cserver45)
+- [**C7**](https://github.com/01000011-00110111)
+- [**CastyiGlitchxz**](https://github.com/CastyiGlitchxz)
