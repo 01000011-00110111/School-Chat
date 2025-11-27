@@ -15,9 +15,7 @@ async def client_message(_, data):
     This function is called when a client sends a message to the server.
     """
     user = User.get_user(data["suuid"])
-    print(data)
     message, _ = run_filter_chat(user, data["roomid"], data["message"], data["suuid"])
-    print(message)
     if message[0] == "msg":
         chat = Private.get_chat(data["roomid"])
         await chat.send_message(message[1], message[3])

@@ -36,7 +36,6 @@ class Private:
         """creates a private chat"""
         pmid = Private.generate_unique_code(5)
         private = private_create(userlist, pmid)
-        print(private)
         Private.all_chats[userlist] = pmid
         return Private(private)
 
@@ -79,7 +78,6 @@ class Private:
 
     async def send_message(self, message, reset):
         """Send a message to the chat."""
-        print('test')
         lines = len(self.messages)# if not private else 1
         if lines >= 350 or reset:# and permission != 'true'):
             await self.reset_chat()

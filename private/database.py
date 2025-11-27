@@ -4,7 +4,7 @@
 """
 
 import configparser
-
+from system import format_system_msg
 
 import pymongo
 
@@ -33,7 +33,7 @@ def private_create(userlist, pmid):
     """creates a private chat"""
     data = {
         "userids": userlist,
-        "messages": [{"message": "Temp message"}],
+        "messages": [{"message": format_system_msg("Temp message")}],
         "pmid": pmid,
     }
     Private.insert_one(data)
