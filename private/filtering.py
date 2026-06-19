@@ -7,7 +7,7 @@ import re
 from datetime import datetime
 from better_profanity import profanity
 
-from private.private import Private
+# from private.private import Private
 # from system import format_system_msg
 
 def get_wordlist():
@@ -126,18 +126,18 @@ def compile_message(message, profile_picture, user):
 
 def run_filter_chat(user, roomid, message, suuid):
     """Filters messages before sending in a chat room."""
-    room = Private.get_chat(roomid)
+    # room = Private.get_chat(roomid)
     reset = False
     if suuid != user.suuid:
         return ('permission', 7, False)
 
 
     perms = check_permissions(user)
-    if room.config["locked"] is True and perms not in ['dev', 'admin', 'mod']:
-        return ('permission', 3, 0)
+    # if room.config["locked"] is True and perms not in ['dev', 'admin', 'mod']:
+    #     return ('permission', 3, 0)
 
-    if room.config["can_send"] == 'mod' and perms not in ['mod', 'admin', 'dev']:
-        return ('permission', 4, 0)
+    # if room.config["can_send"] == 'mod' and perms not in ['mod', 'admin', 'dev']:
+    #     return ('permission', 4, 0)
 
     if "$sudo rc" in message and perms not in ['dev', 'admin', 'mod']:
         return ('permission', 5, 0)

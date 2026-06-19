@@ -36,7 +36,7 @@ async def join_room(sid, data):
             chat.sids[user.suuid] = sid
 
         await sio.emit("load_chat",
-                    {"messages": chat.messages, "roomid": chat.vid, "name": chat.name},
+                    [{"messages": chat.messages, "roomid": chat.vid, "name": chat.name}, False],
                     to=sid)
     else:
         await sio.emit("send_to_login", to=sid)

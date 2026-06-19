@@ -45,6 +45,11 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 
+function open_private_chat(user) {
+    console.log('why?')
+    socket.emit("join_room_private", {other_user: user, suuid: window.sessionStorage.getItem("suuid")})
+}
+
 export function UserList() {
     const [userData, setUserData] = useState({
         update_type: "",
@@ -117,7 +122,7 @@ export function UserList() {
 
             <div id="user_list">
                 {sortedUsers.map(([id, user], index) => (
-                    <div key={id} className="userlist_user">
+                    <div key={id} className="userlist_user" onClick={() => open_private_chat(user.displayName)}>
                         <img 
                             src={user.profile ? user.profile : "/icons/favicon.ico"} 
                             alt="profile" 

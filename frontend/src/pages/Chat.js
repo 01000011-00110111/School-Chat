@@ -54,9 +54,10 @@ function Chat() {
     }, []);
 
     useEffect(() => {
-        socket.on("load_chat", (data) => {
+        socket.on("load_chat", ([data, priv]) => {
             updateChatRoom(data["roomid"], data["name"]);
             sessionStorage.setItem("roomid", data["roomid"]);
+            sessionStorage.setItem("private", priv);
             loadChat(data["messages"]);
             setMessages(data["messages"]);
         });
@@ -126,12 +127,31 @@ function Chat() {
         get_remaining_chars();
     });
 
+    // const sendMessage = (e) => {
+    //     if (input.trim() !== "") {
+    //         e?.preventDefault();
+    //         socket.emit("message", { message: input, roomid: rid, suuid: suuid });
+    //         setInput("");
+    //         update_appbadge();
+    //     }
+    // };
+
     const sendMessage = (e) => {
         if (input.trim() !== "") {
             e?.preventDefault();
-            socket.emit("message", { message: input, roomid: rid, suuid: suuid });
-            setInput("");
-            update_appbadge();
+
+            const privateChat = sessionStorage.getItem("private") === "true";
+            console.log(privateChat)
+            const eventName = privateChat ? "message_private" : "message";
+
+            socket.emit(eventName, {
+                message: input,
+                roomid: rid,
+                suuid: suuid
+            });
+
+            setInput("");       // clear input
+            update_appbadge();  // update badge if needed
         }
     };
 
