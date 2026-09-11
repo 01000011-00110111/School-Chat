@@ -15,11 +15,8 @@ const Settings = () => {
     const [errors, SetErrors] = useState([]);
     
     const getInitialState = () => {
-        if (!storage.get("app-nav-settings")) {
-            storage.set("app-nav-settings", '{"nav_close_onroom": false}');
-        }
-
-        const value = JSON.parse(storage.get("app-nav-settings"))["nav_close_onroom"];
+        const app_settings = storage.get("app-nav-settings", "LOCAL");
+        const value = JSON.parse(app_settings)["nav_close_onroom"];
         return value;
     }
     let suuid = sessionStorage.getItem("suuid");
@@ -62,14 +59,20 @@ const Settings = () => {
         userPing: true,
         privateMessagePing: false,
     });
+    const [themes, setThemes] = useState([]);
+    const [currentTheme, setCurrentTheme] = useState("");
     
     useEffect(() => {
+        const themeRef = storage.get("user-customization-settings", "SESSION");
+        setCurrentTheme(JSON.parse(themeRef).user_theme);
+
         socket.on("settings", (data) => {
             if (data.status === "error") {
                 const error_array = [];
                 Object.entries(data["errors"]).map((error, index) => {
-                    error_array.push(error[1][1])
-                })
+                    return error_array.push(error[1][1])
+                });
+
                 SetErrors(error_array);
             } else {
                 SetErrors([]);
@@ -89,14 +92,26 @@ const Settings = () => {
         });
     }, [formInfo])
 
+    useEffect(() => {
+        socket.emit("list_all_themes");
+
+        socket.on("returned_themes", (themes) => {
+            setThemes(themes);
+        })
+    }, [themes])
+
     const save_settings = () => {
         socket.emit("save_settings", {suuid: window.sessionStorage.getItem("suuid"), formInfo});
-
     }
+
+    const handleThemeChange = (e) => {
+        setCurrentTheme(e.target.value);
+        storage.set("user-customization-settings", `{"user_theme": "${e.target.value}"}`, "SESSION")
+    };
 
     const handleChange = (event) => {
         setNavState(event.target.value);
-        storage.set("app-nav-settings", `{"nav_close_onroom": ${event.target.value}}`)
+        storage.set("app-nav-settings", `{"nav_close_onroom": ${event.target.value}}`, "LOCAL")
         on_update(event);
     }
 
@@ -110,18 +125,18 @@ const Settings = () => {
     };
 
     const activate_notifications = () => {
-        if (!"Notification" in window) {
+        if (!("Notification" in window)) {
             alert("This browser does not support desktop notifications");
         } 
         
         else if (Notification.permission === "granted") {
-            const notification = new Notification("Notifications have been activated!");
+            new Notification("Notifications have been activated!");
         }
 
         else if (Notification.permission !== "denied") {
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    const notification = new Notification("Notifications have been activated!");
+                    new Notification("Notifications have been activated!");
                 }
             });
         }
@@ -186,7 +201,7 @@ const Settings = () => {
 
                     <Tab label={"Appearance"}>
                         <h2>Appearance</h2>
-                        {/* <CheckBox label={"Sync theme across devices"} onUpdate={(e) => on_update(e)}/>
+                        <CheckBox label={"Sync theme across devices"} onUpdate={(e) => on_update(e)}/>
                         <Modal>
                             <LineButton>
                                 <div style={{display: "flex", alignItems: "center", gap: "0.4rem"}}>
@@ -197,12 +212,12 @@ const Settings = () => {
                                 <ColoredBar colors={["black", "gray", "lightgrey"]}/>
                             </LineButton>
 
-                            <select>
-                                <option>Dark</option>
-                                <option>Light</option>
-                                <option>Better Dark</option>
+                            <select onChange={handleThemeChange} value={currentTheme}>
+                                {themes.map((theme) => (
+                                    <option value={theme["id"]}>{theme["name"]}</option>
+                                ))}
                             </select>
-                        </Modal> */}
+                        </Modal>
 
                         <h2>Chat</h2>
 

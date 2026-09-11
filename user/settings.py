@@ -4,8 +4,9 @@
 """
 # import re
 from socketio_confg import sio
-from user.database import update
+from user.database import update_DB
 from user.user import User
+from online.online import update_user
 
 from better_profanity import profanity
 
@@ -59,7 +60,7 @@ async def save_settings(sid, data):
     message_color = data["formInfo"].get("messageColor")
 
     errors = []
-    edits = []
+    edits = {}
 
 
     if display_name:
@@ -67,41 +68,42 @@ async def save_settings(sid, data):
         if not display_name_result[0]:
             errors.append(display_name_result)
         else:
-            edits.append({"display_name": display_name_result[1]})
+            edits["display_name"] = display_name_result[1]
 
     if role:
         role_result = set_role(role)
         if not role_result[0]:
             errors.append(role_result)
         else:
-            edits.append({"role": role_result})
+            edits["role"] = role_result
 
     if username_color:
         username_color_result = check_color(username_color, "#000000")
         if not username_color_result[0]:
             errors.append(username_color_result)
         else:
-            edits.append({"u_color": username_color})
+            edits["u_color"] = username_color
 
     if role_color:
         role_color_result = check_color(role_color, "#000000")
         if not role_color_result[0]:
             errors.append(role_color_result)
         else:
-            edits.append({"r_color": role_color})
+            edits["r_color"] = role_color
 
     if message_color:
         message_color_result = check_color(message_color, "#000000")
         if not message_color_result[0]:
             errors.append(message_color_result)
         else:
-            edits.append({"m_color": message_color})
+            edits["m_color"] = message_color
 
     if errors:
         await sio.emit("settings", {"status": "error", "errors": errors}, room=sid)
     else:
-        update(edits, uuid)
-        user.update(edits)
+        await update_DB(edits, uuid)
+        await update_user(edits, uuid)
+        await user.update(edits)
         await sio.emit("settings", {"status": "success", "edits": edits}, room=sid)
 
 @sio.on("get_settings")

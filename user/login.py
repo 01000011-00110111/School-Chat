@@ -18,8 +18,12 @@ async def login(sid, data):
     uuid = User.check_credentials(username, password)
 
     if uuid:
-        user = User(username, database.get_user_data(uuid), uuid)
-        User.Users[user.suuid] = user
+        if uuid not in User.logged_in:
+            user = User(username, database.get_user_data(uuid), uuid, sid)
+            User.Users[user.suuid] = user
+            User.logged_in[uuid] = user.suuid
+        else:
+            user = User.get_user(User.logged_in[uuid])
         await sio.emit("login", {'suuid': user.suuid, 'status': 'successful'}, to=sid)
     else:
         await sio.emit("login", { 'suuid': False, 'status': 'failed'}, to=sid)
@@ -32,6 +36,8 @@ async def logout(sid, data):
     """
     suuid = data["suuid"]
     if suuid in User.Users:
+        user = User.get_user(suuid)
+        del User.logged_in[user.uuid]
         del User.Users[suuid]
         await sio.emit("send_to_login", to=sid)
 

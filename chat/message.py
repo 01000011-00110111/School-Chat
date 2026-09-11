@@ -19,8 +19,11 @@ async def client_message(_, data):
 
     # log_message_sent(user.uuid, data["roomid"], data["message"])
 
-    message = run_filter_chat(user, data["roomid"], data["message"], data["suuid"])
+    message, who = run_filter_chat(user, data["roomid"], data["message"], data["suuid"])
 
 
     if message[0] == "msg":
-        await Chat.get_chat(data["roomid"]).send_message(message[1], message[3])
+        chat = Chat.get_chat(data["roomid"])
+        await chat.send_message(message[1], message[3])
+        if who is not False:
+            await chat.ping() if who == "everyone" else await User.ping(who)

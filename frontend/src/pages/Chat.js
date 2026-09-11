@@ -11,6 +11,7 @@ import { storage } from '../static/js/storage';
 import { UserList } from '../static/js/online';
 import { update_appbadge } from "../static/js/app_badge";
 import { Theme_System } from "../customization/theme_render";
+import { _ } from "../static/js/static";
 
 function Chat() {
     // const [chatrooms, setChatooms] = useState([]);
@@ -53,9 +54,10 @@ function Chat() {
     }, []);
 
     useEffect(() => {
-        socket.on("load_chat", (data) => {
+        socket.on("load_chat", ([data, priv]) => {
             updateChatRoom(data["roomid"], data["name"]);
             sessionStorage.setItem("roomid", data["roomid"]);
+            sessionStorage.setItem("private", priv);
             loadChat(data["messages"]);
             setMessages(data["messages"]);
         });
@@ -63,6 +65,27 @@ function Chat() {
         return () => {
             socket.off("load_chat");
         };
+    });
+
+    useEffect(() => {
+        const list = [];
+
+        const themeRef = storage.get("user-customization-settings", "SESSION");
+        socket.emit("load_theme", JSON.parse(themeRef).user_theme)
+
+        socket.once("send_theme", (theme) => {
+            if (theme.theme) {                
+                const colors = theme.theme.colors;
+    
+                for (const key in colors) {
+                    list.push(colors[key])
+                }
+    
+                const tms = new Theme_System();
+                tms.set_theme(list);
+                tms.render();
+            }
+        });
     });
 
     const storeText = (event) => {
@@ -81,17 +104,17 @@ function Chat() {
         let total_remaining_chars = max_length - message_length;
 
         // Checks to see if the total messsage length is greater than 100 if so then change the text color to default (white)
-        if (total_remaining_chars > 100) {
+        if (total_remaining_chars > 125) {
             remaining_chars_display.style.color = "white";
         }
         
         // Checks to see if the total messsage length is less than or equal to 100 but more than 20 if so then change the text color to yellow
-        else if (total_remaining_chars <= 100 && total_remaining_chars > 20) {
+        else if (total_remaining_chars <= 125 && total_remaining_chars > 35) {
             remaining_chars_display.style.color = "yellow";
         }
 
         // Checks to see if the total messsage length is less than or equal to 20 if so then change the text color to red
-        else if (total_remaining_chars <= 20) {
+        else if (total_remaining_chars <= 35) {
             remaining_chars_display.style.color = "red";
         };
 
@@ -104,12 +127,31 @@ function Chat() {
         get_remaining_chars();
     });
 
+    // const sendMessage = (e) => {
+    //     if (input.trim() !== "") {
+    //         e?.preventDefault();
+    //         socket.emit("message", { message: input, roomid: rid, suuid: suuid });
+    //         setInput("");
+    //         update_appbadge();
+    //     }
+    // };
+
     const sendMessage = (e) => {
         if (input.trim() !== "") {
             e?.preventDefault();
-            socket.emit("message", { message: input, roomid: rid, suuid: suuid });
-            setInput("");
-            update_appbadge();
+
+            const privateChat = sessionStorage.getItem("private") === "true";
+            console.log(privateChat)
+            const eventName = privateChat ? "message_private" : "message";
+
+            socket.emit(eventName, {
+                message: input,
+                roomid: rid,
+                suuid: suuid
+            });
+
+            setInput("");       // clear input
+            update_appbadge();  // update badge if needed
         }
     };
 
@@ -179,26 +221,26 @@ function Chat() {
         }
     };
 
-    const tms = new Theme_System();
-    tms.set_theme([
-        "#000000",
-        "#000000",
-        "#000000",
-        "white",
-        "#ffffff", // This is the usercard, it doesn't work?
-        "#0c0c0cff",
-        "white",
-        "purple",
-        "white",
-        "transparent",
-        "white",
-        "white", // Doesn't work
-        "rgb(0, 94, 255)",
-        "white",
-        "#000000",
-        "white",
-    ]);
-    tms.render();
+    // const tms = new Theme_System();
+    // tms.set_theme([
+    //     "#000000",
+    //     "#000000",
+    //     "#000000",
+    //     "white",
+    //     "#ffffff", // This is the usercard, it doesn't work?
+    //     "#0c0c0cff",
+    //     "white",
+    //     "purple",
+    //     "white",
+    //     "transparent",
+    //     "white",
+    //     "white", // Doesn't work
+    //     "rgb(0, 94, 255)",
+    //     "white",
+    //     "#000000",
+    //     "white",
+    // ]);
+    // tms.render();
 
     return (
         <div className="main">
@@ -265,7 +307,7 @@ function Chat() {
                         </label>
 
                         <div style={{width: "83%", bottom: "10px", position: "relative", display: "grid", gap: "5px"}}>
-                            <p id="remaining_chars">250 Characters Left</p>
+                            <p id="remaining_chars">350 Characters Left</p>
 
                             <div className="message_box">
                                 <input
@@ -273,7 +315,7 @@ function Chat() {
                                     value={input}
                                     onChange={storeText}
                                     placeholder="Type your message"
-                                    maxLength={250}
+                                    maxLength={350}
                                     id="message_input"
                                     autoCapitalize="true"
                                     autoCorrect="true"

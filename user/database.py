@@ -92,6 +92,7 @@ def get_user_data(user_id):
                 # "warned": {"$arrayElemAt": ["$permissions.location", 0]},
                 "SPermission": {"$arrayElemAt": ["$permissions.SPermission", 0]},
                 "themeCount": {"$arrayElemAt": ["$permissions.themeCount", 0]},
+                "private_chats": {"$arrayElemAt": ["$permissions.private_chats", 0]},
             }
         },
     ]
@@ -192,6 +193,7 @@ def add_accounts(data):
         "warned": "0",
         "SPermission": [""],
         "themeCount": 0,
+        "private_chats": {},
     }
 
     ID.insert_one(id_data)
@@ -199,7 +201,7 @@ def add_accounts(data):
     Permission.insert_one(permission_data)
 
 
-def update(data, user_id):
+async def update_DB(data, user_id):
     """Updates user data in the database."""
     customization_data = {}
 
@@ -215,6 +217,6 @@ def update(data, user_id):
         customization_data["userColor"] = data["u_color"]
 
     Customization.update_one(
-        {"userId": user_id},
-        {"$set": customization_data}
+        {"userId": user_id}, {"$set": customization_data}, upsert=True
     )
+    return

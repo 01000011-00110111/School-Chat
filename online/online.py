@@ -7,7 +7,10 @@ from socketio_confg import sio
 # from user import user, database
 from user.database import get_online_data
 from user.user import User
-from chat.rooms import Chat
+# from chat.rooms import Chat why was this grabbing the Chat class?
+from chat.chat import Chat
+from private.private import Private
+
 import asyncio
 # from datetime import datetime
 # from logs.logs import log_user_connected, log_user_disconnected
@@ -48,6 +51,7 @@ async def connect(sid, data):
         "profile": user.profile,
         "theme": user.theme
     }
+    user.sid = sid
     if user.status != "offline-lockced":
          update({"status": 'active'}, uuid)
     securelist = await user_list()
@@ -79,8 +83,8 @@ heartbeat_flags = {}
 
 async def heartbeat_loop():
     """Periodically check if users are online."""
-    print("✅ heartbeat_loop task started")
     global heartbeat_flags
+    print("✅ heartbeat_loop task started")
     while True:
         # print("💓 Heartbeat loop called")
         heartbeat_flags = {}
@@ -91,7 +95,7 @@ async def heartbeat_loop():
 
         await sio.emit("heartbeat")  # Broadcast to all
 
-        await asyncio.sleep(5)
+        await asyncio.sleep(2.5)
 
         for uuid, responded in heartbeat_flags.items():
             if not responded:
@@ -101,27 +105,41 @@ async def heartbeat_loop():
                 await sio.emit("online", {"update": "partial", "data": securelist})
 
 @sio.on("beat")
-async def beat(sid, data):
+async def beat(sid, data, bypass=False):
     """Handle heartbeat responses from clients."""
     suuid = data.get("suuid")
     user = User.Users.get(suuid)
+    status = data.get("status")
+    roomid = data.get("roomid")
 
     if user:
-        update({"status": data.get("status", "active")}, user.uuid)
+        update({"status": data.get("status", status)}, user.uuid)
+        if roomid is not False:
+            chat = Chat.get_chat(roomid)
+            if chat:
+                if sid not in chat.sids:
+                    chat.sids[user.suuid] = sid
+            else:
+                private = Private.get_chat(roomid)
+                if sid not in private.sids:
+                    private.sids[user.suuid] = sid
+            if user.sid != sid:
+                user.sid = sid
 
-        if user.uuid in heartbeat_flags:
+        if user.uuid in heartbeat_flags and not bypass:
             heartbeat_flags[user.uuid] = True
             securelist = await user_list()
             await sio.emit("online", {"update": "full", "data": securelist}, to=sid)
     else:
         await sio.emit("send_to_login", to=sid)
 
+
 # @sio.on("online")
-async def online(_, data):
+async def online(_, data): # Is this used anywhere?
     """Handle online events."""
     suuid = data['suuid']
-    status = data['status']
     uuid = User.Users[suuid].uuid
+    status = data.get("status")
     update({"status": status}, uuid)
     securelist = await user_list()
     await sio.emit("online", {"update": 'partial', "data": securelist})
@@ -148,3 +166,14 @@ def update(data, uuid):
         if key == 'status' and userlist[uuid]['status'] == 'offline-locked':
             continue
         userlist[uuid][key] = value
+
+async def update_user(edis, uuid):
+    """updates the users profile data on the online list"""
+    allowed_keys = {"role", "display_name"}
+    update_list = {k: v for k, v in edis.items() if k in allowed_keys}
+    if "display_name" in update_list:
+        update_list["displayName"] = update_list.pop("display_name")# I need to keep all common vars the same this is gonna be a pain to make later on
+    update(update_list, uuid)
+    securelist = await get_user(uuid)
+    await sio.emit("online", {"update": 'partial', "data": securelist})
+

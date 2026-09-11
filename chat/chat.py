@@ -49,7 +49,7 @@ class Chat:
     @staticmethod
     def get_chat(roomid):
         """Get a chat from the list of existing chats."""
-        return Chat.chats[roomid]
+        return Chat.chats.get(roomid)
 
     @staticmethod
     def get_all_chats(permission):
@@ -100,6 +100,7 @@ class Chat:
 
         for _, sid in self.sids.items():
             await sio.emit("message", {"message": message}, to=sid)
+        return
 
     async def check_user(self, suuid):
         """Check if a user is in the chat."""
@@ -112,6 +113,11 @@ class Chat:
         self.messages.append(msg)
         for _, sid in self.sids.items():
             await sio.emit("reset_chat", msg, to=sid)
+
+    async def ping(self):
+        """ping all users in the chat room"""
+        for _, sid in self.sids.items():
+            await sio.emit("ping", to=sid)
 
     async def run_backup_task(self):
         """Run the backup task every 15 minutes."""
